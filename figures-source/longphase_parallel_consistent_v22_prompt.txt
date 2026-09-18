@@ -1,0 +1,14 @@
+Edit image1 (LongPhase figure); image2 is architecture reference ONLY, not a style template. Preserve 16:9 composition, all scientific panels, small panel letters and exact established styling. Three required corrections:
+
+PANEL C: Architecture is PARALLEL, never GATv2 then Transformer. Put the compact radial local-neighborhood graphic ABOVE the long-range-token Transformer graphic, with BOTH centered at same x. Input allele graph exits to ONE obvious branch junction. From this junction TWO arrows diverge independently: upper arrow to Local attention GATv2, lower arrow to Window-wide attention Transformer. Each branch has independent output arrow to SAME additive-fusion plus to the right. NO edge or arrow between the two branches. The upper branch is radial focal node receiving unequal-width neighbor arrows; the lower branch is ordered tokens with long-range attention arcs and Genomic window bracket. Preserve distinct operation graphics. Add a thin neutral input residual bypass from the same junction under the branches into additive-fusion plus, not from feature labels. Preserve compact FFN and residual loop and phase-confidence refinement output. Do NOT copy architecture-reference boxes, equations or large headers. True topology same-input -> two parallel operators -> sum -> FFN, NOT serial. Readable clean spacing.
+
+PANEL D: Exactly six aligned loci on BOTH haplotypes and all THREE reads:
+Haplotype1 cyan: A circle | T circle | SV rectangle | filled methylation lollipop | A circle | C circle.
+Haplotype2 coral: G circle | C circle | PLAIN CONTINUOUS LINE with NO BOX at SV locus | hollow methylation lollipop | CA rectangle | T circle.
+Read1 cyan: A circle | T circle | SV rectangle | filled methylation | A circle | C circle.
+Read2 cyan: A circle | T circle | SV rectangle | filled methylation | A circle | C circle.
+Read3 coral: G circle | C circle | PLAIN CONTINUOUS LINE with NO BOX at SV locus | hollow methylation | CA rectangle | T circle.
+Thus non-SV on Haplotype2 and Read3 is just a rail, matching panel a, NEVER an SV-labelled box, empty box or crossed-out box.
+Second-to-last locus is now heterozygous A versus CA, exactly like panel b: A in cyan circle for H1 and reads1/2; CA in coral rectangular indel glyph for H2 and read3. No G SNP at that locus. Keep terminal C/T circles unchanged. All rows perfectly align by locus and symbol; no symbol shifts or mixing. All alleles agree with tagged haplotype.
+Retain wide panel d and well-spaced three reads. Add small "Haplotagging reads" group label between haplotypes and read group without overlap; row labels may remain. Identical sized filled/hollow methylation glyphs.
+Preserve panels a and b except restore dashed coral CA box in LOWER reweighted graph if currently solid. No locus numbers. All other labels and allele graphs unchanged. Keep correct local/global architecture highly legible, no new text paragraphs.

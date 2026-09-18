@@ -1,0 +1,136 @@
+% ------------------------------------------------------------------
+%  LongPhase 2 -- manuscript draft for Nature Methods
+%  Build:  latexmk -pdf main.tex   (or `make` in this folder)
+% ------------------------------------------------------------------
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{xspace}
+\usepackage{xcolor}
+\usepackage{lineno}
+\usepackage[super,sort&compress,numbers]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+
+\graphicspath{{figures/}}
+\bibliographystyle{naturemag}
+\setcitestyle{super,open={},close={}}
+
+% ---------- tool names / editorial macros ----------
+\newcommand{\toolname}{LongPhase~2\xspace}       % rename here if needed
+\newcommand{\gnnname}{LongPhase-GNN\xspace}
+\newcommand{\longphase}{LongPhase\xspace}
+\newcommand{\whatshap}{WhatsHap\xspace}
+\newcommand{\hapcut}{HapCUT2\xspace}
+\newcommand{\methphaser}{MethPhaser\xspace}
+\newcommand{\todo}[1]{\textcolor{red}{[#1]}}     % items to verify before submission
+
+% Nature Methods: <= 90 characters, no jargon; alternatives kept as comments
+% (a) LongPhase 2 co-phases variants and methylation with per-variant confidence
+% (b) Confidence-aware haplotype phasing of variants and methylation from long reads
+\title{Uncertainty-aware co-phasing of variants and methylation with LongPhase~2}
+
+\author{%
+Jyun-Hong Lin$^{1}$, \todo{co-authors}, Yao-Ting Huang$^{1,\ast}$\\[4pt]
+\small $^{1}$Department of Computer Science and Information Engineering, National Chung Cheng University, Chiayi, Taiwan\\
+\small $^{\ast}$Correspondence: ythuang@cs.ccu.edu.tw}
+\date{}
+
+\begin{document}
+\onehalfspacing
+\linenumbers
+\maketitle
+
+\begin{abstract}
+Read-based phasing resolves haplotypes from long reads, yet current methods phase only single-nucleotide variants, weigh all read evidence equally and report no measure of confidence, so that switch errors propagate unnoticed into downstream analyses. Here we present \toolname, which co-phases SNVs, indels, structural variants and allele-specific methylation in a single weighted graph, calibrates every observation by base quality and sequence context, and attaches a phasing entropy to each variant. An optional graph neural network inspects high-entropy sites and removes unreliable phase assignments without altering genotypes. On HG002 nanopore data, \toolname reduces switch errors 3--5-fold relative to WhatsHap and HapCUT2 while running 6--8 times faster, extends haplotype blocks by up to 70\% through co-phasing, and reveals that GRCh38-based benchmarks conceal most of the errors exposed by telomere-to-telomere truth sets. \toolname is a drop-in replacement for the version already embedded in Clair3, ClairS, Severus and EPI2ME workflows.
+\end{abstract}
+
+\section*{Introduction}
+\input{sections/introduction}
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=\textwidth]{fig1_overview}
+  \caption{\textbf{Overview of \toolname.}
+  \textbf{a}, Heterogeneous molecular evidence (SNVs, small indels, structural variants and 5mC calls) from the same long reads is integrated into a single haplotype-resolution problem.
+  \textbf{b}, Weighted phasing graph. Allele nodes are connected by read-supported edges; evidence is calibrated by base quality and sequence-context reliability (homopolymers, tandem repeats, miscalled heterozygous sites in copy-number-altered regions) before multi-neighbour haplotype voting and read-based correction.
+  \textbf{c}, Optional uncertainty correction. Per-variant phasing entropy selects loci for a graph neural network that combines local attention over the phasing graph (GATv2) with window-wide attention (Transformer); variants predicted to be misphased are unphased and the affected phase set is split, preserving the genotype.
+  \textbf{d}, Outputs: phased VCFs for all variant classes and haplotagged alignments.}
+  \label{fig:overview}
+\end{figure}
+
+\section*{Results}
+\input{sections/results}
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=\textwidth]{fig2_snv_comparison}
+  \caption{\textbf{SNV phasing accuracy, block length and runtime compared with WhatsHap and HapCUT2.}
+  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$; SNV-only phasing of identical Clair3 calls; scored against the T2T-based HG002 Q100 (v5.0q) benchmark. Points at 10--20$\times$ are means of ten down-sampling replicates; the shaded region (30--60$\times$) is a single replicate.
+  \textbf{a}, Fraction of benchmark heterozygous SNVs phased.
+  \textbf{b}, Switch error rate.
+  \textbf{c}, Block-wise Hamming distance.
+  \textbf{d}, Phase-block N50.
+  \textbf{e}, Wall-clock runtime (log scale, \todo{$t$} threads); \toolname with correction includes the neural-network stage.
+  Grey, HapCUT2 1.3.4; orange, WhatsHap 2.8; blue, \toolname; red, \toolname with neural-network correction.}
+  \label{fig:snv}
+\end{figure}
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=\textwidth]{fig3_two_benchmarks}
+  \caption{\textbf{The same phased VCFs scored against the GRCh38-based GIAB v4.2.1 and the T2T-based v5.0q benchmarks.}
+  SNV-only phasing of HG002 nanopore R10.4.1 data; replicates as in Fig.~\ref{fig:snv}.
+  \textbf{a}, Fraction of benchmark heterozygous SNVs phased (v5.0q).
+  \textbf{b},\textbf{c}, Genome-wide switch-error counts under v4.2.1 (\textbf{b}) and v5.0q (\textbf{c}); the two panels share axes.
+  \textbf{d}, Phase-block N50 (benchmark independent).
+  \textbf{e},\textbf{f}, Hamming distance under v4.2.1 (\textbf{e}) and v5.0q (\textbf{f}).
+  Grey, HapCUT2 1.3.4; orange, WhatsHap 2.8; teal, \longphase~1.0; blue, \toolname; red, \toolname with neural-network correction.}
+  \label{fig:benchmarks}
+\end{figure}
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=\textwidth]{fig4_cophasing}
+  \caption{\textbf{Co-phasing of SNVs, indels, SVs and allele-specific methylation.}
+  HG002 nanopore R10.4.1 data, 10--60$\times$; dashed lines, \toolname; solid lines, \toolname with neural-network correction.
+  \textbf{a}--\textbf{d}, Fraction of phased SNVs (\textbf{a}), indels (\textbf{b}), allele-specific 5mC sites (\textbf{c}) and SVs (\textbf{d}) in the four-class co-phasing configuration.
+  \textbf{e},\textbf{f}, SNV switch error rate (\textbf{e}) and Hamming distance (\textbf{f}) for SNV-only phasing (blue) and four-class co-phasing (red), each with (solid) and without (dashed) correction. Denominators: GIAB v5.0q heterozygous SNVs and indels; Sniffles2 heterozygous SVs; \texttt{modcall} heterozygous 5mC sites.}
+  \label{fig:cophasing}
+\end{figure}
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=0.92\textwidth]{fig5_variant_combinations}
+  \caption{\textbf{Effect of neural-network correction across variant-class combinations.}
+  Each row is a separate phasing run of HG002 nanopore R10.4.1 data with the indicated variant classes; dashed, \toolname; solid, \toolname with correction. Columns: SNV switch error rate, Hamming distance and phase-block N50, scored against the v5.0q benchmark on SNVs. Replicates as in Fig.~\ref{fig:snv}.}
+  \label{fig:combinations}
+\end{figure}
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=\textwidth]{fig6_unphased_analysis}
+  \caption{\textbf{Composition of the variants unphased by the neural network.}
+  SNV-only phasing of HG002 nanopore R10.4.1 data (seed 1; break threshold 0.30); every SNV phased by \toolname and unphased after correction is classified against the v5.0q benchmark.
+  \textbf{a}, Fraction of unphased SNVs that are absent from the benchmark, homozygous in the benchmark or genuine heterozygous sites; only the last category represents lost phasing information.
+  \textbf{b}, Within each of the three categories, distribution over read depth (low, normal, high relative to the genome-wide mean) and phasing informativeness (number of informative linking reads); the three bars at each coverage each sum to 100\% of their category.
+  \textbf{c}, Prevalence of conditions that overlap the axes of \textbf{b}: phasing entropy of exactly 0, phasing entropy $\ge 0.8$, low genotype quality and clustering within 50~bp of another variant; solid, genuine heterozygous sites; dashed, benchmark-absent calls.}
+  \label{fig:unphased}
+\end{figure}
+
+
+\section*{Discussion}
+\input{sections/discussion}
+
+\section*{Methods}
+\input{sections/methods}
+
+\bibliography{references}
+
+\end{document}

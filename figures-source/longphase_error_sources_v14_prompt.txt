@@ -1,0 +1,29 @@
+Use case: precise-object-edit. Edit the supplied scientific figure, keeping its four-panel layout, dimensions, typography, white background and detailed scientific graphics. Preserve panels a, c and d unchanged. Make the following precise changes within panel b only, with crisp publication-quality linework and readable text. Do not redesign the whole figure.
+
+Panel b has three layers: Original graph (top), Error sources (middle), Reweighted graph (bottom). Replace "Reliability features" with "Error sources". Replace "Reweighted and filtered graph" with "Reweighted graph".
+
+GRAPH ALLELE CORRECTIONS: In BOTH original and bottom graphs the 8 aligned loci must now be exactly:
+1 upper cyan A circle / lower coral G circle;
+2 upper cyan T circle / lower coral C circle;
+3 upper cyan A circle / lower coral +T indel rectangle;
+4 upper cyan T circle / lower coral C circle;
+5 upper cyan G circle / lower coral A circle (both crossed gray only in bottom graph);
+6 upper cyan A circle / lower coral T circle;
+7 filled and hollow dark methylation lollipops unchanged;
+8 upper cyan C circle / lower coral T circle.
+Original graph locus3 indel rectangle must have a SOLID outline, not dashed. All original graph nodes have solid outlines.
+Bottom graph locus2 lower C has a dashed circular outline, upper T solid. Bottom graph locus3 lower +T has a dashed rectangular outline, upper A solid.
+Thin pale links visibly touch the unreliable lower C and lower +T in the bottom graph; no thick edges touch or originate from these uncertain nodes. Keep strong links elsewhere and continuous long-range arcs from reliable nodes bridging filtered locus5. Do not draw cyan arcs from lower coral nodes.
+Keep top CNV region bracket over loci4–6. Remove ONLY the standalone "5mC" text above locus7, retaining number7 and its glyph.
+
+MIDDLE LAYER:
+Keep the three side-by-side detailed mini illustrations.
+Left heading "Uncertain base call": read with A, dashed C, T. Replace BOTH confidence bars and their "High confidence"/"Low confidence" labels with the concrete two-line explanation "Low-quality C call" and "Base identity is uncertain". No confidence bars here. Remove "Weaken affected links". The dashed upward callout arrow from this illustration must point precisely to the LOWER C at original graph locus2.
+Center heading "Indel in tandem repeat": retain the CA CA CA repeated sequence illustration with alternative A vs +T alleles, align its upper A and lower +T to reflect the switched graph alleles. Keep a single dashed upward leader pointing to original graph locus3 LOWER +T. Remove the two OTHER upward dashed leaders currently pointing toward loci4/5 and6. Do NOT have a dashed leader to locus4,5 or6. Remove "Reduce indel influence". Preserve repeated CA sequence detail.
+Right heading exactly "Miscalled SNPs in CNV". Remove "CNV region" directly beneath this middle heading; top graph CNV bracket label stays. Preserve the three mini reads with crossed-out SNP observations, pale yellow background. Remove "Filter unreliable SNP evidence".
+
+BOTTOM LEGEND: thick cyan line "High-confidence edge"; thin pale gray-blue line "Low-confidence edge"; gray crossed-out circle "Filtered variants". Exactly those three labels, evenly spaced and no overlaps. Remove "Target phase" from bottom graph far right.
+
+Keep subtle broad downward arrows conveying original graph -> error sources -> reweighted graph. All other panels and their texts must remain unchanged, especially mandatory GNN refinement architecture and haplotagging reads. No numeric thresholds, no new text boxes. Ensure the top and bottom graph allele order matches exactly and the dashed uncertainty arrows point to the actual affected alleles.
+
+Follow-up correction: Edit this image with only these small corrections in panel b. Preserve all text, layout and panels a c d exactly. In bottom Reweighted graph, the lower-row uncertain C at locus2 MUST have ONLY thin pale low-confidence edges touching it: change the thick coral horizontal segment from lower G at locus1 to dashed lower C at locus2 into a thin pale gray-blue line. Remove the cyan curved arc that originates on or near this lower C and bends along the bottom: cyan arcs must never originate from lower coral alleles. Retain the coral long-range arc from reliable lower G at locus1 to reliable lower T at locus8 to illustrate multilocus connection bypassing uncertainty. Change dashed rectangle enclosing lower coral +T at locus3 from cyan to coral, keep its +T red. In middle tandem-repeat illustration, change upper A circle outline and letter from coral to cyan; change lower +T dashed rectangle and text from cyan to coral. These colors should match upper cyan A and lower coral +T in both graphs. All other content unchanged.

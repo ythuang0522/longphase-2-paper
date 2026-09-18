@@ -1,0 +1,781 @@
+{
+ "42644200": {
+  "pmid": "42644200",
+  "title": "Benchmarking of Oxford Nanopore whole genome sequencing for germline variant and CpG methylation detection across Canada's national platform for genome sequencing and analysis.",
+  "journal": "Frontiers in genetics",
+  "year": "2026",
+  "doi": "10.3389/fgene.2026.1863034",
+  "pmcid": "PMC13506141",
+  "authors": "Galvez JH, Mastromatteo S, O'Neill K, Eveleigh R, Djambazian H, Thiruvahindrapuram B, Chuah E, Chen SH, Hajianpour A, Wang Z, Paton TA, Desai S, Pullenayegum S, He L, Pandoh P, Zhao Y, Mungall K, Mungall AJ, Wintle RF, Bourque G, Scherer SW, Jones S, Lathrop M, McLaren M, Ragoussis J.",
+  "vol": "17",
+  "pages": "1863034",
+  "sent": [
+   "The tool was run in parallel, by chromosome, using the model \u2018 r1041_e82_400bps_sup_v430 \u2019 for the long-reads as well as the \u2018longphase\u2019 module turned on to enable phasing of the detected variants.",
+   "3.5 Germline variant phasing Germline variants were assigned to phase blocks as part of the Clair3 workflow using the longphase tool ( Lin et al., 2022 ).",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants ."
+  ]
+ },
+ "42635225": {
+  "pmid": "42635225",
+  "title": "Leveraging ONT move table values for signal aware variant calling.",
+  "journal": "Bioinformatics (Oxford, England)",
+  "year": "2026",
+  "doi": "10.1093/bioinformatics/btag376",
+  "pmcid": "PMC13501324",
+  "authors": "Yu X, Zheng Z, Chen L, Qin Z, He M, Luo R.",
+  "vol": "42",
+  "pages": "btag376",
+  "sent": [
+   "2016 ) or LongPhase ( Lin et al .",
+   "For full-alignment training, BAM files were phased with WhatsHap or LongPhase and haplotagged using truth variants.",
+   "Longphase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "42480894": {
+  "pmid": "42480894",
+  "title": "Investigation of evolutionary dynamics and genetic heterogeneity of Salmonella in persistent bacteremia.",
+  "journal": "Infection, genetics and evolution : journal of molecular epidemiology and evolutionary genetics in infectious diseases",
+  "year": "2026",
+  "doi": "10.1016/j.meegid.2026.105994",
+  "pmcid": null,
+  "authors": "Yeh TK, Huang YT, Liu PY.",
+  "vol": "144",
+  "pages": "105994",
+  "sent": []
+ },
+ "42387002": {
+  "pmid": "42387002",
+  "title": "ClairS: a deep-learning method for long-read tumor-normal pair somatic small variant calling.",
+  "journal": "Nature methods",
+  "year": "2026",
+  "doi": "10.1038/s41592-026-03152-4",
+  "pmcid": "PMC13441973",
+  "authors": "Zheng Z, Chen L, Su J, Yu X, He M, Lee YL, Lam TW, Luo R.",
+  "vol": "23",
+  "pages": "1507-1520",
+  "sent": [
+   "In the first step, ClairS uses Clair3 for germline variant calling, and then LongPhase or WhatsHap for phasing and read haplotagging (Fig.",
+   "In step 1, ClairS uses Clair3 and LongPhase for germline variant calling, phasing and read haplotagging.",
+   "High-quality heterozygous germline variants shared by both samples are selected and used by LongPhase to phase the germline variants found in the tumor sample.",
+   "Clair3 and LongPhase are used for phasing and read haplotagging.",
+   "In step 1, ClairS uses Clair3 and LongPhase for germline variant calling, phasing and read haplotagging.",
+   "For phasing and haplotagging the tumor alignments, both LongPhase 48 and WhatsHap 49 are allowed in ClairS."
+  ]
+ },
+ "42191776": {
+  "pmid": "42191776",
+  "title": "Whole genome sequencing of pre-treatment and post-treatment locally advanced rectal cancer using long and short read technologies.",
+  "journal": "Scientific reports",
+  "year": "2026",
+  "doi": "10.1038/s41598-026-54265-x",
+  "pmcid": "PMC13473079",
+  "authors": "McAuley L, O'Sullivan L, Grogan L, Murphy A, Skourou C, Curran B, McNamara D, Fay J, O'Neill B, Hennessy BT, Toomey S, Furney SJ.",
+  "vol": "16",
+  "pages": "25464",
+  "sent": [
+   "The following parameters were set; --platform ont_r10_dorado_hac_5khz --enable-indel-calling --enable_clair3_germline_output \u2013q8 \u2013longphase_for_phasing.",
+   "Longphase (v1.7.3) haplotag was used to phase methylBAMs using germline SNVs detected by ClairS and SVs detected by Sniffles2 (v2.6.0) 63 , 64 .",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "41967838": {
+  "pmid": "41967838",
+  "title": "Accelerated long-read variant calling with Clair3 for whole-genome sequencing.",
+  "journal": "Bioinformatics (Oxford, England)",
+  "year": "2026",
+  "doi": "10.1093/bioinformatics/btag181",
+  "pmcid": "PMC13141153",
+  "authors": "Zheng Z, He M, Yu X, Li J, Chen L, Wong AOK, Zhang J, Zhou Y, Luo R.",
+  "vol": "42",
+  "pages": "btag181",
+  "sent": [
+   "Our improvements include a re-implementation of parallelized genome chunking and feature generation pipeline, the integration of LongPhase ( Lin et al.",
+   "High-confidence heterozygous variants identified in the pileup calling step are subsequently phased using LongPhase In parallel, low-confidence pileup calls are subjected to haplotype-aware full-alignment variant calling, where reads are haplotagged to assign them to the correct haplotype.",
+   "2.3 Rapid intermediate variant phasing using LongPhase Haplotype assembly, commonly referred to as phasing, constitutes a critical step in long-read variant calling pipelines, enabling key functionalities such as variant phasing and read haplotagging.",
+   "2019 ), LongPhase ( Lin et al.",
+   "In contrast, LongPhase implements an efficient two-stage graph-based phasing strategy.",
+   "LongPhase demonstrates phasing accuracy comparable to WhatsHap and Margin while achieving significantly faster runtime, making it particularly suitable for large-scale and high-coverage long-read datasets."
+  ]
+ },
+ "41826279": {
+  "pmid": "41826279",
+  "title": "Combined Long-Read Genome and Transcriptome Sequencing Establishes Novel Variants in MEGF8 as the Cause for Carpenter Syndrome Type 2.",
+  "journal": "American journal of medical genetics. Part A",
+  "year": "2026",
+  "doi": "10.1002/ajmg.a.70124",
+  "pmcid": null,
+  "authors": "Rashidi K, Modi BP, Richmond PA, Mangino M, Byres L, McDonald C, Dalmann J, Samra S, Bel KLD, Lehman A, Zambonin JL, Turvey SE.",
+  "vol": "200",
+  "pages": "1719-1724",
+  "sent": []
+ },
+ "41792798": {
+  "pmid": "41792798",
+  "title": "Novel driver gene MDC1 confers homologous recombination repair deficiency and genomic instability in chemoresistant relapsing ovarian cancer.",
+  "journal": "Journal of translational medicine",
+  "year": "2026",
+  "doi": "10.1186/s12967-026-07951-3",
+  "pmcid": "PMC13081607",
+  "authors": "Diaz M, Gull N, Peng PC, Dabke K, Baker J, Sun J, Alvarado J, Bastin B, Mazumdar N, Santiskulvong C, Li AJ, Karlan BY, Rimel BJ, Parker SJ, Gayther SA, Jones MR.",
+  "vol": "24",
+  "pages": "506",
+  "sent": [
+   "Clair3 [ 67 ] identified SNVs in the long read data, which was used in haplotagging the bam file with Longphase [ 68 ].",
+   "N50 of phase blocks was determined using a script provided in the longphase github.",
+   "Lin J-H Chen L-C Yu S-C Huang Y-T LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants Bioinformatics 2022 38 1816 22 10.1093/bioinformatics/btac058 35104333 Lin J-H, Chen L-C, Yu S-C, Huang Y-T.",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "41979282": {
+  "pmid": "41979282",
+  "title": "Deep Learning Technology in Genomics, Radiotherapy, and Ophthalmology for Precision Medicine.",
+  "journal": "Journal of physiological investigation",
+  "year": "2026",
+  "doi": "10.4103/ejpi.ejpi-d-25-00069",
+  "pmcid": null,
+  "authors": "Pratap A, Huang YT, Chiang CK, Liu WM, Lin WY, Hsu HC, Hsiung PA.",
+  "vol": "69",
+  "pages": "127-156",
+  "sent": []
+ },
+ "41677369": {
+  "pmid": "41677369",
+  "title": "cuteHap: Haplotype-Aware Structural Variant Detection in Phased Long-Read Sequencing Data.",
+  "journal": "Advanced science (Weinheim, Baden-Wurttemberg, Germany)",
+  "year": "2026",
+  "doi": "10.1002/advs.202519314",
+  "pmcid": "PMC13088286",
+  "authors": "Cao S, Liu Y, Cui M, Gao R, Guo W, Wang G, Wang Y, Jiang T.",
+  "vol": "13",
+  "pages": "e19314",
+  "sent": [
+   "We applied different phasing methods (i.e., LongPhase [ 41 ] and WhatsHap [ 42 ]) on both simulation and real datasets to evaluate the influence of reads phasing.",
+   "Second, widely used phasing tools such as WhatsHap and LongPhase primarily rely on SNPs to assign haplotypes.",
+   "Subsequently, Clair3 was employed for SNV detection, and LongPhase was used for read phasing.",
+   "LongPhase begins by assigning haplotype tags to the detected SNVs to generate phased SNV calls, and then labels the reads based on this haplotype information and ultimately outputs a phased alignment file.",
+   "Lin J.\u2010H., Chen L.\u2010C., Yu S.\u2010C., and Huang Y.\u2010T., \u201cLongPhase, an Ultra\u2010Fast Chromosome\u2010Scale Phasing Algorithm for Small and Large Variants,\u201d Bioinformatics 38, no."
+  ]
+ },
+ "41669879": {
+  "pmid": "41669879",
+  "title": "A Scalable Framework for Comprehensive Typing of Polymorphic Immune Genes from Long-Read Data.",
+  "journal": "Advanced science (Weinheim, Baden-Wurttemberg, Germany)",
+  "year": "2026",
+  "doi": "10.1002/advs.202521531",
+  "pmcid": "PMC13088316",
+  "authors": "Wang S, Wang X, Wang M, Zhou Q, Wang L, Li SC.",
+  "vol": "13",
+  "pages": "e21531",
+  "sent": [
+   "Joint phasing of SNVs and SVs is then performed using WhatsHap v2.3 [ 34 ] and Longphase v1.7.3 [ 35 ].",
+   "Subsequently, haplotype phasing of SNVs is conducted using WhatsHap v2.3 [ 34 ], while joint phasing of both SNVs and SV breakpoints is performed with Longphase v1.7.3 [ 35 ].",
+   "Huang , \u201c Longphase: An Ultra\u2010fast Chromosome\u2010scale Phasing Algorithm for Small and Large Variants ,\u201d Bioinformatics 38 , no."
+  ]
+ },
+ "41430046": {
+  "pmid": "41430046",
+  "title": "Clair3-RNA: a deep learning-based small variant caller for long-read RNA sequencing data.",
+  "journal": "Nature communications",
+  "year": "2025",
+  "doi": "10.1038/s41467-025-67237-y",
+  "pmcid": "PMC12748580",
+  "authors": "Zheng Z, Yu X, Chen L, Lee YL, Xin C, Wong AOK, Jain M, Kesharwani RK, Sedlazeck FJ, Luo R.",
+  "vol": "16",
+  "pages": "11553",
+  "sent": [
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "41238397": {
+  "pmid": "41238397",
+  "title": "Graph-based deep reinforcement learning for haplotype assembly with Ralphi.",
+  "journal": "Genome research",
+  "year": "2025",
+  "doi": "10.1101/gr.280569.125",
+  "pmcid": "PMC12667386",
+  "authors": "Battistella E, Maheshwari A, Ekim B, Berger B, Popic V.",
+  "vol": "35",
+  "pages": "2617-2625",
+  "sent": [
+   "2017 ), and LongPhase ( Lin et al.",
+   "2022 ) developed for long reads (note that we used LongPhase only for ONT and PacBio comparisons).",
+   "Supplemental Figure S4 compares the performance of LongPhase (default mode) and Ralphi (with no variant filters).",
+   "To ensure that both methods operate on a comparable set of variants, we executed Ralphi in this setting only on the variants phased by LongPhase.",
+   "It can be seen that Ralphi achieves lower error rates and higher AN50 scores across all coverage regimes as compared to LongPhase.",
+   "LongPhase has the fastest runtime on ONT and PacBio reads, whereas HapCUT2 is the fastest tool on Illumina reads."
+  ]
+ },
+ "41174470": {
+  "pmid": "41174470",
+  "title": "Recombination events restored the functional horned haplotypes in the offspring of polled parents.",
+  "journal": "Genetics, selection, evolution : GSE",
+  "year": "2025",
+  "doi": "10.1186/s12711-025-01009-6",
+  "pmcid": "PMC12579413",
+  "authors": "Upadhyay M, Graf A, Pogorevc N, Seichter D, Russ I, Krebs S, Meier S, Medugorac I.",
+  "vol": "57",
+  "pages": "65",
+  "sent": [
+   "Finally, all genomic variants were phased using LongPhase (v 1.7.3) [ 30 ].",
+   "Lin JH Chen LC Yu SC Huang YT Longphase: an ultra-fast chromosome-scale phasing algorithm for small and large variants Bioinformatics 2022 38 1816 1822 10.1093/bioinformatics/btac058 35104333 Lin JH, Chen LC, Yu SC, Huang YT.",
+   "Longphase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "41173866": {
+  "pmid": "41173866",
+  "title": "ClairS-TO: a deep-learning method for long-read tumor-only somatic small variant calling.",
+  "journal": "Nature communications",
+  "year": "2025",
+  "doi": "10.1038/s41467-025-64547-z",
+  "pmcid": "PMC12579226",
+  "authors": "Chen L, Zheng Z, Su J, Yu X, Wong AOK, Zhang J, Lee YL, Luo R.",
+  "vol": "16",
+  "pages": "9630",
+  "sent": [
+   "Input alignments are phased using WhatsHap 37 or LongPhase 38 .",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "41116046": {
+  "pmid": "41116046",
+  "title": "Nanopore long-read sequencing for the critically ill facilitates ultrarapid diagnostics and urgent clinical decision making.",
+  "journal": "European journal of human genetics : EJHG",
+  "year": "2026",
+  "doi": "10.1038/s41431-025-01959-x",
+  "pmcid": "PMC12816666",
+  "authors": "Smits DJ, Ferraro F, Drost M, van der Linde HC, de Graaf BM, van Bever Y, Brooks AS, Bardina L, Br\u00fcggenwirth HT, Debuy C, Donker Kaat L, van Dijk BT, van Engelen N, Geeven G, van de Graaf R, van Haaften-Visser DY, van Hasselt PM, Heijsman D, Hendriks YMC, Hitti-Malin RJ, Hoefsloot LH, Huijbregts G, IJspeert H, Lamballais S, Mijalkovic J, Mol MO, Nawawi D, Nederpelt N, Nibbeling EAR, Te Rijdt W, Schot R, van Slegtenhorst M, Sleutels F, Ulenkate ELM, Van Veghel-Plandsoen M, Verhagen JMA, Vos D, Wauters E, Wilke M, Sylva M, Barakat TS, van Ham TJ, Kleefstra T, Rots D, Verhoeven VJM.",
+  "vol": "34",
+  "pages": "108-118",
+  "sent": [
+   "Variants were called using Clair3 [ 9 ], sniffles2 [ 10 ], SVision-pro [ 11 ] and Spectre ( https://github.com/fritzsedlazeck/Spectre ) and reads were phased using LongPhase v1.0.7 [ 12 ].",
+   "Lin JH Chen LC Yu SC Huang YT LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants Bioinformatics 2022 38 1816 22 10.1093/bioinformatics/btac058 35104333 Lin JH, Chen LC, Yu SC, Huang YT.",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "41109954": {
+  "pmid": "41109954",
+  "title": "Fine mapping regulatory variants by characterizing native CpG methylation with nanopore long-read sequencing.",
+  "journal": "HGG advances",
+  "year": "2026",
+  "doi": "10.1016/j.xhgg.2025.100532",
+  "pmcid": "PMC12642126",
+  "authors": "Tian Y, McDonnell SK, Wu L, Larson NB, Wang L.",
+  "vol": "7",
+  "pages": "100532",
+  "sent": [
+   "We then used the candidate variants for read-level phasing and haplotype tagging in LongPhase.",
+   "After a PEPPER-Margin-DeepVariant and LongPhase pipeline run, we found 72.8% of heterozygous variants phased ( Figure S6 A) and 30,725 phase blocks ( Figure S6 B) for the 22Rv1 genome.",
+   "For phasing and haplotype tagging, we selected LongPhase software 21 for better computational efficiency and compatibility with large structural variations.",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "40993437": {
+  "pmid": "40993437",
+  "title": "Advances in haplotype phasing and genotype imputation.",
+  "journal": "Nature reviews. Genetics",
+  "year": "2026",
+  "doi": "10.1038/s41576-025-00895-2",
+  "pmcid": null,
+  "authors": "Sun Q, Li Y.",
+  "vol": "27",
+  "pages": "155-169",
+  "sent": []
+ },
+ "40931062": {
+  "pmid": "40931062",
+  "title": "Fluctuating DNA methylation tracks cancer evolution at clinical scale.",
+  "journal": "Nature",
+  "year": "2025",
+  "doi": "10.1038/s41586-025-09374-4",
+  "pmcid": "PMC12443617",
+  "authors": "Gabbutt C, Duran-Ferrer M, Grant HE, Mallo D, Nadeu F, Househam J, Villamor N, M\u00fcller M, Heath S, Raineri E, Krali O, Nordlund J, Zenz T, Gut IG, Campo E, Lopez-Guillermo A, Fitzgibbon J, Barnes CP, Shibata D, Martin-Subero JI, Graham TA.",
+  "vol": "645",
+  "pages": "764-773",
+  "sent": [
+   "Subsequently, long reads were phased using variants called using Clair 3 (v1.0.9, model r941_prom_hac_g360 + g422) 58 with the Longphase package (v1.7) 59 .",
+   "The methylation status of each CpG was called using the modcall function within the Longphase package.",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "40671519": {
+  "pmid": "40671519",
+  "title": "Splice-modulating antisense oligonucleotides targeting a pathogenic intronic variant in adult polyglucosan body disease correct mis-splicing and restore enzyme activity in patient cells.",
+  "journal": "Nucleic acids research",
+  "year": "2025",
+  "doi": "10.1093/nar/gkaf658",
+  "pmcid": "PMC12266137",
+  "authors": "Thomas R, Miyoshi E, Akman HO, Storz SHR, Goffena J, Pytte J, Miller DE, Skourti-Stathaki K, Crooke ST.",
+  "vol": "53",
+  "pages": "gkaf658",
+  "sent": [
+   "Reads were aligned to GRCh38 using minimap2 [ 32 ], variants were called using Clair3 [ 33 ], followed by phasing using LongPhase [ 34 ].",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants ."
+  ]
+ },
+ "40554634": {
+  "pmid": "40554634",
+  "title": "Extensive Recombination Suppression and Genetic Degeneration of a Young ZW Sex Chromosome System in Halfbeak Fish.",
+  "journal": "Molecular biology and evolution",
+  "year": "2025",
+  "doi": "10.1093/molbev/msaf151",
+  "pmcid": "PMC12258149",
+  "authors": "Xing TF, Li YL, Yang H, Charlesworth D, Liu JX.",
+  "vol": "42",
+  "pages": "msaf151",
+  "sent": [
+   "The resulting haplotigs (contigs from the same haplotype) of Chr5 chromosome (identified as putative sex chromosome described below) were separated into Z or W groups using SNPs showing sex-linkage in the natural population sample of sexed individuals, based on a custom script and Longphase v1.5.1 ( Lin et al.",
+   "Aligned reads were phased and tagged as either \u201cHP:i:1\u201d or \u201cHP:i:2\u201d using Longphase, based on the presence of the female-specific SNPs identified, with HP:i:2 being the W haplotype.",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants ."
+  ]
+ },
+ "40549196": {
+  "pmid": "40549196",
+  "title": "Enhanced identification of novel pathogenic variants in hereditary hearing loss through physical phasing with integrated short and long-read sequencing data.",
+  "journal": "Molecular genetics and genomics : MGG",
+  "year": "2025",
+  "doi": "10.1007/s00438-025-02256-4",
+  "pmcid": null,
+  "authors": "Kang L, Zhang Q, Wang C, Geng J, Li X, Zhong M, Liu S, Wang X, Lu Y, Cheng J, Ma Y, Bu F, Yuan H.",
+  "vol": "300",
+  "pages": "61",
+  "sent": []
+ },
+ "40507780": {
+  "pmid": "40507780",
+  "title": "Long-Read Sequencing Identifies Mosaic Sequence Variations in Friedreich's Ataxia-GAA Repeats.",
+  "journal": "International journal of molecular sciences",
+  "year": "2025",
+  "doi": "10.3390/ijms26114969",
+  "pmcid": "PMC12154355",
+  "authors": "Park J, Dufke C, Fleszar Z, Schlotterbek M, Buena-Atienza E, St\u00fchn LG, Gross C, Sturm M, Ossowski S, Sch\u00f6ls L, Riess O, Haack TB.",
+  "vol": "26",
+  "pages": "4969",
+  "sent": [
+   "Reads were mapped to the GRCh38 reference genome using minimap2 (v2.26) with the \u2018map-ont\u2019 parameter preset and phased with longphase (v1.7.3) after variant calling with Clair3 (v1.0.2).",
+   "LongPhase: An ultra-fast chromosome-scale phasing algorithm for small and large variants Bioinformatics 2022 38 1816 1822 10.1093/bioinformatics/btac058 35104333 24."
+  ]
+ },
+ "40316544": {
+  "pmid": "40316544",
+  "title": "Restoring flowcell type and basecaller configuration from FASTQ files of nanopore sequencing data.",
+  "journal": "Nature communications",
+  "year": "2025",
+  "doi": "10.1038/s41467-025-59378-x",
+  "pmcid": "PMC12048652",
+  "authors": "Mencius J, Chen W, Zheng Y, An T, Yu Y, Sun K, Feng H, Feng Z.",
+  "vol": "16",
+  "pages": "4102",
+  "sent": [
+   "Table 1 List of ONT data analysis software with reliance on flowcell types or basecaller configurations Application Software Flowcell type Basecaller type Basecaller version Basecalling mode Indirect Sequence alignment minimap2 9 \u25cf Error correction HERRO 39 \u25cf Variants calling Clair3 10 \u25cf \u25cf \u25cf HAC/SUP [a] DeepVariant 40 \u25cf PEPPER 41 \u25cf \u25cf \u25cf SUP Dysgu 42 \u25cf nanomonsv 43 \u25cf \u25cf \u25cf unspecified Medaka [b] \u25cf \u25cf \u25cf",
+   "Lin J-H Chen L-C Yu S-C Huang Y-T LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants Bioinformatics 2022 38 1816 1822 10.1093/bioinformatics/btac058 35104333 Lin, J.-H., Chen, L.-C., Yu, S.-C.",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "39918981": {
+  "pmid": "39918981",
+  "title": "Long and Accurate: How HiFi Sequencing is Transforming Genomics.",
+  "journal": "Genomics, proteomics & bioinformatics",
+  "year": "2025",
+  "doi": "10.1093/gpbjnl/qzaf003",
+  "pmcid": "PMC12257948",
+  "authors": "Wang B, Jia P, Gao S, Zhao H, Zheng G, Xu L, Ye K.",
+  "vol": "23",
+  "pages": "qzaf003",
+  "sent": [
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants ."
+  ]
+ },
+ "40249781": {
+  "pmid": "40249781",
+  "title": "Bidirectional disruption of &lt;i&gt;GNAS&lt;/i&gt; transcripts causes broad methylation defects in pseudohypoparathyroidism type 1B.",
+  "journal": "Proceedings of the National Academy of Sciences of the United States of America",
+  "year": "2025",
+  "doi": "10.1073/pnas.2423271122",
+  "pmcid": "PMC12037034",
+  "authors": "Iwasaki Y, Reyes M, Ryabets-Lienhard A, Gales B, Linglart A, Miller DE, Salusky IB, Bastepe M, J\u00fcppner H.",
+  "vol": "122",
+  "pages": "e2423271122",
+  "sent": [
+   "Reads were aligned to GRCh38 using minimap2 ( 35 ), variants were called using Clair3 ( 36 ), followed by phasing using LongPhase ( 37 ).",
+   "T., LongPhase: An ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "40228901": {
+  "pmid": "40228901",
+  "title": "A Hitchhiker's Guide to long-read genomic analysis.",
+  "journal": "Genome research",
+  "year": "2025",
+  "doi": "10.1101/gr.279975.124",
+  "pmcid": "PMC12047252",
+  "authors": "Mahmoud M, Agustinho DP, Sedlazeck FJ.",
+  "vol": "35",
+  "pages": "545-558",
+  "sent": [
+   "Other SNV-based phasing methods include LongPhase ( Lin et al.",
+   "Longphase: an ultra-fast chromosome-scale phasing algorithm for small and large variants ."
+  ]
+ },
+ "40113261": {
+  "pmid": "40113261",
+  "title": "Unraveling the hidden complexity of cancer through long-read sequencing.",
+  "journal": "Genome research",
+  "year": "2025",
+  "doi": "10.1101/gr.280041.124",
+  "pmcid": "PMC12047254",
+  "authors": "Li Q, Keskus AG, Wagner J, Izydorczyk MB, Timp W, Sedlazeck FJ, Klein AP, Zook JM, Kolmogorov M, Schatz MC.",
+  "vol": "35",
+  "pages": "599-620",
+  "sent": [
+   "2023 LongPhase Fast chromosome-scale phasing for both small and large variations Lin et al.",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants ."
+  ]
+ },
+ "40185952": {
+  "pmid": "40185952",
+  "title": "Severus detects somatic structural variation and complex rearrangements in cancer genomes using long-read sequencing.",
+  "journal": "Nature biotechnology",
+  "year": "2026",
+  "doi": "10.1038/s41587-025-02618-8",
+  "pmcid": "PMC12483193",
+  "authors": "Keskus AG, Bryant A, Ahmad T, Yoo B, Aganezov S, Goretsky A, Donmez A, Lansdon LA, Rodriguez I, Park J, Liu Y, Cui X, Gardner J, McNulty B, Sacco S, Shetty J, Zhao Y, Tran B, Narzisi G, Helland A, Cook DE, Chang PC, Kolesnikov A, Carroll A, Molloy EK, Bi C, Walter A, Gibson M, Pushel I, Guest E, Pastinen T, Shafin K, Miga KH, Malikic S, Day CP, Robine N, Sahinalp C, Dean M, Farooqi MS, Paten B, Kolmogorov M.",
+  "vol": "44",
+  "pages": "247-257",
+  "sent": [
+   "ERR HTTP Error 500: "
+  ]
+ },
+ "40117177": {
+  "pmid": "40117177",
+  "title": "Characteristics and filtering of low-frequency artificial short deletion variations based on nanopore sequencing.",
+  "journal": "GigaScience",
+  "year": "2025",
+  "doi": "10.1093/gigascience/giaf018",
+  "pmcid": "PMC11927395",
+  "authors": "Ye F, Zhu J, Zhang X, Zhang J, Xie Z, Yang T, Han Y, Yang X, Ren Z, Ni M.",
+  "vol": "14",
+  "pages": "giaf018",
+  "sent": [
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "39563027": {
+  "pmid": "39563027",
+  "title": "Long-read RNA sequencing: A transformative technology for exploring transcriptome complexity in human diseases.",
+  "journal": "Molecular therapy : the journal of the American Society of Gene Therapy",
+  "year": "2025",
+  "doi": "10.1016/j.ymthe.2024.11.025",
+  "pmcid": "PMC11897757",
+  "authors": "Ament IH, DeBruyne N, Wang F, Lin L.",
+  "vol": "33",
+  "pages": "883-894",
+  "sent": [
+   "Once called, individual variants can be phased into distinct haplotypes using tools like WhatsHap, 73 HapCUT2, 74 or LongPhase.",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "39406235": {
+  "pmid": "39406235",
+  "title": "Long-read sequencing of an advanced cancer cohort resolves rearrangements, unravels haplotypes, and reveals methylation landscapes.",
+  "journal": "Cell genomics",
+  "year": "2024",
+  "doi": "10.1016/j.xgen.2024.100674",
+  "pmcid": "PMC11605692",
+  "authors": "O'Neill K, Pleasance E, Fan J, Akbari V, Chang G, Dixon K, Csizmok V, MacLennan S, Porter V, Galbraith A, Grisdale CJ, Culibrk L, Dupuis JH, Corbett R, Hopkins J, Bowlby R, Pandoh P, Smailus DE, Cheng D, Wong T, Frey C, Shen Y, Lewis E, Paulin LF, Sedlazeck FJ, Nelson JMT, Chuah E, Mungall KL, Moore RA, Coope R, Mungall AJ, McConechy MK, Williamson LM, Schrader KA, Yip S, Marra MA, Laskin J, Jones SJM.",
+  "vol": "4",
+  "pages": "100674",
+  "sent": [
+   "Phasing of reads in tumors can face challenges from the presence of structural and copy number variation (especially LOH) and may benefit in future from more sophisticated phasing methods such as LongPhase.",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "39427416": {
+  "pmid": "39427416",
+  "title": "Advances in forensic genetics: Exploring the potential of long read sequencing.",
+  "journal": "Forensic science international. Genetics",
+  "year": "2025",
+  "doi": "10.1016/j.fsigen.2024.103156",
+  "pmcid": null,
+  "authors": "Ferreira MR, Carratto TMT, Frontanilla TS, Bonadio RS, Jain M, de Oliveira SF, Castelli EC, Mendes-Junior CT.",
+  "vol": "74",
+  "pages": "103156",
+  "sent": []
+ },
+ "39390579": {
+  "pmid": "39390579",
+  "title": "Graphasing: phasing diploid genome assembly graphs with single-cell strand sequencing.",
+  "journal": "Genome biology",
+  "year": "2024",
+  "doi": "10.1186/s13059-024-03409-1",
+  "pmcid": "PMC11466045",
+  "authors": "Henglin M, Ghareghani M, Harvey WT, Porubsky D, Koren S, Eichler EE, Ebert P, Marschall T.",
+  "vol": "25",
+  "pages": "265",
+  "sent": [
+   "Many phasing tools, such as WhatsHap [ 15 ], HapCol [ 16 ], HapCut2[ 17 ], MarginPhase [ 18 ], and LongPhase [ 19 ], utilize this strategy, where reads are first aligned to a reference genome and genomic variants are called.",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "39160480": {
+  "pmid": "39160480",
+  "title": "GCphase: an SNP phasing method using a graph partition and error correction algorithm.",
+  "journal": "BMC bioinformatics",
+  "year": "2024",
+  "doi": "10.1186/s12859-024-05901-8",
+  "pmcid": "PMC11331634",
+  "authors": "Luo J, Wang J, Zhai H, Wang J.",
+  "vol": "25",
+  "pages": "267",
+  "sent": [
+   "GCphase was compared to three other methods, WhatsHap, HapCUT2, and LongPhase, on the Nanopore and PacBio long-read datasets.",
+   "LongPhase extends phase information between adjacent SNP loci to the entire haplotype level [ 26 ].",
+   "We compared the sequencing depths (20 \u00d7 , 30 \u00d7 , 50 \u00d7 ) of PacBio and Nanopore sequencing data on the human public genome HG002 by using three SNP phasing software [ 31 ], namely, LongPhase, WhatsHap, and HapCUT2, all focusing solely on SNP phasing.",
+   "The command line of LongPhase is: longphase phase -s SNP.vcf -b sort.bam -t 1\u2013pb = o phasedprefix.",
+   "Evaluation of SNP phasing by GCphase in Nanopore and PacBio sequencing data In Nanopore sequencing, GCphase was compared with WhatsHap, HapCUT2, and LongPhase by using the whole-genome sequencing data of the human HG002 sample downloaded from NCBI at coverage depths of 20x, 30x, and 50x.",
+   "For example, in Nanopore Long reads 50 \u00d7 sequencing data, the percentage of SNP sites in GCphase phasing is 96.71%, the percentage of SNP sites in HapCUT2 phasing is 95.70%, the percentage of SNP sites in LongPhase phasing is 96.64%, and the percentage of SNP sites in WhatsHap phasing is 96.01%."
+  ]
+ },
+ "39107278": {
+  "pmid": "39107278",
+  "title": "Diagnostic utility of DNA methylation analysis in genetically unsolved pediatric epilepsies and CHD2 episignature refinement.",
+  "journal": "Nature communications",
+  "year": "2024",
+  "doi": "10.1038/s41467-024-50159-6",
+  "pmcid": "PMC11303402",
+  "authors": "LaFlamme CW, Rastin C, Sengupta S, Pennington HE, Russ-Hall SJ, Schneider AL, Bonkowski ES, Almanza Fuerte EP, Allan TJ, Zalusky MP, Goffena J, Gibson SB, Nyaga DM, Lieffering N, Hebbar M, Walker EV, Darnell D, Olsen SR, Kolekar P, Djekidel MN, Rosikiewicz W, McConkey H, Kerkhof J, Levy MA, Relator R, Lev D, Lerman-Sagie T, Park KL, Alders M, Cappuccio G, Chatron N, Demain L, Genevieve D, Lesca G, Roscioli T, Sanlaville D, Tedder ML, Gupta S, Jones EA, Weisz-Hubshman M, Ketkar S, Dai H, Worley KC, Rosenfeld JA, Chao HT, Undiagnosed Diseases Network, Neale G, Carvill GL, University of Washington Center for Rare Disease Research, Wang Z, Berkovic SF, Sadleir LG, Miller DE, Scheffer IE, Sadikovic B, Mefford HC.",
+  "vol": "15",
+  "pages": "6524",
+  "sent": [
+   "Reads were aligned to GRCh38/hg38 using minimap2 79 , SNP and indel variants were called using Clair3 80 , structural variants were called using Sniffles 81 , SVIM 82 , and CuteSV 83 , and phasing was performed using LongPhase 84 .",
+   "Lin JH Chen LC Yu SC Huang YT LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants Bioinformatics 2022 38 1816 1822 10.1093/bioinformatics/btac058 35104333 Lin, J.",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "38805182": {
+  "pmid": "38805182",
+  "title": "The genome of Przewalski's horse (Equus ferus przewalskii).",
+  "journal": "G3 (Bethesda, Md.)",
+  "year": "2024",
+  "doi": "10.1093/g3journal/jkae113",
+  "pmcid": "PMC11304947",
+  "authors": "Flack N, Hughes L, Cassens J, Enriquez M, Gebeyehu S, Alshagawi M, Hatfield J, Kauffman A, Brown B, Klaeui C, Mabrouk IF, Walls C, Yeater T, Rivas A, Faulk C.",
+  "vol": "14",
+  "pages": "jkae113",
+  "sent": [
+   "2016 ) and haplotagged with Longphase ( Lin et al .",
+   "Longphase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "39003259": {
+  "pmid": "39003259",
+  "title": "Local read haplotagging enables accurate long-read small variant calling.",
+  "journal": "Nature communications",
+  "year": "2024",
+  "doi": "10.1038/s41467-024-50079-5",
+  "pmcid": "PMC11246426",
+  "authors": "Kolesnikov A, Cook D, Nattestad M, Brambrink L, McNulty B, Gorzynski J, Goenka S, Ashley EA, Jain M, Miga KH, Paten B, Chang PC, Carroll A, Shafin K.",
+  "vol": "15",
+  "pages": "5907",
+  "sent": [
+   "Other Long-read germline variant callers such as Clair3 21 and Medaka 32 use local haplotagging information from haplotagging methods like WhatsHap 31 , Margin 33 or LongPhase 34 .",
+   "Lin J-H Chen L-C Yu S-C Huang Y-T Longphase: an ultra-fast chromosome-scale phasing algorithm for small and large variants Bioinformatics 2022 38 1816 1822 10.1093/bioinformatics/btac058 35104333 35."
+  ]
+ },
+ "38909018": {
+  "pmid": "38909018",
+  "title": "MethPhaser: methylation-based long-read haplotype phasing of human genomes.",
+  "journal": "Nature communications",
+  "year": "2024",
+  "doi": "10.1038/s41467-024-49588-0",
+  "pmcid": "PMC11193733",
+  "authors": "Fu Y, Aganezov S, Mahmoud M, Beaulaurier J, Juul S, Treangen TJ, Sedlazeck FJ.",
+  "vol": "15",
+  "pages": "5327",
+  "sent": [
+   "Lin J-H Chen L-C Yu S-C Huang Y-T LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants Bioinformatics 2022 38 1816 1822 10.1093/bioinformatics/btac058 35104333 59."
+  ]
+ },
+ "38605126": {
+  "pmid": "38605126",
+  "title": "Combined approaches, including long-read sequencing, address the diagnostic challenge of HYDIN in primary ciliary dyskinesia.",
+  "journal": "European journal of human genetics : EJHG",
+  "year": "2024",
+  "doi": "10.1038/s41431-024-01599-7",
+  "pmcid": "PMC11369241",
+  "authors": "Fleming A, Galey M, Briggs L, Edwards M, Hogg C, John S, Wilkinson S, Quinn E, Rai R, Burgoyne T, Rogers A, Patel MP, Griffin P, Muller S, Carr SB, Loebinger MR, Lucas JS, Shah A, Jose R, Mitchison HM, Shoemark A, Miller DE, Morris-Rosendahl DJ.",
+  "vol": "32",
+  "pages": "1074-1085",
+  "sent": [
+   "Single nucleotide and indel variants were called using Clair3 [ 41 ] then phased using LongPhase using variant calls from Clair3 [ 42 ].",
+   "Lin JH Chen LC Yu SC Huang YT LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants Bioinformatics.",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "39421454": {
+  "pmid": "39421454",
+  "title": "3-hour genome sequencing and targeted analysis to rapidly assess genetic risk.",
+  "journal": "Genetics in medicine open",
+  "year": "2024",
+  "doi": "10.1016/j.gimo.2024.101833",
+  "pmcid": "PMC11484281",
+  "authors": "Zalusky MP, Gustafson JA, Bohaczuk SC, Mallory B, Reed P, Wenger T, Beckman E, Chang IJ, Paschal CR, Buchan JG, Lockwood CM, Puia-Dumitrescu M, Garalde DR, Guillory J, Markham AJ, Bamshad MJ, Eichler EE, Stergachis AB, Miller DE.",
+  "vol": "2",
+  "pages": "101833",
+  "sent": [
+   "Single-nucleotide and indel variants were called with Clair3, 17 phased with LongPhase, 18 and annotated with VEP 103.1 19 using annotations from SpliceAI 20 and CADD v1.6.",
+   "Beginning at 3 hours after birth and every 30 minutes thereafter, variants were called on the combined bam file with Clair3 17 followed by phasing using LongPhase.",
+   "Subsequent variant calling with Clair3 and phasing with LongPhase confirmed the findings from 3 hours of life ( Figure 2 C).",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "38357851": {
+  "pmid": "38357851",
+  "title": "Parkin mRNA Expression Levels in Peripheral Blood Mononuclear Cells in Parkin-Related Parkinson's Disease.",
+  "journal": "Movement disorders : official journal of the Movement Disorder Society",
+  "year": "2024",
+  "doi": "10.1002/mds.29739",
+  "pmcid": null,
+  "authors": "Papagiannakis N, Liu H, Koros C, Simitsi AM, Stamelou M, Maniati M, Buena-Atienza E, Kartanou C, Karadima G, Makrythanasis P, Vatsellas G, Valente EM, Gasser T, Stefanis L.",
+  "vol": "39",
+  "pages": "715-722",
+  "sent": []
+ },
+ "38269623": {
+  "pmid": "38269623",
+  "title": "HiPhase: jointly phasing small, structural, and tandem repeat variants from HiFi sequencing.",
+  "journal": "Bioinformatics (Oxford, England)",
+  "year": "2024",
+  "doi": "10.1093/bioinformatics/btae042",
+  "pmcid": "PMC10868326",
+  "authors": "Holt JM, Saunders CT, Rowell WJ, Kronenberg Z, Wenger AM, Eberle M.",
+  "vol": "40",
+  "pages": "btae042",
+  "sent": [
+   "10.1109/TSSC.1968.300136 Lin J-H , Chen L-C , Yu S-C et al LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants ."
+  ]
+ },
+ "37941142": {
+  "pmid": "37941142",
+  "title": "BLR: a flexible pipeline for haplotype analysis of multiple linked-read technologies.",
+  "journal": "Nucleic acids research",
+  "year": "2023",
+  "doi": "10.1093/nar/gkad1010",
+  "pmcid": "PMC10711428",
+  "authors": "H\u00f6jer P, Frick T, Siga H, Pourbozorgi P, Aghelpasand H, Martin M, Ahmadian A.",
+  "vol": "51",
+  "pages": "e114",
+  "sent": [
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "37710018": {
+  "pmid": "37710018",
+  "title": "Scalable Nanopore sequencing of human genomes provides a comprehensive view of haplotype-resolved variation and methylation.",
+  "journal": "Nature methods",
+  "year": "2023",
+  "doi": "10.1038/s41592-023-01993-x",
+  "pmcid": "PMC11222905",
+  "authors": "Kolmogorov M, Billingsley KJ, Mastoras M, Meredith M, Monlong J, Lorig-Roach R, Asri M, Alvarez Jerez P, Malik L, Dewan R, Reed X, Genner RM, Daida K, Behera S, Shafin K, Pesout T, Prabakaran J, Carnevali P, Yang J, Rhie A, Scholz SW, Traynor BJ, Miga KH, Jain M, Timp W, Phillippy AM, Chaisson M, Sedlazeck FJ, Blauwendraat C, Paten B.",
+  "vol": "20",
+  "pages": "1483-1492",
+  "sent": [
+   "ERR HTTP Error 500: "
+  ]
+ },
+ "37431944": {
+  "pmid": "37431944",
+  "title": "GWLD: an R package for genome-wide linkage disequilibrium analysis.",
+  "journal": "G3 (Bethesda, Md.)",
+  "year": "2023",
+  "doi": "10.1093/g3journal/jkad154",
+  "pmcid": "PMC10468308",
+  "authors": "Zhang R, Wu H, Li Y, Huang Z, Yin Z, Yang CX, Du ZQ.",
+  "vol": "13",
+  "pages": "jkad154",
+  "sent": [
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants ."
+  ]
+ },
+ "37354526": {
+  "pmid": "37354526",
+  "title": "JTK: targeted diploid genome assembler.",
+  "journal": "Bioinformatics (Oxford, England)",
+  "year": "2023",
+  "doi": "10.1093/bioinformatics/btad398",
+  "pmcid": "PMC10320103",
+  "authors": "Masutani B, Suzuki Y, Suzuki Y, Morishita S.",
+  "vol": "39",
+  "pages": "btad398",
+  "sent": [
+   "2020 ) are popular software to call variants, and LongPhase ( Lin et al.",
+   "2020 ) to call variants, Longphase ( Lin et al.",
+   "contigs Total bases (kb) QV Time (min) JTK 2 9,502 62.0 40.6 PECAT 2 9,736 59.1 9.6 LongPhase + Flye 8 9,816 20.6 29.0 PhaseBook 423 75,357,275 \u2013 31.5 In contrast, the combination of LongPhase and Flye failed to output haplotype-resolved contigs; namely, although LongPhase phased the reads throughout the entire region, Flye produced eight contigs on these phased reads.",
+   "Also, the base-level QV of the assembly was around 20, presumably due to switching errors in LongPhase .",
+   "size (kb) QV Chr1 JTK 2 10,177 27.5 HG002 LongPhase 6 10,324 24.7 PECAT 14 10,753 16.8 Verkko 133 10,845 35.3 LILR-KIR JTK 2 2,175 25.4 HG002 LongPhase 4 2,484 21.2 PECAT 5 3,047 12.5 Verkko 29 2,416 35.0 MHC JTK 2 10,163 27.7 HG002 LongPhase 3 10,542 22.9 PECAT 7 10,387 20.1 Verkko 113 12,044 36.8 Chr1 JTK 2 10,242 29.1 B080 LongPhase 5 11,116 28.5 PECAT 4 9,603 21.7 HiFiASM 118 12,284 40.5 LILR-",
+   "The phasing pipeline, LongPhase with Flye , produced unsolved assemblies for all datasets except LILR-KIR in the B080 sample."
+  ]
+ },
+ "37316925": {
+  "pmid": "37316925",
+  "title": "Applications of long-read sequencing to Mendelian genetics.",
+  "journal": "Genome medicine",
+  "year": "2023",
+  "doi": "10.1186/s13073-023-01194-3",
+  "pmcid": "PMC10266321",
+  "authors": "Mastrorosa FK, Miller DE, Eichler EE.",
+  "vol": "15",
+  "pages": "42",
+  "sent": [
+   "LongPhase [ 78 ] can complement the analysis with variant phasing.",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "37025970": {
+  "pmid": "37025970",
+  "title": "Chromosome-level, nanopore-only genome and allele-specific DNA methylation of Pallas's cat, &lt;i&gt;Otocolobus manul&lt;/i&gt;.",
+  "journal": "NAR genomics and bioinformatics",
+  "year": "2023",
+  "doi": "10.1093/nargab/lqad033",
+  "pmcid": "PMC10071556",
+  "authors": "Flack N, Drown M, Walls C, Pratte J, McLain A, Faulk C.",
+  "vol": "5",
+  "pages": "lqad033",
+  "sent": [
+   "Visualizations were generated using MethylArtist version 1.2.3 ( 61 ), which required haplotagging the PEPPER output with Longphase ( 62 ), and JBrowse 2 ( 63 ) to validate each DMR.",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ },
+ "36721111": {
+  "pmid": "36721111",
+  "title": "In it for the long run: perspectives on exploiting long-read sequencing in livestock for population scale studies of structural variants.",
+  "journal": "Genetics, selection, evolution : GSE",
+  "year": "2023",
+  "doi": "10.1186/s12711-023-00783-5",
+  "pmcid": "PMC9887926",
+  "authors": "Nguyen TV, Vander Jagt CJ, Wang J, Daetwyler HD, Xiang R, Goddard ME, Nguyen LT, Ross EM, Hayes BJ, Chamberlain AJ, MacLeod IM.",
+  "vol": "55",
+  "pages": "9",
+  "sent": [
+   "This has been adopted in several recent phasing and imputation algorithms, for example: WhatsHap [ 60 ], HapCUT2 [ 61 ], QUILT [ 62 ], Duet [ 63 ] or LongPhase [ 64 ].",
+   "Lin J-H Chen L-C Yu S-C Huang Y-T LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants Bioinformatics 2022 38 1816 1822 10.1093/bioinformatics/btac058 35104333 65."
+  ]
+ },
+ "36344913": {
+  "pmid": "36344913",
+  "title": "Duet: SNP-assisted structural variant calling and phasing using Oxford nanopore sequencing.",
+  "journal": "BMC bioinformatics",
+  "year": "2022",
+  "doi": "10.1186/s12859-022-05025-x",
+  "pmcid": "PMC9639287",
+  "authors": "Zhou Y, Leung AW, Ahmed SS, Lam TW, Luo R.",
+  "vol": "23",
+  "pages": "465",
+  "sent": [
+   "We also compared Duet against LongPhase [ 24 ], an algorithm that can phase SVs based on an existing SV call set generated from other programs.",
+   "We use the SV call set from cuteSV, and the SNP call set from Clair3 and WhatsHap as the input for LongPhase.",
+   "Duet still outperformed other tools in SV calling and genotyping and the second in place is cuteSV and LongPhase, respectively.",
+   "Duet still outperformed other tools in SV calling and genotyping and the second in place is cuteSV and LongPhase, respectively.",
+   "However, Duet still ran faster than LongPhase, NanoVar, and Sniffles.",
+   "LongPhase: an ultra-fast chromosome-scale phasing algorithm for small and large variants."
+  ]
+ }
+}

@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="600" viewBox="0 0 1100 600">
+<title>Pairwise allele support and vote weighting</title>
+
+<style>
+ text{font-family:"Helvetica Neue",Helvetica,Arial,"Liberation Sans",sans-serif;fill:#16233D}
+ .pl{font-size:22px;font-weight:700}
+ .h{font-size:15px;font-weight:600}
+ .t{font-size:13px}
+ .tb{font-size:13px;font-weight:600}
+ .s{font-size:11px;fill:#6F8090}
+ .sb{font-size:11px;font-weight:600}
+ .m{font-size:13px;font-style:italic}
+ .code{font-family:Menlo,Consolas,"Courier New",monospace;font-size:11.5px}
+ .w{fill:#ffffff}
+</style>
+
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6F8090"/></marker><marker id="arrd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16233D"/></marker></defs>
+<rect width="1100" height="600" fill="#ffffff"/>
+<text x="20" y="34" class="pl" text-anchor="start">a</text>
+<text x="42" y="34" class="h" text-anchor="start">Four allele-pair weights between two variants</text>
+<text x="200" y="78" class="h" text-anchor="middle">variant u</text>
+<text x="480" y="78" class="h" text-anchor="middle">variant v</text>
+<circle cx="200" cy="120" r="14" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="200" y="124" class="sb" text-anchor="middle" fill="#fff">r</text>
+<circle cx="200" cy="220" r="14" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="200" y="224" class="sb" text-anchor="middle" fill="#fff">a</text>
+<circle cx="480" cy="120" r="14" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="480" y="124" class="sb" text-anchor="middle" fill="#fff">r</text>
+<circle cx="480" cy="220" r="14" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="480" y="224" class="sb" text-anchor="middle" fill="#fff">a</text>
+<text x="176" y="124" class="m" text-anchor="end">uʳ</text>
+<text x="176" y="224" class="m" text-anchor="end">uᵃ</text>
+<text x="504" y="124" class="m" text-anchor="start">vʳ</text>
+<text x="504" y="224" class="m" text-anchor="start">vᵃ</text>
+<line x1="214" y1="120" x2="466" y2="120" stroke="#1687C9" stroke-width="6" stroke-linecap="round"/>
+<text x="340.0" y="108" class="tb" text-anchor="middle">wᵣᵣ = 9</text>
+<line x1="214" y1="220" x2="466" y2="220" stroke="#DC2B23" stroke-width="5" stroke-linecap="round"/>
+<text x="340.0" y="244" class="tb" text-anchor="middle">wₐₐ = 7</text>
+<line x1="212" y1="128" x2="468" y2="212" stroke="#CBD5DE" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="212" y1="212" x2="468" y2="128" stroke="#CBD5DE" stroke-width="2.5" stroke-linecap="round"/>
+<text x="440" y="156.0" class="s" text-anchor="end">wᵣₐ = 1</text>
+<text x="440" y="192.0" class="s" text-anchor="end">wₐᵣ = 0.1</text>
+<text x="40" y="280" class="t" text-anchor="start">P = wᵣᵣ + wₐₐ = 16   (cis: same haplotype carries r and r)</text>
+<text x="40" y="300" class="t" text-anchor="start">Q = wᵣₐ + wₐᵣ = 1.1   (trans)</text>
+<text x="40" y="328" class="t" text-anchor="start">similarity  s = min(P,Q) / max(P,Q) = 0.07</text>
+<text x="40" y="356" class="s" text-anchor="start">Per read: +1 if both bases ≥ Q12, else +0.1 (grey edges here carry a low-quality read).</text>
+<text x="600" y="34" class="pl" text-anchor="start">b</text>
+<text x="622" y="34" class="h" text-anchor="start">Vote rules for the pair (u, v)</text>
+<rect x="600" y="64" width="470" height="120" rx="6" fill="#EEF2F5" stroke="none" stroke-width="1" opacity="1"/>
+<text x="612" y="82" class="sb" text-anchor="start" fill="#6F8090">s &gt; 0.7</text>
+<text x="830" y="82" class="s" text-anchor="start">no vote (uninformative pair)</text>
+<text x="612" y="104" class="sb" text-anchor="start" fill="#6F8090">s &gt; 0.3 for SNV–5mC pairs</text>
+<text x="830" y="104" class="s" text-anchor="start">no vote</text>
+<text x="612" y="126" class="sb" text-anchor="start" fill="#16233D">0.1 &lt; s ≤ 0.7</text>
+<text x="830" y="126" class="s" text-anchor="start">vote for larger of P, Q; weight 1</text>
+<text x="612" y="148" class="sb" text-anchor="start" fill="#2E8B57">s ≤ 0.1, or one side has no support</text>
+<text x="830" y="148" class="s" text-anchor="start">vote; weight 20 (near-unanimous)</text>
+<text x="612" y="170" class="sb" text-anchor="start" fill="#E0A030">u is a tandem-repeat indel</text>
+<text x="830" y="170" class="s" text-anchor="start">vote; weight 0.1</text>
+<text x="600" y="210" class="s" text-anchor="start">The vote is expressed as a haplotype for v using the haplotype already</text>
+<text x="600" y="226" class="s" text-anchor="start">assigned to u: P favours vʳ on hap(uʳ), Q favours vʳ on hap(uᵃ).</text>
+<text x="600" y="300" class="pl" text-anchor="start">c</text>
+<text x="622" y="300" class="h" text-anchor="start">Single-read guard</text>
+<text x="600" y="340" class="s" text-anchor="start">Among the votes received by v, count those whose pair is supported by</text>
+<text x="600" y="356" class="s" text-anchor="start">a single read (P + Q ≤ 1). If more than three such votes exist, h₁ and h₂</text>
+<text x="600" y="372" class="s" text-anchor="start">are recomputed from high-consistency (s &lt; 0.2), non-indel votes only,</text>
+<text x="600" y="388" class="s" text-anchor="start">preventing one chimeric ultra-long read from dominating a sparse region.</text>
+<text x="20" y="420" class="pl" text-anchor="start">d</text>
+<text x="42" y="420" class="h" text-anchor="start">Exported graph (DOT)</text>
+<text x="40" y="456" class="code" text-anchor="start">1001.1 -&gt; 1543.1 [label=16.0]</text>
+<text x="40" y="474" class="code" text-anchor="start">1001.2 -&gt; 1543.2 [label=1.1]</text>
+<text x="40" y="500" class="s" text-anchor="start">position.allele → position.allele, label = accumulated haplotype vote weight at the source;</text>
+<text x="40" y="516" class="s" text-anchor="start">one edge per voting pair; parsed by the GNN module together with INFO/PE, H1, H2.</text>
+</svg>

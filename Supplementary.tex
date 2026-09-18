@@ -1,0 +1,382 @@
+% ------------------------------------------------------------------
+%  Supplementary Information for the LongPhase 2 manuscript
+%  Build:  latexmk -pdf Supplementary.tex
+% ------------------------------------------------------------------
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{xspace}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage[super,sort&compress,numbers]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+
+\graphicspath{{figures/}{figures/supp/}}
+\bibliographystyle{naturemag}
+\setcitestyle{super,open={},close={}}
+\captionsetup{labelfont=bf,font=small,justification=raggedright,singlelinecheck=false}
+
+\newcommand{\toolname}{LongPhase~2\xspace}
+\newcommand{\longphase}{LongPhase\xspace}
+\newcommand{\whatshap}{WhatsHap\xspace}
+\newcommand{\hapcut}{HapCUT2\xspace}
+\newcommand{\todo}[1]{\textcolor{red}{[#1]}}
+\newcommand{\code}[1]{\texttt{\small #1}}
+
+% supplementary numbering
+\renewcommand{\figurename}{Supplementary Fig.}
+\renewcommand{\tablename}{Supplementary Table}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\title{Supplementary Information\\[6pt]
+\large \toolname: uncertainty-aware co-phasing of small variants, structural variants and DNA methylation from long reads}
+\author{Jyun-Hong Lin, \todo{co-authors}, Yao-Ting Huang}
+\date{}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+\clearpage
+
+% ==================================================================
+\section*{Supplementary Notes}
+\addcontentsline{toc}{section}{Supplementary Notes}
+
+\subsection*{Supplementary Note 1. Reading the phasing graph export}
+With \code{--dot}, \code{longphase phase} writes one file per chromosome, \code{<prefix>.<chrom>.dot}, containing one line per voting pair, \code{P.a -> Q.b [label=w]}, where \code{P} and \code{Q} are 1-based positions, \code{a}, \code{b} $\in \{1, 2\}$ index the reference (1) and alternate (2) allele, and \code{w} is the weighted haplotype vote accumulated at \code{P} for that allele at the time the vote was cast. The companion VCF carries, for every phased variant, the fields \code{INFO/H1}, \code{INFO/H2} (weighted votes for haplotype 1 and 2) and \code{INFO/PE} (their normalized Shannon entropy). The \code{gnn} sub-command reads both files; users who wish to inspect why a variant was unphased can therefore reconstruct its local window without re-running the phaser.
+
+\subsection*{Supplementary Note 2. Reproducing the demonstration}
+The repository ships a 500-kb demonstration (chr1:121.5--122.0~Mb; \code{demo/demo.sh}) that runs \code{modcall}, SNV-only and four-class \code{phase}, \code{gnn} correction of both outputs and \code{compare} against a truth VCF, and prints switch errors, phased SNV counts and Hamming distance for the four configurations. Total runtime is under two minutes on four threads.
+
+\clearpage
+% ==================================================================
+\section*{Supplementary Tables}
+\addcontentsline{toc}{section}{Supplementary Tables}
+
+\begin{table}[h]
+\caption{\textbf{Node features of the graph neural network.} Each allele node of a window carries 31 features; \# is the index in the feature vector. $h_1$, $h_2$: weighted haplotype votes (taken from the DOT edge labels when available, otherwise from \code{INFO/H1}, \code{INFO/H2}); PE: phasing entropy; PS: phase set; ``centre'' is the trigger variant of the window. Genomic-context features are computed from the reference when \code{-r} is given and are zero otherwise.}
+\label{tab:nodefeat}
+\small
+\begin{tabular}{@{}r L{3.3cm} L{9.6cm}@{}}
+\toprule
+\# & Feature & Definition \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Phasing evidence (16)}}\\
+1 & PE & normalized Shannon entropy of $(h_1, h_2)$, 0--1 bit \\
+2 & HP & haplotype of this allele node (genotype index) \\
+3 & gt\_ref & genotype index of the reference allele (0) \\
+4 & gt\_alt & genotype index of the alternate allele (1) \\
+5 & is\_center & 1 if the variant is the window trigger \\
+6 & is\_same\_ps & 1 if the variant shares the trigger's PS \\
+7 & allele & 0 for the reference-allele node, 1 for the alternate-allele node \\
+8 & rel\_offset & (pos $-$ pos$_c$) / max$|$pos $-$ pos$_c|$ over the window, signed \\
+9 & H1 & $h_1$ \\
+10 & H2 & $h_2$ \\
+11 & total\_votes & $h_1 + h_2$ \\
+12 & vote\_ratio & $\max(h_1,h_2)/(h_1+h_2)$ \\
+13 & log\_total & $\log_2(1 + h_1 + h_2)$ \\
+14 & log\_h1 & $\log_2(1 + h_1)$ \\
+15 & log\_h2 & $\log_2(1 + h_2)$ \\
+25 & rel\_vote\_depth & $\log_2\big((h_1+h_2)/\overline{(h_1+h_2)}_{\pm 10\,\mathrm{variants}}\big)$ \\
+\addlinespace
+\multicolumn{3}{@{}l}{\textit{Genomic context (6)}}\\
+16 & hp\_len & homopolymer run length at the variant (capped at 20) \\
+17 & gc\_content & GC fraction in $\pm 50$~bp \\
+18 & str\_context & longest tandem-repeat unit count (unit 2--4~bp) in $\pm 15$~bp, /10, capped at 1 \\
+19 & seq\_entropy & Shannon entropy of the $\pm 15$~bp sequence (bits) \\
+20 & neigh\_dens & (number of variants within $\pm 500$~bp $-$ 1)/20 \\
+21 & dist\_near\_indel & $\log_{10}(1 + $ distance to nearest indel$)$, capped at $\log_{10}(10001)$ \\
+\addlinespace
+\multicolumn{3}{@{}l}{\textit{Graph structure (5)}}\\
+22 & out\_degree & number of distinct target positions of outgoing DOT edges, /10, capped at 1 \\
+23 & ps\_block\_size & $\log(1 + $ variants in the PS$) / \log(101)$ \\
+24 & log\_center\_dist & $\log_{10}(1 + |$pos $-$ pos$_c|)$ \\
+26 & out\_weight\_std & s.d.\ of outgoing DOT edge weights, /100, capped at 1 \\
+27 & is\_bridge & 1 if removing the variant disconnects the window graph \\
+\addlinespace
+\multicolumn{3}{@{}l}{\textit{Variant class (4, one-hot)}}\\
+28--31 & is\_SNV, is\_indel, is\_SV, is\_5mC & variant class indicators \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\caption{\textbf{Edge features of the graph neural network.} Edges are taken from the DOT export, restricted to node pairs inside the window, symmetrized, and complemented by one self-loop per node whose features are the mean over the node's incident edges. $w$ is the DOT edge label (accumulated vote weight).}
+\label{tab:edgefeat}
+\small
+\begin{tabular}{@{}r L{3.3cm} L{9.6cm}@{}}
+\toprule
+\# & Feature & Definition \\
+\midrule
+1 & weight & $1/(1 + e^{-w})$ \\
+2 & log\_dist & $\log_{10}(1 + |$pos$_{\mathrm{dst}} - $pos$_{\mathrm{src}}|)$ \\
+3 & log\_weight & $\log(1 + w)$ \\
+4 & is\_same\_hp & 1 if the two allele nodes have the same allele index \\
+5 & is\_inter\_ps & 1 if the two variants belong to different phase sets \\
+6 & weight\_ratio & $w$ / (sum of outgoing edge weights of the source allele node) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\caption{\textbf{Architecture and inference hyperparameters of the graph neural network.}}
+\label{tab:gnnhyper}
+\small
+\begin{tabular}{@{}L{5cm} L{8.5cm}@{}}
+\toprule
+Component & Setting \\
+\midrule
+Input normalization & BatchNorm over 31 node features (frozen statistics at inference) \\
+Input projection & Linear 31 $\rightarrow$ 128, GELU \\
+Layers & 4 GPS layers, hidden size 128 \\
+Local branch & GATv2, 4 heads $\times$ 32, LeakyReLU slope 0.2, per-layer edge encoder 6 $\rightarrow$ 128 \\
+Global branch & multi-head self-attention, 4 heads, Q/K/V/O projections 128 $\rightarrow$ 128 \\
+Fusion & $x \leftarrow x + \mathrm{local} + \mathrm{global}$; LayerNorm ($\varepsilon = 10^{-5}$) \\
+Feed-forward & 128 $\rightarrow$ 256 $\rightarrow$ 128, GELU, residual, LayerNorm \\
+Classifier & concat[$h_i$, $\sum_j w_{ij}$, $\max_j w_{ij}$] (130) $\rightarrow$ 128 (GELU) $\rightarrow$ 2, softmax \\
+Parameters & 687,358 (float32, 2.75~MB, embedded in the binary) \\
+Window & trigger PE $\ge 0.80$; $\pm 20$ variants; $\le 256$ nodes \\
+Decision & unphase if mean $P(\mathrm{error}) \ge 0.30$ over the two allele nodes and all covering windows \\
+Post-processing & split disconnected phase sets (largest component keeps PS); bridge protection off \\
+Training & \todo{data, labels, loss, optimizer, epochs} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\clearpage
+\begin{table}[h]
+\caption{\textbf{Parameters of \code{longphase phase} and their defaults.}}
+\label{tab:phaseparams}
+\small
+\begin{tabular}{@{}L{4.2cm} c L{8.3cm}@{}}
+\toprule
+Parameter & Default & Meaning \\
+\midrule
+\code{--ont} / \code{--pb} & -- & sequencing platform (enables nanopore-specific homopolymer filter) \\
+\code{--indels} & off & phase small indels \\
+\code{--indelQuality} & 0 & exclude indels with QUAL below this value \\
+\code{--sv-file}, \code{--mod-file} & -- & SV VCF (Sniffles2/cuteSV with read names); 5mC VCF from \code{modcall} \\
+\code{-q, --mappingQuality} & 1 & minimum mapping quality of alignments \\
+\code{-x, --mismatchRate} & 3 & mark reads as unreliable above this mismatch rate \\
+\code{-p, --baseQuality} & 12 & base quality below which an observation is down-weighted \\
+\code{-e, --edgeWeight} & 0.1 & weight of a down-weighted observation (otherwise 1) \\
+\code{-a, --connectAdjacent} & 35 & number of downstream variants each variant is linked to \\
+\code{-d, --distance} & 300,000 & maximum distance (bp) between linked variants \\
+\code{-1, --edgeThreshold} & 0.7 & pair casts no vote if $\min(P,Q)/\max(P,Q)$ exceeds this (0.3 for SNV--5mC) \\
+\code{-L, --overlapThreshold} & 0.2 & overlap fraction above which the shorter of two alignments of a read is dropped \\
+\code{-w, --sv-window} & 20 & CIGAR operations scanned around an SV start \\
+\code{-h, --sv-threshold} & 0.10 & relative length tolerance for a CIGAR indel to support an SV \\
+\code{-m, --readConfidence} & 0.65 & minimum majority fraction to tag a read in read-based correction \\
+\code{-n, --snpConfidence} & 0.75 & minimum confidence to keep a variant's phase after read-based correction \\
+\code{--dot} & off & export the phasing graph (required by \code{gnn}) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\caption{\textbf{Parameters of \code{longphase modcall} and their defaults.} Values are those set in the source; the on-line help text lists 0.7 for \code{--heterRatio} and 6 for \code{--connectAdjacent} (\todo{reconcile}).}
+\label{tab:modcallparams}
+\small
+\begin{tabular}{@{}L{4.2cm} c L{8.3cm}@{}}
+\toprule
+Parameter & Default & Meaning \\
+\midrule
+\code{-m, --modThreshold} & 0.8 & ML probability at or above which a base is methylated \\
+\code{-u, --unModThreshold} & 0.2 & ML probability at or below which a base is unmethylated \\
+\code{-e, --heterRatio} & 0.6 & minimum $\min(m,u)/\max(m,u)$ for a heterozygous site \\
+\code{-i, --noiseRatio} & 0.2 & maximum fraction of reads with intermediate probability \\
+\code{-a, --connectAdjacent} & 20 & neighbouring variants searched for SNV co-segregation \\
+\code{-c, --connectConfidence} & 0.9 & minimum majority ratio of co-segregating reads \\
+\code{--all} & off & also output homozygous modification sites \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\caption{\textbf{Parameters of \code{longphase gnn} and \code{longphase haplotag}.}}
+\label{tab:gnnparams}
+\small
+\begin{tabular}{@{}L{4.2cm} c L{8.3cm}@{}}
+\toprule
+Parameter & Default & Meaning \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{gnn}}\\
+\code{-s, --snp-file} & -- & phased SNV/indel VCF from \code{phase} \\
+\code{--sv-file}, \code{--mod-file} & -- & phased SV and 5mC VCFs (corrected copies are written) \\
+\code{--dot-prefix} & from \code{-s} & prefix of the DOT files \\
+\code{-r, --reference} & -- & reference FASTA (enables genomic-context features) \\
+\code{--pe-threshold} & 0.80 & phasing entropy that opens a window \\
+\code{--window} & 20 & variants on each side of the trigger \\
+\code{-B, --break-threshold} & 0.30 & error probability at or above which a variant is unphased \\
+\code{--respect-bridge} & off & never unphase bridge vertices \\
+\code{--no-split-blocks} & off & keep the original PS even if the block becomes disconnected \\
+\addlinespace
+\multicolumn{3}{@{}l}{\textit{haplotag}}\\
+\code{-q, --qualityThreshold} & 1 & minimum mapping quality of tagged alignments \\
+\code{-p, --percentageThreshold} & 0.6 & minimum fraction of a read's informative alleles on the majority haplotype \\
+\code{--tagSupplementary} & off & also tag supplementary alignments \\
+\code{--sv-file}, \code{--mod-file} & -- & use phased SVs and 5mC sites as additional tagging evidence \\
+\code{--cram} & off & write CRAM instead of BAM \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\clearpage
+\begin{table}[h]
+\caption{\textbf{Software and data used in the benchmarks.} \todo{Complete versions and accessions.}}
+\label{tab:software}
+\small
+\begin{tabular}{@{}L{4cm} L{2.6cm} L{6.6cm}@{}}
+\toprule
+Item & Version & Notes \\
+\midrule
+HG002 nanopore R10.4.1 reads & \todo{--} & \todo{flow cell, kit, basecaller model, source} \\
+Reference & GRCh38 \todo{build} & \\
+minimap2 & \todo{--} & \code{-ax map-ont -y} \\
+Clair3 & \todo{--} & SNV and indel calls \\
+Sniffles2 & \todo{--} & \code{--output-rnames} \\
+GIAB v4.2.1 HG002 & v4.2.1 & GRCh38-based small-variant benchmark \\
+HG002 Q100 (T2T-based) & \todo{v?} & referred to as v5.0q \\
+WhatsHap & 2.8 & \todo{options} \\
+HapCUT2 & 1.3.4 & \todo{options} \\
+\longphase~1.0 & 1.0.x \todo{exact} & \code{--ont} \\
+\toolname & \todo{release} & \code{--ont}; \code{gnn} with defaults \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\caption{\textbf{Selected published tools, pipelines and studies that use \longphase.} Compiled from Europe~PMC (80 indexed citing articles) and OpenAlex (96 citing works) for \code{10.1093/bioinformatics/btac058}, September 2026; the ``use'' column quotes or paraphrases the citing article's Methods.}
+\label{tab:citing}
+\small
+\begin{tabular}{@{}L{5.2cm} L{2.9cm} L{5.2cm}@{}}
+\toprule
+Work & Journal, year & Use of \longphase \\
+\midrule
+\multicolumn{3}{@{}l}{\textit{Variant callers and pipelines}}\\
+ClairS\cite{zheng2026clairs} & Nat.\ Methods 2026 & germline phasing and haplotagging of tumour and normal alignments \\
+ClairS-TO\cite{chen2025clairsto} & Nat.\ Commun.\ 2025 & phasing of input alignments \\
+Clair3-RNA\cite{zheng2025clair3rna} & Nat.\ Commun.\ 2025 & phasing in the long-read RNA pipeline \\
+Clair3 (accelerated)\cite{zheng2026accelerated} & Bioinformatics 2026 & intermediate variant phasing and haplotagging \\
+DeepVariant local haplotagging\cite{kolesnikov2024local} & Nat.\ Commun.\ 2024 & cited as haplotagging method used by Clair3/Medaka \\
+Severus\cite{keskus2025severus} & Nat.\ Biotechnol.\ 2025 & haplotagged BAMs for somatic SV calling \\
+EPI2ME wf-human-variation\cite{ont2025wfhuman} & ONT workflow & \code{--use\_longphase} phasing \\
+HiFi-somatic-WDL\cite{pacbio2025hifisomatic} & PacBio workflow & optional phasing tool \\
+cuteHap\cite{cao2026cutehap} & Adv.\ Sci.\ 2026 & read phasing before haplotype-aware SV calling \\
+SpecImmune\cite{wang2026immune} & Adv.\ Sci.\ 2026 & joint SNV--SV phasing of immune genes \\
+\addlinespace
+\multicolumn{3}{@{}l}{\textit{Biological and clinical studies}}\\
+Fluctuating DNA methylation in cancer\cite{gabbutt2025fluctuating} & Nature 2025 & read phasing (v1.7) and \code{modcall} for CpG methylation \\
+Advanced cancer cohort (POG)\cite{oneill2024longread} & Cell Genomics 2024 & discussed as phasing method for tumours \\
+Pediatric epilepsy episignatures\cite{laflamme2024diagnostic} & Nat.\ Commun.\ 2024 & phasing of Clair3 and SV calls \\
+GNAS transcripts in PHP1B\cite{iwasaki2025gnas} & PNAS 2025 & phasing of Clair3 calls \\
+3-hour genome for neonatal risk\cite{zalusky2024threehour} & Genet.\ Med.\ Open 2024 & real-time phasing during sequencing \\
+Ultrarapid diagnostics in critical care\cite{smits2025nanopore} & Eur.\ J.\ Hum.\ Genet.\ 2025 & read phasing (v1.0.7) \\
+HYDIN in primary ciliary dyskinesia\cite{fleming2024hydin} & Eur.\ J.\ Hum.\ Genet.\ 2024 & phasing of Clair3 calls \\
+Antisense oligonucleotides in APBD\cite{thomas2025splice} & Nucleic Acids Res.\ 2025 & phasing of Clair3 calls \\
+Native CpG methylation fine-mapping\cite{tian2025finemapping} & HGG Adv.\ 2025 & phasing and haplotagging (chosen for speed and SV support) \\
+Canadian national platform benchmark\cite{galvez2026benchmarking} & Front.\ Genet.\ 2026 & phasing inside the Clair3 workflow \\
+Pallas's cat genome\cite{flack2023pallas} & NAR Genom.\ Bioinform.\ 2023 & haplotagging for allele-specific methylation \\
+\addlinespace
+\multicolumn{3}{@{}l}{\textit{Methods evaluated against \longphase}}\\
+HiPhase\cite{holt2024hiphase} & Bioinformatics 2024 & comparison method \\
+Ralphi\cite{battistella2025ralphi} & Genome Res.\ 2025 & comparison method (fastest runtime on ONT/PacBio) \\
+GCphase\cite{luo2024gcphase} & BMC Bioinformatics 2024 & comparison method \\
+Duet\cite{zhou2022duet} & BMC Bioinformatics 2022 & comparison method for SV phasing \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\clearpage
+% ==================================================================
+\section*{Supplementary Figures}
+\addcontentsline{toc}{section}{Supplementary Figures}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig1_observations.png}
+\caption{\textbf{Read-level allele observations and pre-graph filters.}
+\textbf{a}, For every alignment, each overlapped variant yields an allele observation with an associated quality: SNVs from the aligned base (Phred quality), indels from CIGAR operations starting at the site, SVs from CIGAR operations of matching length or from the caller's read list, and 5mC from the \code{modcall} read lists. The table summarizes how each class enters the edge weights.
+\textbf{b}, Nanopore-specific homopolymer filter: when two SNVs both lie in homopolymers of length $\ge 3$ and are $\le 2$~bp apart, the downstream SNV is removed.
+\textbf{c}, Overlapping-alignment filter for supplementary alignments of one read.
+\textbf{d}, Indels in tandem repeats are flagged and vote with weight 0.1.}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig2_pair_support.png}
+\caption{\textbf{Pairwise allele support and vote weighting.}
+\textbf{a}, Between two variants $u$ and $v$ the reads accumulate four weights ($w_{rr}, w_{ra}, w_{ar}, w_{aa}$); each read adds 1 when both bases have quality $\ge$~Q12 and 0.1 otherwise. $P$ and $Q$ are the supports for the two possible pairings and $s$ their similarity.
+\textbf{b}, Decision rules that turn $(P, Q, s)$ into a weighted haplotype vote for $v$.
+\textbf{c}, Guard against a single erroneous ultra-long read.
+\textbf{d}, Format of the exported DOT graph consumed by the \code{gnn} module.}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig3_voting_entropy.png}
+\caption{\textbf{Multi-neighbour voting and phasing entropy.}
+\textbf{a}, Variant $v$ receives weighted votes from up to $k = 35$ upstream variants within 300~kb; line thickness encodes vote weight (20, 1 or 0.1). The haplotype with the larger total wins; a tie opens a new phase block.
+\textbf{b}, Phasing entropy of the vote totals for four examples; values $\ge 0.80$ (dashed box) trigger a GNN window.
+\textbf{c}, Block formation and propagation of haplotype labels.}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig4_cnv_filter.png}
+\caption{\textbf{Copy-number-aware filtering of unreliable heterozygous sites.}
+\textbf{a}, Per-position counts of alignments starting (front-clipped, above the axis) and ending (back-clipped, below) are scanned by a finite-state detector that opens a candidate interval at $\ge 5$ front-clips, extends it while starts exceed ends, and closes it when a comparable number of back-clips is observed (maximum 200~kb).
+\textbf{b}, Inside an interval, each heterozygous site is scored by the mean number of mismatches to the phasing graph on ALT- versus REF-supporting reads; sites whose ALT reads carry $\ge 70\%$ of the mismatches are removed from all reads, because their alternate allele is a paralogue-specific difference rather than a heterozygous variant.}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig5_read_correction.png}
+\caption{\textbf{Read-based correction.}
+\textbf{a}, Each read is assigned to a haplotype by majority over its phased SNV and SV alleles (indels count 0.1, 5mC 0); reads with majority $\le 0.65$ or fewer than two informative alleles remain untagged.
+\textbf{b}, Each variant's phase is re-derived from the tagged reads and retained only if the consistent fraction exceeds 0.75; otherwise the variant is unphased.}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig6_gnn_window.png}
+\caption{\textbf{Window construction for the graph neural network.}
+\textbf{a}, A window of $\pm 20$ variants (two allele nodes each) is opened around every phased variant with PE $\ge 0.8$; edges are the DOT edges with both endpoints in the window (blue and red arcs) plus self-loops; a dashed grey edge marks a cross-haplotype link. Predictions are read only in the central zone.
+\textbf{b}, Bridge-vertex feature: a variant whose removal disconnects the window graph.
+\textbf{c}, Definition of the central zone.}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig7_gnn_architecture.png}
+\caption{\textbf{Graph neural network architecture.} Node features are standardized and projected to 128 dimensions. Each of four GPS layers combines a local GATv2 branch over the window graph (edge features enter through a per-layer edge encoder) with a global self-attention branch over all nodes, fused additively into the residual stream and followed by layer normalization and a feed-forward block. The final embedding is concatenated with the sum and maximum of incoming raw edge weights and classified into phased-correctly versus misphased; the probabilities of the two allele nodes of a variant are averaged.}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig8_unphase_split.png}
+\caption{\textbf{Unphasing and phase-set splitting.}
+\textbf{a}, A variant with predicted error probability $\ge 0.30$ (amber) inside a phase set.
+\textbf{b}, After correction the variant is written as an unphased genotype without PS; connectivity of the remaining variants is recomputed over the surviving DOT edges, the largest component keeps the original PS and every other component receives a new PS equal to the position of its first variant. Genotypes are never flipped.}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig9_modcall.png}
+\caption{\textbf{Allele-specific methylation calling with \code{modcall}.}
+\textbf{a}, Per-read CpG states from the ML probability (methylated $\ge 0.8$, unmethylated $\le 0.2$, otherwise noise).
+\textbf{b}, Reverse-strand calls are mapped to the forward CpG coordinate, strands are pooled, and a site is heterozygous when the minority state is at least 60\% of the majority state and noise is at most 20\% of depth.
+\textbf{c}, Candidate heterozygous CpGs are refined by co-segregation with SNVs on the same reads (strong anchors) or with already accepted CpGs (weak, iterative).
+\textbf{d}, Output record with methylated and unmethylated read names used by \code{phase}.}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig10_metrics.png}
+\caption{\textbf{Phasing evaluation metrics.}
+\textbf{a}, Within one intersected block, the query haplotype string is compared with the truth in switch encoding; the number of differing positions is the switch-error count, adjacent switch pairs are counted as flips, and the Hamming distance is the minimum over the two orientations of misassigned variants.
+\textbf{b}, Definitions of block intersection, phased fraction, block N50 and switch error rate as implemented in \code{longphase compare}.}
+\end{figure}
+
+\clearpage
+\bibliography{references}
+\end{document}

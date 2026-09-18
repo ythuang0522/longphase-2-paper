@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="560" viewBox="0 0 1100 560">
+<title>Read-level allele observations and filters</title>
+
+<style>
+ text{font-family:"Helvetica Neue",Helvetica,Arial,"Liberation Sans",sans-serif;fill:#16233D}
+ .pl{font-size:22px;font-weight:700}
+ .h{font-size:15px;font-weight:600}
+ .t{font-size:13px}
+ .tb{font-size:13px;font-weight:600}
+ .s{font-size:11px;fill:#6F8090}
+ .sb{font-size:11px;font-weight:600}
+ .m{font-size:13px;font-style:italic}
+ .code{font-family:Menlo,Consolas,"Courier New",monospace;font-size:11.5px}
+ .w{fill:#ffffff}
+</style>
+
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6F8090"/></marker><marker id="arrd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16233D"/></marker></defs>
+<rect width="1100" height="560" fill="#ffffff"/>
+<text x="20" y="34" class="pl" text-anchor="start">a</text>
+<text x="42" y="34" class="h" text-anchor="start">Allele observations extracted from one alignment</text>
+<text x="52" y="94" class="s" text-anchor="end">Ref</text>
+<line x1="60" y1="90" x2="520" y2="90" stroke="#16233D" stroke-width="2" stroke-linecap="round"/>
+<line x1="80" y1="84" x2="80" y2="96" stroke="#16233D" stroke-width="2" stroke-linecap="round"/>
+<text x="80" y="78" class="sb" text-anchor="middle">SNV</text>
+<text x="80" y="110" class="s" text-anchor="middle">A/G</text>
+<line x1="170" y1="84" x2="170" y2="96" stroke="#16233D" stroke-width="2" stroke-linecap="round"/>
+<text x="170" y="78" class="sb" text-anchor="middle">Indel</text>
+<text x="170" y="110" class="s" text-anchor="middle">T/TAC</text>
+<line x1="270" y1="84" x2="270" y2="96" stroke="#16233D" stroke-width="2" stroke-linecap="round"/>
+<text x="270" y="78" class="sb" text-anchor="middle">SV</text>
+<text x="270" y="110" class="s" text-anchor="middle">DEL 1.2 kb</text>
+<line x1="380" y1="84" x2="380" y2="96" stroke="#16233D" stroke-width="2" stroke-linecap="round"/>
+<text x="380" y="78" class="sb" text-anchor="middle">5mC</text>
+<text x="380" y="110" class="s" text-anchor="middle">CpG</text>
+<line x1="470" y1="84" x2="470" y2="96" stroke="#16233D" stroke-width="2" stroke-linecap="round"/>
+<text x="470" y="78" class="sb" text-anchor="middle">SNV</text>
+<text x="470" y="110" class="s" text-anchor="middle">C/T</text>
+<text x="52" y="142" class="s" text-anchor="end">Read</text>
+<line x1="60" y1="138" x2="510" y2="138" stroke="#CBD5DE" stroke-width="8" stroke-linecap="round"/>
+<circle cx="80" cy="138" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="80" y="142" class="sb" text-anchor="middle" fill="#fff">G</text>
+<text x="80" y="168" class="s" text-anchor="middle">Q=22</text>
+<circle cx="170" cy="138" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="170" y="142" class="sb" text-anchor="middle" fill="#fff"></text>
+<text x="170" y="142" class="sb" text-anchor="middle" fill="#fff">+AC</text>
+<text x="170" y="168" class="s" text-anchor="middle">CIGAR I</text>
+<circle cx="270" cy="138" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="270" y="142" class="sb" text-anchor="middle" fill="#fff"></text>
+<text x="270" y="142" class="sb" text-anchor="middle" fill="#fff">DEL</text>
+<text x="270" y="168" class="s" text-anchor="middle">CIGAR D / RNAMES</text>
+<circle cx="380" cy="138" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="380" y="142" class="sb" text-anchor="middle" fill="#fff">m</text>
+<text x="380" y="168" class="s" text-anchor="middle">ML=0.93</text>
+<circle cx="470" cy="138" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="470" y="142" class="sb" text-anchor="middle" fill="#fff">C</text>
+<text x="470" y="168" class="s" text-anchor="middle">Q=9</text>
+<text x="30" y="200" class="tb" text-anchor="start">Observation quality used for edge weighting</text>
+<text x="30" y="220" class="sb" text-anchor="start">SNV</text>
+<text x="80" y="220" class="s" text-anchor="start">Phred base quality; edge weight 1 if both bases ≥ Q12, else 0.1</text>
+<text x="30" y="238" class="sb" text-anchor="start">Indel</text>
+<text x="80" y="238" class="s" text-anchor="start">CIGAR I/D starting at the site; fixed high quality; tandem-repeat indels flagged</text>
+<text x="30" y="256" class="sb" text-anchor="start">SV</text>
+<text x="80" y="256" class="s" text-anchor="start">caller read list → ALT (high quality); unlisted reads → REF (lower quality)</text>
+<text x="30" y="274" class="sb" text-anchor="start">5mC</text>
+<text x="80" y="274" class="s" text-anchor="start">modcall read lists, strand-matched; fixed high quality</text>
+<text x="580" y="34" class="pl" text-anchor="start">b</text>
+<text x="602" y="34" class="h" text-anchor="start">Homopolymer SNV filter (nanopore)</text>
+<text x="590" y="80" class="s" text-anchor="start">Ref</text>
+<rect x="658" y="66" width="110" height="20" rx="4" fill="#FCF1C7" stroke="none" stroke-width="1" opacity="1"/>
+<rect x="790" y="66" width="88" height="20" rx="4" fill="#FCF1C7" stroke="none" stroke-width="1" opacity="1"/>
+<text x="625" y="80" class="code" text-anchor="middle" fill="#16233D">G</text>
+<text x="647" y="80" class="code" text-anchor="middle" fill="#16233D">T</text>
+<text x="669" y="80" class="code" text-anchor="middle" fill="#16233D">A</text>
+<text x="691" y="80" class="code" text-anchor="middle" fill="#16233D">A</text>
+<text x="713" y="80" class="code" text-anchor="middle" fill="#16233D">A</text>
+<text x="735" y="80" class="code" text-anchor="middle" fill="#16233D">A</text>
+<text x="757" y="80" class="code" text-anchor="middle" fill="#16233D">A</text>
+<text x="779" y="80" class="code" text-anchor="middle" fill="#16233D">C</text>
+<text x="801" y="80" class="code" text-anchor="middle" fill="#16233D">A</text>
+<text x="823" y="80" class="code" text-anchor="middle" fill="#16233D">A</text>
+<text x="845" y="80" class="code" text-anchor="middle" fill="#16233D">A</text>
+<text x="867" y="80" class="code" text-anchor="middle" fill="#16233D">A</text>
+<text x="889" y="80" class="code" text-anchor="middle" fill="#16233D">T</text>
+<text x="911" y="80" class="code" text-anchor="middle" fill="#16233D">G</text>
+<line x1="735" y1="92" x2="735" y2="110" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<line x1="779" y1="92" x2="779" y2="110" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<text x="735" y="124" class="sb" text-anchor="middle">SNV₁</text>
+<text x="779" y="124" class="sb" text-anchor="middle">SNV₂</text>
+<text x="590" y="150" class="s" text-anchor="start">Both SNVs in homopolymers of length ≥ 3 and ≤ 2 bp apart</text>
+<text x="590" y="166" class="s" text-anchor="start">→ downstream SNV removed from all reads</text>
+<text x="580" y="210" class="pl" text-anchor="start">c</text>
+<text x="602" y="210" class="h" text-anchor="start">Overlapping-alignment filter</text>
+<line x1="590" y1="250" x2="1080" y2="250" stroke="#16233D" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="620" y1="272" x2="850" y2="272" stroke="#1687C9" stroke-width="6" stroke-linecap="round"/>
+<text x="612" y="276" class="sb" text-anchor="end">A₁</text>
+<line x1="760" y1="294" x2="1050" y2="294" stroke="#1687C9" stroke-width="6" stroke-linecap="round"/>
+<text x="752" y="298" class="sb" text-anchor="end">A₂</text>
+<rect x="760" y="262" width="90" height="40" rx="3" fill="#FCF1C7" stroke="none" stroke-width="1" opacity="0.8"/>
+<text x="805" y="320" class="s" text-anchor="middle">overlap</text>
+<text x="590" y="346" class="s" text-anchor="start">Two alignments of one read; overlap / combined span ≥ 0.2</text>
+<text x="590" y="362" class="s" text-anchor="start">→ the shorter alignment (A₁) is discarded</text>
+<text x="580" y="400" class="pl" text-anchor="start">d</text>
+<text x="602" y="400" class="h" text-anchor="start">Tandem-repeat indel flag</text>
+<rect x="615" y="426" width="150" height="20" rx="4" fill="#FCF1C7" stroke="none" stroke-width="1" opacity="1"/>
+<text x="600" y="440" class="code" text-anchor="middle" fill="#16233D">G</text>
+<text x="630" y="440" class="code" text-anchor="middle" fill="#16233D">CA</text>
+<text x="660" y="440" class="code" text-anchor="middle" fill="#16233D">CA</text>
+<text x="690" y="440" class="code" text-anchor="middle" fill="#16233D">CA</text>
+<text x="720" y="440" class="code" text-anchor="middle" fill="#16233D">CA</text>
+<text x="750" y="440" class="code" text-anchor="middle" fill="#16233D">CA</text>
+<text x="780" y="440" class="code" text-anchor="middle" fill="#16233D">T</text>
+<text x="690" y="470" class="s" text-anchor="middle">+CA / −CA indel inside a CA repeat</text>
+<text x="590" y="500" class="s" text-anchor="start">Flagged indels stay in the graph but vote with weight 0.1</text>
+<text x="590" y="516" class="s" text-anchor="start">and contribute 0.1 to read haplotype assignment</text>
+<text x="30" y="460" class="s" text-anchor="start">See Supplementary Fig. 4 for the copy-number-aware filter applied after these steps.</text>
+</svg>

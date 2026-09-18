@@ -1,0 +1,19 @@
+Use case: precise-object-edit. Edit the attached LongPhase scientific figure. Preserve the four-panel layout, white background, typography, titles, panel c mandatory GNN architecture and panel d outputs. This is a precise revision, NOT a redesign. High-resolution clean linework.
+
+CHANGE PANEL A: Rebuild only the read alignment diagram beneath the existing legend using a STRICT SIX-COLUMN locus grid. Each reference tick, dashed vertical guide, and every read observation at that locus must share exactly the same x coordinate. The SIX locus types, left to right, are SNP, INDEL, SV, SNP, METHYLATION, INDEL. Keep all six reads, gray horizontal backbones, cyan/coral allele colors, reference rail, labels, and bottom bracket. Fix every shifted icon.
+Grid centers approximately x=120,167,216,264,309,353 in the original 1448-pixel-wide image. No glyphs between columns.
+Column1 SNP: A/G/A/G/A/G circles for reads1–6.
+Column2 INDEL: small insertion rectangles on reads1,3,5; short plain horizontal allele marks at exactly that column on reads2,4,6. Absolutely no SNP circle or SV icon at this column.
+Column3 SV: SV rectangular glyph on reads1 and5 ONLY; reads2,3,4,6 have a short plain horizontal reference-allele mark at that column, no SNP circle. In particular remove the misplaced SV on read4; no SV on read6.
+Column4 SNP: T/C/T/C/T/C circles on reads1–6, all centered exactly on column4 dashed guide.
+Column5 methylation: lollipop stems all centered exactly at x309 and intersect each read backbone; filled heads on reads1,3,5, hollow heads on reads2,4,6. Identical icon size, stem length and vertical offset relative to each read. There must be no displaced methylation glyph at column6.
+Column6 INDEL: small insertion rectangles on reads1,3,5; short plain horizontal reference-allele marks on reads2,4,6. Never put T or any SNP circle, SV or methylation glyph at this locus.
+Plain horizontal allele marks indicate the no-indel/no-SV alternative, not a new variant type. Add one small unobtrusive legend item below the existing icon legend: short dash followed by "Reference allele". Keep spacious alignment without overlapping the Reference label.
+No extra variants. All icons sit precisely at their own locus guides. Each locus carries only its designated variant type across ALL reads.
+
+CHANGE PANEL B:
+Replace middle-layer label "Error sources" with "Evidence calibration", stacked neatly in the same narrow left gutter, no overlap with the vignette.
+In the uncertain-base-call vignette remove BOTH explanatory sentences "Low-quality C call" and "Base identity is uncertain". Replace their area with a miniature sequencing BASE QUALITY bar plot aligned one-to-one beneath the A C T read bases: tall bar under A, very short bar under dashed C, tall bar under T. One shared baseline; neutral gray-blue bars; central short bar accent amber. Small label "Phred quality" to the left or above the plot. NO numbers, thresholds, paragraphs, explanatory sentences or high/low text labels. A pale vertical highlight can visually connect dashed C and its short bar. Keep heading "Uncertain base call" and the dashed leader pointing to original graph lower C. Do not draw a chromatogram or any invented sequencing signal.
+
+Retain all other panel b content, and preserve already-requested scientific consistency: bottom reweighted graph uncertain lower C and lower +T must have only thin pale low-confidence links touching them. Remove the erroneous thick cyan bottom arc from lower C; retain coral long-range G-to-T bridge. Lower +T dashed rectangle must be coral, not cyan. Middle repeat vignette upper A cyan, lower +T coral so the allele colors match graphs. Original indel box stays solid, reweighted indel dashed.
+Preserve panels c and d unchanged. Do not add journal logos or new text boxes.

@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="480" viewBox="0 0 1100 480">
+<title>Unphasing and phase-set splitting</title>
+
+<style>
+ text{font-family:"Helvetica Neue",Helvetica,Arial,"Liberation Sans",sans-serif;fill:#16233D}
+ .pl{font-size:22px;font-weight:700}
+ .h{font-size:15px;font-weight:600}
+ .t{font-size:13px}
+ .tb{font-size:13px;font-weight:600}
+ .s{font-size:11px;fill:#6F8090}
+ .sb{font-size:11px;font-weight:600}
+ .m{font-size:13px;font-style:italic}
+ .code{font-family:Menlo,Consolas,"Courier New",monospace;font-size:11.5px}
+ .w{fill:#ffffff}
+</style>
+
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6F8090"/></marker><marker id="arrd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16233D"/></marker></defs>
+<rect width="1100" height="480" fill="#ffffff"/>
+<text x="20" y="34" class="pl" text-anchor="start">a</text>
+<text x="42" y="34" class="h" text-anchor="start">Before correction: one phase set</text>
+<circle cx="80" cy="110" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="80" y="114" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="80" cy="170" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="80" y="174" class="s" text-anchor="middle" fill="#fff">a</text>
+<line x1="90" y1="110" x2="140" y2="110" stroke="#1687C9" stroke-width="2" stroke-linecap="round"/>
+<line x1="90" y1="170" x2="140" y2="170" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<circle cx="150" cy="110" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="150" y="114" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="150" cy="170" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="150" y="174" class="s" text-anchor="middle" fill="#fff">a</text>
+<line x1="160" y1="110" x2="210" y2="110" stroke="#1687C9" stroke-width="2" stroke-linecap="round"/>
+<line x1="160" y1="170" x2="210" y2="170" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<circle cx="220" cy="110" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="220" y="114" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="220" cy="170" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="220" y="174" class="s" text-anchor="middle" fill="#fff">a</text>
+<line x1="230" y1="110" x2="280" y2="110" stroke="#1687C9" stroke-width="2" stroke-linecap="round"/>
+<line x1="230" y1="170" x2="280" y2="170" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<circle cx="290" cy="110" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="290" y="114" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="290" cy="170" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="290" y="174" class="s" text-anchor="middle" fill="#fff">a</text>
+<line x1="300" y1="110" x2="350" y2="110" stroke="#1687C9" stroke-width="2" stroke-linecap="round"/>
+<line x1="300" y1="170" x2="350" y2="170" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<path d="M298,104 Q360.0,65 422,104" stroke="#1687C9" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+<circle cx="360" cy="110" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="360" y="114" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="360" cy="170" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="360" y="174" class="s" text-anchor="middle" fill="#fff">a</text>
+<line x1="370" y1="110" x2="420" y2="110" stroke="#1687C9" stroke-width="2" stroke-linecap="round"/>
+<line x1="370" y1="170" x2="420" y2="170" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<circle cx="430" cy="110" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="430" y="114" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="430" cy="170" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="430" y="174" class="s" text-anchor="middle" fill="#fff">a</text>
+<line x1="440" y1="110" x2="490" y2="110" stroke="#1687C9" stroke-width="2" stroke-linecap="round"/>
+<line x1="440" y1="170" x2="490" y2="170" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<circle cx="500" cy="110" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="500" y="114" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="500" cy="170" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="500" y="174" class="s" text-anchor="middle" fill="#fff">a</text>
+<line x1="510" y1="110" x2="560" y2="110" stroke="#1687C9" stroke-width="2" stroke-linecap="round"/>
+<line x1="510" y1="170" x2="560" y2="170" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<circle cx="570" cy="110" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="570" y="114" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="570" cy="170" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="570" y="174" class="s" text-anchor="middle" fill="#fff">a</text>
+<line x1="580" y1="110" x2="630" y2="110" stroke="#1687C9" stroke-width="2" stroke-linecap="round"/>
+<line x1="580" y1="170" x2="630" y2="170" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<path d="M578,104 Q640.0,65 702,104" stroke="#1687C9" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+<circle cx="640" cy="110" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="640" y="114" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="640" cy="170" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="640" y="174" class="s" text-anchor="middle" fill="#fff">a</text>
+<line x1="650" y1="110" x2="700" y2="110" stroke="#1687C9" stroke-width="2" stroke-linecap="round"/>
+<line x1="650" y1="170" x2="700" y2="170" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<circle cx="710" cy="110" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="710" y="114" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="710" cy="170" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="710" y="174" class="s" text-anchor="middle" fill="#fff">a</text>
+<rect x="410" y="88" width="40" height="104" rx="6" fill="none" stroke="#E0A030" stroke-width="2" opacity="1"/>
+<text x="430" y="210" class="sb" text-anchor="middle" fill="#E0A030">P(error) = 0.62 ≥ 0.30</text>
+<text x="80" y="220" class="s" text-anchor="start">PS = 1001 for all ten variants;  GT 0|1 / 1|0</text>
+<text x="20" y="270" class="pl" text-anchor="start">b</text>
+<text x="42" y="270" class="h" text-anchor="start">After correction: variant unphased, block split</text>
+<circle cx="80" cy="340" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="80" y="344" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="80" cy="400" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="80" y="404" class="s" text-anchor="middle" fill="#fff">a</text>
+<line x1="90" y1="340" x2="140" y2="340" stroke="#1687C9" stroke-width="2" stroke-linecap="round"/>
+<line x1="90" y1="400" x2="140" y2="400" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<circle cx="150" cy="340" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="150" y="344" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="150" cy="400" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="150" y="404" class="s" text-anchor="middle" fill="#fff">a</text>
+<line x1="160" y1="340" x2="210" y2="340" stroke="#1687C9" stroke-width="2" stroke-linecap="round"/>
+<line x1="160" y1="400" x2="210" y2="400" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<circle cx="220" cy="340" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="220" y="344" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="220" cy="400" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="220" y="404" class="s" text-anchor="middle" fill="#fff">a</text>
+<line x1="230" y1="340" x2="280" y2="340" stroke="#1687C9" stroke-width="2" stroke-linecap="round"/>
+<line x1="230" y1="400" x2="280" y2="400" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<circle cx="290" cy="340" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="290" y="344" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="290" cy="400" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="290" y="404" class="s" text-anchor="middle" fill="#fff">a</text>
+<line x1="300" y1="340" x2="350" y2="340" stroke="#1687C9" stroke-width="2" stroke-linecap="round"/>
+<line x1="300" y1="400" x2="350" y2="400" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<circle cx="360" cy="340" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="360" y="344" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="360" cy="400" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="360" y="404" class="s" text-anchor="middle" fill="#fff">a</text>
+<circle cx="430" cy="340" r="10" fill="#fff" stroke="#6F8090" stroke-width="1.8"/>
+<text x="430" y="344" class="s" text-anchor="middle" fill="#6F8090">r</text>
+<circle cx="430" cy="400" r="10" fill="#fff" stroke="#6F8090" stroke-width="1.8"/>
+<text x="430" y="404" class="s" text-anchor="middle" fill="#6F8090">a</text>
+<text x="430" y="430" class="s" text-anchor="middle">GT 0/1, PS removed</text>
+<circle cx="500" cy="340" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="500" y="344" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="500" cy="400" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="500" y="404" class="s" text-anchor="middle" fill="#fff">a</text>
+<line x1="510" y1="340" x2="560" y2="340" stroke="#1687C9" stroke-width="2" stroke-linecap="round"/>
+<line x1="510" y1="400" x2="560" y2="400" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<circle cx="570" cy="340" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="570" y="344" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="570" cy="400" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="570" y="404" class="s" text-anchor="middle" fill="#fff">a</text>
+<line x1="580" y1="340" x2="630" y2="340" stroke="#1687C9" stroke-width="2" stroke-linecap="round"/>
+<line x1="580" y1="400" x2="630" y2="400" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<circle cx="640" cy="340" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="640" y="344" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="640" cy="400" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="640" y="404" class="s" text-anchor="middle" fill="#fff">a</text>
+<line x1="650" y1="340" x2="700" y2="340" stroke="#1687C9" stroke-width="2" stroke-linecap="round"/>
+<line x1="650" y1="400" x2="700" y2="400" stroke="#DC2B23" stroke-width="2" stroke-linecap="round"/>
+<circle cx="710" cy="340" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
+<text x="710" y="344" class="s" text-anchor="middle" fill="#fff">r</text>
+<circle cx="710" cy="400" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
+<text x="710" y="404" class="s" text-anchor="middle" fill="#fff">a</text>
+<path d="M298,334 Q360.0,295 422,334" stroke="#CBD5DE" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="1" stroke-dasharray="3,3"/>
+<text x="220" y="455" class="s" text-anchor="middle">PS = 1001 (largest component keeps the original ID)</text>
+<text x="605" y="455" class="s" text-anchor="middle">PS = 1436 (position of first variant)</text>
+<rect x="60" y="316" width="320" height="88" rx="6" fill="none" stroke="#103A82" stroke-width="1" opacity="1" stroke-dasharray="4,3"/>
+<rect x="480" y="316" width="250" height="88" rx="6" fill="none" stroke="#103A82" stroke-width="1" opacity="1" stroke-dasharray="4,3"/>
+<text x="760" y="330" class="s" text-anchor="start">Connectivity is re-checked over the surviving DOT edges</text>
+<text x="760" y="346" class="s" text-anchor="start">of each phase set; edges through the unphased variant</text>
+<text x="760" y="362" class="s" text-anchor="start">(dashed) no longer count. Genotypes are never flipped.</text>
+</svg>
