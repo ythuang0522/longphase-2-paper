@@ -1,0 +1,551 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="1020" viewBox="0 0 1680 1020">
+<title>LongPhase 2 overview: evidence-calibrated phasing graph and graph-transformer phase-error detection</title>
+<defs>
+<style>
+ text{font-family:"Helvetica Neue",Helvetica,Arial,"Liberation Sans",sans-serif;
+      letter-spacing:.005em}
+ .pl{font-size:30px;font-weight:700}
+ .h1{font-size:21.5px;font-weight:600}
+ .h2{font-size:19.5px;font-weight:700}
+ .lb{font-size:17.5px;font-weight:400}
+ .lbb{font-size:17.5px;font-weight:600}
+ .sm{font-size:15px;font-weight:400}
+ .num{font-size:17px;font-weight:600}
+ .nt{font-weight:700}
+</style>
+<marker id="aNavy" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+  <path d="M0 0.8 L9.6 5 L0 9.2 z" fill="#103A82"/></marker>
+<marker id="aGrey" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6.4" markerHeight="6.4" orient="auto-start-reverse">
+  <path d="M0 0.8 L9.6 5 L0 9.2 z" fill="#7C8DA0"/></marker>
+<marker id="aBlue" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+  <path d="M0 0.8 L9.6 5 L0 9.2 z" fill="#1687C9"/></marker>
+</defs>
+<rect width="1680" height="1020" fill="#ffffff"/>
+<line x1="498.0" y1="22.0" x2="498.0" y2="660.0" stroke="#C9D2DC" stroke-width="1.6" stroke-linecap="butt" stroke-opacity="1.0"/>
+<line x1="24.0" y1="676.0" x2="1656.0" y2="676.0" stroke="#C9D2DC" stroke-width="1.6" stroke-linecap="butt" stroke-opacity="1.0"/>
+<line x1="1238.0" y1="694.0" x2="1238.0" y2="1000.0" stroke="#C9D2DC" stroke-width="1.6" stroke-linecap="butt" stroke-opacity="1.0"/>
+<text x="24.0" y="44.0" class="pl" fill="#103A82" text-anchor="start">a</text>
+<circle cx="48.0" cy="84.0" r="15" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="48.0" y="89.2" class="nt" fill="#1687C9" text-anchor="middle" font-size="15">A</text>
+<text x="70.0" y="90.0" class="lb" fill="#103A82" text-anchor="start">SNP</text>
+<rect x="112.5" y="73.5" width="27.0" height="21.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.2"/>
+<text x="148.0" y="90.0" class="lb" fill="#103A82" text-anchor="start">Indel</text>
+<rect x="206.0" y="71.5" width="44.0" height="25.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.2"/>
+<text x="228.0" y="89.1" class="nt" fill="#1687C9" text-anchor="middle" font-size="14.5">SV</text>
+<text x="258.0" y="90.0" class="lb" fill="#103A82" text-anchor="start">SV</text>
+<line x1="302.0" y1="87.5" x2="302.0" y2="102.0" stroke="#16233D" stroke-width="3.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="302.0" cy="80.0" r="7.5" fill="#16233D" stroke="#16233D" stroke-width="2.6"/>
+<text x="318.0" y="90.0" class="lb" fill="#103A82" text-anchor="start">5mC</text>
+<line x1="374.0" y1="87.5" x2="374.0" y2="102.0" stroke="#16233D" stroke-width="3.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="374.0" cy="80.0" r="7.5" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<text x="390.0" y="90.0" class="lb" fill="#103A82" text-anchor="start">5mC</text>
+<text x="390.0" y="108.0" class="sm" fill="#103A82" text-anchor="start">(unmodified)</text>
+<text x="138.0" y="158.0" class="h1" fill="#103A82" text-anchor="end">Reference</text>
+<rect x="150.0" y="145.0" width="322.0" height="13.0" rx="3" fill="#103A82" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<rect x="167.4" y="133.0" width="5.2" height="37.0" rx="2" fill="#103A82" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<rect x="223.4" y="133.0" width="5.2" height="37.0" rx="2" fill="#103A82" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<rect x="279.4" y="133.0" width="5.2" height="37.0" rx="2" fill="#103A82" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<rect x="335.4" y="133.0" width="5.2" height="37.0" rx="2" fill="#103A82" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<rect x="391.4" y="133.0" width="5.2" height="37.0" rx="2" fill="#103A82" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<rect x="447.4" y="133.0" width="5.2" height="37.0" rx="2" fill="#103A82" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<line x1="170.0" y1="176.0" x2="170.0" y2="640.0" stroke="#B9C4D0" stroke-width="1.5" stroke-linecap="round" stroke-opacity="1.0" stroke-dasharray="4 6"/>
+<line x1="226.0" y1="176.0" x2="226.0" y2="640.0" stroke="#B9C4D0" stroke-width="1.5" stroke-linecap="round" stroke-opacity="1.0" stroke-dasharray="4 6"/>
+<line x1="282.0" y1="176.0" x2="282.0" y2="640.0" stroke="#B9C4D0" stroke-width="1.5" stroke-linecap="round" stroke-opacity="1.0" stroke-dasharray="4 6"/>
+<line x1="338.0" y1="176.0" x2="338.0" y2="640.0" stroke="#B9C4D0" stroke-width="1.5" stroke-linecap="round" stroke-opacity="1.0" stroke-dasharray="4 6"/>
+<line x1="394.0" y1="176.0" x2="394.0" y2="640.0" stroke="#B9C4D0" stroke-width="1.5" stroke-linecap="round" stroke-opacity="1.0" stroke-dasharray="4 6"/>
+<line x1="450.0" y1="176.0" x2="450.0" y2="640.0" stroke="#B9C4D0" stroke-width="1.5" stroke-linecap="round" stroke-opacity="1.0" stroke-dasharray="4 6"/>
+<text x="138.0" y="224.0" class="lb" fill="#103A82" text-anchor="end">Read 1</text>
+<rect x="150.0" y="211.5" width="322.0" height="13.0" rx="6.5" fill="#C6D0DA" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<circle cx="170.0" cy="218.0" r="17" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="170.0" y="223.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="17">A</text>
+<rect x="212.5" y="207.0" width="27.0" height="22.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.4"/>
+<rect x="260.0" y="205.0" width="44.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.4"/>
+<text x="282.0" y="223.2" class="nt" fill="#1687C9" text-anchor="middle" font-size="15">SV</text>
+<circle cx="338.0" cy="218.0" r="17" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="338.0" y="223.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="17">T</text>
+<line x1="394.0" y1="226.5" x2="394.0" y2="248.0" stroke="#16233D" stroke-width="3.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="394.0" cy="218.0" r="8.5" fill="#16233D" stroke="#16233D" stroke-width="2.6"/>
+<rect x="436.5" y="207.0" width="27.0" height="22.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.4"/>
+<text x="138.0" y="304.0" class="lb" fill="#103A82" text-anchor="end">Read 2</text>
+<rect x="150.0" y="291.5" width="322.0" height="13.0" rx="6.5" fill="#C6D0DA" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<circle cx="170.0" cy="298.0" r="17" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="170.0" y="303.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="17">G</text>
+<circle cx="338.0" cy="298.0" r="17" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="338.0" y="303.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="17">C</text>
+<line x1="394.0" y1="306.5" x2="394.0" y2="328.0" stroke="#16233D" stroke-width="3.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="394.0" cy="298.0" r="8.5" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<text x="138.0" y="384.0" class="lb" fill="#103A82" text-anchor="end">Read 3</text>
+<rect x="150.0" y="371.5" width="322.0" height="13.0" rx="6.5" fill="#C6D0DA" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<circle cx="170.0" cy="378.0" r="17" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="170.0" y="383.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="17">A</text>
+<rect x="212.5" y="367.0" width="27.0" height="22.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.4"/>
+<circle cx="338.0" cy="378.0" r="17" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="338.0" y="383.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="17">T</text>
+<line x1="394.0" y1="386.5" x2="394.0" y2="408.0" stroke="#16233D" stroke-width="3.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="394.0" cy="378.0" r="8.5" fill="#16233D" stroke="#16233D" stroke-width="2.6"/>
+<rect x="436.5" y="367.0" width="27.0" height="22.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.4"/>
+<text x="138.0" y="464.0" class="lb" fill="#103A82" text-anchor="end">Read 4</text>
+<rect x="150.0" y="451.5" width="322.0" height="13.0" rx="6.5" fill="#C6D0DA" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<circle cx="170.0" cy="458.0" r="17" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="170.0" y="463.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="17">G</text>
+<circle cx="338.0" cy="458.0" r="17" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="338.0" y="463.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="17">C</text>
+<line x1="394.0" y1="466.5" x2="394.0" y2="488.0" stroke="#16233D" stroke-width="3.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="394.0" cy="458.0" r="8.5" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<text x="138.0" y="544.0" class="lb" fill="#103A82" text-anchor="end">Read 5</text>
+<rect x="150.0" y="531.5" width="322.0" height="13.0" rx="6.5" fill="#C6D0DA" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<circle cx="170.0" cy="538.0" r="17" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="170.0" y="544.0" class="nt" fill="#1687C9" text-anchor="middle" font-size="17">A</text>
+<rect x="212.5" y="527.0" width="27.0" height="22.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.4"/>
+<rect x="260.0" y="525.0" width="44.0" height="26.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.4"/>
+<text x="282.0" y="543.2" class="nt" fill="#1687C9" text-anchor="middle" font-size="15">SV</text>
+<circle cx="338.0" cy="538.0" r="17" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="338.0" y="544.0" class="nt" fill="#1687C9" text-anchor="middle" font-size="17">T</text>
+<line x1="394.0" y1="546.5" x2="394.0" y2="568.0" stroke="#16233D" stroke-width="3.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="394.0" cy="538.0" r="8.5" fill="#16233D" stroke="#16233D" stroke-width="2.6"/>
+<rect x="436.5" y="527.0" width="27.0" height="22.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.4"/>
+<text x="138.0" y="624.0" class="lb" fill="#103A82" text-anchor="end">Read 6</text>
+<rect x="150.0" y="611.5" width="322.0" height="13.0" rx="6.5" fill="#C6D0DA" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<circle cx="170.0" cy="618.0" r="17" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="170.0" y="624.0" class="nt" fill="#DC2B23" text-anchor="middle" font-size="17">G</text>
+<circle cx="338.0" cy="618.0" r="17" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="338.0" y="624.0" class="nt" fill="#DC2B23" text-anchor="middle" font-size="17">C</text>
+<line x1="394.0" y1="626.5" x2="394.0" y2="648.0" stroke="#16233D" stroke-width="3.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="394.0" cy="618.0" r="8.5" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<text x="516.0" y="44.0" class="pl" fill="#103A82" text-anchor="start">b</text>
+<rect x="1061.1" y="72.0" width="343.4" height="128.0" rx="7" fill="#FCF1C7" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<path d="M1077.1 56 L1077.1 44 L1388.5 44 L1388.5 56" fill="none" stroke="#103A82" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0"/>
+<text x="1232.8" y="30.0" class="h1" fill="#103A82" text-anchor="middle">CNV region</text>
+<path d="M855.7 182 Q1232.8 272 1609.9 182" fill="none" stroke="#F0766C" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.9"/>
+<path d="M981.4 184 Q1232.8 250 1484.2 184" fill="none" stroke="#9BA9B8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.6"/>
+<line x1="730.0" y1="104.0" x2="855.7" y2="166.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="730.0" y1="166.0" x2="855.7" y2="104.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="730.0" y1="104.0" x2="855.7" y2="104.0" stroke="#6CC8EE" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="730.0" y1="166.0" x2="855.7" y2="166.0" stroke="#F0766C" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="855.7" y1="104.0" x2="981.4" y2="166.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="855.7" y1="166.0" x2="981.4" y2="104.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="855.7" y1="104.0" x2="981.4" y2="104.0" stroke="#6CC8EE" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="855.7" y1="166.0" x2="981.4" y2="166.0" stroke="#F0766C" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="981.4" y1="104.0" x2="1107.1" y2="166.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="981.4" y1="166.0" x2="1107.1" y2="104.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="981.4" y1="104.0" x2="1107.1" y2="104.0" stroke="#6CC8EE" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="981.4" y1="166.0" x2="1107.1" y2="166.0" stroke="#F0766C" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="1107.1" y1="104.0" x2="1232.8" y2="166.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1107.1" y1="166.0" x2="1232.8" y2="104.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1107.1" y1="104.0" x2="1232.8" y2="104.0" stroke="#6CC8EE" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="1107.1" y1="166.0" x2="1232.8" y2="166.0" stroke="#F0766C" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="1232.8" y1="104.0" x2="1358.5" y2="166.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1232.8" y1="166.0" x2="1358.5" y2="104.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1232.8" y1="104.0" x2="1358.5" y2="104.0" stroke="#6CC8EE" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="1232.8" y1="166.0" x2="1358.5" y2="166.0" stroke="#F0766C" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="1358.5" y1="104.0" x2="1484.2" y2="166.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1358.5" y1="166.0" x2="1484.2" y2="104.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1358.5" y1="104.0" x2="1484.2" y2="104.0" stroke="#6CC8EE" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="1358.5" y1="166.0" x2="1484.2" y2="166.0" stroke="#F0766C" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="1484.2" y1="104.0" x2="1609.9" y2="166.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1484.2" y1="166.0" x2="1609.9" y2="104.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1484.2" y1="104.0" x2="1609.9" y2="104.0" stroke="#6CC8EE" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="1484.2" y1="166.0" x2="1609.9" y2="166.0" stroke="#F0766C" stroke-width="9.5" stroke-linecap="butt"/>
+<circle cx="730.0" cy="104.0" r="26" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="730.0" y="111.3" class="nt" fill="#1687C9" text-anchor="middle" font-size="20.8">A</text>
+<circle cx="730.0" cy="166.0" r="26" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="730.0" y="173.3" class="nt" fill="#DC2B23" text-anchor="middle" font-size="20.8">G</text>
+<circle cx="855.7" cy="104.0" r="26" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="855.7" y="111.3" class="nt" fill="#1687C9" text-anchor="middle" font-size="20.8">T</text>
+<circle cx="855.7" cy="166.0" r="26" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="855.7" y="173.3" class="nt" fill="#DC2B23" text-anchor="middle" font-size="20.8">C</text>
+<circle cx="981.4" cy="104.0" r="26" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="981.4" y="111.3" class="nt" fill="#1687C9" text-anchor="middle" font-size="20.8">A</text>
+<rect x="952.4" y="145.0" width="58.0" height="42.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="981.4" y="173.3" class="nt" fill="#DC2B23" text-anchor="middle" font-size="21">CA</text>
+<circle cx="1107.1" cy="104.0" r="26" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1107.1" y="111.3" class="nt" fill="#1687C9" text-anchor="middle" font-size="20.8">T</text>
+<circle cx="1107.1" cy="166.0" r="26" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1107.1" y="173.3" class="nt" fill="#DC2B23" text-anchor="middle" font-size="20.8">C</text>
+<circle cx="1232.8" cy="104.0" r="26" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1232.8" y="111.3" class="nt" fill="#1687C9" text-anchor="middle" font-size="20.8">G</text>
+<circle cx="1232.8" cy="166.0" r="26" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1232.8" y="173.3" class="nt" fill="#DC2B23" text-anchor="middle" font-size="20.8">A</text>
+<circle cx="1358.5" cy="104.0" r="26" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1358.5" y="111.3" class="nt" fill="#1687C9" text-anchor="middle" font-size="20.8">A</text>
+<circle cx="1358.5" cy="166.0" r="26" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1358.5" y="173.3" class="nt" fill="#DC2B23" text-anchor="middle" font-size="20.8">T</text>
+<line x1="1484.2" y1="104.0" x2="1484.2" y2="190.0" stroke="#16233D" stroke-width="3.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="1484.2" cy="104" r="10" fill="#16233D" stroke="#16233D" stroke-width="2.6"/>
+<circle cx="1484.2" cy="166" r="10" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<circle cx="1609.9" cy="104.0" r="26" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1609.9" y="111.3" class="nt" fill="#1687C9" text-anchor="middle" font-size="20.8">C</text>
+<circle cx="1609.9" cy="166.0" r="26" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1609.9" y="173.3" class="nt" fill="#DC2B23" text-anchor="middle" font-size="20.8">T</text>
+<text x="512.0" y="138.0" class="h1" fill="#103A82" text-anchor="start" font-size="24">Original</text>
+<text x="512.0" y="168.0" class="h1" fill="#103A82" text-anchor="start" font-size="24">graph</text>
+<path d="M541 190 L555 190 L555 242 L565 242 L548 262 L531 242 L541 242 Z" fill="#8FA3B6" stroke="none"/>
+<text x="512.0" y="330.0" class="h1" fill="#103A82" text-anchor="start" font-size="24">Evidence</text>
+<text x="512.0" y="360.0" class="h1" fill="#103A82" text-anchor="start" font-size="24">calibration</text>
+<path d="M541 408 L555 408 L555 462 L565 462 L548 482 L531 462 L541 462 Z" fill="#8FA3B6" stroke="none"/>
+<text x="512.0" y="530.0" class="h1" fill="#103A82" text-anchor="start" font-size="24">Reweighted</text>
+<text x="512.0" y="560.0" class="h1" fill="#103A82" text-anchor="start" font-size="24">graph</text>
+<text x="798.0" y="254.0" class="h2" fill="#103A82" text-anchor="middle">Uncertain base call</text>
+<text x="692.0" y="324.0" class="lb" fill="#103A82" text-anchor="end">Read</text>
+<line x1="718.0" y1="318.0" x2="882.0" y2="318.0" stroke="#C5E6F6" stroke-width="9" stroke-linecap="butt" stroke-opacity="1.0"/>
+<rect x="776.0" y="342.0" width="46.0" height="102.0" rx="4" fill="#FCF1C7" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<circle cx="736.0" cy="318.0" r="20" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="736.0" y="323.6" class="nt" fill="#1687C9" text-anchor="middle" font-size="16">A</text>
+<circle cx="800.0" cy="318.0" r="20" fill="#ffffff" stroke="#1687C9" stroke-width="2.6" stroke-dasharray="6 4.5"/>
+<text x="800.0" y="323.6" class="nt" fill="#1687C9" text-anchor="middle" font-size="16">C</text>
+<circle cx="864.0" cy="318.0" r="20" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="864.0" y="323.6" class="nt" fill="#1687C9" text-anchor="middle" font-size="16">T</text>
+<line x1="786.0" y1="292.0" x2="778.0" y2="280.0" stroke="#29B6E8" stroke-width="2.6" stroke-linecap="round" stroke-opacity="1.0"/>
+<line x1="800.0" y1="290.0" x2="800.0" y2="276.0" stroke="#29B6E8" stroke-width="2.6" stroke-linecap="round" stroke-opacity="1.0"/>
+<line x1="814.0" y1="292.0" x2="822.0" y2="280.0" stroke="#29B6E8" stroke-width="2.6" stroke-linecap="round" stroke-opacity="1.0"/>
+<text x="702.0" y="378.0" class="lb" fill="#103A82" text-anchor="start">Phred quality</text>
+<rect x="719.0" y="386.0" width="34.0" height="58.0" rx="1.5" fill="#6F8090" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<rect x="783.0" y="424.0" width="34.0" height="20.0" rx="1.5" fill="#F2A33C" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<rect x="847.0" y="394.0" width="34.0" height="50.0" rx="1.5" fill="#6F8090" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<line x1="710.0" y1="444.0" x2="890.0" y2="444.0" stroke="#103A82" stroke-width="2" stroke-linecap="butt" stroke-opacity="1.0"/>
+<path d="M800 456 L800 486" fill="none" stroke="#8FA3B6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aGrey)"/>
+<text x="1200.0" y="254.0" class="h2" fill="#103A82" text-anchor="middle">Sequence-context reliability</text>
+<text x="1058.0" y="320.0" class="lb" fill="#103A82" text-anchor="end">Non-repetitive</text>
+<text x="1058.0" y="342.0" class="lb" fill="#103A82" text-anchor="end">context</text>
+<text x="1091.0" y="306.0" class="sm" fill="#103A82" text-anchor="middle">G</text>
+<line x1="1091.0" y1="314.0" x2="1091.0" y2="326.0" stroke="#6F8090" stroke-width="1.6" stroke-linecap="round" stroke-opacity="1.0"/>
+<text x="1091.0" y="346.0" class="sm" fill="#103A82" text-anchor="middle">G</text>
+<text x="1118.0" y="306.0" class="sm" fill="#103A82" text-anchor="middle">T</text>
+<line x1="1118.0" y1="314.0" x2="1118.0" y2="326.0" stroke="#6F8090" stroke-width="1.6" stroke-linecap="round" stroke-opacity="1.0"/>
+<text x="1118.0" y="346.0" class="sm" fill="#103A82" text-anchor="middle">T</text>
+<text x="1145.0" y="306.0" class="sm" fill="#103A82" text-anchor="middle">C</text>
+<line x1="1145.0" y1="314.0" x2="1145.0" y2="326.0" stroke="#6F8090" stroke-width="1.6" stroke-linecap="round" stroke-opacity="1.0"/>
+<text x="1145.0" y="346.0" class="sm" fill="#103A82" text-anchor="middle">C</text>
+<text x="1279.0" y="306.0" class="sm" fill="#103A82" text-anchor="middle">G</text>
+<line x1="1279.0" y1="314.0" x2="1279.0" y2="326.0" stroke="#6F8090" stroke-width="1.6" stroke-linecap="round" stroke-opacity="1.0"/>
+<text x="1279.0" y="346.0" class="sm" fill="#103A82" text-anchor="middle">G</text>
+<text x="1306.0" y="306.0" class="sm" fill="#103A82" text-anchor="middle">C</text>
+<line x1="1306.0" y1="314.0" x2="1306.0" y2="326.0" stroke="#6F8090" stroke-width="1.6" stroke-linecap="round" stroke-opacity="1.0"/>
+<text x="1306.0" y="346.0" class="sm" fill="#103A82" text-anchor="middle">C</text>
+<text x="1333.0" y="306.0" class="sm" fill="#103A82" text-anchor="middle">T</text>
+<line x1="1333.0" y1="314.0" x2="1333.0" y2="326.0" stroke="#6F8090" stroke-width="1.6" stroke-linecap="round" stroke-opacity="1.0"/>
+<text x="1333.0" y="346.0" class="sm" fill="#103A82" text-anchor="middle">T</text>
+<rect x="1189.0" y="286.0" width="46.0" height="34.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1212.0" y="309.6" class="nt" fill="#1687C9" text-anchor="middle" font-size="19">A</text>
+<rect x="1184.0" y="332.0" width="56.0" height="34.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1212.0" y="355.6" class="nt" fill="#DC2B23" text-anchor="middle" font-size="19">CA</text>
+<text x="1058.0" y="412.0" class="lb" fill="#103A82" text-anchor="end">Tandem-repeat</text>
+<text x="1058.0" y="434.0" class="lb" fill="#103A82" text-anchor="end">context</text>
+<rect x="1069.2" y="382.0" width="89.6" height="64.0" rx="5" fill="#FCF1C7" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<rect x="1265.2" y="382.0" width="89.6" height="64.0" rx="5" fill="#FCF1C7" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<text x="1094.0" y="398.0" class="sm" fill="#103A82" text-anchor="middle">CA</text>
+<line x1="1094.0" y1="406.0" x2="1094.0" y2="418.0" stroke="#6F8090" stroke-width="1.6" stroke-linecap="round" stroke-opacity="1.0"/>
+<text x="1094.0" y="438.0" class="sm" fill="#103A82" text-anchor="middle">CA</text>
+<text x="1134.0" y="398.0" class="sm" fill="#103A82" text-anchor="middle">CA</text>
+<line x1="1134.0" y1="406.0" x2="1134.0" y2="418.0" stroke="#6F8090" stroke-width="1.6" stroke-linecap="round" stroke-opacity="1.0"/>
+<text x="1134.0" y="438.0" class="sm" fill="#103A82" text-anchor="middle">CA</text>
+<text x="1290.0" y="398.0" class="sm" fill="#103A82" text-anchor="middle">CA</text>
+<line x1="1290.0" y1="406.0" x2="1290.0" y2="418.0" stroke="#6F8090" stroke-width="1.6" stroke-linecap="round" stroke-opacity="1.0"/>
+<text x="1290.0" y="438.0" class="sm" fill="#103A82" text-anchor="middle">CA</text>
+<text x="1330.0" y="398.0" class="sm" fill="#103A82" text-anchor="middle">CA</text>
+<line x1="1330.0" y1="406.0" x2="1330.0" y2="418.0" stroke="#6F8090" stroke-width="1.6" stroke-linecap="round" stroke-opacity="1.0"/>
+<text x="1330.0" y="438.0" class="sm" fill="#103A82" text-anchor="middle">CA</text>
+<rect x="1189.0" y="378.0" width="46.0" height="34.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1212.0" y="401.6" class="nt" fill="#1687C9" text-anchor="middle" font-size="19">A</text>
+<rect x="1184.0" y="424.0" width="56.0" height="34.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#DC2B23" stroke-width="2.6" stroke-dasharray="6 4.5"/>
+<text x="1212.0" y="447.6" class="nt" fill="#DC2B23" text-anchor="middle" font-size="19">CA</text>
+<text x="1548.0" y="254.0" class="h2" fill="#103A82" text-anchor="middle">Miscalled SNPs in CNV</text>
+<rect x="1460.0" y="280.0" width="176.0" height="146.0" rx="6" fill="#FCF1C7" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<text x="1448.0" y="312.0" class="lb" fill="#103A82" text-anchor="end">Read 1</text>
+<line x1="1486.0" y1="306.0" x2="1610.0" y2="306.0" stroke="#9BA9B8" stroke-width="2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="1486.0" cy="306.0" r="19" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1486.0" y="311.4" class="nt" fill="#1687C9" text-anchor="middle" font-size="15.5">T</text>
+<circle cx="1548.0" cy="306.0" r="18" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<path d="M1537.2 295.2 L1558.8 316.8 M1558.8 295.2 L1537.2 316.8" stroke="#16233D" stroke-width="2.6" stroke-linecap="round"/>
+<circle cx="1610.0" cy="306.0" r="19" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1610.0" y="311.4" class="nt" fill="#1687C9" text-anchor="middle" font-size="15.5">A</text>
+<text x="1448.0" y="360.0" class="lb" fill="#103A82" text-anchor="end">Read 2</text>
+<line x1="1486.0" y1="354.0" x2="1610.0" y2="354.0" stroke="#9BA9B8" stroke-width="2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="1486.0" cy="354.0" r="19" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1486.0" y="359.4" class="nt" fill="#1687C9" text-anchor="middle" font-size="15.5">T</text>
+<circle cx="1548.0" cy="354.0" r="18" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<path d="M1537.2 343.2 L1558.8 364.8 M1558.8 343.2 L1537.2 364.8" stroke="#16233D" stroke-width="2.6" stroke-linecap="round"/>
+<circle cx="1610.0" cy="354.0" r="19" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1610.0" y="359.4" class="nt" fill="#1687C9" text-anchor="middle" font-size="15.5">T</text>
+<text x="1448.0" y="408.0" class="lb" fill="#103A82" text-anchor="end">Read 3</text>
+<line x1="1486.0" y1="402.0" x2="1610.0" y2="402.0" stroke="#9BA9B8" stroke-width="2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="1486.0" cy="402.0" r="19" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1486.0" y="407.4" class="nt" fill="#1687C9" text-anchor="middle" font-size="15.5">T</text>
+<circle cx="1548.0" cy="402.0" r="18" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<path d="M1537.2 391.2 L1558.8 412.8 M1558.8 391.2 L1537.2 412.8" stroke="#16233D" stroke-width="2.6" stroke-linecap="round"/>
+<circle cx="1610.0" cy="402.0" r="19" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1610.0" y="407.4" class="nt" fill="#1687C9" text-anchor="middle" font-size="15.5">A</text>
+<path d="M1548 438 L1548 482" fill="none" stroke="#8FA3B6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aGrey)"/>
+<path d="M772 234 C776 214 812 212 844 196" fill="none" stroke="#103A82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" stroke-dasharray="7 6" marker-end="url(#aNavy)"/>
+<path d="M1056 236 C1044 220 1018 208 996 194" fill="none" stroke="#103A82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" stroke-dasharray="7 6" marker-end="url(#aNavy)"/>
+<path d="M1502 234 C1482 224 1448 218 1416 214" fill="none" stroke="#103A82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" stroke-dasharray="7 6" marker-end="url(#aNavy)"/>
+<path d="M855.7 620 Q1232.8 668 1609.9 620" fill="none" stroke="#F0766C" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.9"/>
+<line x1="730.0" y1="540.0" x2="855.7" y2="602.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="730.0" y1="602.0" x2="855.7" y2="540.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="730.0" y1="540.0" x2="855.7" y2="540.0" stroke="#6CC8EE" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="730.0" y1="602.0" x2="855.7" y2="602.0" stroke="#9BA9B8" stroke-width="2.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<line x1="855.7" y1="540.0" x2="981.4" y2="602.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="855.7" y1="602.0" x2="981.4" y2="540.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="855.7" y1="540.0" x2="981.4" y2="540.0" stroke="#6CC8EE" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="855.7" y1="602.0" x2="981.4" y2="602.0" stroke="#9BA9B8" stroke-width="2.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<line x1="981.4" y1="540.0" x2="1107.1" y2="602.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="981.4" y1="602.0" x2="1107.1" y2="540.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="981.4" y1="540.0" x2="1107.1" y2="540.0" stroke="#6CC8EE" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="981.4" y1="602.0" x2="1107.1" y2="602.0" stroke="#9BA9B8" stroke-width="2.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<line x1="1107.1" y1="540.0" x2="1232.8" y2="602.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1107.1" y1="602.0" x2="1232.8" y2="540.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1107.1" y1="540.0" x2="1232.8" y2="540.0" stroke="#C5E6F6" stroke-width="6" stroke-linecap="butt"/>
+<line x1="1107.1" y1="602.0" x2="1232.8" y2="602.0" stroke="#F9CFC9" stroke-width="6" stroke-linecap="butt"/>
+<line x1="1232.8" y1="540.0" x2="1358.5" y2="602.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1232.8" y1="602.0" x2="1358.5" y2="540.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1232.8" y1="540.0" x2="1358.5" y2="540.0" stroke="#C5E6F6" stroke-width="6" stroke-linecap="butt"/>
+<line x1="1232.8" y1="602.0" x2="1358.5" y2="602.0" stroke="#F9CFC9" stroke-width="6" stroke-linecap="butt"/>
+<line x1="1358.5" y1="540.0" x2="1484.2" y2="602.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1358.5" y1="602.0" x2="1484.2" y2="540.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1358.5" y1="540.0" x2="1484.2" y2="540.0" stroke="#6CC8EE" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="1358.5" y1="602.0" x2="1484.2" y2="602.0" stroke="#F0766C" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="1484.2" y1="540.0" x2="1609.9" y2="602.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1484.2" y1="602.0" x2="1609.9" y2="540.0" stroke="#9BA9B8" stroke-width="1.9" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1484.2" y1="540.0" x2="1609.9" y2="540.0" stroke="#6CC8EE" stroke-width="9.5" stroke-linecap="butt"/>
+<line x1="1484.2" y1="602.0" x2="1609.9" y2="602.0" stroke="#F0766C" stroke-width="9.5" stroke-linecap="butt"/>
+<circle cx="730.0" cy="540.0" r="26" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="730.0" y="547.3" class="nt" fill="#1687C9" text-anchor="middle" font-size="20.8">A</text>
+<circle cx="730.0" cy="602.0" r="26" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="730.0" y="609.3" class="nt" fill="#DC2B23" text-anchor="middle" font-size="20.8">G</text>
+<circle cx="855.7" cy="540.0" r="26" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="855.7" y="547.3" class="nt" fill="#1687C9" text-anchor="middle" font-size="20.8">T</text>
+<circle cx="855.7" cy="602.0" r="26" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6" stroke-dasharray="6 4.5"/>
+<text x="855.7" y="609.3" class="nt" fill="#DC2B23" text-anchor="middle" font-size="20.8">C</text>
+<circle cx="981.4" cy="540.0" r="26" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="981.4" y="547.3" class="nt" fill="#1687C9" text-anchor="middle" font-size="20.8">A</text>
+<rect x="952.4" y="581.0" width="58.0" height="42.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="981.4" y="609.4" class="nt" fill="#DC2B23" text-anchor="middle" font-size="21">CA</text>
+<circle cx="1107.1" cy="540.0" r="26" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1107.1" y="547.3" class="nt" fill="#1687C9" text-anchor="middle" font-size="20.8">T</text>
+<circle cx="1107.1" cy="602.0" r="26" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1107.1" y="609.3" class="nt" fill="#DC2B23" text-anchor="middle" font-size="20.8">C</text>
+<circle cx="1232.8" cy="540.0" r="21" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<path d="M1220.2 527.4 L1245.4 552.6 M1245.4 527.4 L1220.2 552.6" stroke="#16233D" stroke-width="2.6" stroke-linecap="round"/>
+<circle cx="1232.8" cy="602.0" r="21" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<path d="M1220.2 589.4 L1245.4 614.6 M1245.4 589.4 L1220.2 614.6" stroke="#16233D" stroke-width="2.6" stroke-linecap="round"/>
+<circle cx="1358.5" cy="540.0" r="26" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1358.5" y="547.3" class="nt" fill="#1687C9" text-anchor="middle" font-size="20.8">A</text>
+<circle cx="1358.5" cy="602.0" r="26" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1358.5" y="609.3" class="nt" fill="#DC2B23" text-anchor="middle" font-size="20.8">T</text>
+<line x1="1484.2" y1="540.0" x2="1484.2" y2="626.0" stroke="#16233D" stroke-width="3.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="1484.2" cy="540" r="10" fill="#16233D" stroke="#16233D" stroke-width="2.6"/>
+<circle cx="1484.2" cy="602" r="10" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<circle cx="1609.9" cy="540.0" r="26" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1609.9" y="547.3" class="nt" fill="#1687C9" text-anchor="middle" font-size="20.8">C</text>
+<circle cx="1609.9" cy="602.0" r="26" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1609.9" y="609.3" class="nt" fill="#DC2B23" text-anchor="middle" font-size="20.8">T</text>
+<line x1="700.0" y1="660.0" x2="748.0" y2="660.0" stroke="#6CC8EE" stroke-width="9.5" stroke-linecap="butt"/>
+<text x="760.0" y="666.0" class="lb" fill="#103A82" text-anchor="start">High-confidence edge</text>
+<line x1="1076.0" y1="660.0" x2="1124.0" y2="660.0" stroke="#9BA9B8" stroke-width="2.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<text x="1136.0" y="666.0" class="lb" fill="#103A82" text-anchor="start">Low-confidence edge</text>
+<circle cx="1420.0" cy="660.0" r="15" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<path d="M1411.0 651.0 L1429.0 669.0 M1429.0 651.0 L1411.0 669.0" stroke="#16233D" stroke-width="2.6" stroke-linecap="round"/>
+<text x="1444.0" y="666.0" class="lb" fill="#103A82" text-anchor="start">Filtered variants</text>
+<text x="24.0" y="722.0" class="pl" fill="#103A82" text-anchor="start">c</text>
+<text x="64.0" y="722.0" class="h2" fill="#103A82" text-anchor="start">Node features</text>
+<text x="64.0" y="748.0" class="sm" fill="#103A82" text-anchor="start">Phase evidence</text>
+<text x="183.0" y="748.0" class="sm" fill="#103A82" text-anchor="start">Variant type</text>
+<text x="287.0" y="748.0" class="sm" fill="#103A82" text-anchor="start">Genomic context</text>
+<text x="410.0" y="746.0" class="sm" fill="#103A82" text-anchor="start">···</text>
+<rect x="171.0" y="819.0" width="58.0" height="124.0" rx="8" fill="#FCF1C7" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<line x1="84.0" y1="852.0" x2="142.0" y2="910.0" stroke="#9BA9B8" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="84.0" y1="910.0" x2="142.0" y2="852.0" stroke="#9BA9B8" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="84.0" y1="852.0" x2="142.0" y2="852.0" stroke="#6CC8EE" stroke-width="7" stroke-linecap="butt"/>
+<line x1="84.0" y1="910.0" x2="142.0" y2="910.0" stroke="#F0766C" stroke-width="7" stroke-linecap="butt"/>
+<line x1="142.0" y1="852.0" x2="200.0" y2="910.0" stroke="#9BA9B8" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="142.0" y1="910.0" x2="200.0" y2="852.0" stroke="#9BA9B8" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="142.0" y1="852.0" x2="200.0" y2="852.0" stroke="#6CC8EE" stroke-width="7" stroke-linecap="butt"/>
+<line x1="142.0" y1="910.0" x2="200.0" y2="910.0" stroke="#F0766C" stroke-width="7" stroke-linecap="butt"/>
+<line x1="200.0" y1="852.0" x2="258.0" y2="910.0" stroke="#9BA9B8" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="200.0" y1="910.0" x2="258.0" y2="852.0" stroke="#9BA9B8" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="200.0" y1="852.0" x2="258.0" y2="852.0" stroke="#6CC8EE" stroke-width="7" stroke-linecap="butt"/>
+<line x1="200.0" y1="910.0" x2="258.0" y2="910.0" stroke="#F0766C" stroke-width="7" stroke-linecap="butt"/>
+<line x1="258.0" y1="852.0" x2="316.0" y2="910.0" stroke="#9BA9B8" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="258.0" y1="910.0" x2="316.0" y2="852.0" stroke="#9BA9B8" stroke-width="1.8" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="258.0" y1="852.0" x2="316.0" y2="852.0" stroke="#6CC8EE" stroke-width="7" stroke-linecap="butt"/>
+<line x1="258.0" y1="910.0" x2="316.0" y2="910.0" stroke="#F0766C" stroke-width="7" stroke-linecap="butt"/>
+<circle cx="84.0" cy="852.0" r="21" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="84.0" y="858.0" class="nt" fill="#1687C9" text-anchor="middle" font-size="17">A</text>
+<circle cx="84.0" cy="910.0" r="21" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="84.0" y="916.0" class="nt" fill="#DC2B23" text-anchor="middle" font-size="17">G</text>
+<circle cx="142.0" cy="852.0" r="21" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="142.0" y="858.0" class="nt" fill="#1687C9" text-anchor="middle" font-size="17">T</text>
+<circle cx="142.0" cy="910.0" r="21" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="142.0" y="916.0" class="nt" fill="#DC2B23" text-anchor="middle" font-size="17">C</text>
+<circle cx="200.0" cy="852.0" r="21" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="200.0" y="858.0" class="nt" fill="#1687C9" text-anchor="middle" font-size="17">C</text>
+<circle cx="200.0" cy="910.0" r="21" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="200.0" y="916.0" class="nt" fill="#DC2B23" text-anchor="middle" font-size="17">T</text>
+<circle cx="258.0" cy="852.0" r="21" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="258.0" y="858.0" class="nt" fill="#1687C9" text-anchor="middle" font-size="17">G</text>
+<circle cx="258.0" cy="910.0" r="21" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="258.0" y="916.0" class="nt" fill="#DC2B23" text-anchor="middle" font-size="17">A</text>
+<circle cx="316.0" cy="852.0" r="21" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="316.0" y="858.0" class="nt" fill="#1687C9" text-anchor="middle" font-size="17">T</text>
+<circle cx="316.0" cy="910.0" r="21" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="316.0" y="916.0" class="nt" fill="#DC2B23" text-anchor="middle" font-size="17">C</text>
+<path d="M222 754 C218 780 206 800 202 826" fill="none" stroke="#103A82" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aNavy)"/>
+<text x="64.0" y="966.0" class="h2" fill="#103A82" text-anchor="start">Edge features</text>
+<text x="64.0" y="992.0" class="sm" fill="#103A82" text-anchor="start">Link strength</text>
+<text x="168.0" y="992.0" class="sm" fill="#103A82" text-anchor="start">Genomic distance</text>
+<text x="302.0" y="992.0" class="sm" fill="#103A82" text-anchor="start">Phase-set relation</text>
+<text x="430.0" y="990.0" class="sm" fill="#103A82" text-anchor="start">···</text>
+<path d="M148 950 C158 940 164 932 170 918" fill="none" stroke="#103A82" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aNavy)"/>
+<path d="M342 881 L434 881" fill="none" stroke="#1687C9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aBlue)"/>
+<circle cx="456" cy="881" r="13" fill="#ffffff" stroke="#103A82" stroke-width="2.4"/>
+<path d="M466 872 C484 851 488 821 498 809" fill="none" stroke="#1687C9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aBlue)"/>
+<path d="M466 890 C484 907 490 925 508 933" fill="none" stroke="#1687C9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aBlue)"/>
+<text x="604.0" y="746.0" class="h2" fill="#103A82" text-anchor="middle">Local graph attention</text>
+<ellipse cx="604" cy="812" rx="90" ry="46" fill="#ffffff" stroke="#1687C9" stroke-width="1.8" stroke-dasharray="6 5"/>
+<path d="M555.2 791.8 L591.1 806.6" fill="none" stroke="#7C8DA0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aGrey)"/>
+<path d="M647.1 790.5 L616.5 805.7" fill="none" stroke="#7C8DA0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aGrey)"/>
+<path d="M561.2 830.1 L591.1 817.5" fill="none" stroke="#7C8DA0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aGrey)"/>
+<path d="M652.5 828.7 L617.2 816.6" fill="none" stroke="#7C8DA0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aGrey)"/>
+<path d="M611.2 836.4 L608.0 825.4" fill="none" stroke="#7C8DA0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aGrey)"/>
+<circle cx="546.0" cy="788.0" r="8.5" fill="#8FD18A" stroke="#8FD18A" stroke-width="1"/>
+<circle cx="656.0" cy="786.0" r="8.5" fill="#6CC8EE" stroke="#6CC8EE" stroke-width="1"/>
+<circle cx="552.0" cy="834.0" r="8.5" fill="#F49AC1" stroke="#F49AC1" stroke-width="1"/>
+<circle cx="662.0" cy="832.0" r="8.5" fill="#F0766C" stroke="#F0766C" stroke-width="1"/>
+<circle cx="614.0" cy="846.0" r="8.5" fill="#B9A5E6" stroke="#B9A5E6" stroke-width="1"/>
+<circle cx="604" cy="812" r="11.5" fill="#F6C24E" stroke="#C98A2E" stroke-width="1.6"/>
+<rect x="507.0" y="918.0" width="194.0" height="42.0" rx="8" fill="#EAF4FB" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<path d="M529 931 Q544.0 915 559 931" fill="none" stroke="#1687C9" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.75"/>
+<path d="M529 931 Q574.0 890 619 931" fill="none" stroke="#1687C9" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.75"/>
+<path d="M559 931 Q574.0 915 589 931" fill="none" stroke="#1687C9" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.75"/>
+<path d="M559 931 Q589.0 903 619 931" fill="none" stroke="#1687C9" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.75"/>
+<path d="M589 931 Q604.0 915 619 931" fill="none" stroke="#1687C9" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.75"/>
+<path d="M619 931 Q634.0 915 649 931" fill="none" stroke="#1687C9" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.75"/>
+<path d="M619 931 Q649.0 903 679 931" fill="none" stroke="#1687C9" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.75"/>
+<path d="M649 931 Q664.0 915 679 931" fill="none" stroke="#1687C9" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.75"/>
+<rect x="521.0" y="932.0" width="16.0" height="16.0" rx="2.5" fill="#9BA9B8" fill-opacity="1.0" stroke="#6F8090" stroke-width="1.2"/>
+<rect x="551.0" y="932.0" width="16.0" height="16.0" rx="2.5" fill="#9BA9B8" fill-opacity="1.0" stroke="#6F8090" stroke-width="1.2"/>
+<rect x="581.0" y="932.0" width="16.0" height="16.0" rx="2.5" fill="#9BA9B8" fill-opacity="1.0" stroke="#6F8090" stroke-width="1.2"/>
+<rect x="611.0" y="932.0" width="16.0" height="16.0" rx="2.5" fill="#F5A623" fill-opacity="1.0" stroke="#C97A0E" stroke-width="1.2"/>
+<rect x="641.0" y="932.0" width="16.0" height="16.0" rx="2.5" fill="#9BA9B8" fill-opacity="1.0" stroke="#6F8090" stroke-width="1.2"/>
+<rect x="671.0" y="932.0" width="16.0" height="16.0" rx="2.5" fill="#9BA9B8" fill-opacity="1.0" stroke="#6F8090" stroke-width="1.2"/>
+<path d="M515 956 L515 964 L693 964 L693 956" fill="none" stroke="#103A82" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0"/>
+<text x="604.0" y="992.0" class="h2" fill="#103A82" text-anchor="middle">Window-wide self-attention</text>
+<path d="M696 812 C744 812 760 869 799 876" fill="none" stroke="#103A82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aNavy)"/>
+<path d="M701 940 C754 940 760 893 799 886" fill="none" stroke="#103A82" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aNavy)"/>
+<text x="752.0" y="800.0" class="lbb" fill="#103A82" text-anchor="middle" font-style="italic">h<tspan font-size="72%" baseline-shift="sub">local</tspan></text>
+<text x="756.0" y="936.0" class="lbb" fill="#103A82" text-anchor="middle" font-style="italic">h<tspan font-size="72%" baseline-shift="sub">global</tspan></text>
+<circle cx="820" cy="881" r="19" fill="#ffffff" stroke="#103A82" stroke-width="2.4"/>
+<path d="M810 881 L830 881 M820 871 L820 891" fill="none" stroke="#103A82" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0"/>
+<text x="850.0" y="840.0" class="h2" fill="#103A82" text-anchor="middle">Feature fusion</text>
+<path d="M841 881 L846 881" fill="none" stroke="#1687C9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0"/>
+<rect x="848.0" y="852.0" width="20.0" height="58.0" rx="5" fill="#9B8CD8" fill-opacity="1.0" stroke="#6F5EB8" stroke-width="1.4"/>
+<rect x="878.0" y="852.0" width="20.0" height="58.0" rx="5" fill="#9B8CD8" fill-opacity="1.0" stroke="#6F5EB8" stroke-width="1.4"/>
+<rect x="908.0" y="852.0" width="20.0" height="58.0" rx="5" fill="#9B8CD8" fill-opacity="1.0" stroke="#6F5EB8" stroke-width="1.4"/>
+<path d="M932 881 L982 881" fill="none" stroke="#1687C9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aBlue)"/>
+<text x="1100.0" y="724.0" class="h2" fill="#103A82" text-anchor="middle">Phase-confidence</text>
+<text x="1100.0" y="746.0" class="h2" fill="#103A82" text-anchor="middle">refinement</text>
+<line x1="1012.0" y1="800.0" x2="1056.0" y2="866.0" stroke="#9BA9B8" stroke-width="1.6" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1012.0" y1="866.0" x2="1056.0" y2="800.0" stroke="#9BA9B8" stroke-width="1.6" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1012.0" y1="800.0" x2="1056.0" y2="800.0" stroke="#6CC8EE" stroke-width="6.5" stroke-linecap="butt"/>
+<line x1="1012.0" y1="866.0" x2="1056.0" y2="866.0" stroke="#F0766C" stroke-width="6.5" stroke-linecap="butt"/>
+<line x1="1056.0" y1="800.0" x2="1100.0" y2="866.0" stroke="#9BA9B8" stroke-width="1.4400000000000002" stroke-linecap="round" stroke-opacity="0.6"/>
+<line x1="1056.0" y1="866.0" x2="1100.0" y2="800.0" stroke="#9BA9B8" stroke-width="1.4400000000000002" stroke-linecap="round" stroke-opacity="0.6"/>
+<line x1="1100.0" y1="800.0" x2="1144.0" y2="866.0" stroke="#9BA9B8" stroke-width="1.4400000000000002" stroke-linecap="round" stroke-opacity="0.6"/>
+<line x1="1100.0" y1="866.0" x2="1144.0" y2="800.0" stroke="#9BA9B8" stroke-width="1.4400000000000002" stroke-linecap="round" stroke-opacity="0.6"/>
+<line x1="1144.0" y1="800.0" x2="1188.0" y2="866.0" stroke="#9BA9B8" stroke-width="1.6" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1144.0" y1="866.0" x2="1188.0" y2="800.0" stroke="#9BA9B8" stroke-width="1.6" stroke-linecap="round" stroke-opacity="0.85"/>
+<line x1="1144.0" y1="800.0" x2="1188.0" y2="800.0" stroke="#6CC8EE" stroke-width="6.5" stroke-linecap="butt"/>
+<line x1="1144.0" y1="866.0" x2="1188.0" y2="866.0" stroke="#F0766C" stroke-width="6.5" stroke-linecap="butt"/>
+<path d="M1056.0 796 Q1100.0 721 1144.0 796" fill="none" stroke="#6CC8EE" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0"/>
+<path d="M1056.0 870 Q1100.0 945 1144.0 870" fill="none" stroke="#F0766C" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0"/>
+<circle cx="1012.0" cy="800.0" r="19" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1012.0" y="805.4" class="nt" fill="#1687C9" text-anchor="middle" font-size="15.5">A</text>
+<circle cx="1012.0" cy="866.0" r="19" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1012.0" y="871.4" class="nt" fill="#DC2B23" text-anchor="middle" font-size="15.5">G</text>
+<circle cx="1056.0" cy="800.0" r="19" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1056.0" y="805.4" class="nt" fill="#1687C9" text-anchor="middle" font-size="15.5">T</text>
+<circle cx="1056.0" cy="866.0" r="19" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1056.0" y="871.4" class="nt" fill="#DC2B23" text-anchor="middle" font-size="15.5">C</text>
+<circle cx="1100.0" cy="800.0" r="19" fill="#EEF1F4" stroke="#6F8090" stroke-width="2.6"/>
+<text x="1100.0" y="805.4" class="nt" fill="#6F8090" text-anchor="middle" font-size="15.5">C</text>
+<circle cx="1100.0" cy="866.0" r="19" fill="#EEF1F4" stroke="#6F8090" stroke-width="2.6"/>
+<text x="1100.0" y="871.4" class="nt" fill="#6F8090" text-anchor="middle" font-size="15.5">T</text>
+<circle cx="1144.0" cy="800.0" r="19" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1144.0" y="805.4" class="nt" fill="#1687C9" text-anchor="middle" font-size="15.5">G</text>
+<circle cx="1144.0" cy="866.0" r="19" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1144.0" y="871.4" class="nt" fill="#DC2B23" text-anchor="middle" font-size="15.5">A</text>
+<circle cx="1188.0" cy="800.0" r="19" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1188.0" y="805.4" class="nt" fill="#1687C9" text-anchor="middle" font-size="15.5">T</text>
+<circle cx="1188.0" cy="866.0" r="19" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1188.0" y="871.4" class="nt" fill="#DC2B23" text-anchor="middle" font-size="15.5">C</text>
+<path d="M1100 934 L1100 892" fill="none" stroke="#103A82" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aNavy)"/>
+<text x="1100.0" y="956.0" class="lb" fill="#103A82" text-anchor="middle">Unphased SNP</text>
+<text x="1252.0" y="722.0" class="pl" fill="#103A82" text-anchor="start">d</text>
+<text x="1274.0" y="744.0" class="h2" fill="#1687C9" text-anchor="start">Haplotype 1</text>
+<line x1="1322.0" y1="780.0" x2="1626.0" y2="780.0" stroke="#6CC8EE" stroke-width="7" stroke-linecap="butt"/>
+<circle cx="1344.0" cy="780.0" r="20" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1344.0" y="785.6" class="nt" fill="#1687C9" text-anchor="middle" font-size="16">A</text>
+<circle cx="1392.0" cy="780.0" r="20" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1392.0" y="785.6" class="nt" fill="#1687C9" text-anchor="middle" font-size="16">T</text>
+<rect x="1424.0" y="765.0" width="52.0" height="30.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1450.0" y="785.2" class="nt" fill="#1687C9" text-anchor="middle" font-size="15">SV</text>
+<line x1="1508.0" y1="788.5" x2="1508.0" y2="810.0" stroke="#16233D" stroke-width="3.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="1508.0" cy="780.0" r="8.5" fill="#16233D" stroke="#16233D" stroke-width="2.6"/>
+<circle cx="1556.0" cy="780.0" r="20" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1556.0" y="785.6" class="nt" fill="#1687C9" text-anchor="middle" font-size="16">A</text>
+<circle cx="1604.0" cy="780.0" r="20" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1604.0" y="785.6" class="nt" fill="#1687C9" text-anchor="middle" font-size="16">C</text>
+<text x="1274.0" y="828.0" class="h2" fill="#DC2B23" text-anchor="start">Haplotype 2</text>
+<line x1="1322.0" y1="864.0" x2="1626.0" y2="864.0" stroke="#F0766C" stroke-width="7" stroke-linecap="butt"/>
+<circle cx="1344.0" cy="864.0" r="20" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1344.0" y="869.6" class="nt" fill="#DC2B23" text-anchor="middle" font-size="16">G</text>
+<circle cx="1392.0" cy="864.0" r="20" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1392.0" y="869.6" class="nt" fill="#DC2B23" text-anchor="middle" font-size="16">C</text>
+<line x1="1508.0" y1="872.5" x2="1508.0" y2="894.0" stroke="#16233D" stroke-width="3.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="1508.0" cy="864.0" r="8.5" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<rect x="1530.0" y="849.0" width="52.0" height="30.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1556.0" y="869.2" class="nt" fill="#DC2B23" text-anchor="middle" font-size="15">CA</text>
+<circle cx="1604.0" cy="864.0" r="20" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1604.0" y="869.6" class="nt" fill="#DC2B23" text-anchor="middle" font-size="16">T</text>
+<text x="1274.0" y="904.0" class="h2" fill="#103A82" text-anchor="start">Haplotagging reads</text>
+<text x="1312.0" y="940.0" class="lb" fill="#1687C9" text-anchor="end">Read 1</text>
+<rect x="1322.0" y="929.0" width="304.0" height="10.0" rx="5" fill="#D9EEF9" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<circle cx="1344.0" cy="934.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1344.0" y="938.0" class="nt" fill="#1687C9" text-anchor="middle" font-size="11.5">A</text>
+<circle cx="1392.0" cy="934.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1392.0" y="938.0" class="nt" fill="#1687C9" text-anchor="middle" font-size="11.5">T</text>
+<rect x="1432.0" y="923.0" width="36.0" height="22.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.2"/>
+<text x="1450.0" y="937.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="11">SV</text>
+<line x1="1508.0" y1="940.0" x2="1508.0" y2="950.0" stroke="#16233D" stroke-width="2.8" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="1508.0" cy="934.0" r="6" fill="#16233D" stroke="#16233D" stroke-width="2.6"/>
+<circle cx="1556.0" cy="934.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1556.0" y="938.0" class="nt" fill="#1687C9" text-anchor="middle" font-size="11.5">A</text>
+<circle cx="1604.0" cy="934.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1604.0" y="938.0" class="nt" fill="#1687C9" text-anchor="middle" font-size="11.5">C</text>
+<text x="1312.0" y="973.0" class="lb" fill="#1687C9" text-anchor="end">Read 2</text>
+<rect x="1322.0" y="962.0" width="304.0" height="10.0" rx="5" fill="#D9EEF9" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<circle cx="1344.0" cy="967.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1344.0" y="971.0" class="nt" fill="#1687C9" text-anchor="middle" font-size="11.5">A</text>
+<circle cx="1392.0" cy="967.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1392.0" y="971.0" class="nt" fill="#1687C9" text-anchor="middle" font-size="11.5">T</text>
+<rect x="1432.0" y="956.0" width="36.0" height="22.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.2"/>
+<text x="1450.0" y="970.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="11">SV</text>
+<line x1="1508.0" y1="973.0" x2="1508.0" y2="983.0" stroke="#16233D" stroke-width="2.8" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="1508.0" cy="967.0" r="6" fill="#16233D" stroke="#16233D" stroke-width="2.6"/>
+<circle cx="1556.0" cy="967.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1556.0" y="971.0" class="nt" fill="#1687C9" text-anchor="middle" font-size="11.5">A</text>
+<circle cx="1604.0" cy="967.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1604.0" y="971.0" class="nt" fill="#1687C9" text-anchor="middle" font-size="11.5">C</text>
+<text x="1312.0" y="1006.0" class="lb" fill="#DC2B23" text-anchor="end">Read 3</text>
+<rect x="1322.0" y="995.0" width="304.0" height="10.0" rx="5" fill="#FBE1DE" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<circle cx="1344.0" cy="1000.0" r="12.5" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1344.0" y="1004.0" class="nt" fill="#DC2B23" text-anchor="middle" font-size="11.5">G</text>
+<circle cx="1392.0" cy="1000.0" r="12.5" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1392.0" y="1004.0" class="nt" fill="#DC2B23" text-anchor="middle" font-size="11.5">C</text>
+<line x1="1508.0" y1="1006.0" x2="1508.0" y2="1016.0" stroke="#16233D" stroke-width="2.8" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="1508.0" cy="1000.0" r="6" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<rect x="1538.0" y="989.0" width="36.0" height="22.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#DC2B23" stroke-width="2.2"/>
+<text x="1556.0" y="1003.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="11">CA</text>
+<circle cx="1604.0" cy="1000.0" r="12.5" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1604.0" y="1004.0" class="nt" fill="#DC2B23" text-anchor="middle" font-size="11.5">T</text>
+</svg>

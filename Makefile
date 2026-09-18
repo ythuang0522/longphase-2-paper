@@ -6,7 +6,13 @@ Supplementary.pdf: Supplementary.tex references.bib figures/supp/*.pdf
 figures/supp/%.pdf: figures/supp/%.svg
 	rsvg-convert -f pdf -o $@ $<
 
-main.pdf: main.tex sections/*.tex references.bib figures/*
+figures/fig1_overview.svg: figures-source/make_fig1.py
+	python3 figures-source/make_fig1.py
+
+figures/fig1_overview.pdf: figures/fig1_overview.svg
+	rsvg-convert -f pdf -o $@ $<
+
+main.pdf: main.tex sections/*.tex references.bib figures/fig1_overview.pdf figures/*.png
 	latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
 
 wordcount:
