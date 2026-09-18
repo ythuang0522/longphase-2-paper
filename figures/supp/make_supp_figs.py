@@ -829,124 +829,182 @@ def fig_s8():
 # S9  modcall
 # ============================================================================
 def fig_s9():
-    S = SVG(W, 498, "Allele-specific methylation calling with modcall")
-    XL, XR = 16, 428
-    S.line(408, 18, 408, 482, stroke=LGREY, w=0.8)
+    S = SVG(W, 566, "Allele-specific methylation calling with modcall")
+    XL, XR = 16, 424
+    S.line(406, 18, 406, 550, stroke=LGREY, w=0.8)
+    RW = 340   # right column width
 
-    # -- a ---------------------------------------------------------------
-    S.panel(XL, 24, "a", "Per-read CpG state from the ML probability")
-    x0, x1, y = 60, 380, 62
-    for f0, wf, col, lab, tc in [(0.0, 0.2, H1L, "unmethylated", H1),
-                                 (0.2, 0.6, VLGREY, "ambiguous", GREY),
-                                 (0.8, 0.2, H2L, "methylated", H2)]:
-        S.rect(x0 + f0 * (x1 - x0), y - 16, wf * (x1 - x0), 16, fill=col, r=1)
-        S.text(x0 + (f0 + wf / 2) * (x1 - x0), y - 4.5, lab, cls="sb",
-               anchor="middle", fill=tc)
-    S.line(x0, y + 4, x1, y + 4, stroke=INK, w=1)
-    for p, lab in [(0, "0"), (0.2, "0.2"), (0.8, "0.8"), (1, "1")]:
-        xx = x0 + p * (x1 - x0)
-        S.line(xx, y + 4, xx, y + 9, stroke=INK, w=1)
-        S.text(xx, y + 20, lab, cls="s", anchor="middle")
-    S.text(XL, y + 20, "ML / 255", cls="s")
+    def cpg_mark(cx, cy, state, r=4.4):
+        """state: 'm' methylated, 'u' unmethylated, 'a' ambiguous."""
+        if state == "m":
+            S.circle(cx, cy, r, fill=INK, stroke=INK, sw=0)
+        elif state == "u":
+            S.circle(cx, cy, r, fill="#ffffff", stroke=INK, sw=1.1)
+        else:
+            S.circle(cx, cy, r, fill=LGREY, stroke=GREY, sw=0.9)
 
-    # -- b ---------------------------------------------------------------
-    S.panel(XL, 118, "b", "CpG strand pooling")
-    yb = 154
-    S.rect(110, yb - 9, 150, 14, fill=VLGREY, r=1)
-    S.rect(110, yb + 17, 150, 14, fill=VLGREY, r=1)
-    S.text(104, yb + 2, "5′", cls="s", anchor="end")
-    S.text(266, yb + 2, "3′", cls="s")
-    S.text(104, yb + 28, "3′", cls="s", anchor="end")
-    S.text(266, yb + 28, "5′", cls="s")
-    S.text(176, yb + 2, "C", cls="code", anchor="middle", fill=H2)
-    S.text(192, yb + 2, "G", cls="code", anchor="middle", fill=INK)
-    S.text(176, yb + 28, "G", cls="code", anchor="middle", fill=INK)
-    S.text(192, yb + 28, "C", cls="code", anchor="middle", fill=H2)
-    S.path(f"M196,{yb+24} C220,{yb+20} 218,{yb+3} 184,{yb+8}", stroke=AMBER, w=1,
-           arrow="arra")
-    S.text(278, yb + 2, "forward call", cls="s")
-    S.text(278, yb + 28, "reverse call → forward coordinate", cls="s")
-    S.text(XL, yb + 52, "M, U, A = methylated, unmethylated, ambiguous reads after pooling",
-           cls="s")
+    # -- a  read-level ML parsing ---------------------------------------
+    S.panel(XL, 24, "a", "Per-read CpG state from the MM / ML tags")
+    sites = [78, 132, 186, 262, 330]
+    stat  = ["Homo", "Hetero", "Hetero", "Homo", "Hetero"]
+    S.rect(52, 38, 330, 11, fill=HEADF, r=1)
+    for x, st in zip(sites, stat):
+        S.text(x, 34, st, cls="s", anchor="middle",
+               fill=(INK if st == "Hetero" else GREY))
+        S.text(x, 47, "CpG", cls="n", anchor="middle", fill=GREY)
+    # forward-strand reads
+    fwd = [(56, 300, {78: "m", 132: "m", 186: "m", 330: "u"}),
+           (96, 378, {132: "m", 186: "m", 330: "u"}),
+           (56, 340, {78: "m", 132: "u", 186: "u"}),
+           (56, 230, {78: "m", 132: "u", 186: "a"})]
+    rev = [(66, 372, {78: "m", 262: "m", 330: "m"}),
+           (120, 382, {186: "a", 262: "m", 330: "m"}),
+           (56, 320, {78: "m", 186: "m", 262: "m"})]
+    y = 62
+    S.text(XL, y + 22, "forward", cls="s", rot=-90)
+    for x1, x2, marks in fwd:
+        S.line(x1, y, x2, y, stroke=LGREY, w=1.1, arrow="arr")
+        for px, st in marks.items():
+            if x1 <= px <= x2: cpg_mark(px, y, st)
+        y += 15
+    y += 7
+    S.text(XL, y + 18, "reverse", cls="s", rot=-90)
+    for x1, x2, marks in rev:
+        S.line(x2, y, x1, y, stroke=LGREY, w=1.1, arrow="arr")
+        for px, st in marks.items():
+            if x1 <= px <= x2: cpg_mark(px, y, st)
+        y += 15
+    # threshold scale
+    ys = y + 16
+    x0, x1s = 62, 372
+    for f0, wf, col in [(0.0, 0.2, "#ffffff"), (0.2, 0.6, VLGREY), (0.8, 0.2, INK)]:
+        S.rect(x0 + f0 * (x1s - x0), ys, wf * (x1s - x0), 11, fill=col,
+               stroke=LGREY, sw=0.7, r=1)
+    for p2, lab in [(0, "0"), (0.2, "0.2"), (0.8, "0.8"), (1, "1")]:
+        xx = x0 + p2 * (x1s - x0)
+        S.text(xx, ys + 22, lab, cls="s", anchor="middle")
+    for f0, wf, lab in [(0.0, 0.2, "unmethylated"), (0.2, 0.6, "ambiguous"),
+                        (0.8, 0.2, "methylated")]:
+        S.text(x0 + (f0 + wf / 2) * (x1s - x0), ys + 34, lab, cls="s",
+               anchor="middle")
+    S.text(XL, ys + 9, "ML / 255", cls="s")
 
-    # -- c ---------------------------------------------------------------
-    S.panel(XL, 234, "c", "Site genotype")
-    S.callout(XL, 248, 378, 32, fill=VLGREY, accent=INK)
-    S.text(XL + 10, 263, "heterozygous if  min(M,U) / max(M,U) ≥ 0.6", cls="tb", fill=INK)
-    S.text(XL + 10, 275, "and  A / (M+U+A) ≤ 0.2;  otherwise homozygous or excluded",
-           cls="s")
+    # -- b  CpG merging --------------------------------------------------
+    yb0 = 246
+    S.panel(XL, yb0, "b", "Strand pooling and merging of consecutive CpGs")
+    yb = yb0 + 22
+    for col_x, hdr in [(58, "two CpG coordinates"), (250, "one merged locus")]:
+        S.text(col_x + 58, yb, hdr, cls="s", anchor="middle", fill=GREY)
+    # left: two coordinates, forward reads carry C, reverse carry G
+    for k, (lx, pair) in enumerate([(58, [(96, 116)]), (250, [(306, 306)])]):
+        for (ca, cb) in pair:
+            S.rect(lx, yb + 8, 116, 11, fill=HEADF, r=1)
+            S.text(ca, yb + 17, "C", cls="n", anchor="middle", fill=INK)
+            if cb != ca:
+                S.text(cb, yb + 17, "G", cls="n", anchor="middle", fill=GREY)
+        yy = yb + 28
+        for j in range(6):
+            fwdr = j < 3
+            st = "m" if j < 3 else "u"
+            S.line(lx, yy, lx + 116, yy, stroke=LGREY, w=1.1)
+            if k == 0:
+                cpg_mark(ca if fwdr else cb, yy, st)
+            else:
+                cpg_mark(306, yy, st)
+            yy += 12
+    S.path(f"M188,{yb+58} L240,{yb+58}", stroke=INK, w=1.2, arrow="arrd")
+    S.text(XL, yb + 112, "5mC is called on one strand at a time; merging gives one "
+           "locus with one read list", cls="s")
+
+    # -- c  site genotype ------------------------------------------------
+    yc0 = 412
+    S.panel(XL, yc0, "c", "Site genotype")
+    S.callout(XL, yc0 + 12, 374, 30, fill=VLGREY, accent=INK)
+    S.text(XL + 10, yc0 + 26, "heterozygous if  min(M,U) / max(M,U) &#8805; 0.6"
+           "   and   A / (M+U+A) &#8804; 0.2", cls="tb", fill=INK)
+    S.text(XL + 10, yc0 + 38, "otherwise homozygous methylated or unmethylated, and "
+           "excluded from phasing", cls="s")
     for i, (m, u, a, gt, col) in enumerate([(14, 12, 2, "0/1", GREEN),
                                             (25, 2, 1, "1/1", GREY),
                                             (9, 8, 11, "excluded", GREY)]):
-        yy = 296 + i * 24
-        tot, bw = m + u + a, 196
-        S.rect(XL + 96, yy, bw * m / tot, 14, fill=H2, r=1)
-        S.rect(XL + 96 + bw * m / tot, yy, bw * u / tot, 14, fill=H1, r=1)
-        S.rect(XL + 96 + bw * (m + u) / tot, yy, bw * a / tot, 14, fill=LGREY, r=1)
-        S.text(XL + 90, yy + 11, f"M {m}   U {u}   A {a}", cls="s", anchor="end")
-        S.text(XL + 302, yy + 11, gt, cls="tb", fill=col)
+        yy = yc0 + 52 + i * 22
+        tot, bw = m + u + a, 190
+        S.rect(XL + 96, yy, bw * m / tot, 13, fill=INK, r=1)
+        S.rect(XL + 96 + bw * m / tot, yy, bw * u / tot, 13, fill="#ffffff",
+               stroke=LGREY, sw=0.7, r=1)
+        S.rect(XL + 96 + bw * (m + u) / tot, yy, bw * a / tot, 13, fill=LGREY, r=1)
+        S.text(XL + 90, yy + 10, f"M {m}   U {u}   A {a}", cls="s", anchor="end")
+        S.text(XL + 296, yy + 10, gt, cls="tb", fill=col)
     kx = XL
-    for c, lab in [(H2, "methylated"), (H1, "unmethylated"), (LGREY, "ambiguous")]:
-        S.rect(kx, 374, 10, 10, fill=c, r=1)
-        S.text(kx + 14, 383, lab, cls="s")
+    for c, sk, lab in [(INK, INK, "methylated"), ("#ffffff", LGREY, "unmethylated"),
+                       (LGREY, LGREY, "ambiguous")]:
+        S.rect(kx, yc0 + 124, 10, 10, fill=c, stroke=sk, sw=0.7, r=1)
+        S.text(kx + 14, yc0 + 133, lab, cls="s")
         kx += 22 + 5.4 * len(lab)
 
-    # -- e ---------------------------------------------------------------
-    S.panel(XL, 418, "e", "Output record")
-    S.rect(XL, 430, 378, 52, fill=VLGREY, r=2)
-    S.text(XL + 10, 446, "chr1 10469 . N . . PASS RS=P;MR=read3,read7;NR=read1,read4",
-           cls="code")
-    S.text(XL + 10, 459, "GT:MD:UD:DP   0/1:14:12:28", cls="code")
-    S.text(XL + 10, 475, "MR / NR read names attach the 5mC alleles to reads in phase",
+    # -- d  the four edge types ------------------------------------------
+    S.panel(XR, 24, "d", "Read support between two loci")
+    pairs = [("MM", "m", "m", 8), ("UU", "u", "u", 10),
+             ("MU", "m", "u", 2), ("UM", "u", "m", 1)]
+    for k, (lab, s1, s2, n) in enumerate(pairs):
+        col_i, row_i = k % 2, k // 2
+        ex = XR + col_i * 168
+        ey = 52 + row_i * 40
+        S.text(ex, ey + 4, lab, cls="sb", fill=GREY)
+        cpg_mark(ex + 34, ey, s1, r=6)
+        cpg_mark(ex + 88, ey, s2, r=6)
+        S.line(ex + 41, ey, ex + 81, ey, stroke=LGREY, w=1.4)
+        S.text(ex + 116, ey + 4, str(n), cls="tb", anchor="end", fill=INK)
+        S.text(ex + 121, ey + 4, "read" if n == 1 else "reads", cls="s")
+    S.rule(XR, 140, XR + RW)
+    S.text(XR, 158, "P = MM + UU = 18", cls="tb", fill=INK)
+    S.text(XR + 132, 158, "Q = MU + UM = 3", cls="tb", fill=INK)
+    S.text(XR, 182, "linkage  =", cls="eq", fill=INK)
+    S.frac(XR + 108, 178, "max(P, Q)", "P + Q", cls="s", width=64)
+    S.text(XR + 150, 182, "= 0.86", cls="tb", fill=INK)
+    S.text(XR + 196, 182, "&lt; 0.9  rejected", cls="tb", fill=AMBER)
+    S.text(XR, 202, "P and Q are the same quantities the phasing graph accumulates,",
+           cls="s")
+    S.text(XR, 213, "so 5mC alleles need no methylation-specific handling in phase.",
            cls="s")
 
-    # -- d ---------------------------------------------------------------
-    S.panel(XR, 24, "d", "Co-segregation with a neighbouring marker")
-    S.text(XR + 4, 62, "linkage  =", cls="eq", fill=INK)
-    S.frac(XR + 144, 58, "max(RR + AA,  RA + AR)", "RR + AA + RA + AR", cls="s", width=116)
-    S.text(XR + 196, 62, "≥ 0.9", cls="tb", fill=GREEN)
-
-    modes = [("SNV-anchored", GREEN, "accepted",
-              "SNV within the next 20 variants, on &gt; max(6, (d" + sub("1") + "+d"
-              + sub("2") + ")/4) reads"),
-             ("no SNV in range", LGREY, "weak",
-              "held for methylation-only mode"),
-             ("CpG–CpG expansion", AMBER, "accepted",
-              "linked to an accepted CpG; 2 rounds, adjacent CpGs merged")]
+    # -- e  linking modes -------------------------------------------------
+    S.panel(XR, 246, "e", "Co-segregation with a neighbouring marker")
+    modes = [("SNV-anchored", GREEN, "strong anchor",
+              "SNV among the next 20 variants"),
+             ("methylation-only", GREEN, "strong anchor",
+              "no informative SNV in range"),
+             ("iterative expansion", AMBER, "weak, admitted",
+              "against an accepted CpG, &#8805; 6 reads, 2 rounds")]
     for k, (title, col, verdict, note) in enumerate(modes):
-        yk = 96 + k * 104
+        yk = 272 + k * 62
         S.text(XR, yk, title, cls="sb", fill=INK)
-        ax, bx, cx = XR + 62, XR + 142, XR + 222
-        yt2, yb2 = yk + 32, yk + 60
-        if k < 2:
-            S.node(ax, yt2, "R", H1, r=9)
-            S.node(ax, yb2, "A", H2, r=9)
-            S.text(ax, yk + 18, "SNV", cls="s", anchor="middle")
+        ax, bx = XR + 30, XR + 110
+        yt2 = yk + 26
+        if k == 0:
+            S.node(ax, yt2, "R", H1, r=8)
+            S.text(ax, yk + 46, "SNV", cls="s", anchor="middle")
         else:
-            S.circle(ax, yt2, 8, fill=INK, stroke=INK, sw=0)
-            S.circle(ax, yb2, 8, fill="#fff", stroke=INK)
-            S.text(ax, yk + 18, "CpG", cls="s", anchor="middle")
-        S.circle(bx, yt2, 8, fill=INK, stroke=INK, sw=0)
-        S.circle(bx, yb2, 8, fill="#fff", stroke=INK)
-        S.text(bx, yk + 18, "CpG", cls="s", anchor="middle")
-        S.line(ax + 9, yt2, bx - 9, yt2, stroke=col, w=2.4)
-        S.line(ax + 9, yb2, bx - 9, yb2, stroke=col, w=2.4)
-        if k == 2:
-            S.circle(cx, yt2, 8, fill=INK, stroke=INK, sw=0)
-            S.circle(cx, yb2, 8, fill="#fff", stroke=INK)
-            S.text(cx, yk + 18, "CpG", cls="s", anchor="middle")
-            S.line(bx + 9, yt2, cx - 9, yt2, stroke=col, w=2.4)
-            S.line(bx + 9, yb2, cx - 9, yb2, stroke=col, w=2.4)
-        vx = cx + 34 if k == 2 else bx + 34
-        S.text(vx, yk + 49, verdict, cls="sb", fill=col if col != LGREY else GREY)
-        S.text(XR, yk + 80, note, cls="s")
-        if k < 2:
-            S.rule(XR, yk + 92, W - 16)
+            cpg_mark(ax, yt2, "m", r=7)
+            S.text(ax, yk + 46, "CpG", cls="s", anchor="middle")
+        cpg_mark(bx, yt2, "m", r=7)
+        S.text(bx, yk + 46, "CpG", cls="s", anchor="middle")
+        S.line(ax + 9, yt2, bx - 9, yt2, stroke=col, w=2.2)
+        S.text(bx + 22, yt2 + 4, verdict, cls="sb",
+               fill=(col if col != LGREY else GREY))
+        S.text(bx + 22, yt2 + 16, note, cls="s")
+    S.callout(XR, 458, RW, 30, fill=AMBERL, accent=AMBER)
+    S.text(XR + 10, 472, "a pair is considered only while spanning reads &gt; max(6, "
+           "(n" + sub("1") + " + n" + sub("2") + ") / 4)", cls="tb", fill=INK)
+    S.text(XR + 10, 483, "falling to that bound ends the neighbour scan for the site",
+           cls="s")
 
-    S.circle(XR + 6, 414, 6, fill=INK, stroke=INK, sw=0)
-    S.text(XR + 16, 417, "methylated allele", cls="s")
-    S.circle(XR + 124, 414, 6, fill="#fff", stroke=INK)
-    S.text(XR + 134, 417, "unmethylated allele", cls="s")
+    # -- f  output --------------------------------------------------------
+    S.panel(XR, 512, "f", "Output record")
+    S.rect(XR, 522, RW, 30, fill=VLGREY, r=2)
+    S.text(XR + 8, 535, "chr1 10469 . N . . PASS RS=P;MR=read3,read7;NR=read1,read4",
+           cls="code")
+    S.text(XR + 8, 547, "GT:MD:UD:DP   0/1:14:12:28", cls="code")
 
     S.save("suppfig9_modcall.svg")
 
