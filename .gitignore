@@ -19,3 +19,7 @@
 # Scratch
 tmp/
 scratch/
+
+# Python
+__pycache__/
+*.pyc
