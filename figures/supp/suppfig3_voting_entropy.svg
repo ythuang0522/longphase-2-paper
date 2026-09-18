@@ -51,38 +51,38 @@
 <text x="370.0" y="131.0" class="n" text-anchor="middle" fill="#6E7C8C">r</text>
 <circle cx="370.0" cy="200.0" r="10" fill="#fff" stroke="#6E7C8C" stroke-width="1.4"/>
 <text x="370.0" y="203.0" class="n" text-anchor="middle" fill="#6E7C8C">a</text>
-<path d="M80,128 C220.0,84 220.0,84 360,128" stroke="#1266B0" stroke-width="4.815433297614831" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
-<rect x="211.0" y="80.0" width="18.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="220.0" y="89.0" class="sb" text-anchor="middle" fill="#1266B0">20</text>
-<path d="M140,128 C250.0,78 250.0,78 360,128" stroke="#1266B0" stroke-width="2.670367564768983" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
-<rect x="241.0" y="74.0" width="18.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="250.0" y="83.0" class="sb" text-anchor="middle" fill="#1266B0">1</text>
-<path d="M200,128 C280.0,72 280.0,72 360,128" stroke="#1266B0" stroke-width="2.670367564768983" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
-<rect x="271.0" y="68.0" width="18.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="280.0" y="77.0" class="sb" text-anchor="middle" fill="#1266B0">1</text>
-<path d="M320,128 C340.0,60 340.0,60 360,128" stroke="#1266B0" stroke-width="1.4117509926287681" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
-<rect x="331.0" y="56.0" width="18.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="340.0" y="65.0" class="sb" text-anchor="middle" fill="#1266B0">0.1</text>
-<path d="M260,200 C310.0,244 310.0,244 360,200" stroke="#CE4125" stroke-width="2.670367564768983" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
-<rect x="301.0" y="246.0" width="18.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="310.0" y="255.0" class="sb" text-anchor="middle" fill="#CE4125">1</text>
+<path d="M80,128 C220.0,52.0 220.0,52.0 360,128" stroke="#1266B0" stroke-width="4.815433297614831" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+<rect x="211.0" y="48.0" width="18.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="220.0" y="57.0" class="sb" text-anchor="middle" fill="#1266B0">20</text>
+<path d="M140,128 C250.0,64.0 250.0,64.0 360,128" stroke="#1266B0" stroke-width="2.670367564768983" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+<rect x="241.0" y="60.0" width="18.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="250.0" y="69.0" class="sb" text-anchor="middle" fill="#1266B0">1</text>
+<path d="M200,128 C280.0,76.0 280.0,76.0 360,128" stroke="#1266B0" stroke-width="2.670367564768983" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+<rect x="271.0" y="72.0" width="18.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="280.0" y="81.0" class="sb" text-anchor="middle" fill="#1266B0">1</text>
+<path d="M320,128 C340.0,100.0 340.0,100.0 360,128" stroke="#1266B0" stroke-width="1.4117509926287681" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+<rect x="331.0" y="96.0" width="18.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="340.0" y="105.0" class="sb" text-anchor="middle" fill="#1266B0">0.1</text>
+<path d="M260,200 C310.0,232.8 310.0,232.8 360,200" stroke="#CE4125" stroke-width="2.670367564768983" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+<rect x="301.0" y="234.8" width="18.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="310.0" y="243.8" class="sb" text-anchor="middle" fill="#CE4125">1</text>
 <rect x="59.0" y="159.0" width="22.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="70.0" y="168.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" dy="2.6">−5</tspan><tspan dy="-2.6"></tspan></text>
+<text x="70.0" y="168.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" baseline-shift="sub">−5</tspan></text>
 <rect x="119.0" y="159.0" width="22.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="130.0" y="168.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" dy="2.6">−4</tspan><tspan dy="-2.6"></tspan></text>
+<text x="130.0" y="168.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" baseline-shift="sub">−4</tspan></text>
 <rect x="179.0" y="159.0" width="22.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="190.0" y="168.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" dy="2.6">−3</tspan><tspan dy="-2.6"></tspan></text>
+<text x="190.0" y="168.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" baseline-shift="sub">−3</tspan></text>
 <rect x="239.0" y="159.0" width="22.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="250.0" y="168.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" dy="2.6">−2</tspan><tspan dy="-2.6"></tspan></text>
+<text x="250.0" y="168.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" baseline-shift="sub">−2</tspan></text>
 <rect x="299.0" y="159.0" width="22.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="310.0" y="168.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" dy="2.6">−1</tspan><tspan dy="-2.6"></tspan></text>
+<text x="310.0" y="168.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" baseline-shift="sub">−1</tspan></text>
 <rect x="359.0" y="159.0" width="22.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
 <text x="370.0" y="168.0" class="m" text-anchor="middle" fill="#16233D">v</text>
 <text x="388.0" y="131.0" class="s" text-anchor="start" fill="#1266B0">hap 1</text>
 <text x="388.0" y="203.0" class="s" text-anchor="start" fill="#CE4125">hap 2</text>
 <rect x="16.0" y="244.0" width="386.0" height="40.0" rx="2" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="28.0" y="261.0" class="eq" text-anchor="start" fill="#1266B0">h<tspan font-size="72%" dy="2.6">1</tspan><tspan dy="-2.6"></tspan>(v) = 20 + 1 + 1 + 0.1 = 22.1</text>
-<text x="246.0" y="261.0" class="eq" text-anchor="start" fill="#CE4125">h<tspan font-size="72%" dy="2.6">2</tspan><tspan dy="-2.6"></tspan>(v) = 1</text>
+<text x="28.0" y="261.0" class="eq" text-anchor="start" fill="#1266B0">h<tspan font-size="72%" baseline-shift="sub">1</tspan>(v) = 20 + 1 + 1 + 0.1 = 22.1</text>
+<text x="246.0" y="261.0" class="eq" text-anchor="start" fill="#CE4125">h<tspan font-size="72%" baseline-shift="sub">2</tspan>(v) = 1</text>
 <text x="28.0" y="277.0" class="sb" text-anchor="start" fill="#16233D">v → haplotype 1</text>
 <text x="116.0" y="277.0" class="s" text-anchor="start">(a tie opens a new phase block)</text>
 <text x="16.0" y="310.0" class="pl" text-anchor="start">c</text>
@@ -113,7 +113,7 @@
 <text x="382.0" y="347.0" class="s" text-anchor="start" fill="#6E7C8C">dropped</text>
 <text x="438.0" y="24.0" class="pl" text-anchor="start">b</text>
 <text x="452.0" y="24.0" class="h" text-anchor="start">Phasing entropy</text>
-<text x="442.0" y="58.0" class="eq" text-anchor="start" fill="#16233D">PE(v) = − Σ p<tspan font-size="72%" dy="2.6">i</tspan><tspan dy="-2.6"></tspan> log<tspan font-size="72%" dy="2.6">2</tspan><tspan dy="-2.6"></tspan> p<tspan font-size="72%" dy="2.6">i</tspan><tspan dy="-2.6"></tspan>,    p<tspan font-size="72%" dy="2.6">i</tspan><tspan dy="-2.6"></tspan> = h<tspan font-size="72%" dy="2.6">i</tspan><tspan dy="-2.6"></tspan> / (h<tspan font-size="72%" dy="2.6">1</tspan><tspan dy="-2.6"></tspan> + h<tspan font-size="72%" dy="2.6">2</tspan><tspan dy="-2.6"></tspan>)</text>
+<text x="442.0" y="58.0" class="eq" text-anchor="start" fill="#16233D">PE(v) = − Σ p<tspan font-size="72%" baseline-shift="sub">i</tspan> log<tspan font-size="72%" baseline-shift="sub">2</tspan> p<tspan font-size="72%" baseline-shift="sub">i</tspan>,    p<tspan font-size="72%" baseline-shift="sub">i</tspan> = h<tspan font-size="72%" baseline-shift="sub">i</tspan> / (h<tspan font-size="72%" baseline-shift="sub">1</tspan> + h<tspan font-size="72%" baseline-shift="sub">2</tspan>)</text>
 <rect x="482.0" y="112.0" width="262.0" height="96.0" rx="2" fill="#FBF0D5" stroke="none" stroke-width="0.8" opacity="0.55"/>
 <text x="744.0" y="124.0" class="sb" text-anchor="end" fill="#B8860B">PE ≥ 0.80</text>
 <text x="478.0" y="95.0" class="sb" text-anchor="end" fill="#16233D">22.1 : 1</text>
@@ -134,8 +134,8 @@
 <text x="648.0" y="188.0" class="tb" text-anchor="start" fill="#B8860B">PE = 1.000</text>
 <text x="442.0" y="230.0" class="sb" text-anchor="start" fill="#B8860B">PE ≥ 0.80 → a GNN window is opened (Fig. 6)</text>
 <text x="442.0" y="248.0" class="s" text-anchor="start">written to VCF as INFO/PE, INFO/H1, INFO/H2</text>
-<rect x="442.0" y="268.0" width="10.0" height="10.0" rx="1" fill="#1266B0" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="456.0" y="277.0" class="s" text-anchor="start">votes for hap 1</text>
-<rect x="547.0" y="268.0" width="10.0" height="10.0" rx="1" fill="#CE4125" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="561.0" y="277.0" class="s" text-anchor="start">votes for hap 2</text>
+<circle cx="448.0" cy="273.0" r="5" fill="#1266B0" stroke="#1266B0" stroke-width="0"/>
+<text x="458.0" y="276.0" class="s" text-anchor="start">allele on haplotype 1</text>
+<circle cx="587.4" cy="273.0" r="5" fill="#CE4125" stroke="#CE4125" stroke-width="0"/>
+<text x="597.4" y="276.0" class="s" text-anchor="start">allele on haplotype 2</text>
 </svg>

@@ -170,6 +170,6 @@
 <text x="206.0" y="372.0" class="sb" text-anchor="start" fill="#B8860B">→ is_bridge = 1</text>
 <text x="452.0" y="324.0" class="pl" text-anchor="start">c</text>
 <text x="466.0" y="324.0" class="h" text-anchor="start">Centre-zone mask</text>
-<text x="466.0" y="352.0" class="eq" text-anchor="start" fill="#16233D">r = |pos − pos<tspan font-size="72%" dy="2.6">c</tspan><tspan dy="-2.6"></tspan>| / max offset in the window</text>
-<text x="466.0" y="374.0" class="eq" text-anchor="start" fill="#16233D">kept if  r ≤ min(1, 10 / round(20 · r<tspan font-size="72%" dy="2.6">max</tspan><tspan dy="-2.6"></tspan>))</text>
+<text x="466.0" y="352.0" class="eq" text-anchor="start" fill="#16233D">r = |pos − pos<tspan font-size="72%" baseline-shift="sub">c</tspan>| / max offset in the window</text>
+<text x="466.0" y="374.0" class="eq" text-anchor="start" fill="#16233D">kept if  r ≤ min(1, 10 / round(20 · r<tspan font-size="72%" baseline-shift="sub">max</tspan>))</text>
 </svg>

@@ -302,33 +302,34 @@ Duet\cite{zhou2022duet} & BMC Bioinformatics 2022 & comparison method for SV pha
 \addcontentsline{toc}{section}{Supplementary Figures}
 
 \begin{figure}[h]
-\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig1_observations.png}
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig1_observations.pdf}
 \caption{\textbf{Read-level allele observations and pre-graph filters.}
 \textbf{a}, For every alignment, each overlapped variant yields an allele observation with an associated quality: SNVs from the aligned base (Phred quality), indels from CIGAR operations starting at the site, SVs from CIGAR operations of matching length or from the caller's read list, and 5mC from the \code{modcall} read lists. The table summarizes how each class enters the edge weights.
 \textbf{b}, Nanopore-specific homopolymer filter: when two SNVs both lie in homopolymers of length $\ge 3$ and are $\le 2$~bp apart, the downstream SNV is removed.
 \textbf{c}, Overlapping-alignment filter for supplementary alignments of one read.
-\textbf{d}, Indels in tandem repeats are flagged and vote with weight 0.1.}
+\textbf{d}, Indels in tandem repeats are flagged and vote with weight 0.1.
+The strip at the bottom gives the order in which the filters are applied; the copy-number-aware filter of Supplementary Fig.~4 acts last, immediately before graph construction.}
 \end{figure}
 
 \begin{figure}[h]
-\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig2_pair_support.png}
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig2_pair_support.pdf}
 \caption{\textbf{Pairwise allele support and vote weighting.}
 \textbf{a}, Between two variants $u$ and $v$ the reads accumulate four weights ($w_{rr}, w_{ra}, w_{ar}, w_{aa}$); each read adds 1 when both bases have quality $\ge$~Q12 and 0.1 otherwise. $P$ and $Q$ are the supports for the two possible pairings and $s$ their similarity.
 \textbf{b}, Decision rules that turn $(P, Q, s)$ into a weighted haplotype vote for $v$.
-\textbf{c}, Guard against a single erroneous ultra-long read.
+\textbf{c}, Guard against a single erroneous ultra-long read: among the votes received by $v$, those whose pair is supported by a single read ($P + Q \le 1$, amber) are counted, and if more than three such votes exist $h_1$ and $h_2$ are recomputed from high-consistency ($s < 0.2$), non-indel votes only.
 \textbf{d}, Format of the exported DOT graph consumed by the \code{gnn} module.}
 \end{figure}
 
 \begin{figure}[h]
-\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig3_voting_entropy.png}
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig3_voting_entropy.pdf}
 \caption{\textbf{Multi-neighbour voting and phasing entropy.}
 \textbf{a}, Variant $v$ receives weighted votes from up to $k = 35$ upstream variants within 300~kb; line thickness encodes vote weight (20, 1 or 0.1). The haplotype with the larger total wins; a tie opens a new phase block.
 \textbf{b}, Phasing entropy of the vote totals for four examples; values $\ge 0.80$ (dashed box) trigger a GNN window.
-\textbf{c}, Block formation and propagation of haplotype labels.}
+\textbf{c}, Block formation. Variants are visited in coordinate order and each assigned variant casts votes to its next $k$ neighbours within 300~kb; a variant that receives no informative vote, or a tie, starts a new block (amber). Blocks holding a single variant are dropped (grey). Haplotype labels are propagated along the block to give the phased genotypes 0|1 and 1|0, and the phase set is the position of the first variant of the block.}
 \end{figure}
 
 \begin{figure}[h]
-\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig4_cnv_filter.png}
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig4_cnv_filter.pdf}
 \caption{\textbf{Copy-number-aware filtering of unreliable heterozygous sites.}
 \textbf{a}, Per-position counts of alignments starting (front-clipped, above the axis) and ending (back-clipped, below) are scanned by a two-state detector. A \emph{step} boundary ($\ge 5$ front-clips at one position) marks a copy-number transition; a \emph{ramp} boundary (front-clips exceeding back-clips without reaching that threshold) marks the nested breakpoints left by breakage--fusion--bridge cycles. Both states carry a running excess $c$ of front- over back-clips and extend the candidate end by a 30~kb look-ahead while $c > 30$; a step closes at an adaptive pull-down threshold ($n/2$ for an opening front-clip count $n \ge 10$, else 5) or when $c$ decays to its floor, a ramp closes when back-clips reach $c/4$. Candidates longer than 200~kb are abandoned.
 \textbf{b}, Inside an interval, each read is scored by its mismatch load $R_m$ --- the number of heterozygous sites in the interval at which it carries the alternate allele --- and each heterozygous site by $\mathrm{MR} = \bar{R}_m^{\,\mathrm{ALT}}/(\bar{R}_m^{\,\mathrm{REF}}+\bar{R}_m^{\,\mathrm{ALT}})$. At a genuine heterozygous site both allele populations are ordinary reads of the locus and $\mathrm{MR} \approx 0.5$; at a paralogue-specific difference the alternate allele is carried by reads that originate elsewhere and mismatch the reference at many other sites in the same interval, so $\mathrm{MR} \rightarrow 1$. Sites with $\mathrm{MR} \ge 0.7$ are removed from all reads. Sites at which either mean is zero are never removed.
@@ -336,48 +337,48 @@ Duet\cite{zhou2022duet} & BMC Bioinformatics 2022 & comparison method for SV pha
 \end{figure}
 
 \begin{figure}[h]
-\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig5_read_correction.png}
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig5_read_correction.pdf}
 \caption{\textbf{Read-based correction.}
 \textbf{a}, Each read is assigned to a haplotype by majority over its phased SNV and SV alleles (indels count 0.1, 5mC 0); reads with majority $\le 0.65$ or fewer than two informative alleles remain untagged.
-\textbf{b}, Each variant's phase is re-derived from the tagged reads and retained only if the consistent fraction exceeds 0.75; otherwise the variant is unphased.}
+\textbf{b}, Each variant's phase is re-derived from the tagged reads and retained only if the consistent fraction $\rho$ exceeds 0.75; otherwise the variant is unphased. Only variants supported by both read populations keep a phase, so assignments driven by a few chimeric or mis-mapped reads are removed. The two thresholds are \code{--readConfidence} 0.65 and \code{--snpConfidence} 0.75.}
 \end{figure}
 
 \begin{figure}[h]
-\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig6_gnn_window.png}
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig6_gnn_window.pdf}
 \caption{\textbf{Window construction for the graph neural network.}
 \textbf{a}, A window of $\pm 20$ variants (two allele nodes each) is opened around every phased variant with PE $\ge 0.8$; edges are the DOT edges with both endpoints in the window (blue and red arcs) plus self-loops; a dashed grey edge marks a cross-haplotype link. Predictions are read only in the central zone.
 \textbf{b}, Bridge-vertex feature: a variant whose removal disconnects the window graph.
-\textbf{c}, Definition of the central zone.}
+\textbf{c}, Definition of the central zone. A window holds at most 41 variants and 82 allele nodes, and windows exceeding 256 nodes are skipped; SNV, indel, SV and 5mC records are merged and sorted by position before nodes are created. Edges are the DOT edges with both endpoints in the window, symmetrized, plus one self-loop per node whose features are the mean over that node's incident edges. The predictions of the two allele nodes of a variant are averaged, and a variant covered by several windows receives the mean over those windows.}
 \end{figure}
 
 \begin{figure}[h]
-\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig7_gnn_architecture.png}
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig7_gnn_architecture.pdf}
 \caption{\textbf{Graph neural network architecture.} Node features are standardized and projected to 128 dimensions. Each of four GPS layers combines a local GATv2 branch over the window graph (edge features enter through a per-layer edge encoder) with a global self-attention branch over all nodes, fused additively into the residual stream and followed by layer normalization and a feed-forward block. The final embedding is concatenated with the sum and maximum of incoming raw edge weights and classified into phased-correctly versus misphased; the probabilities of the two allele nodes of a variant are averaged.}
 \end{figure}
 
 \begin{figure}[h]
-\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig8_unphase_split.png}
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig8_unphase_split.pdf}
 \caption{\textbf{Unphasing and phase-set splitting.}
 \textbf{a}, A variant with predicted error probability $\ge 0.30$ (amber) inside a phase set.
 \textbf{b}, After correction the variant is written as an unphased genotype without PS; connectivity of the remaining variants is recomputed over the surviving DOT edges, the largest component keeps the original PS and every other component receives a new PS equal to the position of its first variant. Genotypes are never flipped.}
 \end{figure}
 
 \begin{figure}[h]
-\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig9_modcall.png}
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig9_modcall.pdf}
 \caption{\textbf{Allele-specific methylation calling with \code{modcall}.}
 \textbf{a}, Per-read CpG states from the \code{ML} probability: methylated $\ge 0.8$, unmethylated $\le 0.2$, otherwise ambiguous. Only CpG dinucleotides are considered.
 \textbf{b}, Reverse-strand calls are mapped to the forward CpG coordinate and the two strands are pooled, so that a CpG is genotyped once from all reads covering it.
 \textbf{c}, A site is called heterozygous when $\min(M_R,U_R)/\max(M_R,U_R) \ge 0.6$ and $A_R/(M_R+U_R+A_R) \le 0.2$, where $M_R$, $U_R$ and $A_R$ are methylated, unmethylated and ambiguous read counts.
 \textbf{d}, Balance alone does not imply allele specificity, since stochastic methylation satisfies the same inequalities. Candidates are therefore required to co-segregate with a neighbouring marker at linkage ratio $\max(RR+AA,RA+AR)/(RR+AA+RA+AR) \ge 0.9$, in SNV-anchored mode against an SNV within the next 20 variants, or in methylation-only mode against another candidate CpG where no informative SNV is in range. Weakly connected CpGs are admitted by iterative expansion against already accepted CpGs.
 \textbf{e}, Output record with methylated and unmethylated read names used by \code{phase}.
-\todo{Two real-data panels already exist in the group's algorithm slides and should be added here: (i) the per-site scatter of \code{ML} probability at heterozygous versus homozygous CpGs on HG002, with the 0.8 and 0.2 lines marked, which justifies both thresholds and shows that homozygous sites are the ones spanning the ambiguous band; (ii) alignment views of one accepted and two rejected candidates, showing what the linkage criterion in \textbf{d} excludes. Regenerate both with the submitted version on the data used in this paper; the slide versions come from a pre-release build.}}
+\todo{Four real-data panels exist in the group's thesis and slide material and would replace assertion with evidence throughout this figure. (i)~Per-site scatter of \code{ML} probability at heterozygous versus homozygous CpGs with the 0.8 and 0.2 lines marked, justifying both thresholds and showing that it is the homozygous sites that spread across the ambiguous band; the original was computed on 48 sites in the imprinted \textit{SNRPN} locus, which is too small and too special a sample to stand in a Nature Methods supplement --- recompute genome-wide on HG002. (ii)~Distribution of the linkage ratio $\max(P,Q)/(P+Q)$ stratified by the true class of the site pair (heterozygous--heterozygous, homozygous--homozygous, heterozygous--homozygous). This is the strongest justification available for the 0.9 threshold, because in the original the three classes separate (roughly 0.65--1, 0.5--0.75 and 0.5--0.7), showing that the cut removes homozygous sites misclassified as allele-specific rather than being an arbitrary round number. (iii)~Alignment views of an accepted and a rejected candidate under the two-strand CpG criterion in \textbf{b}. (iv)~A low-coverage example showing the $\max(6,(n_1+n_2)/4)$ span requirement terminating a scan. Regenerate all four with the submitted version on the data used in this paper.}}
 \end{figure}
 
 \begin{figure}[h]
-\centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig10_metrics.png}
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig10_metrics.pdf}
 \caption{\textbf{Phasing evaluation metrics.}
 \textbf{a}, Within one intersected block, the query haplotype string is compared with the truth in switch encoding; the number of differing positions is the switch-error count, adjacent switch pairs are counted as flips, and the Hamming distance is the minimum over the two orientations of misassigned variants.
-\textbf{b}, Definitions of block intersection, phased fraction, block N50 and switch error rate as implemented in \code{longphase compare}.}
+\textbf{b}, Block intersection and the block-level statistics. Only variants that are heterozygous in both files and phased in both are compared (dark bars); blocks left with a single variant are ignored (outline). Phased fraction, block N50 and switch error rate are computed over the intersected blocks as implemented in \code{longphase compare}.}
 \end{figure}
 
 \begin{figure}[h]

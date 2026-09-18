@@ -37,15 +37,15 @@
 <line x1="266.0" y1="76.0" x2="266.0" y2="86.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
 <rect x="366.0" y="26.0" width="398.0" height="284.0" rx="4" fill="none" stroke="#16233D" stroke-width="1" opacity="1" stroke-dasharray="4,3"/>
 <text x="378.0" y="43.0" class="h" text-anchor="start">GPS layer × 4</text>
-<text x="752.0" y="43.0" class="s" text-anchor="end">hidden 128, 4 heads</text>
+<text x="752.0" y="300.0" class="s" text-anchor="end">hidden 128, 4 heads</text>
 <rect x="382.0" y="54.0" width="176.0" height="34.0" rx="3" fill="#DCEAF6" stroke="#1266B0" stroke-width="0.9" opacity="1"/>
 <text x="470.0" y="69.5" class="tb" text-anchor="middle" fill="#16233D">local  GATv2</text>
-<text x="470.0" y="82.0" class="s" text-anchor="middle">attention over x<tspan font-size="72%" dy="2.6">i</tspan><tspan dy="-2.6"></tspan>, x<tspan font-size="72%" dy="2.6">j</tspan><tspan dy="-2.6"></tspan>, e<tspan font-size="72%" dy="2.6">ij</tspan><tspan dy="-2.6"></tspan></text>
+<text x="470.0" y="82.0" class="s" text-anchor="middle">attention over x<tspan font-size="72%" baseline-shift="sub">i</tspan>, x<tspan font-size="72%" baseline-shift="sub">j</tspan>, e<tspan font-size="72%" baseline-shift="sub">ij</tspan></text>
 <text x="470.0" y="101.0" class="s" text-anchor="middle">softmax over incoming edges of i</text>
 <text x="470.0" y="113.0" class="s" text-anchor="middle">edge encoder 6 → 128 per layer</text>
 <rect x="572.0" y="54.0" width="176.0" height="34.0" rx="3" fill="#FAE3DD" stroke="#CE4125" stroke-width="0.9" opacity="1"/>
 <text x="660.0" y="69.5" class="tb" text-anchor="middle" fill="#16233D">global  self-attention</text>
-<text x="660.0" y="82.0" class="s" text-anchor="middle">softmax(QK<tspan font-size="72%" dy="-4.2">T</tspan><tspan dy="4.2"></tspan>/√d) V over N nodes</text>
+<text x="660.0" y="82.0" class="s" text-anchor="middle">softmax(QK<tspan font-size="72%" baseline-shift="super">T</tspan>/√d) V over N nodes</text>
 <text x="660.0" y="101.0" class="s" text-anchor="middle">Q, K, V, O projections 128 → 128</text>
 <text x="660.0" y="113.0" class="s" text-anchor="middle">window-wide context</text>
 <rect x="476.0" y="130.0" width="180.0" height="30.0" rx="3" fill="#fff" stroke="#16233D" stroke-width="0.9" opacity="1"/>
@@ -62,10 +62,10 @@
 <line x1="566.0" y1="160.0" x2="566.0" y2="174.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
 <line x1="566.0" y1="202.0" x2="566.0" y2="216.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
 <line x1="566.0" y1="248.0" x2="566.0" y2="262.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
-<line x1="336.0" y1="104.0" x2="380.0" y2="71.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
-<line x1="336.0" y1="104.0" x2="570.0" y2="71.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<path d="M336,104 L352,104 L352,60 L378,60" stroke="#6E7C8C" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="1" marker-end="url(#arr)"/>
+<path d="M352,60 L352,49 L660,49 L660,52" stroke="#6E7C8C" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="1" marker-end="url(#arr)"/>
 <rect x="366.0" y="344.0" width="190.0" height="32.0" rx="3" fill="#fff" stroke="#16233D" stroke-width="0.9" opacity="1"/>
-<text x="461.0" y="358.5" class="tb" text-anchor="middle" fill="#16233D">concat [ h<tspan font-size="72%" dy="2.6">i</tspan><tspan dy="-2.6"></tspan> | Σw<tspan font-size="72%" dy="2.6">ij</tspan><tspan dy="-2.6"></tspan> | max w<tspan font-size="72%" dy="2.6">ij</tspan><tspan dy="-2.6"></tspan> ]</text>
+<text x="461.0" y="358.5" class="tb" text-anchor="middle" fill="#16233D">concat [ h<tspan font-size="72%" baseline-shift="sub">i</tspan> | Σw<tspan font-size="72%" baseline-shift="sub">ij</tspan> | max w<tspan font-size="72%" baseline-shift="sub">ij</tspan> ]</text>
 <text x="461.0" y="371.0" class="s" text-anchor="middle">130 features</text>
 <rect x="586.0" y="344.0" width="178.0" height="32.0" rx="3" fill="#F1F4F7" stroke="#C7D1DB" stroke-width="0.9" opacity="1"/>
 <text x="675.0" y="358.5" class="tb" text-anchor="middle" fill="#16233D">Linear 130 → 128 → 2</text>
@@ -86,7 +86,7 @@
 <text x="158.0" y="371.0" class="t" text-anchor="start">dense O(N²), N ≤ 256</text>
 <rect x="16.0" y="376.0" width="330.0" height="16.0" rx="0" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
 <text x="22.0" y="387.0" class="tb" text-anchor="start">numerics</text>
-<text x="158.0" y="387.0" class="t" text-anchor="start">exact GELU, LayerNorm ε = 10<tspan font-size="72%" dy="-4.2">−5</tspan><tspan dy="4.2"></tspan></text>
+<text x="158.0" y="387.0" class="t" text-anchor="start">exact GELU, LayerNorm ε = 10<tspan font-size="72%" baseline-shift="super">−5</tspan></text>
 <rect x="16.0" y="392.0" width="330.0" height="16.0" rx="0" fill="#F7F9FB" stroke="none" stroke-width="0.8" opacity="1"/>
 <text x="22.0" y="403.0" class="tb" text-anchor="start">isolated nodes</text>
 <text x="158.0" y="403.0" class="t" text-anchor="start">attend uniformly to all nodes</text>

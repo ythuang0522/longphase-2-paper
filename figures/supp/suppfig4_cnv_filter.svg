@@ -124,7 +124,7 @@
 <line x1="287.0" y1="78.0" x2="287.0" y2="87.0" stroke="#B8860B" stroke-width="0.9" stroke-linecap="round" marker-end="url(#arra)"/>
 <text x="371.5" y="146.0" class="sb" text-anchor="start" fill="#B8860B">pull-down</text>
 <text x="250.4" y="172.0" class="s" text-anchor="middle" fill="#B8860B">candidate interval ≤ 200 kb</text>
-<text x="476.0" y="188.0" class="s" text-anchor="end">genomic position</text>
+<text x="470.0" y="188.0" class="s" text-anchor="end">genomic position →</text>
 <rect x="508.0" y="34.0" width="256.0" height="16.0" rx="0" fill="#E4EAF0" stroke="none" stroke-width="0.8" opacity="1"/>
 <text x="514.0" y="45.0" class="sb" text-anchor="start" fill="#16233D">state</text>
 <text x="596.0" y="45.0" class="sb" text-anchor="start" fill="#16233D">rule</text>
@@ -148,11 +148,11 @@
 <line x1="16.0" y1="202.0" x2="764.0" y2="202.0" stroke="#C7D1DB" stroke-width="0.8" stroke-linecap="butt"/>
 <text x="16.0" y="226.0" class="pl" text-anchor="start">b</text>
 <text x="30.0" y="226.0" class="h" text-anchor="start">Mismatch load separates true heterozygotes from paralogues</text>
-<text x="16.0" y="252.0" class="s" text-anchor="start">R<tspan font-size="72%" dy="2.6">m</tspan><tspan dy="-2.6"></tspan> = alternate alleles carried by one read inside the interval</text>
+<text x="16.0" y="252.0" class="s" text-anchor="start">R<tspan font-size="72%" baseline-shift="sub">m</tspan> = alternate alleles carried by one read inside the interval</text>
 <text x="22.0" y="280.0" class="eq" text-anchor="start" fill="#16233D">MR  =</text>
-<text x="170.0" y="272.5" class="s" text-anchor="middle">mean R<tspan font-size="72%" dy="2.6">m</tspan><tspan dy="-2.6"></tspan> (ALT)</text>
+<text x="170.0" y="272.5" class="s" text-anchor="middle">mean R<tspan font-size="72%" baseline-shift="sub">m</tspan> (ALT)</text>
 <line x1="92.0" y1="276.0" x2="248.0" y2="276.0" stroke="#16233D" stroke-width="0.8" stroke-linecap="butt"/>
-<text x="170.0" y="286.5" class="s" text-anchor="middle">mean R<tspan font-size="72%" dy="2.6">m</tspan><tspan dy="-2.6"></tspan> (REF) + mean R<tspan font-size="72%" dy="2.6">m</tspan><tspan dy="-2.6"></tspan> (ALT)</text>
+<text x="170.0" y="286.5" class="s" text-anchor="middle">mean R<tspan font-size="72%" baseline-shift="sub">m</tspan> (REF) + mean R<tspan font-size="72%" baseline-shift="sub">m</tspan> (ALT)</text>
 <text x="262.0" y="280.0" class="tb" text-anchor="start" fill="#B8860B">≥ 0.7  →  remove the site from every read</text>
 <text x="16.0" y="310.0" class="sb" text-anchor="start" fill="#16233D">true heterozygous site</text>
 <text x="38.0" y="329.0" class="s" text-anchor="end" fill="#1266B0">REF</text>

@@ -60,13 +60,13 @@ STYLE = """
 """ % (INK, GREY)
 
 
-def sub(s, d=2.6):
-    """Subscript that restores the baseline for the text that follows."""
-    return f'<tspan font-size="72%" dy="{d}">{s}</tspan><tspan dy="{-d}"></tspan>'
+def sub(s):
+    """Subscript. baseline-shift does not accumulate, unlike a dy pair."""
+    return f'<tspan font-size="72%" baseline-shift="sub">{s}</tspan>'
 
 
-def sup(s, d=-4.2):
-    return f'<tspan font-size="72%" dy="{d}">{s}</tspan><tspan dy="{-d}"></tspan>'
+def sup(s):
+    return f'<tspan font-size="72%" baseline-shift="super">{s}</tspan>'
 
 
 class SVG:
@@ -308,18 +308,16 @@ def fig_s2():
     S.text(vx + 16, yb + 3, "v" + sup("a"), cls="m")
     S.text(200, yt - 8, "w" + sub("rr") + " = 9", cls="tb", anchor="middle", fill=H1)
     S.text(200, yb + 18, "w" + sub("aa") + " = 7", cls="tb", anchor="middle", fill=H2)
-    S.halo_text(234, 104, "w" + sub("ar") + " = 0.1", cls="sb", anchor="middle",
-                fill=GREY, hw=54)
-    S.halo_text(234, 140, "w" + sub("ra") + " = 1", cls="sb", anchor="middle",
-                fill=GREY, hw=48)
+    S.text(200, 186, "grey, trans pairs:   w" + sub("ra") + " = 1,   w" + sub("ar")
+           + " = 0.1", cls="sb", anchor="middle", fill=GREY)
 
-    S.rect(XL, 182, 350, 68, fill=VLGREY, r=2)
-    S.text(XL + 12, 201, "P = w" + sub("rr") + " + w" + sub("aa") + " = 16", cls="eq", fill=INK)
-    S.text(XL + 160, 201, "cis", cls="m", fill=H1)
-    S.text(XL + 12, 221, "Q = w" + sub("ra") + " + w" + sub("ar") + " = 1.1", cls="eq", fill=INK)
-    S.text(XL + 160, 221, "trans", cls="m", fill=H2)
-    S.text(XL + 12, 241, "s = min(P,Q) / max(P,Q) = 0.07", cls="eq", fill=INK)
-    S.text(XL, 266, "each read adds 1 (both bases ≥ Q12) or 0.1", cls="s")
+    S.rect(XL, 196, 350, 68, fill=VLGREY, r=2)
+    S.text(XL + 12, 215, "P = w" + sub("rr") + " + w" + sub("aa") + " = 16", cls="eq", fill=INK)
+    S.text(XL + 160, 215, "cis", cls="m", fill=H1)
+    S.text(XL + 12, 235, "Q = w" + sub("ra") + " + w" + sub("ar") + " = 1.1", cls="eq", fill=INK)
+    S.text(XL + 160, 235, "trans", cls="m", fill=H2)
+    S.text(XL + 12, 255, "s = min(P,Q) / max(P,Q) = 0.07", cls="eq", fill=INK)
+    S.text(XL, 280, "each read adds 1 (both bases ≥ Q12) or 0.1", cls="s")
 
     # -- d ---------------------------------------------------------------
     S.panel(XL, 300, "d", "Exported graph (DOT)")
@@ -339,29 +337,33 @@ def fig_s2():
     tcol = [[GREY, GREY], [GREY, GREY], [INK, INK], [GREEN, GREEN], [AMBER, AMBER]]
     S.table(XR, 38, [178, 186], rows, header=("condition on s", "vote for v"),
             row_tint=tint, text_colors=tcol, cell_cls=("tb", "t"))
-    S.text(XR, 158, "the vote names a haplotype for v given hap(u)", cls="s")
-    S.text(XR, 173, "P → v" + sup("r") + " on hap(u" + sup("r") + ");   Q → v"
+    S.text(XR, 156, "the vote names a haplotype for v given hap(u)", cls="s")
+    S.text(XR, 176, "P → v" + sup("r") + " on hap(u" + sup("r") + ");   Q → v"
            + sup("r") + " on hap(u" + sup("a") + ")", cls="sb", fill=INK)
 
     # -- c ---------------------------------------------------------------
     S.panel(XR, 208, "c", "Single-read guard")
-    gx, gy, gh = XR + 44, 306, 58
-    S.line(gx - 8, gy, gx + 300, gy, stroke=INK, w=1)
-    S.text(XR, gy - 26, "P + Q", cls="sb", anchor="start", fill=INK)
-    S.text(XR, gy + 12, "votes received by v", cls="s")
+    ax0, ax1, ay = XR + 58, XR + 268, 232
     supports = [0.4, 0.6, 0.8, 1.0, 2.6, 4.1, 6.0, 9.4]
+    def sx(v): return ax0 + (ax1 - ax0) * v / 10.0
+    S.rect(ax0, ay - 6, sx(1) - ax0, len(supports) * 11 + 6, fill=AMBERL, r=1)
     for i, p in enumerate(supports):
-        h = 4 + 44 * (p / 10.0)
+        y = ay + i * 11
         c = AMBER if p <= 1 else H1
-        S.rect(gx + i * 36, gy - h, 20, h, fill=c, r=1)
-    thr = gy - (4 + 44 * 0.1)
-    S.line(gx - 8, thr, gx + 300, thr, stroke=AMBER, w=1, dash="3,2.5")
-    S.text(gx + 306, thr + 3, "P + Q ≤ 1", cls="sb", fill=AMBER)
-    S.text(gx + 34, gy - 52, "4 votes rest on a single read", cls="sb", fill=AMBER)
-    S.callout(XR, 328, 364, 42, fill=AMBERL, accent=AMBER)
-    S.text(XR + 12, 344, "&gt; 3 such votes → recompute h" + sub("1") + ", h" + sub("2"),
-           cls="tb", fill=INK)
-    S.text(XR + 12, 360, "from s &lt; 0.2, non-indel votes only", cls="tb", fill=INK)
+        S.line(ax0, y, sx(p), y, stroke=c, w=1.2)
+        S.circle(sx(p), y, 2.6, fill=c, stroke=c, sw=0)
+    S.line(ax0, ay + len(supports) * 11, ax1, ay + len(supports) * 11, stroke=INK, w=1)
+    for v in (0, 1, 5, 10):
+        x = sx(v)
+        S.line(x, ay + len(supports) * 11, x, ay + len(supports) * 11 + 4, stroke=INK, w=1)
+        S.text(x, ay + len(supports) * 11 + 14, str(v), cls="s", anchor="middle")
+    S.text(XR + 52, ay + 47, "votes to v", cls="s", anchor="end")
+    S.text(ax1 + 8, ay + len(supports) * 11 + 4, "P + Q", cls="s")
+    S.text(sx(1) + 4, ay - 10, "4 votes rest on a single read (P + Q \u2264 1)",
+           cls="sb", fill=AMBER)
+    S.callout(XR, 340, 364, 34, fill=AMBERL, accent=AMBER)
+    S.text(XR + 12, 356, "&gt; 3 such votes \u2192 recompute h" + sub("1") + ", h" + sub("2")
+           + " from s &lt; 0.2, non-indel votes only", cls="tb", fill=INK)
 
     S.save("suppfig2_pair_support.svg")
 
@@ -394,7 +396,8 @@ def fig_s3():
         x, xv = xs[i], xs[5]
         c = H1 if hap == 1 else H2
         yy = yt if hap == 1 else yb
-        arc = (yt - 44 - i * 6) if hap == 1 else (yb + 44)
+        span = abs(xv - x)
+        arc = (yt - 16 - 0.20 * span) if hap == 1 else (yb + 16 + 0.14 * span)
         S.path(f"M{x+10},{yy} C{(x+xv)/2},{arc} {(x+xv)/2},{arc} {xv-10},{yy}",
                stroke=c, w=0.9 + 1.7 * math.log10(w * 10 + 1), op=0.8)
         S.halo_text((x + xv) / 2, arc + (5 if hap == 1 else 11), f"{w:g}",
@@ -454,11 +457,11 @@ def fig_s3():
     S.text(XR + 4, 230, "PE ≥ 0.80 → a GNN window is opened (Fig. 6)",
            cls="sb", fill=AMBER)
     S.text(XR + 4, 248, "written to VCF as INFO/PE, INFO/H1, INFO/H2", cls="s")
-    kx = XR + 4
-    for c, lab in [(H1, "votes for hap 1"), (H2, "votes for hap 2")]:
-        S.rect(kx, 268, 10, 10, fill=c, r=1)
-        S.text(kx + 14, 277, lab, cls="s")
-        kx += 24 + 5.4 * len(lab)
+    kx = XR + 10
+    for c, lab in [(H1, "allele on haplotype 1"), (H2, "allele on haplotype 2")]:
+        S.node(kx, 273, "", c, r=5)
+        S.text(kx + 10, 276, lab, cls="s")
+        kx += 26 + 5.4 * len(lab)
 
     S.save("suppfig3_voting_entropy.svg")
 
@@ -501,7 +504,7 @@ def fig_s4():
     S.text(x0 + 42 * dx + 4, yb + 34, "pull-down", cls="sb", fill=AMBER)
     S.text(x0 + 26 * dx, yb + 60, "candidate interval ≤ 200 kb", cls="s",
            anchor="middle", fill=AMBER)
-    S.text(x1 + 6, yb + 76, "genomic position", cls="s", anchor="end")
+    S.text(x1, yb + 76, "genomic position \u2192", cls="s", anchor="end")
 
     S.table(508, 34, [82, 174],
             [("open, step", "≥ 5 front-clips at one position"),
@@ -577,8 +580,8 @@ def fig_s5():
         S.text(512, y + 3, lab, cls="sb", fill=c)
         S.text(568, y + 3, frac, cls="s")
     n1, n2 = "n" + sub("1"), "n" + sub("2")
-    S.callout(XL, 212, 660, 34, fill=VLGREY, accent=INK)
-    S.text(XL + 12, 227, "tagged if  max(" + n1 + "," + n2 + ") / (" + n1 + " + " + n2
+    S.callout(XL, 210, 660, 38, fill=VLGREY, accent=INK)
+    S.text(XL + 12, 235, "tagged if  max(" + n1 + "," + n2 + ") / (" + n1 + " + " + n2
            + ")  &gt; 0.65   and   ≥ 2 informative alleles", cls="tb", fill=INK)
     S.text(XL + 12, 241, "allele weights: SNV 1, SV 1, indel 0.1, 5mC 0", cls="s")
 
@@ -594,7 +597,7 @@ def fig_s5():
         S.rect(bx, 302, 368, 84, fill=fill, r=2)
         S.rect(bx, 302, 2.2, 84, fill=col, r=0)
         S.text(bx + 12, 320, "variant " + v[0] + sub(v[1]), cls="tb", fill=INK)
-        S.text(bx + 12, 338, n1 + " = " + a1 + "    " + n2 + " = " + a2, cls="s")
+        S.text(bx + 12, 338, n1 + " = " + a1 + ",   " + n2 + " = " + a2, cls="s")
         S.text(bx + 12, 353, n1 + ": hap-1 REF + hap-2 ALT reads", cls="s")
         S.text(bx + 12, 366, n2 + ": hap-1 ALT + hap-2 REF reads", cls="s")
         S.text(bx + 188, 344, "ρ =", cls="eq", fill=INK)
@@ -716,7 +719,7 @@ def fig_s7():
     lx, ly, lw, lh = 366, 26, 398, 284
     S.rect(lx, ly, lw, lh, fill="none", stroke=INK, sw=1, r=4, dash="4,3")
     S.text(lx + 12, ly + 17, "GPS layer × 4", cls="h")
-    S.text(lx + lw - 12, ly + 17, "hidden 128, 4 heads", cls="s", anchor="end")
+    S.text(lx + lw - 12, ly + lh - 10, "hidden 128, 4 heads", cls="s", anchor="end")
     box(lx + 16, ly + 28, 176, 34, "local  GATv2",
         "attention over x" + sub("i") + ", x" + sub("j") + ", e" + sub("ij"),
         fill=H1L, stroke=H1)
@@ -734,8 +737,8 @@ def fig_s7():
     box(lx + 110, ly + 238, 180, 26, "LayerNorm")
     for y1, y2 in [(ly + 134, ly + 148), (ly + 176, ly + 190), (ly + 222, ly + 236)]:
         S.line(lx + 200, y1, lx + 200, y2, stroke=GREY, arrow="arr")
-    S.line(336, 104, lx + 14, ly + 45, stroke=GREY, arrow="arr")
-    S.line(336, 104, lx + 204, ly + 45, stroke=GREY, arrow="arr")
+    S.path(f"M336,104 L352,104 L352,60 L{lx+12},60", stroke=GREY, w=1, arrow="arr")
+    S.path(f"M352,60 L352,49 L{lx+294},49 L{lx+294},{ly+26}", stroke=GREY, w=1, arrow="arr")
 
     box(366, 344, 190, 32,
         "concat [ h" + sub("i") + " | Σw" + sub("ij") + " | max w" + sub("ij") + " ]",
@@ -900,7 +903,7 @@ def fig_s9():
     # -- d ---------------------------------------------------------------
     S.panel(XR, 24, "d", "Co-segregation with a neighbouring marker")
     S.text(XR + 4, 62, "linkage  =", cls="eq", fill=INK)
-    S.frac(XR + 128, 58, "max(RR + AA,  RA + AR)", "RR + AA + RA + AR", cls="s", width=116)
+    S.frac(XR + 144, 58, "max(RR + AA,  RA + AR)", "RR + AA + RA + AR", cls="s", width=116)
     S.text(XR + 196, 62, "≥ 0.9", cls="tb", fill=GREEN)
 
     modes = [("SNV-anchored", GREEN, "accepted",
@@ -911,7 +914,7 @@ def fig_s9():
              ("CpG–CpG expansion", AMBER, "accepted",
               "linked to an accepted CpG; 2 rounds, adjacent CpGs merged")]
     for k, (title, col, verdict, note) in enumerate(modes):
-        yk = 96 + k * 98
+        yk = 96 + k * 104
         S.text(XR, yk, title, cls="sb", fill=INK)
         ax, bx, cx = XR + 62, XR + 142, XR + 222
         yt2, yb2 = yk + 32, yk + 60
@@ -936,14 +939,14 @@ def fig_s9():
             S.line(bx + 9, yb2, cx - 9, yb2, stroke=col, w=2.4)
         vx = cx + 34 if k == 2 else bx + 34
         S.text(vx, yk + 49, verdict, cls="sb", fill=col if col != LGREY else GREY)
-        S.text(XR, yk + 82, note, cls="s")
+        S.text(XR, yk + 80, note, cls="s")
         if k < 2:
-            S.rule(XR, yk + 90, W - 16)
+            S.rule(XR, yk + 92, W - 16)
 
-    S.circle(XR + 6, 400, 6, fill=INK, stroke=INK, sw=0)
-    S.text(XR + 16, 403, "methylated allele", cls="s")
-    S.circle(XR + 124, 400, 6, fill="#fff", stroke=INK)
-    S.text(XR + 134, 403, "unmethylated allele", cls="s")
+    S.circle(XR + 6, 414, 6, fill=INK, stroke=INK, sw=0)
+    S.text(XR + 16, 417, "methylated allele", cls="s")
+    S.circle(XR + 124, 414, 6, fill="#fff", stroke=INK)
+    S.text(XR + 134, 417, "unmethylated allele", cls="s")
 
     S.save("suppfig9_modcall.svg")
 
@@ -1000,7 +1003,7 @@ def fig_s10():
         S.rect(bx + x * sc, by - 4, w * sc, 9, fill=H1, r=1)
     for x, w in [(0, 64), (72, 140), (222, 38), (270, 106)]:
         S.rect(bx + x * sc, by + 14, w * sc, 9, fill=H2, r=1)
-    for x, w in [(0, 64), (72, 48), (132, 92), (272, 106)]:
+    for x, w in [(0, 64), (72, 48), (132, 80), (272, 104)]:
         S.rect(bx + x * sc, by + 32, w * sc, 9, fill=INK, r=1)
     S.rect(bx + 236 * sc, by + 32, 24 * sc, 9, fill="none", stroke=LGREY, sw=0.8, r=1)
     S.text(bx + 248 * sc, by + 56, "singleton, ignored", cls="s", anchor="middle", fill=GREY)
