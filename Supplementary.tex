@@ -330,8 +330,9 @@ Duet\cite{zhou2022duet} & BMC Bioinformatics 2022 & comparison method for SV pha
 \begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig4_cnv_filter.png}
 \caption{\textbf{Copy-number-aware filtering of unreliable heterozygous sites.}
-\textbf{a}, Per-position counts of alignments starting (front-clipped, above the axis) and ending (back-clipped, below) are scanned by a finite-state detector that opens a candidate interval at $\ge 5$ front-clips, extends it while starts exceed ends, and closes it when a comparable number of back-clips is observed (maximum 200~kb).
-\textbf{b}, Inside an interval, each heterozygous site is scored by the mean number of mismatches to the phasing graph on ALT- versus REF-supporting reads; sites whose ALT reads carry $\ge 70\%$ of the mismatches are removed from all reads, because their alternate allele is a paralogue-specific difference rather than a heterozygous variant.}
+\textbf{a}, Per-position counts of alignments starting (front-clipped, above the axis) and ending (back-clipped, below) are scanned by a two-state detector. A \emph{step} boundary ($\ge 5$ front-clips at one position) marks a copy-number transition; a \emph{ramp} boundary (front-clips exceeding back-clips without reaching that threshold) marks the nested breakpoints left by breakage--fusion--bridge cycles. Both states carry a running excess $c$ of front- over back-clips and extend the candidate end by a 30~kb look-ahead while $c > 30$; a step closes at an adaptive pull-down threshold ($n/2$ for an opening front-clip count $n \ge 10$, else 5) or when $c$ decays to its floor, a ramp closes when back-clips reach $c/4$. Candidates longer than 200~kb are abandoned.
+\textbf{b}, Inside an interval, each read is scored by its mismatch load $R_m$ --- the number of heterozygous sites in the interval at which it carries the alternate allele --- and each heterozygous site by $\mathrm{MR} = \bar{R}_m^{\,\mathrm{ALT}}/(\bar{R}_m^{\,\mathrm{REF}}+\bar{R}_m^{\,\mathrm{ALT}})$. At a genuine heterozygous site both allele populations are ordinary reads of the locus and $\mathrm{MR} \approx 0.5$; at a paralogue-specific difference the alternate allele is carried by reads that originate elsewhere and mismatch the reference at many other sites in the same interval, so $\mathrm{MR} \rightarrow 1$. Sites with $\mathrm{MR} \ge 0.7$ are removed from all reads. Sites at which either mean is zero are never removed.
+\todo{Add a panel \textbf{c}: the distribution of $\mathrm{MR}$ for benchmark-confirmed heterozygous sites versus benchmark-absent calls inside detected intervals, with the 0.7 threshold marked. Without it the threshold is asserted rather than shown, and this is the panel a reviewer will ask for.}}
 \end{figure}
 
 \begin{figure}[h]
@@ -364,10 +365,12 @@ Duet\cite{zhou2022duet} & BMC Bioinformatics 2022 & comparison method for SV pha
 \begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/imagen/suppfig9_modcall.png}
 \caption{\textbf{Allele-specific methylation calling with \code{modcall}.}
-\textbf{a}, Per-read CpG states from the ML probability (methylated $\ge 0.8$, unmethylated $\le 0.2$, otherwise noise).
-\textbf{b}, Reverse-strand calls are mapped to the forward CpG coordinate, strands are pooled, and a site is heterozygous when the minority state is at least 60\% of the majority state and noise is at most 20\% of depth.
-\textbf{c}, Candidate heterozygous CpGs are refined by co-segregation with SNVs on the same reads (strong anchors) or with already accepted CpGs (weak, iterative).
-\textbf{d}, Output record with methylated and unmethylated read names used by \code{phase}.}
+\textbf{a}, Per-read CpG states from the \code{ML} probability: methylated $\ge 0.8$, unmethylated $\le 0.2$, otherwise ambiguous. Only CpG dinucleotides are considered.
+\textbf{b}, Reverse-strand calls are mapped to the forward CpG coordinate and the two strands are pooled, so that a CpG is genotyped once from all reads covering it.
+\textbf{c}, A site is called heterozygous when $\min(M_R,U_R)/\max(M_R,U_R) \ge 0.6$ and $A_R/(M_R+U_R+A_R) \le 0.2$, where $M_R$, $U_R$ and $A_R$ are methylated, unmethylated and ambiguous read counts.
+\textbf{d}, Balance alone does not imply allele specificity, since stochastic methylation satisfies the same inequalities. Candidates are therefore required to co-segregate with a neighbouring marker at linkage ratio $\max(RR+AA,RA+AR)/(RR+AA+RA+AR) \ge 0.9$, in SNV-anchored mode against an SNV within the next 20 variants, or in methylation-only mode against another candidate CpG where no informative SNV is in range. Weakly connected CpGs are admitted by iterative expansion against already accepted CpGs.
+\textbf{e}, Output record with methylated and unmethylated read names used by \code{phase}.
+\todo{Two real-data panels would replace assertion with evidence, and both exist in the group's presentation material: (i) per-site distributions of the \code{ML} probability at heterozygous versus homozygous CpGs, with the 0.8 and 0.2 lines marked, justifying the two thresholds; (ii) alignment views of one accepted and two rejected candidate sites, showing what the linkage criterion in \textbf{d} excludes. Regenerate both on the HG002 data used here.}}
 \end{figure}
 
 \begin{figure}[h]
