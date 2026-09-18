@@ -1,592 +1,1019 @@
 #!/usr/bin/env python3
-"""Generate supplementary method figures (SVG) for the LongPhase 2 manuscript.
+"""Generate the ten supplementary method figures (SVG) for the LongPhase 2 manuscript.
 
-Style follows Fig. 1: white background, flat vector geometry, Helvetica/Arial,
-haplotype 1 = blue (#1687C9), haplotype 2 = red (#DC2B23), neutral greys,
-amber for uncertain/flagged items. Run:  python3 make_supp_figs.py
-Then convert:  for f in *.svg; do rsvg-convert -f pdf -o ${f%.svg}.pdf $f; done
+Design rules (Nature figure style)
+----------------------------------
+* Canvas width 780 px == 160 mm (\\textwidth). 1 px ~= 0.58 pt, so the body face
+  (10 px) prints at ~5.8 pt and panel letters (14 px) at ~8 pt -- inside the
+  5-7 pt window Nature asks for.
+* The figure carries labels, values, equations and short noun phrases only.
+  Explanatory sentences belong in the legend, never in the artwork.
+* Flat vector geometry, hairlines, white background, no gradients or shadows.
+* Colour is semantic and colour-blind safe: haplotype 1 blue, haplotype 2
+  vermilion, neutral grey for structure, amber only for flagged / thresholded
+  items, green only for an accepted decision.
+* Sub- and superscripts are typeset with <tspan>, never with Unicode
+  subscript characters: Helvetica has no glyph for most of them and the
+  renderer silently substitutes a different face.
+
+All text is written as raw SVG markup, so literal <, > and & must be escaped
+in the source strings (they are, as &lt; &gt; &amp;).
+
+Run:      python3 make_supp_figs.py
+Convert:  for f in *.svg; do rsvg-convert -f pdf -o ${f%.svg}.pdf $f; done
 """
-import math, os
+import math, os, random
 
-H1 = "#1687C9"; H1D = "#103A82"; H2 = "#DC2B23"; H2L = "#F0766C"
-INK = "#16233D"; GREY = "#6F8090"; LGREY = "#CBD5DE"; VLGREY = "#EEF2F5"
-AMBER = "#E0A030"; AMBERL = "#FCF1C7"; GREEN = "#2E8B57"
+# ---------------------------------------------------------------- palette ---
+H1     = "#1266B0"   # haplotype 1
+H1L    = "#DCEAF6"
+H2     = "#CE4125"   # haplotype 2
+H2L    = "#FAE3DD"
+INK    = "#16233D"
+GREY   = "#6E7C8C"
+LGREY  = "#C7D1DB"
+VLGREY = "#F1F4F7"
+BAND   = "#F7F9FB"
+HEADF  = "#E4EAF0"
+AMBER  = "#B8860B"
+AMBERL = "#FBF0D5"
+GREEN  = "#1F7A4D"
+GREENL = "#E4F1EA"
+
+MINUS = "−"
 
 STYLE = """
 <style>
  text{font-family:"Helvetica Neue",Helvetica,Arial,"Liberation Sans",sans-serif;fill:%s}
- .pl{font-size:22px;font-weight:700}
- .h{font-size:15px;font-weight:600}
- .t{font-size:13px}
- .tb{font-size:13px;font-weight:600}
- .s{font-size:11px;fill:%s}
- .sb{font-size:11px;font-weight:600}
- .m{font-size:13px;font-style:italic}
- .code{font-family:Menlo,Consolas,"Courier New",monospace;font-size:11.5px}
- .w{fill:#ffffff}
+ .pl{font-size:14px;font-weight:700}
+ .h{font-size:11px;font-weight:600}
+ .t{font-size:10px}
+ .tb{font-size:10px;font-weight:600}
+ .s{font-size:9px;fill:%s}
+ .sb{font-size:9px;font-weight:600}
+ .n{font-size:8.5px;font-weight:700}
+ .m{font-size:10px;font-style:italic}
+ .mb{font-size:10px;font-style:italic;font-weight:600}
+ .eq{font-size:10.5px}
+ .code{font-family:"SF Mono",Menlo,Consolas,"Courier New",monospace;font-size:9px}
 </style>
 """ % (INK, GREY)
+
+
+def sub(s, d=2.6):
+    """Subscript that restores the baseline for the text that follows."""
+    return f'<tspan font-size="72%" dy="{d}">{s}</tspan><tspan dy="{-d}"></tspan>'
+
+
+def sup(s, d=-4.2):
+    return f'<tspan font-size="72%" dy="{d}">{s}</tspan><tspan dy="{-d}"></tspan>'
+
 
 class SVG:
     def __init__(self, w, h, title):
         self.w, self.h = w, h
-        self.parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}">',
-                      f'<title>{title}</title>', STYLE,
-                      '<defs>'
-                      f'<marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="{GREY}"/></marker>'
-                      f'<marker id="arrd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="{INK}"/></marker>'
-                      '</defs>',
-                      f'<rect width="{w}" height="{h}" fill="#ffffff"/>']
+        self.parts = [
+            f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}">',
+            f'<title>{title}</title>', STYLE,
+            '<defs>'
+            f'<marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="{GREY}"/></marker>'
+            f'<marker id="arrd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="{INK}"/></marker>'
+            f'<marker id="arra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="{AMBER}"/></marker>'
+            '</defs>',
+            f'<rect width="{w}" height="{h}" fill="#ffffff"/>']
+
+    # ---- primitives --------------------------------------------------------
     def add(self, s): self.parts.append(s)
+
     def text(self, x, y, s, cls="t", anchor="start", fill=None, rot=None):
-        s = str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
         f = f' fill="{fill}"' if fill else ""
         r = f' transform="rotate({rot} {x} {y})"' if rot is not None else ""
-        self.add(f'<text x="{x}" y="{y}" class="{cls}" text-anchor="{anchor}"{f}{r}>{s}</text>')
-    def line(self, x1, y1, x2, y2, stroke=GREY, w=1.2, dash=None, arrow=False, cap="round"):
+        self.add(f'<text x="{x:.1f}" y="{y:.1f}" class="{cls}" text-anchor="{anchor}"{f}{r}>{s}</text>')
+
+    def halo_text(self, x, y, s, cls="sb", anchor="middle", fill=None, pad=3, hw=None):
+        """Text on a white plate, for labels that sit on top of lines."""
+        w = hw or (len(str(s)) * 5.0 + 2 * pad)
+        x0 = {"middle": x - w / 2, "start": x - pad, "end": x - w + pad}[anchor]
+        self.rect(x0, y - 9, w, 12, fill="#ffffff", r=1)
+        self.text(x, y, s, cls=cls, anchor=anchor, fill=fill)
+
+    def line(self, x1, y1, x2, y2, stroke=GREY, w=1, dash=None, arrow=None, cap="round"):
         d = f' stroke-dasharray="{dash}"' if dash else ""
-        a = ' marker-end="url(#arr)"' if arrow else ""
-        self.add(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{stroke}" stroke-width="{w}" stroke-linecap="{cap}"{d}{a}/>')
-    def path(self, d, stroke=GREY, w=1.2, fill="none", dash=None, arrow=False, op=1):
+        a = f' marker-end="url(#{arrow})"' if arrow else ""
+        self.add(f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" stroke="{stroke}" stroke-width="{w}" stroke-linecap="{cap}"{d}{a}/>')
+
+    def path(self, d, stroke=GREY, w=1, fill="none", dash=None, arrow=None, op=1):
         dd = f' stroke-dasharray="{dash}"' if dash else ""
-        a = ' marker-end="url(#arr)"' if arrow else ""
+        a = f' marker-end="url(#{arrow})"' if arrow else ""
         self.add(f'<path d="{d}" stroke="{stroke}" stroke-width="{w}" fill="{fill}" stroke-linecap="round" stroke-linejoin="round" opacity="{op}"{dd}{a}/>')
-    def rect(self, x, y, w, h, fill=VLGREY, stroke="none", sw=1, r=3, op=1, dash=None):
+
+    def rect(self, x, y, w, h, fill=VLGREY, stroke="none", sw=0.8, r=2, op=1, dash=None):
         d = f' stroke-dasharray="{dash}"' if dash else ""
-        self.add(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{r}" fill="{fill}" stroke="{stroke}" stroke-width="{sw}" opacity="{op}"{d}/>')
-    def circle(self, cx, cy, r, fill="#fff", stroke=INK, sw=1.5):
-        self.add(f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{fill}" stroke="{stroke}" stroke-width="{sw}"/>')
-    def node(self, cx, cy, label, color, r=11, filled=True, cls="sb"):
+        self.add(f'<rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}" rx="{r}" fill="{fill}" stroke="{stroke}" stroke-width="{sw}" opacity="{op}"{d}/>')
+
+    def circle(self, cx, cy, r, fill="#fff", stroke=INK, sw=1.2):
+        self.add(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r}" fill="{fill}" stroke="{stroke}" stroke-width="{sw}"/>')
+
+    # ---- composites --------------------------------------------------------
+    def node(self, cx, cy, label, color, r=8, filled=True):
         if filled:
-            self.circle(cx, cy, r, fill=color, stroke=color)
-            self.text(cx, cy + 4, label, cls=cls, anchor="middle", fill="#fff")
+            self.circle(cx, cy, r, fill=color, stroke=color, sw=0)
+            if label: self.text(cx, cy + 3, label, cls="n", anchor="middle", fill="#fff")
         else:
-            self.circle(cx, cy, r, fill="#fff", stroke=color, sw=1.8)
-            self.text(cx, cy + 4, label, cls=cls, anchor="middle", fill=color)
+            self.circle(cx, cy, r, fill="#fff", stroke=color, sw=1.4)
+            if label: self.text(cx, cy + 3, label, cls="n", anchor="middle", fill=color)
+
     def panel(self, x, y, letter, title=None):
         self.text(x, y, letter, cls="pl")
-        if title: self.text(x + 22, y, title, cls="h")
-    def read(self, x1, x2, y, color=LGREY, w=5):
+        if title: self.text(x + 14, y, title, cls="h")
+
+    def rule(self, x1, y, x2, stroke=LGREY, w=0.8):
+        self.line(x1, y, x2, y, stroke=stroke, w=w, cap="butt")
+
+    def read(self, x1, x2, y, color=LGREY, w=4):
         self.line(x1, y, x2, y, stroke=color, w=w, cap="round")
+
+    def callout(self, x, y, w, h, fill=VLGREY, accent=None):
+        self.rect(x, y, w, h, fill=fill, r=2)
+        if accent: self.rect(x, y, 2.2, h, fill=accent, r=0)
+
+    def table(self, x, y, cols, rows, header=None, rowh=16, pad=6,
+              cell_cls=None, row_tint=None, text_colors=None):
+        total = sum(cols)
+        yy = y
+        if header:
+            self.rect(x, yy, total, rowh, fill=HEADF, r=0)
+            cx = x
+            for w, htxt in zip(cols, header):
+                self.text(cx + pad, yy + rowh - 5, htxt, cls="sb", fill=INK)
+                cx += w
+            yy += rowh
+        for i, row in enumerate(rows):
+            tint = (row_tint[i] if row_tint else None) or (BAND if i % 2 else "#ffffff")
+            self.rect(x, yy, total, rowh, fill=tint, r=0)
+            cx = x
+            for j, (w, cell) in enumerate(zip(cols, row)):
+                cls = (cell_cls[j] if cell_cls else ("tb" if j == 0 else "t"))
+                col = text_colors[i][j] if text_colors else None
+                self.text(cx + pad, yy + rowh - 5, cell, cls=cls, fill=col)
+                cx += w
+            yy += rowh
+        self.rect(x, y, total, yy - y, fill="none", stroke=LGREY, sw=0.8, r=0)
+        if header:
+            self.rule(x, y + rowh, x + total, stroke=LGREY)
+        return yy
+
+    def frac(self, x, y, num, den, cls="t", width=None):
+        """Stacked fraction, bar centred on (x, y)."""
+        w = width or 60
+        self.text(x, y - 3.5, num, cls=cls, anchor="middle")
+        self.rule(x - w / 2, y, x + w / 2, stroke=INK, w=0.8)
+        self.text(x, y + 10.5, den, cls=cls, anchor="middle")
+        return w
+
+    def chip(self, x, y, label, w=None, fill=VLGREY, tc=INK):
+        w = w or (5.6 * len(label) + 14)
+        self.rect(x, y, w, 17, fill=fill, r=8)
+        self.text(x + w / 2, y + 12, label, cls="s", anchor="middle", fill=tc)
+        return w
+
     def save(self, name):
         self.add('</svg>')
-        with open(name, "w") as f: f.write("\n".join(self.parts))
+        with open(name, "w") as f:
+            f.write("\n".join(self.parts))
         print("wrote", name)
 
-# ----------------------------------------------------------------------------
-# S1  Read-level allele extraction and pre-graph filters
-# ----------------------------------------------------------------------------
+
+W = 780
+
+
+# ============================================================================
+# S1  Read-level allele observations and pre-graph filters
+# ============================================================================
 def fig_s1():
-    S = SVG(1100, 560, "Read-level allele observations and filters")
-    # a: allele observations from one read
-    S.panel(20, 34, "a", "Allele observations extracted from one alignment")
-    y0 = 90
-    S.text(52, y0 + 4, "Ref", cls="s", anchor="end")
-    S.line(60, y0, 520, y0, stroke=INK, w=2)
-    cols = [(80, "SNV", "A/G"), (170, "Indel", "T/TAC"), (270, "SV", "DEL 1.2 kb"), (380, "5mC", "CpG"), (470, "SNV", "C/T")]
-    for x, k, lab in cols:
-        S.line(x, y0 - 6, x, y0 + 6, stroke=INK, w=2)
-        S.text(x, y0 - 12, k, cls="sb", anchor="middle")
-        S.text(x, y0 + 20, lab, cls="s", anchor="middle")
-    yr = y0 + 48
-    S.text(52, yr + 4, "Read", cls="s", anchor="end")
-    S.read(60, 510, yr, color=LGREY, w=8)
-    # observations
-    obs = [(80, "G", "Q=22", H2), (170, "+AC", "CIGAR I", H1), (270, "DEL", "CIGAR D / RNAMES", H1), (380, "m", "ML=0.93", H2), (470, "C", "Q=9", H1)]
-    for x, a, src, c in obs:
-        S.node(x, yr, a if len(a) <= 2 else "", c, r=10)
-        if len(a) > 2: S.text(x, yr + 4, a, cls="sb", anchor="middle", fill="#fff")
-        S.text(x, yr + 30, src, cls="s", anchor="middle")
-    # weights table
-    ty = yr + 62
-    S.text(30, ty, "Observation quality used for edge weighting", cls="tb")
-    rows = [("SNV", "Phred base quality; edge weight 1 if both bases ≥ Q12, else 0.1"),
-            ("Indel", "CIGAR I/D starting at the site; fixed high quality; tandem-repeat indels flagged"),
-            ("SV", "caller read list → ALT (high quality); unlisted reads → REF (lower quality)"),
-            ("5mC", "modcall read lists, strand-matched; fixed high quality")]
-    for i, (k, v) in enumerate(rows):
-        yy = ty + 20 + i * 18
-        S.text(30, yy, k, cls="sb"); S.text(80, yy, v, cls="s")
-    # b: homopolymer SNV filter
-    S.panel(580, 34, "b", "Homopolymer SNV filter (nanopore)")
-    yb = 80
-    seq = "G T A A A A A C A A A A T G"
-    S.text(590, yb, "Ref", cls="s")
-    S.rect(625 + 2 * 22 - 11, yb - 14, 22 * 5, 20, fill=AMBERL, r=4)
-    S.rect(625 + 8 * 22 - 11, yb - 14, 22 * 4, 20, fill=AMBERL, r=4)
-    for i, ch in enumerate(seq.split()):
-        S.text(625 + i * 22, yb, ch, cls="code", anchor="middle", fill=INK)
-    S.line(625 + 5 * 22, yb + 12, 625 + 5 * 22, yb + 30, stroke=H2, w=2)
-    S.line(625 + 7 * 22, yb + 12, 625 + 7 * 22, yb + 30, stroke=H2, w=2)
-    S.text(625 + 5 * 22, yb + 44, "SNV₁", cls="sb", anchor="middle")
-    S.text(625 + 7 * 22, yb + 44, "SNV₂", cls="sb", anchor="middle")
-    S.text(590, yb + 70, "Both SNVs in homopolymers of length ≥ 3 and ≤ 2 bp apart", cls="s")
-    S.text(590, yb + 86, "→ downstream SNV removed from all reads", cls="s")
-    # c: overlapping alignment filter
-    S.panel(580, 210, "c", "Overlapping-alignment filter")
-    yc = 250
-    S.line(590, yc, 1080, yc, stroke=INK, w=1.5)
-    S.read(620, 850, yc + 22, color=H1, w=6); S.text(612, yc + 26, "A₁", cls="sb", anchor="end")
-    S.read(760, 1050, yc + 44, color=H1, w=6); S.text(752, yc + 48, "A₂", cls="sb", anchor="end")
-    S.rect(760, yc + 12, 90, 40, fill=AMBERL, r=3, op=0.8)
-    S.text(805, yc + 70, "overlap", cls="s", anchor="middle")
-    S.text(590, yc + 96, "Two alignments of one read; overlap / combined span ≥ 0.2", cls="s")
-    S.text(590, yc + 112, "→ the shorter alignment (A₁) is discarded", cls="s")
-    # d: tandem-repeat indel flag
-    S.panel(580, 400, "d", "Tandem-repeat indel flag")
-    yd = 440
-    seq2 = "G CA CA CA CA CA T"
-    S.rect(615, yd - 14, 150, 20, fill=AMBERL, r=4)
-    x = 600
-    for tok in seq2.split():
-        S.text(x, yd, tok, cls="code", anchor="middle", fill=INK)
-        x += 30
-    S.text(690, yd + 30, "+CA / −CA indel inside a CA repeat", cls="s", anchor="middle")
-    S.text(590, yd + 60, "Flagged indels stay in the graph but vote with weight 0.1", cls="s")
-    S.text(590, yd + 76, "and contribute 0.1 to read haplotype assignment", cls="s")
-    # a (cont.): CNV note
-    S.text(30, 460, "See Supplementary Fig. 4 for the copy-number-aware filter applied after these steps.", cls="s")
+    S = SVG(W, 382, "Read-level allele observations and pre-graph filters")
+    XL, XR = 16, 424
+    S.line(404, 18, 404, 300, stroke=LGREY, w=0.8)
+
+    # -- a ---------------------------------------------------------------
+    S.panel(XL, 24, "a", "Allele observations from one alignment")
+    xs = [78, 146, 214, 282, 350]
+    y0 = 66
+    S.text(56, y0 + 3, "reference", cls="s", anchor="end")
+    S.line(66, y0, 384, y0, stroke=INK, w=1.2)
+    for x, (k, lab) in zip(xs, [("SNV", "A/G"), ("indel", "T/TAC"), ("SV", "DEL 1.2 kb"),
+                                ("5mC", "CpG"), ("SNV", "C/T")]):
+        S.line(x, y0 - 4, x, y0 + 4, stroke=INK, w=1.2)
+        S.text(x, y0 - 9, k, cls="sb", anchor="middle", fill=INK)
+        S.text(x, y0 + 15, lab, cls="s", anchor="middle")
+
+    yr = y0 + 46
+    S.text(56, yr + 3, "read", cls="s", anchor="end")
+    S.read(66, 384, yr, color=LGREY, w=5)
+    for x, (a, src, c) in zip(xs, [("G", "Q 22", H2), ("+AC", "CIGAR I", H1),
+                                   ("DEL", "CIGAR D", H1), ("m", "ML 0.93", H2),
+                                   ("C", "Q 9", H1)]):
+        if len(a) <= 1:
+            S.node(x, yr, a, c, r=8)
+        else:
+            S.rect(x - 15, yr - 8, 30, 16, fill=c, r=8)
+            S.text(x, yr + 3, a, cls="n", anchor="middle", fill="#fff")
+        S.text(x, yr + 22, src, cls="s", anchor="middle")
+
+    S.text(XL, 158, "observation quality entering the edge weight", cls="sb", fill=INK)
+    S.table(XL, 166, [42, 130, 188],
+            [("SNV", "aligned base, Phred Q", "1 if both bases ≥ Q12, else 0.1"),
+             ("indel", "CIGAR I/D at the site", "1; 0.1 if in a tandem repeat"),
+             ("SV", "caller read list", "1 for ALT, 0.1 for REF"),
+             ("5mC", "modcall read lists", "1, strand matched")],
+            header=("class", "source", "weight"))
+
+    # -- d (left column, bottom) -----------------------------------------
+    S.panel(XL, 268, "d", "Tandem-repeat indel flag")
+    yd = 296
+    S.rect(74, yd - 11, 132, 16, fill=AMBERL, r=2)
+    x = 64
+    for tok in "G CA CA CA CA CA T".split():
+        S.text(x, yd + 3, tok, cls="code", anchor="middle", fill=INK)
+        x += 24
+    S.text(226, yd + 3, "+CA / " + MINUS + "CA inside the repeat", cls="s")
+    S.text(XL, yd + 22, "→ the indel stays in the graph but votes with weight 0.1",
+           cls="sb", fill=AMBER)
+
+    # -- b ---------------------------------------------------------------
+    S.panel(XR, 24, "b", "Homopolymer SNV filter (nanopore)")
+    yb, x0, dx = 62, 466, 17
+    S.text(XR + 12, yb + 3, "ref", cls="s", anchor="end")
+    S.rect(x0 + 2 * dx - 8.5, yb - 11, dx * 5, 16, fill=AMBERL, r=2)
+    S.rect(x0 + 8 * dx - 8.5, yb - 11, dx * 4, 16, fill=AMBERL, r=2)
+    for i, ch in enumerate("G T A A A A A C A A A A T G".split()):
+        S.text(x0 + i * dx, yb + 3, ch, cls="code", anchor="middle", fill=INK)
+    for i, lab in ((5, "SNV" + sub("1")), (7, "SNV" + sub("2"))):
+        S.line(x0 + i * dx, yb + 9, x0 + i * dx, yb + 22, stroke=H2, w=1.4)
+        S.text(x0 + i * dx, yb + 33, lab, cls="sb", anchor="middle", fill=H2)
+    S.text(XR, yb + 54, "runs ≥ 3 bp, SNVs ≤ 2 bp apart", cls="s")
+    S.text(XR, yb + 68, "→ drop SNV" + sub("2") + " from every read", cls="sb", fill=AMBER)
+
+    # -- c ---------------------------------------------------------------
+    S.panel(XR, 162, "c", "Overlapping-alignment filter")
+    yc = 196
+    S.read(470, 604, yc, color=H1, w=4.5)
+    S.text(464, yc + 3, "A" + sub("1"), cls="sb", anchor="end", fill=H1)
+    S.read(562, 756, yc + 20, color=H1, w=4.5)
+    S.text(556, yc + 23, "A" + sub("2"), cls="sb", anchor="end", fill=H1)
+    S.rect(562, yc - 8, 42, 36, fill=AMBERL, r=2, op=0.85)
+    S.text(583, yc + 44, "overlap", cls="s", anchor="middle", fill=AMBER)
+    S.text(XR, yc + 66, "overlap / combined span ≥ 0.2", cls="s")
+    S.text(XR, yc + 80, "→ discard the shorter alignment A" + sub("1"),
+           cls="sb", fill=AMBER)
+
+    # -- pipeline strip ---------------------------------------------------
+    S.rule(XL, 330, W - XL)
+    S.text(XL, 350, "order of operations", cls="sb", fill=INK)
+    steps = [("extract", GREENL, GREEN), ("b  homopolymer", VLGREY, INK),
+             ("c  overlap", VLGREY, INK), ("d  repeat flag", AMBERL, AMBER),
+             ("Fig. 4  copy number", VLGREY, INK), ("graph", GREENL, GREEN)]
+    x = 132
+    for i, (lab, fill, tc) in enumerate(steps):
+        w = S.chip(x, 340, lab, fill=fill, tc=tc)
+        if i < len(steps) - 1:
+            S.line(x + w + 3, 348.5, x + w + 11, 348.5, stroke=LGREY, w=1, arrow="arr")
+        x += w + 14
+
     S.save("suppfig1_observations.svg")
 
-# ----------------------------------------------------------------------------
-# S2  Pairwise support, edge weights and vote rules
-# ----------------------------------------------------------------------------
+
+# ============================================================================
+# S2  Pairwise allele support and vote weighting
+# ============================================================================
 def fig_s2():
-    S = SVG(1100, 600, "Pairwise allele support and vote weighting")
-    S.panel(20, 34, "a", "Four allele-pair weights between two variants")
-    ux, vx = 200, 480
-    yt, yb = 120, 220
-    S.text(ux, 78, "variant u", cls="h", anchor="middle"); S.text(vx, 78, "variant v", cls="h", anchor="middle")
-    S.node(ux, yt, "r", H1, r=14); S.node(ux, yb, "a", H2, r=14)
-    S.node(vx, yt, "r", H1, r=14); S.node(vx, yb, "a", H2, r=14)
-    S.text(ux - 24, yt + 4, "uʳ", cls="m", anchor="end"); S.text(ux - 24, yb + 4, "uᵃ", cls="m", anchor="end")
-    S.text(vx + 24, yt + 4, "vʳ", cls="m"); S.text(vx + 24, yb + 4, "vᵃ", cls="m")
-    S.line(ux + 14, yt, vx - 14, yt, stroke=H1, w=6); S.text((ux + vx) / 2, yt - 12, "wᵣᵣ = 9", cls="tb", anchor="middle")
-    S.line(ux + 14, yb, vx - 14, yb, stroke=H2, w=5); S.text((ux + vx) / 2, yb + 24, "wₐₐ = 7", cls="tb", anchor="middle")
-    S.line(ux + 12, yt + 8, vx - 12, yb - 8, stroke=LGREY, w=2.5); S.line(ux + 12, yb - 8, vx - 12, yt + 8, stroke=LGREY, w=2.5)
-    S.text(vx - 40, (yt + yb) / 2 - 14, "wᵣₐ = 1", cls="s", anchor="end"); S.text(vx - 40, (yt + yb) / 2 + 22, "wₐᵣ = 0.1", cls="s", anchor="end")
-    S.text(40, 280, "P = wᵣᵣ + wₐₐ = 16   (cis: same haplotype carries r and r)", cls="t")
-    S.text(40, 300, "Q = wᵣₐ + wₐᵣ = 1.1   (trans)", cls="t")
-    S.text(40, 328, "similarity  s = min(P,Q) / max(P,Q) = 0.07", cls="t")
-    S.text(40, 356, "Per read: +1 if both bases ≥ Q12, else +0.1 (grey edges here carry a low-quality read).", cls="s")
-    # b: vote decision rules
-    S.panel(600, 34, "b", "Vote rules for the pair (u, v)")
-    rows = [("s > 0.7", "no vote (uninformative pair)", GREY),
-            ("s > 0.3 for SNV–5mC pairs", "no vote", GREY),
-            ("0.1 < s ≤ 0.7", "vote for larger of P, Q; weight 1", INK),
-            ("s ≤ 0.1, or one side has no support", "vote; weight 20 (near-unanimous)", GREEN),
-            ("u is a tandem-repeat indel", "vote; weight 0.1", AMBER)]
-    y = 80
-    S.rect(600, y - 16, 470, 22 * len(rows) + 10, fill=VLGREY, r=6)
-    for cond, act, c in rows:
-        S.text(612, y + 2, cond, cls="sb", fill=c); S.text(830, y + 2, act, cls="s")
-        y += 22
-    S.text(600, y + 20, "The vote is expressed as a haplotype for v using the haplotype already", cls="s")
-    S.text(600, y + 36, "assigned to u: P favours vʳ on hap(uʳ), Q favours vʳ on hap(uᵃ).", cls="s")
-    # c: one-long-read guard
-    S.panel(600, 300, "c", "Single-read guard")
-    y = 340
-    S.text(600, y, "Among the votes received by v, count those whose pair is supported by", cls="s")
-    S.text(600, y + 16, "a single read (P + Q ≤ 1). If more than three such votes exist, h₁ and h₂", cls="s")
-    S.text(600, y + 32, "are recomputed from high-consistency (s < 0.2), non-indel votes only,", cls="s")
-    S.text(600, y + 48, "preventing one chimeric ultra-long read from dominating a sparse region.", cls="s")
-    # d: what the DOT graph stores
-    S.panel(20, 420, "d", "Exported graph (DOT)")
-    S.text(40, 456, '1001.1 -> 1543.1 [label=16.0]', cls="code")
-    S.text(40, 474, '1001.2 -> 1543.2 [label=1.1]', cls="code")
-    S.text(40, 500, "position.allele → position.allele, label = accumulated haplotype vote weight at the source;", cls="s")
-    S.text(40, 516, "one edge per voting pair; parsed by the GNN module together with INFO/PE, H1, H2.", cls="s")
+    S = SVG(W, 390, "Pairwise allele support and vote weighting")
+    XL, XR = 16, 400
+    S.line(382, 18, 382, 374, stroke=LGREY, w=0.8)
+
+    # -- a ---------------------------------------------------------------
+    S.panel(XL, 24, "a", "Allele-pair weights between two variants")
+    ux, vx, yt, yb = 120, 280, 84, 152
+    S.text(ux, 60, "variant u", cls="mb", anchor="middle", fill=INK)
+    S.text(vx, 60, "variant v", cls="mb", anchor="middle", fill=INK)
+    S.line(ux + 11, yt, vx - 11, yt, stroke=H1, w=4.5)
+    S.line(ux + 11, yb, vx - 11, yb, stroke=H2, w=3.8)
+    S.line(ux + 10, yt + 8, vx - 10, yb - 8, stroke=LGREY, w=1.6)
+    S.line(ux + 10, yb - 8, vx - 10, yt + 8, stroke=LGREY, w=1.6)
+    S.node(ux, yt, "r", H1, r=11); S.node(ux, yb, "a", H2, r=11)
+    S.node(vx, yt, "r", H1, r=11); S.node(vx, yb, "a", H2, r=11)
+    S.text(ux - 16, yt + 3, "u" + sup("r"), cls="m", anchor="end")
+    S.text(ux - 16, yb + 3, "u" + sup("a"), cls="m", anchor="end")
+    S.text(vx + 16, yt + 3, "v" + sup("r"), cls="m")
+    S.text(vx + 16, yb + 3, "v" + sup("a"), cls="m")
+    S.text(200, yt - 8, "w" + sub("rr") + " = 9", cls="tb", anchor="middle", fill=H1)
+    S.text(200, yb + 18, "w" + sub("aa") + " = 7", cls="tb", anchor="middle", fill=H2)
+    S.halo_text(234, 104, "w" + sub("ar") + " = 0.1", cls="sb", anchor="middle",
+                fill=GREY, hw=54)
+    S.halo_text(234, 140, "w" + sub("ra") + " = 1", cls="sb", anchor="middle",
+                fill=GREY, hw=48)
+
+    S.rect(XL, 182, 350, 68, fill=VLGREY, r=2)
+    S.text(XL + 12, 201, "P = w" + sub("rr") + " + w" + sub("aa") + " = 16", cls="eq", fill=INK)
+    S.text(XL + 160, 201, "cis", cls="m", fill=H1)
+    S.text(XL + 12, 221, "Q = w" + sub("ra") + " + w" + sub("ar") + " = 1.1", cls="eq", fill=INK)
+    S.text(XL + 160, 221, "trans", cls="m", fill=H2)
+    S.text(XL + 12, 241, "s = min(P,Q) / max(P,Q) = 0.07", cls="eq", fill=INK)
+    S.text(XL, 266, "each read adds 1 (both bases ≥ Q12) or 0.1", cls="s")
+
+    # -- d ---------------------------------------------------------------
+    S.panel(XL, 300, "d", "Exported graph (DOT)")
+    S.rect(XL, 312, 350, 54, fill=VLGREY, r=2)
+    S.text(XL + 10, 329, "1001.1 -&gt; 1543.1 [label=16.0]", cls="code")
+    S.text(XL + 10, 343, "1001.2 -&gt; 1543.2 [label=1.1]", cls="code")
+    S.text(XL + 10, 359, "position.allele → position.allele, label = vote weight", cls="s")
+
+    # -- b ---------------------------------------------------------------
+    S.panel(XR, 24, "b", "Vote rules for the pair (u, v)")
+    rows = [("s &gt; 0.7", "no vote"),
+            ("s &gt; 0.3, SNV–5mC pair", "no vote"),
+            ("0.1 &lt; s ≤ 0.7", "vote larger of P, Q; weight 1"),
+            ("s ≤ 0.1 or one side unsupported", "vote; weight 20"),
+            ("u is a tandem-repeat indel", "vote; weight 0.1")]
+    tint = [VLGREY, VLGREY, "#ffffff", GREENL, AMBERL]
+    tcol = [[GREY, GREY], [GREY, GREY], [INK, INK], [GREEN, GREEN], [AMBER, AMBER]]
+    S.table(XR, 38, [178, 186], rows, header=("condition on s", "vote for v"),
+            row_tint=tint, text_colors=tcol, cell_cls=("tb", "t"))
+    S.text(XR, 158, "the vote names a haplotype for v given hap(u)", cls="s")
+    S.text(XR, 173, "P → v" + sup("r") + " on hap(u" + sup("r") + ");   Q → v"
+           + sup("r") + " on hap(u" + sup("a") + ")", cls="sb", fill=INK)
+
+    # -- c ---------------------------------------------------------------
+    S.panel(XR, 208, "c", "Single-read guard")
+    gx, gy, gh = XR + 44, 306, 58
+    S.line(gx - 8, gy, gx + 300, gy, stroke=INK, w=1)
+    S.text(XR, gy - 26, "P + Q", cls="sb", anchor="start", fill=INK)
+    S.text(XR, gy + 12, "votes received by v", cls="s")
+    supports = [0.4, 0.6, 0.8, 1.0, 2.6, 4.1, 6.0, 9.4]
+    for i, p in enumerate(supports):
+        h = 4 + 44 * (p / 10.0)
+        c = AMBER if p <= 1 else H1
+        S.rect(gx + i * 36, gy - h, 20, h, fill=c, r=1)
+    thr = gy - (4 + 44 * 0.1)
+    S.line(gx - 8, thr, gx + 300, thr, stroke=AMBER, w=1, dash="3,2.5")
+    S.text(gx + 306, thr + 3, "P + Q ≤ 1", cls="sb", fill=AMBER)
+    S.text(gx + 34, gy - 52, "4 votes rest on a single read", cls="sb", fill=AMBER)
+    S.callout(XR, 328, 364, 42, fill=AMBERL, accent=AMBER)
+    S.text(XR + 12, 344, "&gt; 3 such votes → recompute h" + sub("1") + ", h" + sub("2"),
+           cls="tb", fill=INK)
+    S.text(XR + 12, 360, "from s &lt; 0.2, non-indel votes only", cls="tb", fill=INK)
+
     S.save("suppfig2_pair_support.svg")
 
-# ----------------------------------------------------------------------------
+
+# ============================================================================
 # S3  Multi-neighbour voting and phasing entropy
-# ----------------------------------------------------------------------------
+# ============================================================================
 def fig_s3():
-    S = SVG(1100, 520, "Multi-neighbour voting and phasing entropy")
-    S.panel(20, 34, "a", "Variant v receives weighted votes from up to k = 35 upstream variants")
-    xs = [80, 160, 240, 320, 400, 480]
-    yt, yb = 130, 210
-    labels = ["v₋₅", "v₋₄", "v₋₃", "v₋₂", "v₋₁", "v"]
+    S = SVG(W, 380, "Multi-neighbour voting and phasing entropy")
+    XL, XR = 16, 438
+    S.line(418, 18, 418, 364, stroke=LGREY, w=0.8)
+
+    # -- a ---------------------------------------------------------------
+    S.panel(XL, 24, "a", "Weighted votes from up to k = 35 upstream variants")
+    xs = [70, 130, 190, 250, 310, 370]
+    yt, yb = 128, 200
+    labels = ["v" + sub(MINUS + "5"), "v" + sub(MINUS + "4"), "v" + sub(MINUS + "3"),
+              "v" + sub(MINUS + "2"), "v" + sub(MINUS + "1"), "v"]
     hp = [1, 2, 1, 1, 2, None]
-    for x, lab, h in zip(xs, labels, hp):
-        S.text(x, 100, lab, cls="m", anchor="middle")
-        if h == 1:
-            S.node(x, yt, "r", H1, r=11); S.node(x, yb, "a", H2, r=11)
-        elif h == 2:
-            S.node(x, yt, "r", H2, r=11); S.node(x, yb, "a", H1, r=11)
+    for x, h in zip(xs, hp):
+        S.line(x, 112, x, 216, stroke=LGREY, w=0.6, dash="2,3")
+        if h is None:
+            S.node(x, yt, "r", GREY, r=10, filled=False)
+            S.node(x, yb, "a", GREY, r=10, filled=False)
         else:
-            S.node(x, yt, "r", GREY, r=11, filled=False); S.node(x, yb, "a", GREY, r=11, filled=False)
-    # votes to v
-    votes = [(0, 1, 20, H1), (1, 1, 1, H1), (2, 1, 1, H1), (3, 2, 1, H2), (4, 1, 0.1, H1)]
-    for i, hap, w, c in votes:
-        x = xs[i]
-        d = f"M{x+11},{yt if hap==1 else yb} C{(x+xs[5])/2},{yt-60 if hap==1 else yb+60} {(x+xs[5])/2},{yt-60 if hap==1 else yb+60} {xs[5]-11},{yt if hap==1 else yb}"
-        S.path(d, stroke=c, w=max(1, min(6, 1 + math.log10(w + 1) * 3)), op=0.8)
-        S.text((x + xs[5]) / 2 + (i - 2) * 6, (yt - 66 + i * 5) if hap == 1 else (yb + 60), f"{w:g}", cls="sb", anchor="middle", fill=c)
-    S.text(560, yt + 4, "votes for hap 1", cls="s"); S.text(560, yb + 4, "votes for hap 2", cls="s")
-    S.text(40, 290, "h₁(v) = 20 + 1 + 1 + 0.1 = 22.1        h₂(v) = 1", cls="t")
-    S.text(40, 314, "v assigned to haplotype 1;  tie h₁ = h₂ opens a new phase block (PS = position of first variant)", cls="s")
-    # b: entropy
-    S.panel(640, 34, "b", "Phasing entropy PE")
-    S.text(660, 76, "PE(v) = − Σ pᵢ log₂ pᵢ,   pᵢ = hᵢ / (h₁ + h₂)", cls="t")
-    # small bars examples
+            S.node(x, yt, "r", H1 if h == 1 else H2, r=10)
+            S.node(x, yb, "a", H2 if h == 1 else H1, r=10)
+    votes = [(0, 1, 20), (1, 1, 1), (2, 1, 1), (4, 1, 0.1), (3, 2, 1)]
+    for i, hap, w in votes:
+        x, xv = xs[i], xs[5]
+        c = H1 if hap == 1 else H2
+        yy = yt if hap == 1 else yb
+        arc = (yt - 44 - i * 6) if hap == 1 else (yb + 44)
+        S.path(f"M{x+10},{yy} C{(x+xv)/2},{arc} {(x+xv)/2},{arc} {xv-10},{yy}",
+               stroke=c, w=0.9 + 1.7 * math.log10(w * 10 + 1), op=0.8)
+        S.halo_text((x + xv) / 2, arc + (5 if hap == 1 else 11), f"{w:g}",
+                    cls="sb", anchor="middle", fill=c, hw=18)
+    for x, lab in zip(xs, labels):
+        S.halo_text(x, 168, lab, cls="m", anchor="middle", fill=INK, hw=22)
+    S.text(388, yt + 3, "hap 1", cls="s", fill=H1)
+    S.text(388, yb + 3, "hap 2", cls="s", fill=H2)
+
+    S.rect(XL, 244, 386, 40, fill=VLGREY, r=2)
+    S.text(XL + 12, 261, "h" + sub("1") + "(v) = 20 + 1 + 1 + 0.1 = 22.1", cls="eq", fill=H1)
+    S.text(XL + 230, 261, "h" + sub("2") + "(v) = 1", cls="eq", fill=H2)
+    S.text(XL + 12, 277, "v → haplotype 1", cls="sb", fill=INK)
+    S.text(XL + 100, 277, "(a tie opens a new phase block)", cls="s")
+
+    # -- c ---------------------------------------------------------------
+    S.panel(XL, 310, "c", "Block formation")
+    yc = 344
+    pos = [XL + 22 + i * 36 for i in range(10)]
+    for i, x in enumerate(pos):
+        if i < 9 and i not in (4, 8):
+            S.line(x + 6, yc, pos[i + 1] - 6, yc, stroke=LGREY, w=1.2)
+    for i, x in enumerate(pos):
+        if i == 5:
+            S.node(x, yc, "", AMBER, r=6, filled=False)
+        elif i == 9:
+            S.node(x, yc, "", GREY, r=6, filled=False)
+        else:
+            S.node(x, yc, "", H1, r=6)
+    S.line(pos[0] - 8, yc + 15, pos[4] + 8, yc + 15, stroke=H1, w=2, cap="butt")
+    S.line(pos[5] - 8, yc + 15, pos[8] + 8, yc + 15, stroke=H1, w=2, cap="butt")
+    S.text((pos[0] + pos[4]) / 2, yc + 27, "PS 1", cls="s", anchor="middle")
+    S.text((pos[5] + pos[8]) / 2, yc + 27, "PS 2", cls="s", anchor="middle")
+    S.text(pos[5], yc - 13, "tie", cls="sb", anchor="middle", fill=AMBER)
+    S.text(pos[9], yc - 13, "singleton", cls="sb", anchor="middle", fill=GREY)
+    S.text(pos[9] + 20, yc + 3, "dropped", cls="s", fill=GREY)
+
+    # -- b ---------------------------------------------------------------
+    S.panel(XR, 24, "b", "Phasing entropy")
+    S.text(XR + 4, 58, "PE(v) = − Σ p" + sub("i") + " log" + sub("2") + " p"
+           + sub("i") + ",    p" + sub("i") + " = h" + sub("i") + " / (h" + sub("1")
+           + " + h" + sub("2") + ")", cls="eq", fill=INK)
     ex = [("22.1 : 1", 22.1, 1), ("3 : 1", 3, 1), ("4 : 3", 4, 3), ("5 : 5", 5, 5)]
-    x0 = 660
+    x0, bw = XR + 58, 140
+    S.rect(XR + 44, 112, 262, 96, fill=AMBERL, r=2, op=0.55)
+    S.text(XR + 306, 124, "PE ≥ 0.80", cls="sb", anchor="end", fill=AMBER)
     for i, (lab, a, b) in enumerate(ex):
-        y = 110 + i * 46
+        y = 84 + i * 31
         tot = a + b
-        S.text(x0, y + 14, lab, cls="sb")
-        S.rect(x0 + 60, y, 200 * a / tot, 18, fill=H1, r=2)
-        S.rect(x0 + 60 + 200 * a / tot, y, 200 * b / tot, 18, fill=H2, r=2)
+        S.text(XR + 40, y + 11, lab, cls="sb", anchor="end", fill=INK)
+        S.rect(x0, y, bw * a / tot, 14, fill=H1, r=1)
+        S.rect(x0 + bw * a / tot, y, bw * b / tot, 14, fill=H2, r=1)
         p1, p2 = a / tot, b / tot
-        pe = -(p1 * math.log2(p1) + p2 * math.log2(p2)) if p2 > 0 else 0
-        S.text(x0 + 275, y + 14, f"PE = {pe:.3f}", cls="tb", fill=AMBER if pe >= 0.8 else INK)
-    S.rect(x0 + 55, 150, 330, 76, fill="none", stroke=AMBER, sw=1.5, dash="4,3", r=4)
-    S.text(x0 + 60, 312, "PE ≥ 0.80 triggers a GNN window (Supplementary Fig. 6)", cls="s", fill=AMBER)
-    S.text(x0, 340, "Written to VCF as INFO/PE, INFO/H1, INFO/H2 for every phased variant.", cls="s")
-    # c: read-quality weighting reminder
-    S.panel(20, 380, "c", "Block formation")
-    S.text(40, 412, "Variants are visited in coordinate order. Each assigned variant casts votes to its next k neighbours", cls="s")
-    S.text(40, 428, "within 300 kb; a variant that receives no informative vote, or a tie, starts a new block. Blocks with a", cls="s")
-    S.text(40, 444, "single variant are dropped. Haplotype labels are propagated along the block to produce phased GTs (0|1 / 1|0).", cls="s")
+        pe = -(p1 * math.log2(p1) + p2 * math.log2(p2))
+        S.text(x0 + bw + 12, y + 11, f"PE = {pe:.3f}", cls="tb",
+               fill=AMBER if pe >= 0.8 else INK)
+    S.text(XR + 4, 230, "PE ≥ 0.80 → a GNN window is opened (Fig. 6)",
+           cls="sb", fill=AMBER)
+    S.text(XR + 4, 248, "written to VCF as INFO/PE, INFO/H1, INFO/H2", cls="s")
+    kx = XR + 4
+    for c, lab in [(H1, "votes for hap 1"), (H2, "votes for hap 2")]:
+        S.rect(kx, 268, 10, 10, fill=c, r=1)
+        S.text(kx + 14, 277, lab, cls="s")
+        kx += 24 + 5.4 * len(lab)
+
     S.save("suppfig3_voting_entropy.svg")
 
-# ----------------------------------------------------------------------------
-# S4  Copy-number-aware filter
-# ----------------------------------------------------------------------------
+
+# ============================================================================
+# S4  Copy-number-aware filtering
+# ============================================================================
 def fig_s4():
-    S = SVG(1100, 560, "Copy-number-aware filtering of unreliable heterozygous sites")
-    S.panel(20, 34, "a", "Clipping-based detection of copy-number-altered intervals")
-    x0, x1, yb = 60, 1040, 190
-    S.line(x0, yb, x1, yb, stroke=INK, w=1.5)
-    S.text(x0, yb + 18, "genomic position →", cls="s")
-    # front clips (up) and back clips (down)
-    import random
-    random.seed(3)
-    for x in range(x0 + 10, x1, 14):
-        up = random.randint(0, 1); dn = random.randint(0, 1)
-        if 380 <= x <= 420: up += random.randint(4, 8)
-        if 640 <= x <= 690: dn += random.randint(4, 8)
-        if 420 < x < 640: up += random.randint(0, 2); dn += random.randint(0, 1)
-        if up: S.rect(x - 4, yb - 8 * up, 8, 8 * up, fill=H1, r=1)
-        if dn: S.rect(x - 4, yb, 8, 8 * dn, fill=H2L, r=1)
-    S.text(x0, yb - 90, "alignments starting (front-clipped)", cls="s", fill=H1)
-    S.text(x0, yb + 40, "alignments ending (back-clipped)", cls="s", fill=H2L)
-    S.rect(380, yb - 105, 310, 175, fill=AMBERL, r=4, op=0.5)
-    S.text(535, yb - 112, "candidate CNV interval", cls="sb", anchor="middle", fill=AMBER)
-    S.text(700, yb - 60, "open: ≥ 5 front-clips at one position", cls="s")
-    S.text(700, yb - 44, "extend: running (starts − ends) > 0, ≤ 200 kb", cls="s")
-    S.text(700, yb - 28, "close: back-clips ≥ pull-down count", cls="s")
-    # b: mismatch scoring within interval
-    S.panel(20, 290, "b", "Removing heterozygous calls whose ALT reads carry the mismatches")
-    yv = 340
-    S.text(40, yv - 8, "Variant inside interval; other heterozygous sites on the same reads shown as ticks", cls="s")
-    reads = [("REF", H1, [0, 0, 0, 1, 0, 0, 0]), ("REF", H1, [0, 0, 0, 0, 0, 1, 0]), ("REF", H1, [0, 0, 0, 0, 0, 0, 0]),
-             ("ALT", H2, [1, 1, 0, 1, 1, 1, 0]), ("ALT", H2, [1, 0, 1, 1, 1, 0, 1]), ("ALT", H2, [0, 1, 1, 1, 0, 1, 1])]
-    for i, (al, c, mm) in enumerate(reads):
-        y = yv + 20 + i * 22
-        S.text(60, y + 4, al, cls="sb", anchor="end", fill=c)
-        S.read(80, 560, y, color=LGREY, w=6)
-        S.node(320, y, "", c, r=7)
-        for j, m in enumerate(mm):
-            xx = 110 + j * 65
-            if xx == 320: continue
-            S.line(xx, y - 6, xx, y + 6, stroke=H2 if m else GREY, w=2 if m else 1)
-    S.text(600, yv + 30, "mean mismatches per read", cls="sb")
-    S.text(600, yv + 50, "REF-supporting reads:  0.7", cls="s", fill=H1)
-    S.text(600, yv + 66, "ALT-supporting reads:  4.7", cls="s", fill=H2)
-    S.text(600, yv + 92, "ratio = ALT / (REF + ALT) = 0.87  ≥ 0.7", cls="tb")
-    S.text(600, yv + 112, "→ site removed from all reads before graph construction", cls="s")
-    S.text(600, yv + 140, "Targets heterozygous calls created by collapsed", cls="s")
-    S.text(600, yv + 156, "paralogues or copy-number change, whose ALT allele", cls="s")
-    S.text(600, yv + 172, "co-occurs with a paralogue-specific mismatch pattern.", cls="s")
-    S.save("suppfig4_cnv_filter.svg")
+    S = SVG(W, 430, "Copy-number-aware filtering of unreliable heterozygous sites")
+    XL = 16
 
-# ----------------------------------------------------------------------------
-# S5  Read-based correction
-# ----------------------------------------------------------------------------
-def fig_s5():
-    S = SVG(1100, 520, "Read-based correction")
-    S.panel(20, 34, "a", "Step 1: assign each read to a haplotype from the initial phase")
-    xs = [120, 200, 280, 360, 440, 520]
-    yv = 80
-    for i, x in enumerate(xs):
-        S.text(x, yv, f"v{i+1}", cls="m", anchor="middle")
-    reads = [([1, 1, 1, 1, None, 1], "hap 1  (5/5)", H1, True),
-             ([2, 2, None, 2, 2, 2], "hap 2  (5/5)", H2, True),
-             ([1, 1, 2, 1, 1, None], "hap 1  (4/5 = 0.80)", H1, True),
-             ([1, 2, 2, 1, None, None], "untagged (2/4 = 0.50)", GREY, False),
-             ([None, None, 2, None, None, None], "untagged (< 2 alleles)", GREY, False)]
-    for i, (al, lab, c, ok) in enumerate(reads):
-        y = yv + 30 + i * 30
-        S.read(90, 560, y, color=LGREY if not ok else (H1 if c == H1 else H2L), w=6)
-        for x, a in zip(xs, al):
-            if a is None: continue
-            S.node(x, y, "r" if a == 1 else "a", H1 if a == 1 else H2, r=8, cls="s")
-        S.text(580, y + 4, lab, cls="s", fill=c)
-    S.text(40, 260, "A read is tagged when max(n₁,n₂)/(n₁+n₂) > 0.65 and it carries ≥ 2 informative alleles;", cls="s")
-    S.text(40, 276, "SNV and SV alleles count 1, indels 0.1, 5mC 0.", cls="s")
-    # b: re-derive variant phase
-    S.panel(20, 320, "b", "Step 2: re-derive each variant's phase from tagged reads")
-    y = 360
-    S.text(40, y, "For variant v₃:", cls="tb")
-    S.text(40, y + 22, "hap-1 reads with REF + hap-2 reads with ALT  = n₁ = 1", cls="s")
-    S.text(40, y + 38, "hap-1 reads with ALT + hap-2 reads with REF  = n₂ = 2", cls="s")
-    S.text(40, y + 60, "confidence ρ = max(n₁,n₂)/(n₁+n₂) = 0.67  ≤ 0.75", cls="tb", fill=AMBER)
-    S.text(40, y + 80, "→ v₃ left unphased (GT 0/1, no PS)", cls="s", fill=AMBER)
-    S.text(560, y, "For variant v₁:", cls="tb")
-    S.text(560, y + 22, "n₁ = 3,  n₂ = 0,  ρ = 1.00 > 0.75", cls="s")
-    S.text(560, y + 42, "→ phase confirmed: REF on hap 1, ALT on hap 2 (GT 0|1)", cls="s", fill=GREEN)
-    S.text(560, y + 70, "Only variants supported by the two read populations keep a", cls="s")
-    S.text(560, y + 86, "phase; assignments driven by a few chimeric or mis-mapped", cls="s")
-    S.text(560, y + 102, "reads are removed. Thresholds: --readConfidence 0.65,", cls="s")
-    S.text(560, y + 118, "--snpConfidence 0.75.", cls="s")
-    S.save("suppfig5_read_correction.svg")
-
-# ----------------------------------------------------------------------------
-# S6  GNN window construction
-# ----------------------------------------------------------------------------
-def fig_s6():
-    S = SVG(1100, 600, "Window construction for the graph neural network")
-    S.panel(20, 34, "a", "A window is opened around every phased variant with PE ≥ 0.8")
-    n = 13; x0 = 90; dx = 70; yt, yb = 130, 200
-    center = 6
+    # -- a ---------------------------------------------------------------
+    S.panel(XL, 24, "a", "Two-state detection of copy-number-altered intervals")
+    x0, x1, yb = 60, 470, 112
+    n, dx = 56, (x1 - x0) / 56.0
+    rng = random.Random(11)
+    front = [rng.choice([0, 1, 1]) for _ in range(n)]
+    back = [rng.choice([0, 1, 1]) for _ in range(n)]
+    for i in range(15, 40):
+        front[i] = max(front[i], 1); back[i] = max(back[i], 1)
+    front[14] = 9
+    for i in (20, 26, 31):
+        front[i] = 3
+    back[39], back[40], back[41] = 6, 8, 5
+    u = 5.6
+    S.rect(x0 + 13.4 * dx, yb - 62, 29 * dx, 110, fill=AMBERL, r=2, op=0.5)
     for i in range(n):
         x = x0 + i * dx
-        c1, c2 = (H1, H2) if i % 5 != 3 else (H2, H1)
-        if i == center:
-            S.rect(x - 22, yt - 24, 44, yb - yt + 48, fill=AMBERL, r=6)
-        S.node(x, yt, "r", c1, r=10, cls="s"); S.node(x, yb, "a", c2, r=10, cls="s")
-        lab = "c" if i == center else (f"{i-center:+d}" if abs(i - center) <= 2 or i in (0, n - 1) else "")
-        if i == 0: lab = "−20"
-        if i == n - 1: lab = "+20"
-        S.text(x, yt - 32, lab, cls="s", anchor="middle")
-    # edges: sample some DOT edges
-    import random
-    random.seed(7)
+        if front[i]: S.rect(x - 2.2, yb - u * front[i], 4.4, u * front[i], fill=H1, r=0.5)
+        if back[i]: S.rect(x - 2.2, yb, 4.4, u * back[i], fill=H2, r=0.5)
+    S.line(x0 - 6, yb, x1 + 6, yb, stroke=INK, w=1)
+    S.text(XL, yb - 58, "alignment starts", cls="sb", fill=H1)
+    S.text(XL, yb - 47, "(front-clipped)", cls="s", fill=H1)
+    S.text(XL, yb + 30, "alignment ends", cls="sb", fill=H2)
+    S.text(XL, yb + 41, "(back-clipped)", cls="s", fill=H2)
+    S.text(x0 + 14 * dx + 7, yb - 50, "step", cls="sb", fill=AMBER)
+    S.text(x0 + 26 * dx, yb - 40, "ramp boundaries", cls="sb", anchor="middle", fill=AMBER)
+    for i in (20, 26, 31):
+        S.line(x0 + i * dx, yb - 34, x0 + i * dx, yb - 25, stroke=AMBER, w=0.9, arrow="arra")
+    S.text(x0 + 42 * dx + 4, yb + 34, "pull-down", cls="sb", fill=AMBER)
+    S.text(x0 + 26 * dx, yb + 60, "candidate interval ≤ 200 kb", cls="s",
+           anchor="middle", fill=AMBER)
+    S.text(x1 + 6, yb + 76, "genomic position", cls="s", anchor="end")
+
+    S.table(508, 34, [82, 174],
+            [("open, step", "≥ 5 front-clips at one position"),
+             ("open, ramp", "front-clips &gt; back-clips, below that"),
+             ("extend", "excess c &gt; 30, 30 kb look-ahead"),
+             ("close, step", "back-clips ≥ n/2 (n ≥ 10), else 5"),
+             ("close, ramp", "back-clips ≥ c/4")],
+            header=("state", "rule"))
+
+    S.rule(XL, 202, W - XL)
+
+    # -- b ---------------------------------------------------------------
+    S.panel(XL, 226, "b", "Mismatch load separates true heterozygotes from paralogues")
+    Rm = "R" + sub("m")
+    S.text(XL, 252, Rm + " = alternate alleles carried by one read inside the interval",
+           cls="s")
+    S.text(XL + 6, 280, "MR  =", cls="eq", fill=INK)
+    S.frac(170, 276, "mean " + Rm + " (ALT)",
+           "mean " + Rm + " (REF) + mean " + Rm + " (ALT)", cls="s", width=156)
+    S.text(262, 280, "≥ 0.7  →  remove the site from every read", cls="tb", fill=AMBER)
+
+    scenes = [(XL, "true heterozygous site", "MR = 0.52", "kept", GREEN,
+               [(0, [0, 0, 1, 0, 0]), (0, [0, 0, 0, 0, 1]), (0, [0, 1, 0, 0, 0]),
+                (1, [0, 0, 0, 1, 0]), (1, [1, 0, 0, 0, 0]), (1, [0, 0, 1, 0, 0])]),
+              (400, "paralogue-specific difference", "MR = 0.87", "removed", AMBER,
+               [(0, [0, 0, 1, 0, 0]), (0, [0, 0, 0, 0, 0]), (0, [0, 1, 0, 0, 0]),
+                (1, [1, 1, 0, 1, 1]), (1, [1, 0, 1, 1, 1]), (1, [0, 1, 1, 1, 1])])]
+    for bx, title, mr, verdict, col, reads in scenes:
+        S.text(bx, 310, title, cls="sb", fill=INK)
+        for i, (alt, mm) in enumerate(reads):
+            y = 326 + i * 15
+            c = H2 if alt else H1
+            S.text(bx + 22, y + 3, "ALT" if alt else "REF", cls="s", anchor="end", fill=c)
+            S.read(bx + 28, bx + 250, y, color=LGREY, w=4)
+            S.node(bx + 139, y, "", c, r=5)
+            for j, m in enumerate(mm):
+                xx = bx + 42 + j * 44
+                if abs(xx - (bx + 139)) < 10: continue
+                S.line(xx, y - 5, xx, y + 5, stroke=H2 if m else LGREY, w=1.4 if m else 1)
+        S.text(bx + 258, 352, mr, cls="tb", fill=col)
+        S.text(bx + 258, 366, verdict, cls="sb", fill=col)
+    S.text(XL, 424, "grey ticks, reference allele", cls="s")
+    S.text(XL + 146, 424, "red ticks, alternate allele at another heterozygous site",
+           cls="s", fill=H2)
+
+    S.save("suppfig4_cnv_filter.svg")
+
+
+# ============================================================================
+# S5  Read-based correction
+# ============================================================================
+def fig_s5():
+    S = SVG(W, 400, "Read-based correction")
+    XL = 16
+
+    # -- a ---------------------------------------------------------------
+    S.panel(XL, 24, "a", "Step 1  —  assign each read to a haplotype")
+    xs = [110 + i * 62 for i in range(6)]
+    for i, x in enumerate(xs):
+        S.text(x, 52, f"v{i+1}", cls="m", anchor="middle", fill=INK)
+    reads = [([1, 1, 1, 1, None, 1], "hap 1", "5/5", H1),
+             ([2, 2, None, 2, 2, 2], "hap 2", "5/5", H2),
+             ([1, 1, 2, 1, 1, None], "hap 1", "4/5 = 0.80", H1),
+             ([1, 2, 2, 1, None, None], "untagged", "2/4 = 0.50", GREY),
+             ([None, None, 2, None, None, None], "untagged", "&lt; 2 alleles", GREY)]
+    for i, (al, lab, frac, c) in enumerate(reads):
+        y = 74 + i * 26
+        S.text(XL + 44, y + 3, f"read {i+1}", cls="s", anchor="end")
+        S.read(XL + 52, 500, y, color=LGREY if c == GREY else (H1L if c == H1 else H2L), w=5)
+        for x, a in zip(xs, al):
+            if a is None: continue
+            S.node(x, y, "r" if a == 1 else "a", H1 if a == 1 else H2, r=8)
+        S.text(512, y + 3, lab, cls="sb", fill=c)
+        S.text(568, y + 3, frac, cls="s")
+    n1, n2 = "n" + sub("1"), "n" + sub("2")
+    S.callout(XL, 212, 660, 34, fill=VLGREY, accent=INK)
+    S.text(XL + 12, 227, "tagged if  max(" + n1 + "," + n2 + ") / (" + n1 + " + " + n2
+           + ")  &gt; 0.65   and   ≥ 2 informative alleles", cls="tb", fill=INK)
+    S.text(XL + 12, 241, "allele weights: SNV 1, SV 1, indel 0.1, 5mC 0", cls="s")
+
+    S.rule(XL, 264, W - XL)
+
+    # -- b ---------------------------------------------------------------
+    S.panel(XL, 288, "b", "Step 2  —  re-derive each variant's phase from tagged reads")
+    boxes = [(XL, "v3", "1", "2", "2", "3", "0.67", "≤ 0.75", AMBERL, AMBER,
+              "unphased, GT 0/1"),
+             (396, "v1", "3", "0", "3", "3", "1.00", "&gt; 0.75", H1L, H1,
+              "phased, GT 0|1")]
+    for bx, v, a1, a2, num, den, rho, cmp_, fill, col, verdict in boxes:
+        S.rect(bx, 302, 368, 84, fill=fill, r=2)
+        S.rect(bx, 302, 2.2, 84, fill=col, r=0)
+        S.text(bx + 12, 320, "variant " + v[0] + sub(v[1]), cls="tb", fill=INK)
+        S.text(bx + 12, 338, n1 + " = " + a1 + "    " + n2 + " = " + a2, cls="s")
+        S.text(bx + 12, 353, n1 + ": hap-1 REF + hap-2 ALT reads", cls="s")
+        S.text(bx + 12, 366, n2 + ": hap-1 ALT + hap-2 REF reads", cls="s")
+        S.text(bx + 188, 344, "ρ =", cls="eq", fill=INK)
+        S.frac(bx + 242, 342, "max(" + n1 + "," + n2 + ")", n1 + " + " + n2,
+               cls="s", width=66)
+        S.text(bx + 284, 346, "=", cls="eq", fill=INK)
+        S.frac(bx + 300, 342, num, den, cls="s", width=12)
+        S.text(bx + 314, 346, "= " + rho, cls="tb", fill=col)
+        S.text(bx + 188, 370, cmp_, cls="sb", fill=col)
+        S.text(bx + 224, 370, "→ " + verdict, cls="sb", fill=col)
+
+    S.save("suppfig5_read_correction.svg")
+
+
+# ============================================================================
+# S6  GNN window construction
+# ============================================================================
+def fig_s6():
+    S = SVG(W, 408, "Window construction for the graph neural network")
+    XL = 16
+
+    # -- a ---------------------------------------------------------------
+    S.panel(XL, 24, "a", "A window is opened around every phased variant with PE ≥ 0.8")
+    n, x0, dx = 13, 76, 52
+    yt, yb = 132, 196
+    center = 6
+    S.rect(x0 + (center - 2.6) * dx, 84, 5.2 * dx, 156, fill="none",
+           stroke=AMBER, sw=1, dash="3,2.5", r=3)
+    S.rect(x0 + center * dx - 15, 90, 30, 144, fill=AMBERL, r=2, op=0.7)
+    rng = random.Random(7)
     for i in range(n):
         for j in range(i + 1, min(n, i + 4)):
-            if random.random() < 0.7:
+            if rng.random() < 0.72:
                 xi, xj = x0 + i * dx, x0 + j * dx
-                S.path(f"M{xi+8},{yt-6} Q{(xi+xj)/2},{yt-40-(j-i)*8} {xj-8},{yt-6}", stroke=H1, w=1.2, op=0.5)
-                S.path(f"M{xi+8},{yb+6} Q{(xi+xj)/2},{yb+40+(j-i)*8} {xj-8},{yb+6}", stroke=H2, w=1.2, op=0.5)
-    # cross edge near center
-    xi, xj = x0 + 5 * dx, x0 + 7 * dx
-    S.line(xi + 8, yt + 6, xj - 8, yb - 6, stroke=GREY, w=1.5, dash="3,3")
-    S.text(560, 270, "center zone: predictions kept", cls="s", anchor="middle", fill=AMBER)
-    S.rect(x0 + 3.5 * dx, 100, 5 * dx, 150, fill="none", stroke=AMBER, sw=1.2, dash="4,3", r=6)
-    S.text(40, 305, "• up to 20 variants on each side (≤ 41 variants, ≤ 82 allele nodes; windows above 256 nodes are skipped)", cls="s")
-    S.text(40, 321, "• nodes: one per allele; SNV, indel, SV and 5mC records are merged and sorted by position", cls="s")
-    S.text(40, 337, "• edges: DOT edges with both endpoints in the window, symmetrized, plus one self-loop per node (mean of incident edge features)", cls="s")
-    S.text(40, 353, "• predictions of the two allele nodes are averaged; a variant covered by several windows receives the mean", cls="s")
-    # b: bridge vertex
-    S.panel(20, 400, "b", "Bridge vertex feature")
-    xb = 60; y = 450
-    pts = [(xb + i * 45, y + (0 if i % 2 == 0 else 22)) for i in range(9)]
-    for i in range(8):
-        if i == 3: continue
-        S.line(*pts[i], *pts[i + 1], stroke=GREY, w=1.5)
-    S.line(*pts[3], *pts[4], stroke=GREY, w=1.5)
-    S.line(*pts[2], *pts[4], stroke=GREY, w=1.5) if False else None
-    for i, (px, py) in enumerate(pts):
-        S.circle(px, py, 7, fill=AMBER if i == 4 else "#fff", stroke=AMBER if i == 4 else GREY, sw=1.5)
-    S.text(xb + 4 * 45, y + 50, "removing this variant disconnects the window → is_bridge = 1", cls="s", anchor="middle", fill=AMBER)
-    # c: center mask formula
-    S.panel(600, 400, "c", "Center-zone mask")
-    S.text(620, 440, "r = |pos − pos_c| / max offset in window", cls="s")
-    S.text(620, 458, "kept if r ≤ min(1, 10 / round(20·r_max))", cls="s")
-    S.text(620, 476, "so that predictions are read only where both", cls="s")
-    S.text(620, 492, "sides of the variant are visible to the network.", cls="s")
+                S.path(f"M{xi+6},{yt-6} Q{(xi+xj)/2},{yt-26-(j-i)*7} {xj-6},{yt-6}",
+                       stroke=H1, w=0.8, op=0.45)
+                S.path(f"M{xi+6},{yb+6} Q{(xi+xj)/2},{yb+26+(j-i)*7} {xj-6},{yb+6}",
+                       stroke=H2, w=0.8, op=0.45)
+    for i in range(n):
+        x = x0 + i * dx
+        S.node(x, yt, "r", H1, r=9)
+        S.node(x, yb, "a", H2, r=9)
+        if i == center:
+            lab = "c"
+        elif i == 0:
+            lab = MINUS + "20"
+        elif i == n - 1:
+            lab = "+20"
+        elif abs(i - center) <= 2:
+            lab = ("+" if i > center else MINUS) + str(abs(i - center))
+        else:
+            lab = ""
+        if lab:
+            S.text(x, 80, lab, cls="s", anchor="middle", fill=AMBER if i == center else GREY)
+    S.line(x0 + 5 * dx + 7, yt + 6, x0 + 7 * dx - 7, yb - 6, stroke=GREY, w=1, dash="2.5,2")
+    S.text(x0 - 22, yt + 3, "…", cls="t", anchor="middle")
+    S.text(x0 + n * dx - 30, yt + 3, "…", cls="t", anchor="middle")
+    S.text(x0 + center * dx, 254, "centre zone, predictions kept",
+           cls="sb", anchor="middle", fill=AMBER)
+    kx = XL
+    for c, lab, dash in [(H1, "hap-1 allele edges", None), (H2, "hap-2 allele edges", None),
+                         (GREY, "cross-haplotype edge", "2.5,2")]:
+        S.line(kx, 278, kx + 16, 278, stroke=c, w=1.4, dash=dash)
+        S.text(kx + 21, 281, lab, cls="s")
+        kx += 26 + 5.4 * len(lab)
+    S.text(kx + 4, 281, "≤ 41 variants, ≤ 82 allele nodes", cls="s", fill=INK)
+
+    S.rule(XL, 300, W - XL)
+
+    # -- b ---------------------------------------------------------------
+    S.panel(XL, 324, "b", "Bridge-vertex feature")
+    cy = 362
+    left = [(XL + 30, cy - 14), (XL + 30, cy + 14), (XL + 62, cy)]
+    right = [(XL + 160, cy - 14), (XL + 160, cy + 14), (XL + 128, cy)]
+    mid = (XL + 95, cy)
+    for tri in (left, right):
+        for i in range(3):
+            S.line(*tri[i], *tri[(i + 1) % 3], stroke=LGREY, w=1.2)
+    S.line(*left[2], *mid, stroke=AMBER, w=1.2)
+    S.line(*mid, *right[2], stroke=AMBER, w=1.2)
+    for px, py in left + right:
+        S.circle(px, py, 5.5, fill="#fff", stroke=GREY, sw=1.2)
+    S.circle(mid[0], mid[1], 5.5, fill=AMBER, stroke=AMBER, sw=0)
+    S.text(XL + 190, cy - 4, "removing this variant disconnects the window",
+           cls="s")
+    S.text(XL + 190, cy + 10, "→ is_bridge = 1", cls="sb", fill=AMBER)
+
+    # -- c ---------------------------------------------------------------
+    S.panel(452, 324, "c", "Centre-zone mask")
+    S.text(466, 352, "r = |pos − pos" + sub("c") + "| / max offset in the window",
+           cls="eq", fill=INK)
+    S.text(466, 374, "kept if  r ≤ min(1, 10 / round(20 · r" + sub("max") + "))",
+           cls="eq", fill=INK)
+
     S.save("suppfig6_gnn_window.svg")
 
-# ----------------------------------------------------------------------------
+
+# ============================================================================
 # S7  GNN architecture
-# ----------------------------------------------------------------------------
+# ============================================================================
 def fig_s7():
-    S = SVG(1100, 640, "Graph neural network architecture")
-    def box(x, y, w, h, label, sub=None, fill=VLGREY, stroke=LGREY, tc=INK):
-        S.rect(x, y, w, h, fill=fill, stroke=stroke, sw=1, r=6)
-        S.text(x + w / 2, y + h / 2 + (4 if not sub else -2), label, cls="tb", anchor="middle", fill=tc)
-        if sub: S.text(x + w / 2, y + h / 2 + 14, sub, cls="s", anchor="middle")
-    # inputs
-    box(40, 60, 200, 44, "node features", "N × 31", fill="#fff", stroke=INK)
-    box(40, 120, 200, 44, "edge features", "N × N × 6", fill="#fff", stroke=INK)
-    box(40, 180, 200, 44, "adjacency", "N × N (undirected + self-loops)", fill="#fff", stroke=INK)
-    # input processing
-    box(290, 60, 180, 44, "BatchNorm (frozen)", "per-feature standardization")
-    box(290, 120, 180, 44, "Linear 31 → 128", "+ GELU")
-    S.line(240, 82, 290, 82, arrow=True); S.line(380, 104, 380, 120, arrow=True)
-    # layer block
-    lx, ly, lw, lh = 520, 40, 540, 400
-    S.rect(lx, ly, lw, lh, fill="none", stroke=INK, sw=1.2, r=10, dash="6,4")
-    S.text(lx + 12, ly + 20, "GPS layer  × 4   (hidden 128, 4 heads)", cls="h")
-    # local branch
-    box(lx + 30, ly + 50, 220, 70, "Local: GATv2", "attention over xᵢ, xⱼ and edge eᵢⱼ", fill="#E3F1FA", stroke=H1)
-    S.text(lx + 140, ly + 132, "softmax over incoming edges of i;", cls="s", anchor="middle")
-    S.text(lx + 140, ly + 146, "edge encoder Wₑ (6 → 128) per layer", cls="s", anchor="middle")
-    # global branch
-    box(lx + 290, ly + 50, 220, 70, "Global: self-attention", "softmax(QKᵀ/√d) V over all N nodes", fill="#FBE7E6", stroke=H2)
-    S.text(lx + 400, ly + 132, "Q, K, V, O projections 128 → 128;", cls="s", anchor="middle")
-    S.text(lx + 400, ly + 146, "window-wide context", cls="s", anchor="middle")
-    # combine
-    box(lx + 160, ly + 175, 220, 40, "x + local + global", "additive fusion, residual")
-    S.line(lx + 140, ly + 120, lx + 200, ly + 175, arrow=True); S.line(lx + 400, ly + 120, lx + 340, ly + 175, arrow=True)
-    box(lx + 160, ly + 230, 220, 34, "LayerNorm")
-    box(lx + 160, ly + 279, 220, 44, "FFN 128 → 256 → 128", "GELU, residual")
-    box(lx + 160, ly + 338, 220, 34, "LayerNorm")
-    for y1, y2 in [(ly + 215, ly + 230), (ly + 264, ly + 279), (ly + 323, ly + 338)]:
-        S.line(lx + 270, y1, lx + 270, y2, arrow=True)
-    S.line(470, 142, lx + 30, ly + 85, arrow=True)
-    S.line(470, 142, lx + 290, ly + 85, arrow=True)
-    # loop arrow
-    S.path(f"M{lx+380},{ly+355} L{lx+520},{ly+355} L{lx+520},{ly+85} L{lx+512},{ly+85}", stroke=GREY, w=1.2, dash="3,3", arrow=True)
-    S.text(lx + 528, ly + 220, "×4", cls="sb")
-    # classifier
-    box(560, 480, 240, 44, "concat [hᵢ | Σwᵢⱼ | max wᵢⱼ]", "130 features", fill="#fff", stroke=INK)
-    box(830, 480, 220, 44, "Linear 130→128, GELU", "Linear 128→2, softmax")
-    S.line(lx + 270, ly + 372, lx + 270, 480, arrow=True)
-    S.line(800, 502, 830, 502, arrow=True)
-    box(830, 550, 220, 44, "P(misphased) per allele node", "averaged over the two alleles", fill=AMBERL, stroke=AMBER)
-    S.line(940, 524, 940, 550, arrow=True)
-    # edge context from edge features
-    S.path("M240,142 L260,142 L260,470 L560,470 L560,480", stroke=GREY, w=1, dash="3,3", arrow=True)
-    S.text(270, 462, "edge context (sum, max of raw edge weight over incoming edges)", cls="s")
-    # params
-    S.text(40, 560, "687,358 parameters; weights compiled into the binary; dense O(N²) attention is inexpensive for N ≤ 256.", cls="s")
-    S.text(40, 578, "Exact GELU; LayerNorm ε = 10⁻⁵; LeakyReLU slope 0.2; nodes without incoming edges attend uniformly to all nodes.", cls="s")
+    S = SVG(W, 440, "Graph neural network architecture")
+
+    def box(x, y, w, h, label, sub_=None, fill=VLGREY, stroke=LGREY, tc=INK):
+        S.rect(x, y, w, h, fill=fill, stroke=stroke, sw=0.9, r=3)
+        S.text(x + w / 2, y + h / 2 + (3.5 if not sub_ else -1.5), label, cls="tb",
+               anchor="middle", fill=tc)
+        if sub_:
+            S.text(x + w / 2, y + h / 2 + 11, sub_, cls="s", anchor="middle")
+
+    box(16, 44, 150, 32, "node features", "N × 31", fill="#fff", stroke=INK)
+    box(16, 88, 150, 32, "edge features", "N × N × 6", fill="#fff", stroke=INK)
+    box(16, 132, 150, 32, "adjacency", "undirected + self-loops", fill="#fff", stroke=INK)
+    box(196, 44, 140, 32, "BatchNorm", "frozen, per-feature")
+    box(196, 88, 140, 32, "Linear 31 → 128", "GELU")
+    S.line(166, 60, 194, 60, stroke=GREY, arrow="arr")
+    S.line(266, 76, 266, 86, stroke=GREY, arrow="arr")
+
+    lx, ly, lw, lh = 366, 26, 398, 284
+    S.rect(lx, ly, lw, lh, fill="none", stroke=INK, sw=1, r=4, dash="4,3")
+    S.text(lx + 12, ly + 17, "GPS layer × 4", cls="h")
+    S.text(lx + lw - 12, ly + 17, "hidden 128, 4 heads", cls="s", anchor="end")
+    box(lx + 16, ly + 28, 176, 34, "local  GATv2",
+        "attention over x" + sub("i") + ", x" + sub("j") + ", e" + sub("ij"),
+        fill=H1L, stroke=H1)
+    S.text(lx + 104, ly + 75, "softmax over incoming edges of i", cls="s", anchor="middle")
+    S.text(lx + 104, ly + 87, "edge encoder 6 → 128 per layer", cls="s", anchor="middle")
+    box(lx + 206, ly + 28, 176, 34, "global  self-attention",
+        "softmax(QK" + sup("T") + "/√d) V over N nodes", fill=H2L, stroke=H2)
+    S.text(lx + 294, ly + 75, "Q, K, V, O projections 128 → 128", cls="s", anchor="middle")
+    S.text(lx + 294, ly + 87, "window-wide context", cls="s", anchor="middle")
+    box(lx + 110, ly + 104, 180, 30, "x + local + global", fill="#fff", stroke=INK)
+    S.line(lx + 104, ly + 95, lx + 158, ly + 103, stroke=GREY, arrow="arr")
+    S.line(lx + 294, ly + 95, lx + 242, ly + 103, stroke=GREY, arrow="arr")
+    box(lx + 110, ly + 150, 180, 26, "LayerNorm")
+    box(lx + 110, ly + 192, 180, 30, "FFN 128 → 256 → 128", "GELU, residual")
+    box(lx + 110, ly + 238, 180, 26, "LayerNorm")
+    for y1, y2 in [(ly + 134, ly + 148), (ly + 176, ly + 190), (ly + 222, ly + 236)]:
+        S.line(lx + 200, y1, lx + 200, y2, stroke=GREY, arrow="arr")
+    S.line(336, 104, lx + 14, ly + 45, stroke=GREY, arrow="arr")
+    S.line(336, 104, lx + 204, ly + 45, stroke=GREY, arrow="arr")
+
+    box(366, 344, 190, 32,
+        "concat [ h" + sub("i") + " | Σw" + sub("ij") + " | max w" + sub("ij") + " ]",
+        "130 features", fill="#fff", stroke=INK)
+    box(586, 344, 178, 32, "Linear 130 → 128 → 2", "GELU, softmax")
+    box(586, 392, 178, 30, "P(misphased)", "mean of the two allele nodes",
+        fill=AMBERL, stroke=AMBER, tc=INK)
+    S.line(lx + 200, ly + lh, lx + 200, 342, stroke=GREY, arrow="arr")
+    S.line(556, 360, 584, 360, stroke=GREY, arrow="arr")
+    S.line(675, 376, 675, 390, stroke=GREY, arrow="arr")
+    S.path("M166,104 L184,104 L184,328 L366,328 L366,342", stroke=GREY, w=0.9,
+           dash="2.5,2", arrow="arr")
+    S.text(192, 324, "raw edge weights", cls="s")
+
+    S.table(16, 344, [136, 194],
+            [("parameters", "687,358, compiled into the binary"),
+             ("attention cost", "dense O(N²), N ≤ 256"),
+             ("numerics", "exact GELU, LayerNorm ε = 10" + sup("−5")),
+             ("isolated nodes", "attend uniformly to all nodes")],
+            rowh=16)
+
     S.save("suppfig7_gnn_architecture.svg")
 
-# ----------------------------------------------------------------------------
+
+# ============================================================================
 # S8  Unphasing and phase-set splitting
-# ----------------------------------------------------------------------------
+# ============================================================================
 def fig_s8():
-    S = SVG(1100, 480, "Unphasing and phase-set splitting")
-    S.panel(20, 34, "a", "Before correction: one phase set")
-    xs = [80 + i * 70 for i in range(10)]
-    yt, yb = 110, 170
+    S = SVG(W, 352, "Unphasing and phase-set splitting")
+    XL = 16
+    xs = [66 + i * 58 for i in range(10)]
     flagged = 5
+
+    # -- a ---------------------------------------------------------------
+    S.panel(XL, 24, "a", "Before correction  —  one phase set")
+    yt, yb = 78, 124
     for i, x in enumerate(xs):
-        S.node(x, yt, "r", H1, r=10, cls="s"); S.node(x, yb, "a", H2, r=10, cls="s")
         if i < 9:
-            S.line(x + 10, yt, xs[i + 1] - 10, yt, stroke=H1, w=2); S.line(x + 10, yb, xs[i + 1] - 10, yb, stroke=H2, w=2)
+            S.line(x + 9, yt, xs[i + 1] - 9, yt, stroke=H1, w=1.6)
+            S.line(x + 9, yb, xs[i + 1] - 9, yb, stroke=H2, w=1.6)
         if i in (3, 7):
-            S.path(f"M{x+8},{yt-6} Q{(x+xs[i+2])/2},{yt-45} {xs[i+2]-8},{yt-6}", stroke=H1, w=1.5, op=0.6)
-    S.rect(xs[flagged] - 20, yt - 22, 40, yb - yt + 44, fill="none", stroke=AMBER, sw=2, r=6)
-    S.text(xs[flagged], yb + 40, "P(error) = 0.62 ≥ 0.30", cls="sb", anchor="middle", fill=AMBER)
-    S.text(xs[0], 220, "PS = 1001 for all ten variants;  GT 0|1 / 1|0", cls="s")
-    S.panel(20, 270, "b", "After correction: variant unphased, block split")
-    yt2, yb2 = 340, 400
+            S.path(f"M{x+6},{yt-7} Q{(x+xs[i+2])/2},{yt-32} {xs[i+2]-6},{yt-7}",
+                   stroke=H1, w=0.9, op=0.55)
+    for i, x in enumerate(xs):
+        S.node(x, yt, "r", H1, r=9)
+        S.node(x, yb, "a", H2, r=9)
+    S.rect(xs[flagged] - 16, yt - 18, 32, (yb - yt) + 36, fill="none",
+           stroke=AMBER, sw=1.4, r=3)
+    S.text(xs[flagged], yb + 36, "P(error) = 0.62 ≥ 0.30", cls="sb",
+           anchor="middle", fill=AMBER)
+    S.text(XL, yb + 36, "PS 1001, GT 0|1 / 1|0", cls="s")
+
+    S.rule(XL, 186, W - XL)
+
+    # -- b ---------------------------------------------------------------
+    S.panel(XL, 210, "b", "After correction  —  variant unphased, phase set split")
+    yt2, yb2 = 262, 304
+    S.rect(xs[0] - 18, yt2 - 18, xs[4] - xs[0] + 36, (yb2 - yt2) + 36, fill="none",
+           stroke=H1, sw=0.9, dash="3,2.5", r=3)
+    S.rect(xs[6] - 18, yt2 - 18, xs[9] - xs[6] + 36, (yb2 - yt2) + 36, fill="none",
+           stroke=H1, sw=0.9, dash="3,2.5", r=3)
+    for i, x in enumerate(xs):
+        if i < 9 and flagged not in (i, i + 1):
+            S.line(x + 9, yt2, xs[i + 1] - 9, yt2, stroke=H1, w=1.6)
+            S.line(x + 9, yb2, xs[i + 1] - 9, yb2, stroke=H2, w=1.6)
+    S.path(f"M{xs[3]+6},{yt2-7} Q{(xs[3]+xs[5])/2},{yt2-30} {xs[5]-6},{yt2-7}",
+           stroke=LGREY, w=0.9, dash="2.5,2")
     for i, x in enumerate(xs):
         if i == flagged:
-            S.node(x, yt2, "r", GREY, r=10, filled=False, cls="s"); S.node(x, yb2, "a", GREY, r=10, filled=False, cls="s")
-            S.text(x, yb2 + 30, "GT 0/1, PS removed", cls="s", anchor="middle")
-            continue
-        S.node(x, yt2, "r", H1, r=10, cls="s"); S.node(x, yb2, "a", H2, r=10, cls="s")
-        if i < 9 and i != flagged - 1 and i + 1 != flagged:
-            S.line(x + 10, yt2, xs[i + 1] - 10, yt2, stroke=H1, w=2); S.line(x + 10, yb2, xs[i + 1] - 10, yb2, stroke=H2, w=2)
-    S.path(f"M{xs[3]+8},{yt2-6} Q{(xs[3]+xs[5])/2},{yt2-45} {xs[5]-8},{yt2-6}", stroke=LGREY, w=1.5, dash="3,3")
-    S.text(xs[2], yb2 + 55, "PS = 1001 (largest component keeps the original ID)", cls="s", anchor="middle")
-    S.text(xs[7] + 35, yb2 + 55, "PS = 1436 (position of first variant)", cls="s", anchor="middle")
-    S.rect(xs[0] - 20, yt2 - 24, xs[4] - xs[0] + 40, 88, fill="none", stroke=H1D, sw=1, dash="4,3", r=6)
-    S.rect(xs[6] - 20, yt2 - 24, xs[9] - xs[6] + 40, 88, fill="none", stroke=H1D, sw=1, dash="4,3", r=6)
-    S.text(760, 330, "Connectivity is re-checked over the surviving DOT edges", cls="s")
-    S.text(760, 346, "of each phase set; edges through the unphased variant", cls="s")
-    S.text(760, 362, "(dashed) no longer count. Genotypes are never flipped.", cls="s")
+            S.node(x, yt2, "r", GREY, r=9, filled=False)
+            S.node(x, yb2, "a", GREY, r=9, filled=False)
+        else:
+            S.node(x, yt2, "r", H1, r=9)
+            S.node(x, yb2, "a", H2, r=9)
+    S.text(xs[flagged], yt2 - 28, "GT 0/1, PS removed", cls="sb", anchor="middle", fill=GREY)
+    S.text((xs[0] + xs[4]) / 2, yb2 + 32, "PS 1001, largest component", cls="s",
+           anchor="middle")
+    S.text((xs[6] + xs[9]) / 2, yb2 + 32, "PS 1436, position of the first variant",
+           cls="s", anchor="middle")
+    S.line(646, yt2 - 8, 662, yt2 - 8, stroke=LGREY, w=1.2, dash="2.5,2")
+    S.text(667, yt2 - 5, "edge no longer counted", cls="s")
+    S.text(646, yt2 + 14, "genotypes are never flipped", cls="sb", fill=INK)
+
     S.save("suppfig8_unphase_split.svg")
 
-# ----------------------------------------------------------------------------
+
+# ============================================================================
 # S9  modcall
-# ----------------------------------------------------------------------------
+# ============================================================================
 def fig_s9():
-    S = SVG(1100, 600, "Allele-specific methylation calling (modcall)")
-    S.panel(20, 34, "a", "Per-read CpG state from ML probability")
-    x0, x1, y = 60, 460, 90
-    S.line(x0, y, x1, y, stroke=INK, w=1.5)
+    S = SVG(W, 498, "Allele-specific methylation calling with modcall")
+    XL, XR = 16, 428
+    S.line(408, 18, 408, 482, stroke=LGREY, w=0.8)
+
+    # -- a ---------------------------------------------------------------
+    S.panel(XL, 24, "a", "Per-read CpG state from the ML probability")
+    x0, x1, y = 60, 380, 62
+    for f0, wf, col, lab, tc in [(0.0, 0.2, H1L, "unmethylated", H1),
+                                 (0.2, 0.6, VLGREY, "ambiguous", GREY),
+                                 (0.8, 0.2, H2L, "methylated", H2)]:
+        S.rect(x0 + f0 * (x1 - x0), y - 16, wf * (x1 - x0), 16, fill=col, r=1)
+        S.text(x0 + (f0 + wf / 2) * (x1 - x0), y - 4.5, lab, cls="sb",
+               anchor="middle", fill=tc)
+    S.line(x0, y + 4, x1, y + 4, stroke=INK, w=1)
     for p, lab in [(0, "0"), (0.2, "0.2"), (0.8, "0.8"), (1, "1")]:
-        xx = x0 + p * (x1 - x0); S.line(xx, y - 5, xx, y + 5, stroke=INK, w=1.5); S.text(xx, y + 20, lab, cls="s", anchor="middle")
-    S.rect(x0, y - 30, 0.2 * (x1 - x0), 22, fill="#E3F1FA", r=3); S.text(x0 + 0.1 * (x1 - x0), y - 14, "unmethylated", cls="sb", anchor="middle", fill=H1)
-    S.rect(x0 + 0.2 * (x1 - x0), y - 30, 0.6 * (x1 - x0), 22, fill=VLGREY, r=3); S.text(x0 + 0.5 * (x1 - x0), y - 14, "noise (ignored)", cls="sb", anchor="middle", fill=GREY)
-    S.rect(x0 + 0.8 * (x1 - x0), y - 30, 0.2 * (x1 - x0), 22, fill="#FBE7E6", r=3); S.text(x0 + 0.9 * (x1 - x0), y - 14, "methylated", cls="sb", anchor="middle", fill=H2)
-    S.text(x0, y + 44, "ML tag / 255; thresholds --modThreshold 0.8, --unModThreshold 0.2", cls="s")
-    # b: strand pairing + genotype
-    S.panel(20, 170, "b", "CpG strand pairing and site genotype")
-    y = 215
-    S.text(40, y, "5′ … C G … 3′   forward-strand reads report C;  reverse-strand reads report the G position", cls="s")
-    S.text(40, y + 16, "→ reverse-strand calls are mapped to the forward CpG coordinate and the two strands are pooled", cls="s")
-    S.text(40, y + 44, "m = methylated reads, u = unmethylated reads, noise = depth − m − u", cls="s")
-    S.text(40, y + 70, "heterozygous (allele-specific) if  min(m,u)/max(m,u) ≥ 0.6  and  noise/depth ≤ 0.2", cls="tb")
-    S.text(40, y + 90, "otherwise homozygous methylated (m ≥ u) or unmethylated → excluded from phasing", cls="s")
-    # example bars
-    ex = [("m=14, u=12, noise=2", 14, 12, 2, True), ("m=25, u=2, noise=1", 25, 2, 1, False), ("m=9, u=8, noise=11", 9, 8, 11, False)]
-    for i, (lab, m, u, nz, ok) in enumerate(ex):
-        yy = y + 115 + i * 26; tot = m + u + nz; w = 260
-        S.rect(40, yy, w * m / tot, 16, fill=H2, r=2); S.rect(40 + w * m / tot, yy, w * u / tot, 16, fill=H1, r=2); S.rect(40 + w * (m + u) / tot, yy, w * nz / tot, 16, fill=LGREY, r=2)
-        S.text(310, yy + 12, lab, cls="s"); S.text(470, yy + 12, "0/1" if ok else ("1/1" if m >= u and nz / tot <= 0.2 else "excluded (noise)"), cls="sb", fill=GREEN if ok else GREY)
-    # c: SNV co-segregation
-    S.panel(600, 34, "c", "Refinement by co-segregation with SNVs")
-    xs = [650, 730, 810, 890, 970]
-    kinds = ["SNV", "CpG", "SNV", "CpG", "CpG"]
-    yt, yb = 110, 170
-    for x, k in zip(xs, kinds):
-        S.text(x, 86, k, cls="s", anchor="middle")
-        if k == "SNV":
-            S.node(x, yt, "r", H1, r=10, cls="s"); S.node(x, yb, "a", H2, r=10, cls="s")
+        xx = x0 + p * (x1 - x0)
+        S.line(xx, y + 4, xx, y + 9, stroke=INK, w=1)
+        S.text(xx, y + 20, lab, cls="s", anchor="middle")
+    S.text(XL, y + 20, "ML / 255", cls="s")
+
+    # -- b ---------------------------------------------------------------
+    S.panel(XL, 118, "b", "CpG strand pooling")
+    yb = 154
+    S.rect(110, yb - 9, 150, 14, fill=VLGREY, r=1)
+    S.rect(110, yb + 17, 150, 14, fill=VLGREY, r=1)
+    S.text(104, yb + 2, "5′", cls="s", anchor="end")
+    S.text(266, yb + 2, "3′", cls="s")
+    S.text(104, yb + 28, "3′", cls="s", anchor="end")
+    S.text(266, yb + 28, "5′", cls="s")
+    S.text(176, yb + 2, "C", cls="code", anchor="middle", fill=H2)
+    S.text(192, yb + 2, "G", cls="code", anchor="middle", fill=INK)
+    S.text(176, yb + 28, "G", cls="code", anchor="middle", fill=INK)
+    S.text(192, yb + 28, "C", cls="code", anchor="middle", fill=H2)
+    S.path(f"M196,{yb+24} C220,{yb+20} 218,{yb+3} 184,{yb+8}", stroke=AMBER, w=1,
+           arrow="arra")
+    S.text(278, yb + 2, "forward call", cls="s")
+    S.text(278, yb + 28, "reverse call → forward coordinate", cls="s")
+    S.text(XL, yb + 52, "M, U, A = methylated, unmethylated, ambiguous reads after pooling",
+           cls="s")
+
+    # -- c ---------------------------------------------------------------
+    S.panel(XL, 234, "c", "Site genotype")
+    S.callout(XL, 248, 378, 32, fill=VLGREY, accent=INK)
+    S.text(XL + 10, 263, "heterozygous if  min(M,U) / max(M,U) ≥ 0.6", cls="tb", fill=INK)
+    S.text(XL + 10, 275, "and  A / (M+U+A) ≤ 0.2;  otherwise homozygous or excluded",
+           cls="s")
+    for i, (m, u, a, gt, col) in enumerate([(14, 12, 2, "0/1", GREEN),
+                                            (25, 2, 1, "1/1", GREY),
+                                            (9, 8, 11, "excluded", GREY)]):
+        yy = 296 + i * 24
+        tot, bw = m + u + a, 196
+        S.rect(XL + 96, yy, bw * m / tot, 14, fill=H2, r=1)
+        S.rect(XL + 96 + bw * m / tot, yy, bw * u / tot, 14, fill=H1, r=1)
+        S.rect(XL + 96 + bw * (m + u) / tot, yy, bw * a / tot, 14, fill=LGREY, r=1)
+        S.text(XL + 90, yy + 11, f"M {m}   U {u}   A {a}", cls="s", anchor="end")
+        S.text(XL + 302, yy + 11, gt, cls="tb", fill=col)
+    kx = XL
+    for c, lab in [(H2, "methylated"), (H1, "unmethylated"), (LGREY, "ambiguous")]:
+        S.rect(kx, 374, 10, 10, fill=c, r=1)
+        S.text(kx + 14, 383, lab, cls="s")
+        kx += 22 + 5.4 * len(lab)
+
+    # -- e ---------------------------------------------------------------
+    S.panel(XL, 418, "e", "Output record")
+    S.rect(XL, 430, 378, 52, fill=VLGREY, r=2)
+    S.text(XL + 10, 446, "chr1 10469 . N . . PASS RS=P;MR=read3,read7;NR=read1,read4",
+           cls="code")
+    S.text(XL + 10, 459, "GT:MD:UD:DP   0/1:14:12:28", cls="code")
+    S.text(XL + 10, 475, "MR / NR read names attach the 5mC alleles to reads in phase",
+           cls="s")
+
+    # -- d ---------------------------------------------------------------
+    S.panel(XR, 24, "d", "Co-segregation with a neighbouring marker")
+    S.text(XR + 4, 62, "linkage  =", cls="eq", fill=INK)
+    S.frac(XR + 128, 58, "max(RR + AA,  RA + AR)", "RR + AA + RA + AR", cls="s", width=116)
+    S.text(XR + 196, 62, "≥ 0.9", cls="tb", fill=GREEN)
+
+    modes = [("SNV-anchored", GREEN, "accepted",
+              "SNV within the next 20 variants, on &gt; max(6, (d" + sub("1") + "+d"
+              + sub("2") + ")/4) reads"),
+             ("no SNV in range", LGREY, "weak",
+              "held for methylation-only mode"),
+             ("CpG–CpG expansion", AMBER, "accepted",
+              "linked to an accepted CpG; 2 rounds, adjacent CpGs merged")]
+    for k, (title, col, verdict, note) in enumerate(modes):
+        yk = 96 + k * 98
+        S.text(XR, yk, title, cls="sb", fill=INK)
+        ax, bx, cx = XR + 62, XR + 142, XR + 222
+        yt2, yb2 = yk + 32, yk + 60
+        if k < 2:
+            S.node(ax, yt2, "R", H1, r=9)
+            S.node(ax, yb2, "A", H2, r=9)
+            S.text(ax, yk + 18, "SNV", cls="s", anchor="middle")
         else:
-            S.circle(x, yt, 10, fill=INK, stroke=INK); S.circle(x, yb, 10, fill="#fff", stroke=INK)
-    S.line(xs[0] + 10, yt, xs[1] - 10, yt, stroke=GREEN, w=4); S.line(xs[0] + 10, yb, xs[1] - 10, yb, stroke=GREEN, w=4)
-    S.text((xs[0] + xs[1]) / 2, yt - 18, "strong", cls="sb", anchor="middle", fill=GREEN)
-    S.line(xs[1] + 10, yt, xs[2] - 10, yt, stroke=GREEN, w=4); S.line(xs[1] + 10, yb, xs[2] - 10, yb, stroke=GREEN, w=4)
-    S.line(xs[2] + 10, yt, xs[3] - 10, yt, stroke=LGREY, w=2); S.line(xs[2] + 10, yb, xs[3] - 10, yb, stroke=LGREY, w=2)
-    S.text((xs[2] + xs[3]) / 2, yt - 18, "weak", cls="sb", anchor="middle", fill=GREY)
-    S.line(xs[3] + 10, yt, xs[4] - 10, yt, stroke=AMBER, w=3); S.line(xs[3] + 10, yb, xs[4] - 10, yb, stroke=AMBER, w=3)
-    S.text((xs[3] + xs[4]) / 2, yt - 18, "CpG–CpG", cls="sb", anchor="middle", fill=AMBER)
-    S.text(620, 215, "strong anchor: CpG state co-segregates with an SNV within the next", cls="s")
-    S.text(620, 231, "20 variants on > max(6, (d₁+d₂)/4) reads with majority ratio ≥ 0.9", cls="s")
-    S.text(620, 255, "weak CpG: no qualifying SNV link; accepted only if it co-segregates", cls="s")
-    S.text(620, 271, "with an already accepted CpG (iterative expansion, 2 rounds)", cls="s")
-    S.text(620, 295, "adjacent CpG coordinates are merged and represented by the first", cls="s")
-    # d: output
-    S.panel(600, 340, "d", "Output VCF record")
-    S.text(620, 372, 'chr1  10469  .  N  .  .  PASS  RS=P;MR=read3,read7,...;NR=read1,read4,...', cls="code")
-    S.text(620, 390, 'GT:MD:UD:DP  0/1:14:12:28', cls="code")
-    S.text(620, 416, "RS strand; MR/NR methylated and unmethylated read names (used by phase", cls="s")
-    S.text(620, 432, "to attach 5mC alleles to reads); MD/UD/DP depths. Phased output adds PS and 0|1.", cls="s")
+            S.circle(ax, yt2, 8, fill=INK, stroke=INK, sw=0)
+            S.circle(ax, yb2, 8, fill="#fff", stroke=INK)
+            S.text(ax, yk + 18, "CpG", cls="s", anchor="middle")
+        S.circle(bx, yt2, 8, fill=INK, stroke=INK, sw=0)
+        S.circle(bx, yb2, 8, fill="#fff", stroke=INK)
+        S.text(bx, yk + 18, "CpG", cls="s", anchor="middle")
+        S.line(ax + 9, yt2, bx - 9, yt2, stroke=col, w=2.4)
+        S.line(ax + 9, yb2, bx - 9, yb2, stroke=col, w=2.4)
+        if k == 2:
+            S.circle(cx, yt2, 8, fill=INK, stroke=INK, sw=0)
+            S.circle(cx, yb2, 8, fill="#fff", stroke=INK)
+            S.text(cx, yk + 18, "CpG", cls="s", anchor="middle")
+            S.line(bx + 9, yt2, cx - 9, yt2, stroke=col, w=2.4)
+            S.line(bx + 9, yb2, cx - 9, yb2, stroke=col, w=2.4)
+        vx = cx + 34 if k == 2 else bx + 34
+        S.text(vx, yk + 49, verdict, cls="sb", fill=col if col != LGREY else GREY)
+        S.text(XR, yk + 82, note, cls="s")
+        if k < 2:
+            S.rule(XR, yk + 90, W - 16)
+
+    S.circle(XR + 6, 400, 6, fill=INK, stroke=INK, sw=0)
+    S.text(XR + 16, 403, "methylated allele", cls="s")
+    S.circle(XR + 124, 400, 6, fill="#fff", stroke=INK)
+    S.text(XR + 134, 403, "unmethylated allele", cls="s")
+
     S.save("suppfig9_modcall.svg")
 
-# ----------------------------------------------------------------------------
+
+# ============================================================================
 # S10  Evaluation metrics
-# ----------------------------------------------------------------------------
+# ============================================================================
 def fig_s10():
-    S = SVG(1100, 520, "Phasing evaluation metrics")
-    S.panel(20, 34, "a", "Switch errors, flips and Hamming distance within one block")
-    xs = [230 + i * 70 for i in range(10)]
-    truth = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    S = SVG(W, 372, "Phasing evaluation metrics")
+    XL = 16
+
+    # -- a ---------------------------------------------------------------
+    S.panel(XL, 24, "a", "Switch errors, flips and Hamming distance within one block")
+    xs = [160 + i * 58 for i in range(10)]
+    truth = [0] * 10
     query = [0, 0, 0, 1, 1, 1, 1, 0, 1, 0]
-    for row, (lab, hap, y) in enumerate([("truth h₀", truth, 100), ("query h₀", query, 150)]):
-        S.text(200, y + 4, lab, cls="sb", anchor="end")
+    S.text(146, 56, "position", cls="s", anchor="end")
+    for i, x in enumerate(xs):
+        S.text(x, 56, str(i + 1), cls="s", anchor="middle")
+    for lab, hap, y in [("truth h" + sub("0"), truth, 80),
+                        ("query h" + sub("0"), query, 116)]:
+        S.text(146, y + 3, lab, cls="sb", anchor="end", fill=INK)
         for x, a in zip(xs, hap):
-            S.node(x, y, str(a), H1 if a == 0 else H2, r=11, cls="s")
-    sw_t = "".join("0" if truth[i] == truth[i + 1] else "1" for i in range(9))
-    sw_q = "".join("0" if query[i] == query[i + 1] else "1" for i in range(9))
-    S.text(200, 204, "switch encoding (query)", cls="sb", anchor="end")
+            S.node(x, y, str(a), H1 if a == 0 else H2, r=10)
+    sw = ["0" if query[i] == query[i + 1] else "1" for i in range(9)]
+    S.text(146, 158, "switch encoding", cls="sb", anchor="end", fill=INK)
     for i in range(9):
         x = (xs[i] + xs[i + 1]) / 2
-        c = H2 if sw_q[i] == "1" else GREY
-        S.text(x, 204, sw_q[i], cls="tb", anchor="middle", fill=c)
-        if sw_q[i] == "1": S.line(x, 165, x, 190, stroke=H2, w=1.5, dash="3,2")
-    S.text(60, 240, "switch errors = Hamming(switch(truth), switch(query)) = 4", cls="s", anchor="end") if False else None
-    S.text(100, 240, "switch errors = number of positions where the switch encodings differ = 4", cls="t")
-    S.text(100, 262, "switch/flip decomposition: two adjacent switches (positions 7–8) form one flip; isolated switches = 2, flips = 1", cls="s")
-    S.text(100, 284, "Hamming distance = min over the two orientations of misassigned variants = min(5, 5) = 5 of 10 (50%)", cls="s")
-    S.text(100, 306, "(per-block minimum, summed over blocks, divided by variants compared)", cls="s")
-    # b: block N50 and phased fraction
-    S.panel(20, 350, "b", "Block statistics")
-    S.text(40, 384, "Blocks are intersected: only variants heterozygous in both files and phased in both are compared; singleton blocks are ignored.", cls="s")
-    S.text(40, 402, "Phased SNV (%) = truth heterozygous SNVs phased by the query / all truth heterozygous SNVs (same for indels, SVs, 5mC).", cls="s")
-    S.text(40, 420, "Block N50 = span of the block at which the cumulative span of query blocks, sorted by length, reaches 50% of the total.", cls="s")
-    S.text(40, 438, "Switch error rate (%) = switch errors / assessed variant pairs × 100. Cross-tool comparisons use SNVs only (--only-snvs).", cls="s")
-    S.text(40, 466, "Implemented in longphase compare (re-implementation of whatshap compare; identical values, parallel over chromosomes).", cls="s")
+        on = sw[i] == "1"
+        S.text(x, 158, sw[i], cls="tb", anchor="middle", fill=H2 if on else LGREY)
+        if on:
+            S.line(x, 130, x, 148, stroke=H2, w=1, dash="2.5,2")
+    xf1, xf2 = (xs[6] + xs[7]) / 2, (xs[7] + xs[8]) / 2
+    S.path(f"M{xf1},168 L{xf1},175 L{xf2},175 L{xf2},168", stroke=H2, w=1)
+    S.text((xf1 + xf2) / 2, 188, "flip", cls="sb", anchor="middle", fill=H2)
+    for i in (2, 8):
+        S.text((xs[i] + xs[i + 1]) / 2, 176, "isolated", cls="s", anchor="middle", fill=H2)
+
+    S.table(XL, 204, [118, 60, 132, 106],
+            [("switch errors", "4", "isolated switches", "2"),
+             ("flips", "1", "Hamming distance", "min(5, 5) = 5 of 10")],
+            rowh=16, cell_cls=("tb", "t", "tb", "t"))
+
+    S.rule(XL, 250, W - XL)
+
+    # -- b ---------------------------------------------------------------
+    S.panel(XL, 274, "b", "Block statistics")
+    bx, by = XL + 68, 300
+    sc = 0.90
+    S.text(bx - 8, by + 3, "truth blocks", cls="s", anchor="end")
+    S.text(bx - 8, by + 21, "query blocks", cls="s", anchor="end")
+    S.text(bx - 8, by + 39, "compared", cls="s", anchor="end")
+    for x, w in [(0, 120), (132, 92), (236, 24), (272, 108)]:
+        S.rect(bx + x * sc, by - 4, w * sc, 9, fill=H1, r=1)
+    for x, w in [(0, 64), (72, 140), (222, 38), (270, 106)]:
+        S.rect(bx + x * sc, by + 14, w * sc, 9, fill=H2, r=1)
+    for x, w in [(0, 64), (72, 48), (132, 92), (272, 106)]:
+        S.rect(bx + x * sc, by + 32, w * sc, 9, fill=INK, r=1)
+    S.rect(bx + 236 * sc, by + 32, 24 * sc, 9, fill="none", stroke=LGREY, sw=0.8, r=1)
+    S.text(bx + 248 * sc, by + 56, "singleton, ignored", cls="s", anchor="middle", fill=GREY)
+
+    S.table(462, 288, [122, 180],
+            [("phased fraction", "phased truth het / all truth het"),
+             ("block N50", "span at 50% cumulative block span"),
+             ("switch error rate", "switch errors / assessed pairs × 100")],
+            rowh=16)
+    S.text(462, 356, "longphase compare; cross-tool comparisons use --only-snvs", cls="s")
+
     S.save("suppfig10_metrics.svg")
+
 
 if __name__ == "__main__":
     os.chdir(os.path.dirname(os.path.abspath(__file__)))

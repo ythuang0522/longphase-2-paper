@@ -1,83 +1,94 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="640" viewBox="0 0 1100 640">
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="440" viewBox="0 0 780 440">
 <title>Graph neural network architecture</title>
 
 <style>
  text{font-family:"Helvetica Neue",Helvetica,Arial,"Liberation Sans",sans-serif;fill:#16233D}
- .pl{font-size:22px;font-weight:700}
- .h{font-size:15px;font-weight:600}
- .t{font-size:13px}
- .tb{font-size:13px;font-weight:600}
- .s{font-size:11px;fill:#6F8090}
- .sb{font-size:11px;font-weight:600}
- .m{font-size:13px;font-style:italic}
- .code{font-family:Menlo,Consolas,"Courier New",monospace;font-size:11.5px}
- .w{fill:#ffffff}
+ .pl{font-size:14px;font-weight:700}
+ .h{font-size:11px;font-weight:600}
+ .t{font-size:10px}
+ .tb{font-size:10px;font-weight:600}
+ .s{font-size:9px;fill:#6E7C8C}
+ .sb{font-size:9px;font-weight:600}
+ .n{font-size:8.5px;font-weight:700}
+ .m{font-size:10px;font-style:italic}
+ .mb{font-size:10px;font-style:italic;font-weight:600}
+ .eq{font-size:10.5px}
+ .code{font-family:"SF Mono",Menlo,Consolas,"Courier New",monospace;font-size:9px}
 </style>
 
-<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6F8090"/></marker><marker id="arrd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16233D"/></marker></defs>
-<rect width="1100" height="640" fill="#ffffff"/>
-<rect x="40" y="60" width="200" height="44" rx="6" fill="#fff" stroke="#16233D" stroke-width="1" opacity="1"/>
-<text x="140.0" y="80.0" class="tb" text-anchor="middle" fill="#16233D">node features</text>
-<text x="140.0" y="96.0" class="s" text-anchor="middle">N × 31</text>
-<rect x="40" y="120" width="200" height="44" rx="6" fill="#fff" stroke="#16233D" stroke-width="1" opacity="1"/>
-<text x="140.0" y="140.0" class="tb" text-anchor="middle" fill="#16233D">edge features</text>
-<text x="140.0" y="156.0" class="s" text-anchor="middle">N × N × 6</text>
-<rect x="40" y="180" width="200" height="44" rx="6" fill="#fff" stroke="#16233D" stroke-width="1" opacity="1"/>
-<text x="140.0" y="200.0" class="tb" text-anchor="middle" fill="#16233D">adjacency</text>
-<text x="140.0" y="216.0" class="s" text-anchor="middle">N × N (undirected + self-loops)</text>
-<rect x="290" y="60" width="180" height="44" rx="6" fill="#EEF2F5" stroke="#CBD5DE" stroke-width="1" opacity="1"/>
-<text x="380.0" y="80.0" class="tb" text-anchor="middle" fill="#16233D">BatchNorm (frozen)</text>
-<text x="380.0" y="96.0" class="s" text-anchor="middle">per-feature standardization</text>
-<rect x="290" y="120" width="180" height="44" rx="6" fill="#EEF2F5" stroke="#CBD5DE" stroke-width="1" opacity="1"/>
-<text x="380.0" y="140.0" class="tb" text-anchor="middle" fill="#16233D">Linear 31 → 128</text>
-<text x="380.0" y="156.0" class="s" text-anchor="middle">+ GELU</text>
-<line x1="240" y1="82" x2="290" y2="82" stroke="#6F8090" stroke-width="1.2" stroke-linecap="round" marker-end="url(#arr)"/>
-<line x1="380" y1="104" x2="380" y2="120" stroke="#6F8090" stroke-width="1.2" stroke-linecap="round" marker-end="url(#arr)"/>
-<rect x="520" y="40" width="540" height="400" rx="10" fill="none" stroke="#16233D" stroke-width="1.2" opacity="1" stroke-dasharray="6,4"/>
-<text x="532" y="60" class="h" text-anchor="start">GPS layer  × 4   (hidden 128, 4 heads)</text>
-<rect x="550" y="90" width="220" height="70" rx="6" fill="#E3F1FA" stroke="#1687C9" stroke-width="1" opacity="1"/>
-<text x="660.0" y="123.0" class="tb" text-anchor="middle" fill="#16233D">Local: GATv2</text>
-<text x="660.0" y="139.0" class="s" text-anchor="middle">attention over xᵢ, xⱼ and edge eᵢⱼ</text>
-<text x="660" y="172" class="s" text-anchor="middle">softmax over incoming edges of i;</text>
-<text x="660" y="186" class="s" text-anchor="middle">edge encoder Wₑ (6 → 128) per layer</text>
-<rect x="810" y="90" width="220" height="70" rx="6" fill="#FBE7E6" stroke="#DC2B23" stroke-width="1" opacity="1"/>
-<text x="920.0" y="123.0" class="tb" text-anchor="middle" fill="#16233D">Global: self-attention</text>
-<text x="920.0" y="139.0" class="s" text-anchor="middle">softmax(QKᵀ/√d) V over all N nodes</text>
-<text x="920" y="172" class="s" text-anchor="middle">Q, K, V, O projections 128 → 128;</text>
-<text x="920" y="186" class="s" text-anchor="middle">window-wide context</text>
-<rect x="680" y="215" width="220" height="40" rx="6" fill="#EEF2F5" stroke="#CBD5DE" stroke-width="1" opacity="1"/>
-<text x="790.0" y="233.0" class="tb" text-anchor="middle" fill="#16233D">x + local + global</text>
-<text x="790.0" y="249.0" class="s" text-anchor="middle">additive fusion, residual</text>
-<line x1="660" y1="160" x2="720" y2="215" stroke="#6F8090" stroke-width="1.2" stroke-linecap="round" marker-end="url(#arr)"/>
-<line x1="920" y1="160" x2="860" y2="215" stroke="#6F8090" stroke-width="1.2" stroke-linecap="round" marker-end="url(#arr)"/>
-<rect x="680" y="270" width="220" height="34" rx="6" fill="#EEF2F5" stroke="#CBD5DE" stroke-width="1" opacity="1"/>
-<text x="790.0" y="291.0" class="tb" text-anchor="middle" fill="#16233D">LayerNorm</text>
-<rect x="680" y="319" width="220" height="44" rx="6" fill="#EEF2F5" stroke="#CBD5DE" stroke-width="1" opacity="1"/>
-<text x="790.0" y="339.0" class="tb" text-anchor="middle" fill="#16233D">FFN 128 → 256 → 128</text>
-<text x="790.0" y="355.0" class="s" text-anchor="middle">GELU, residual</text>
-<rect x="680" y="378" width="220" height="34" rx="6" fill="#EEF2F5" stroke="#CBD5DE" stroke-width="1" opacity="1"/>
-<text x="790.0" y="399.0" class="tb" text-anchor="middle" fill="#16233D">LayerNorm</text>
-<line x1="790" y1="255" x2="790" y2="270" stroke="#6F8090" stroke-width="1.2" stroke-linecap="round" marker-end="url(#arr)"/>
-<line x1="790" y1="304" x2="790" y2="319" stroke="#6F8090" stroke-width="1.2" stroke-linecap="round" marker-end="url(#arr)"/>
-<line x1="790" y1="363" x2="790" y2="378" stroke="#6F8090" stroke-width="1.2" stroke-linecap="round" marker-end="url(#arr)"/>
-<line x1="470" y1="142" x2="550" y2="125" stroke="#6F8090" stroke-width="1.2" stroke-linecap="round" marker-end="url(#arr)"/>
-<line x1="470" y1="142" x2="810" y2="125" stroke="#6F8090" stroke-width="1.2" stroke-linecap="round" marker-end="url(#arr)"/>
-<path d="M900,395 L1040,395 L1040,125 L1032,125" stroke="#6F8090" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="1" stroke-dasharray="3,3" marker-end="url(#arr)"/>
-<text x="1048" y="260" class="sb" text-anchor="start">×4</text>
-<rect x="560" y="480" width="240" height="44" rx="6" fill="#fff" stroke="#16233D" stroke-width="1" opacity="1"/>
-<text x="680.0" y="500.0" class="tb" text-anchor="middle" fill="#16233D">concat [hᵢ | Σwᵢⱼ | max wᵢⱼ]</text>
-<text x="680.0" y="516.0" class="s" text-anchor="middle">130 features</text>
-<rect x="830" y="480" width="220" height="44" rx="6" fill="#EEF2F5" stroke="#CBD5DE" stroke-width="1" opacity="1"/>
-<text x="940.0" y="500.0" class="tb" text-anchor="middle" fill="#16233D">Linear 130→128, GELU</text>
-<text x="940.0" y="516.0" class="s" text-anchor="middle">Linear 128→2, softmax</text>
-<line x1="790" y1="412" x2="790" y2="480" stroke="#6F8090" stroke-width="1.2" stroke-linecap="round" marker-end="url(#arr)"/>
-<line x1="800" y1="502" x2="830" y2="502" stroke="#6F8090" stroke-width="1.2" stroke-linecap="round" marker-end="url(#arr)"/>
-<rect x="830" y="550" width="220" height="44" rx="6" fill="#FCF1C7" stroke="#E0A030" stroke-width="1" opacity="1"/>
-<text x="940.0" y="570.0" class="tb" text-anchor="middle" fill="#16233D">P(misphased) per allele node</text>
-<text x="940.0" y="586.0" class="s" text-anchor="middle">averaged over the two alleles</text>
-<line x1="940" y1="524" x2="940" y2="550" stroke="#6F8090" stroke-width="1.2" stroke-linecap="round" marker-end="url(#arr)"/>
-<path d="M240,142 L260,142 L260,470 L560,470 L560,480" stroke="#6F8090" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="1" stroke-dasharray="3,3" marker-end="url(#arr)"/>
-<text x="270" y="462" class="s" text-anchor="start">edge context (sum, max of raw edge weight over incoming edges)</text>
-<text x="40" y="560" class="s" text-anchor="start">687,358 parameters; weights compiled into the binary; dense O(N²) attention is inexpensive for N ≤ 256.</text>
-<text x="40" y="578" class="s" text-anchor="start">Exact GELU; LayerNorm ε = 10⁻⁵; LeakyReLU slope 0.2; nodes without incoming edges attend uniformly to all nodes.</text>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6E7C8C"/></marker><marker id="arrd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16233D"/></marker><marker id="arra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B8860B"/></marker></defs>
+<rect width="780" height="440" fill="#ffffff"/>
+<rect x="16.0" y="44.0" width="150.0" height="32.0" rx="3" fill="#fff" stroke="#16233D" stroke-width="0.9" opacity="1"/>
+<text x="91.0" y="58.5" class="tb" text-anchor="middle" fill="#16233D">node features</text>
+<text x="91.0" y="71.0" class="s" text-anchor="middle">N × 31</text>
+<rect x="16.0" y="88.0" width="150.0" height="32.0" rx="3" fill="#fff" stroke="#16233D" stroke-width="0.9" opacity="1"/>
+<text x="91.0" y="102.5" class="tb" text-anchor="middle" fill="#16233D">edge features</text>
+<text x="91.0" y="115.0" class="s" text-anchor="middle">N × N × 6</text>
+<rect x="16.0" y="132.0" width="150.0" height="32.0" rx="3" fill="#fff" stroke="#16233D" stroke-width="0.9" opacity="1"/>
+<text x="91.0" y="146.5" class="tb" text-anchor="middle" fill="#16233D">adjacency</text>
+<text x="91.0" y="159.0" class="s" text-anchor="middle">undirected + self-loops</text>
+<rect x="196.0" y="44.0" width="140.0" height="32.0" rx="3" fill="#F1F4F7" stroke="#C7D1DB" stroke-width="0.9" opacity="1"/>
+<text x="266.0" y="58.5" class="tb" text-anchor="middle" fill="#16233D">BatchNorm</text>
+<text x="266.0" y="71.0" class="s" text-anchor="middle">frozen, per-feature</text>
+<rect x="196.0" y="88.0" width="140.0" height="32.0" rx="3" fill="#F1F4F7" stroke="#C7D1DB" stroke-width="0.9" opacity="1"/>
+<text x="266.0" y="102.5" class="tb" text-anchor="middle" fill="#16233D">Linear 31 → 128</text>
+<text x="266.0" y="115.0" class="s" text-anchor="middle">GELU</text>
+<line x1="166.0" y1="60.0" x2="194.0" y2="60.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<line x1="266.0" y1="76.0" x2="266.0" y2="86.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<rect x="366.0" y="26.0" width="398.0" height="284.0" rx="4" fill="none" stroke="#16233D" stroke-width="1" opacity="1" stroke-dasharray="4,3"/>
+<text x="378.0" y="43.0" class="h" text-anchor="start">GPS layer × 4</text>
+<text x="752.0" y="43.0" class="s" text-anchor="end">hidden 128, 4 heads</text>
+<rect x="382.0" y="54.0" width="176.0" height="34.0" rx="3" fill="#DCEAF6" stroke="#1266B0" stroke-width="0.9" opacity="1"/>
+<text x="470.0" y="69.5" class="tb" text-anchor="middle" fill="#16233D">local  GATv2</text>
+<text x="470.0" y="82.0" class="s" text-anchor="middle">attention over x<tspan font-size="72%" dy="2.6">i</tspan><tspan dy="-2.6"></tspan>, x<tspan font-size="72%" dy="2.6">j</tspan><tspan dy="-2.6"></tspan>, e<tspan font-size="72%" dy="2.6">ij</tspan><tspan dy="-2.6"></tspan></text>
+<text x="470.0" y="101.0" class="s" text-anchor="middle">softmax over incoming edges of i</text>
+<text x="470.0" y="113.0" class="s" text-anchor="middle">edge encoder 6 → 128 per layer</text>
+<rect x="572.0" y="54.0" width="176.0" height="34.0" rx="3" fill="#FAE3DD" stroke="#CE4125" stroke-width="0.9" opacity="1"/>
+<text x="660.0" y="69.5" class="tb" text-anchor="middle" fill="#16233D">global  self-attention</text>
+<text x="660.0" y="82.0" class="s" text-anchor="middle">softmax(QK<tspan font-size="72%" dy="-4.2">T</tspan><tspan dy="4.2"></tspan>/√d) V over N nodes</text>
+<text x="660.0" y="101.0" class="s" text-anchor="middle">Q, K, V, O projections 128 → 128</text>
+<text x="660.0" y="113.0" class="s" text-anchor="middle">window-wide context</text>
+<rect x="476.0" y="130.0" width="180.0" height="30.0" rx="3" fill="#fff" stroke="#16233D" stroke-width="0.9" opacity="1"/>
+<text x="566.0" y="148.5" class="tb" text-anchor="middle" fill="#16233D">x + local + global</text>
+<line x1="470.0" y1="121.0" x2="524.0" y2="129.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<line x1="660.0" y1="121.0" x2="608.0" y2="129.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<rect x="476.0" y="176.0" width="180.0" height="26.0" rx="3" fill="#F1F4F7" stroke="#C7D1DB" stroke-width="0.9" opacity="1"/>
+<text x="566.0" y="192.5" class="tb" text-anchor="middle" fill="#16233D">LayerNorm</text>
+<rect x="476.0" y="218.0" width="180.0" height="30.0" rx="3" fill="#F1F4F7" stroke="#C7D1DB" stroke-width="0.9" opacity="1"/>
+<text x="566.0" y="231.5" class="tb" text-anchor="middle" fill="#16233D">FFN 128 → 256 → 128</text>
+<text x="566.0" y="244.0" class="s" text-anchor="middle">GELU, residual</text>
+<rect x="476.0" y="264.0" width="180.0" height="26.0" rx="3" fill="#F1F4F7" stroke="#C7D1DB" stroke-width="0.9" opacity="1"/>
+<text x="566.0" y="280.5" class="tb" text-anchor="middle" fill="#16233D">LayerNorm</text>
+<line x1="566.0" y1="160.0" x2="566.0" y2="174.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<line x1="566.0" y1="202.0" x2="566.0" y2="216.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<line x1="566.0" y1="248.0" x2="566.0" y2="262.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<line x1="336.0" y1="104.0" x2="380.0" y2="71.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<line x1="336.0" y1="104.0" x2="570.0" y2="71.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<rect x="366.0" y="344.0" width="190.0" height="32.0" rx="3" fill="#fff" stroke="#16233D" stroke-width="0.9" opacity="1"/>
+<text x="461.0" y="358.5" class="tb" text-anchor="middle" fill="#16233D">concat [ h<tspan font-size="72%" dy="2.6">i</tspan><tspan dy="-2.6"></tspan> | Σw<tspan font-size="72%" dy="2.6">ij</tspan><tspan dy="-2.6"></tspan> | max w<tspan font-size="72%" dy="2.6">ij</tspan><tspan dy="-2.6"></tspan> ]</text>
+<text x="461.0" y="371.0" class="s" text-anchor="middle">130 features</text>
+<rect x="586.0" y="344.0" width="178.0" height="32.0" rx="3" fill="#F1F4F7" stroke="#C7D1DB" stroke-width="0.9" opacity="1"/>
+<text x="675.0" y="358.5" class="tb" text-anchor="middle" fill="#16233D">Linear 130 → 128 → 2</text>
+<text x="675.0" y="371.0" class="s" text-anchor="middle">GELU, softmax</text>
+<rect x="586.0" y="392.0" width="178.0" height="30.0" rx="3" fill="#FBF0D5" stroke="#B8860B" stroke-width="0.9" opacity="1"/>
+<text x="675.0" y="405.5" class="tb" text-anchor="middle" fill="#16233D">P(misphased)</text>
+<text x="675.0" y="418.0" class="s" text-anchor="middle">mean of the two allele nodes</text>
+<line x1="566.0" y1="310.0" x2="566.0" y2="342.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<line x1="556.0" y1="360.0" x2="584.0" y2="360.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<line x1="675.0" y1="376.0" x2="675.0" y2="390.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<path d="M166,104 L184,104 L184,328 L366,328 L366,342" stroke="#6E7C8C" stroke-width="0.9" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="1" stroke-dasharray="2.5,2" marker-end="url(#arr)"/>
+<text x="192.0" y="324.0" class="s" text-anchor="start">raw edge weights</text>
+<rect x="16.0" y="344.0" width="330.0" height="16.0" rx="0" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="22.0" y="355.0" class="tb" text-anchor="start">parameters</text>
+<text x="158.0" y="355.0" class="t" text-anchor="start">687,358, compiled into the binary</text>
+<rect x="16.0" y="360.0" width="330.0" height="16.0" rx="0" fill="#F7F9FB" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="22.0" y="371.0" class="tb" text-anchor="start">attention cost</text>
+<text x="158.0" y="371.0" class="t" text-anchor="start">dense O(N²), N ≤ 256</text>
+<rect x="16.0" y="376.0" width="330.0" height="16.0" rx="0" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="22.0" y="387.0" class="tb" text-anchor="start">numerics</text>
+<text x="158.0" y="387.0" class="t" text-anchor="start">exact GELU, LayerNorm ε = 10<tspan font-size="72%" dy="-4.2">−5</tspan><tspan dy="4.2"></tspan></text>
+<rect x="16.0" y="392.0" width="330.0" height="16.0" rx="0" fill="#F7F9FB" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="22.0" y="403.0" class="tb" text-anchor="start">isolated nodes</text>
+<text x="158.0" y="403.0" class="t" text-anchor="start">attend uniformly to all nodes</text>
+<rect x="16.0" y="344.0" width="330.0" height="64.0" rx="0" fill="none" stroke="#C7D1DB" stroke-width="0.8" opacity="1"/>
 </svg>

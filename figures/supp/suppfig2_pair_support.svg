@@ -1,74 +1,105 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="600" viewBox="0 0 1100 600">
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="390" viewBox="0 0 780 390">
 <title>Pairwise allele support and vote weighting</title>
 
 <style>
  text{font-family:"Helvetica Neue",Helvetica,Arial,"Liberation Sans",sans-serif;fill:#16233D}
- .pl{font-size:22px;font-weight:700}
- .h{font-size:15px;font-weight:600}
- .t{font-size:13px}
- .tb{font-size:13px;font-weight:600}
- .s{font-size:11px;fill:#6F8090}
- .sb{font-size:11px;font-weight:600}
- .m{font-size:13px;font-style:italic}
- .code{font-family:Menlo,Consolas,"Courier New",monospace;font-size:11.5px}
- .w{fill:#ffffff}
+ .pl{font-size:14px;font-weight:700}
+ .h{font-size:11px;font-weight:600}
+ .t{font-size:10px}
+ .tb{font-size:10px;font-weight:600}
+ .s{font-size:9px;fill:#6E7C8C}
+ .sb{font-size:9px;font-weight:600}
+ .n{font-size:8.5px;font-weight:700}
+ .m{font-size:10px;font-style:italic}
+ .mb{font-size:10px;font-style:italic;font-weight:600}
+ .eq{font-size:10.5px}
+ .code{font-family:"SF Mono",Menlo,Consolas,"Courier New",monospace;font-size:9px}
 </style>
 
-<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6F8090"/></marker><marker id="arrd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16233D"/></marker></defs>
-<rect width="1100" height="600" fill="#ffffff"/>
-<text x="20" y="34" class="pl" text-anchor="start">a</text>
-<text x="42" y="34" class="h" text-anchor="start">Four allele-pair weights between two variants</text>
-<text x="200" y="78" class="h" text-anchor="middle">variant u</text>
-<text x="480" y="78" class="h" text-anchor="middle">variant v</text>
-<circle cx="200" cy="120" r="14" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
-<text x="200" y="124" class="sb" text-anchor="middle" fill="#fff">r</text>
-<circle cx="200" cy="220" r="14" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
-<text x="200" y="224" class="sb" text-anchor="middle" fill="#fff">a</text>
-<circle cx="480" cy="120" r="14" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
-<text x="480" y="124" class="sb" text-anchor="middle" fill="#fff">r</text>
-<circle cx="480" cy="220" r="14" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
-<text x="480" y="224" class="sb" text-anchor="middle" fill="#fff">a</text>
-<text x="176" y="124" class="m" text-anchor="end">uʳ</text>
-<text x="176" y="224" class="m" text-anchor="end">uᵃ</text>
-<text x="504" y="124" class="m" text-anchor="start">vʳ</text>
-<text x="504" y="224" class="m" text-anchor="start">vᵃ</text>
-<line x1="214" y1="120" x2="466" y2="120" stroke="#1687C9" stroke-width="6" stroke-linecap="round"/>
-<text x="340.0" y="108" class="tb" text-anchor="middle">wᵣᵣ = 9</text>
-<line x1="214" y1="220" x2="466" y2="220" stroke="#DC2B23" stroke-width="5" stroke-linecap="round"/>
-<text x="340.0" y="244" class="tb" text-anchor="middle">wₐₐ = 7</text>
-<line x1="212" y1="128" x2="468" y2="212" stroke="#CBD5DE" stroke-width="2.5" stroke-linecap="round"/>
-<line x1="212" y1="212" x2="468" y2="128" stroke="#CBD5DE" stroke-width="2.5" stroke-linecap="round"/>
-<text x="440" y="156.0" class="s" text-anchor="end">wᵣₐ = 1</text>
-<text x="440" y="192.0" class="s" text-anchor="end">wₐᵣ = 0.1</text>
-<text x="40" y="280" class="t" text-anchor="start">P = wᵣᵣ + wₐₐ = 16   (cis: same haplotype carries r and r)</text>
-<text x="40" y="300" class="t" text-anchor="start">Q = wᵣₐ + wₐᵣ = 1.1   (trans)</text>
-<text x="40" y="328" class="t" text-anchor="start">similarity  s = min(P,Q) / max(P,Q) = 0.07</text>
-<text x="40" y="356" class="s" text-anchor="start">Per read: +1 if both bases ≥ Q12, else +0.1 (grey edges here carry a low-quality read).</text>
-<text x="600" y="34" class="pl" text-anchor="start">b</text>
-<text x="622" y="34" class="h" text-anchor="start">Vote rules for the pair (u, v)</text>
-<rect x="600" y="64" width="470" height="120" rx="6" fill="#EEF2F5" stroke="none" stroke-width="1" opacity="1"/>
-<text x="612" y="82" class="sb" text-anchor="start" fill="#6F8090">s &gt; 0.7</text>
-<text x="830" y="82" class="s" text-anchor="start">no vote (uninformative pair)</text>
-<text x="612" y="104" class="sb" text-anchor="start" fill="#6F8090">s &gt; 0.3 for SNV–5mC pairs</text>
-<text x="830" y="104" class="s" text-anchor="start">no vote</text>
-<text x="612" y="126" class="sb" text-anchor="start" fill="#16233D">0.1 &lt; s ≤ 0.7</text>
-<text x="830" y="126" class="s" text-anchor="start">vote for larger of P, Q; weight 1</text>
-<text x="612" y="148" class="sb" text-anchor="start" fill="#2E8B57">s ≤ 0.1, or one side has no support</text>
-<text x="830" y="148" class="s" text-anchor="start">vote; weight 20 (near-unanimous)</text>
-<text x="612" y="170" class="sb" text-anchor="start" fill="#E0A030">u is a tandem-repeat indel</text>
-<text x="830" y="170" class="s" text-anchor="start">vote; weight 0.1</text>
-<text x="600" y="210" class="s" text-anchor="start">The vote is expressed as a haplotype for v using the haplotype already</text>
-<text x="600" y="226" class="s" text-anchor="start">assigned to u: P favours vʳ on hap(uʳ), Q favours vʳ on hap(uᵃ).</text>
-<text x="600" y="300" class="pl" text-anchor="start">c</text>
-<text x="622" y="300" class="h" text-anchor="start">Single-read guard</text>
-<text x="600" y="340" class="s" text-anchor="start">Among the votes received by v, count those whose pair is supported by</text>
-<text x="600" y="356" class="s" text-anchor="start">a single read (P + Q ≤ 1). If more than three such votes exist, h₁ and h₂</text>
-<text x="600" y="372" class="s" text-anchor="start">are recomputed from high-consistency (s &lt; 0.2), non-indel votes only,</text>
-<text x="600" y="388" class="s" text-anchor="start">preventing one chimeric ultra-long read from dominating a sparse region.</text>
-<text x="20" y="420" class="pl" text-anchor="start">d</text>
-<text x="42" y="420" class="h" text-anchor="start">Exported graph (DOT)</text>
-<text x="40" y="456" class="code" text-anchor="start">1001.1 -&gt; 1543.1 [label=16.0]</text>
-<text x="40" y="474" class="code" text-anchor="start">1001.2 -&gt; 1543.2 [label=1.1]</text>
-<text x="40" y="500" class="s" text-anchor="start">position.allele → position.allele, label = accumulated haplotype vote weight at the source;</text>
-<text x="40" y="516" class="s" text-anchor="start">one edge per voting pair; parsed by the GNN module together with INFO/PE, H1, H2.</text>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6E7C8C"/></marker><marker id="arrd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16233D"/></marker><marker id="arra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B8860B"/></marker></defs>
+<rect width="780" height="390" fill="#ffffff"/>
+<line x1="382.0" y1="18.0" x2="382.0" y2="374.0" stroke="#C7D1DB" stroke-width="0.8" stroke-linecap="round"/>
+<text x="16.0" y="24.0" class="pl" text-anchor="start">a</text>
+<text x="30.0" y="24.0" class="h" text-anchor="start">Allele-pair weights between two variants</text>
+<text x="120.0" y="60.0" class="mb" text-anchor="middle" fill="#16233D">variant u</text>
+<text x="280.0" y="60.0" class="mb" text-anchor="middle" fill="#16233D">variant v</text>
+<line x1="131.0" y1="84.0" x2="269.0" y2="84.0" stroke="#1266B0" stroke-width="4.5" stroke-linecap="round"/>
+<line x1="131.0" y1="152.0" x2="269.0" y2="152.0" stroke="#CE4125" stroke-width="3.8" stroke-linecap="round"/>
+<line x1="130.0" y1="92.0" x2="270.0" y2="144.0" stroke="#C7D1DB" stroke-width="1.6" stroke-linecap="round"/>
+<line x1="130.0" y1="144.0" x2="270.0" y2="92.0" stroke="#C7D1DB" stroke-width="1.6" stroke-linecap="round"/>
+<circle cx="120.0" cy="84.0" r="11" fill="#1266B0" stroke="#1266B0" stroke-width="0"/>
+<text x="120.0" y="87.0" class="n" text-anchor="middle" fill="#fff">r</text>
+<circle cx="120.0" cy="152.0" r="11" fill="#CE4125" stroke="#CE4125" stroke-width="0"/>
+<text x="120.0" y="155.0" class="n" text-anchor="middle" fill="#fff">a</text>
+<circle cx="280.0" cy="84.0" r="11" fill="#1266B0" stroke="#1266B0" stroke-width="0"/>
+<text x="280.0" y="87.0" class="n" text-anchor="middle" fill="#fff">r</text>
+<circle cx="280.0" cy="152.0" r="11" fill="#CE4125" stroke="#CE4125" stroke-width="0"/>
+<text x="280.0" y="155.0" class="n" text-anchor="middle" fill="#fff">a</text>
+<text x="104.0" y="87.0" class="m" text-anchor="end">u<tspan font-size="72%" dy="-4.2">r</tspan><tspan dy="4.2"></tspan></text>
+<text x="104.0" y="155.0" class="m" text-anchor="end">u<tspan font-size="72%" dy="-4.2">a</tspan><tspan dy="4.2"></tspan></text>
+<text x="296.0" y="87.0" class="m" text-anchor="start">v<tspan font-size="72%" dy="-4.2">r</tspan><tspan dy="4.2"></tspan></text>
+<text x="296.0" y="155.0" class="m" text-anchor="start">v<tspan font-size="72%" dy="-4.2">a</tspan><tspan dy="4.2"></tspan></text>
+<text x="200.0" y="76.0" class="tb" text-anchor="middle" fill="#1266B0">w<tspan font-size="72%" dy="2.6">rr</tspan><tspan dy="-2.6"></tspan> = 9</text>
+<text x="200.0" y="170.0" class="tb" text-anchor="middle" fill="#CE4125">w<tspan font-size="72%" dy="2.6">aa</tspan><tspan dy="-2.6"></tspan> = 7</text>
+<rect x="207.0" y="95.0" width="54.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="234.0" y="104.0" class="sb" text-anchor="middle" fill="#6E7C8C">w<tspan font-size="72%" dy="2.6">ar</tspan><tspan dy="-2.6"></tspan> = 0.1</text>
+<rect x="210.0" y="131.0" width="48.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="234.0" y="140.0" class="sb" text-anchor="middle" fill="#6E7C8C">w<tspan font-size="72%" dy="2.6">ra</tspan><tspan dy="-2.6"></tspan> = 1</text>
+<rect x="16.0" y="182.0" width="350.0" height="68.0" rx="2" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="28.0" y="201.0" class="eq" text-anchor="start" fill="#16233D">P = w<tspan font-size="72%" dy="2.6">rr</tspan><tspan dy="-2.6"></tspan> + w<tspan font-size="72%" dy="2.6">aa</tspan><tspan dy="-2.6"></tspan> = 16</text>
+<text x="176.0" y="201.0" class="m" text-anchor="start" fill="#1266B0">cis</text>
+<text x="28.0" y="221.0" class="eq" text-anchor="start" fill="#16233D">Q = w<tspan font-size="72%" dy="2.6">ra</tspan><tspan dy="-2.6"></tspan> + w<tspan font-size="72%" dy="2.6">ar</tspan><tspan dy="-2.6"></tspan> = 1.1</text>
+<text x="176.0" y="221.0" class="m" text-anchor="start" fill="#CE4125">trans</text>
+<text x="28.0" y="241.0" class="eq" text-anchor="start" fill="#16233D">s = min(P,Q) / max(P,Q) = 0.07</text>
+<text x="16.0" y="266.0" class="s" text-anchor="start">each read adds 1 (both bases ≥ Q12) or 0.1</text>
+<text x="16.0" y="300.0" class="pl" text-anchor="start">d</text>
+<text x="30.0" y="300.0" class="h" text-anchor="start">Exported graph (DOT)</text>
+<rect x="16.0" y="312.0" width="350.0" height="54.0" rx="2" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="26.0" y="329.0" class="code" text-anchor="start">1001.1 -&gt; 1543.1 [label=16.0]</text>
+<text x="26.0" y="343.0" class="code" text-anchor="start">1001.2 -&gt; 1543.2 [label=1.1]</text>
+<text x="26.0" y="359.0" class="s" text-anchor="start">position.allele → position.allele, label = vote weight</text>
+<text x="400.0" y="24.0" class="pl" text-anchor="start">b</text>
+<text x="414.0" y="24.0" class="h" text-anchor="start">Vote rules for the pair (u, v)</text>
+<rect x="400.0" y="38.0" width="364.0" height="16.0" rx="0" fill="#E4EAF0" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="406.0" y="49.0" class="sb" text-anchor="start" fill="#16233D">condition on s</text>
+<text x="584.0" y="49.0" class="sb" text-anchor="start" fill="#16233D">vote for v</text>
+<rect x="400.0" y="54.0" width="364.0" height="16.0" rx="0" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="406.0" y="65.0" class="tb" text-anchor="start" fill="#6E7C8C">s &gt; 0.7</text>
+<text x="584.0" y="65.0" class="t" text-anchor="start" fill="#6E7C8C">no vote</text>
+<rect x="400.0" y="70.0" width="364.0" height="16.0" rx="0" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="406.0" y="81.0" class="tb" text-anchor="start" fill="#6E7C8C">s &gt; 0.3, SNV–5mC pair</text>
+<text x="584.0" y="81.0" class="t" text-anchor="start" fill="#6E7C8C">no vote</text>
+<rect x="400.0" y="86.0" width="364.0" height="16.0" rx="0" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="406.0" y="97.0" class="tb" text-anchor="start" fill="#16233D">0.1 &lt; s ≤ 0.7</text>
+<text x="584.0" y="97.0" class="t" text-anchor="start" fill="#16233D">vote larger of P, Q; weight 1</text>
+<rect x="400.0" y="102.0" width="364.0" height="16.0" rx="0" fill="#E4F1EA" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="406.0" y="113.0" class="tb" text-anchor="start" fill="#1F7A4D">s ≤ 0.1 or one side unsupported</text>
+<text x="584.0" y="113.0" class="t" text-anchor="start" fill="#1F7A4D">vote; weight 20</text>
+<rect x="400.0" y="118.0" width="364.0" height="16.0" rx="0" fill="#FBF0D5" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="406.0" y="129.0" class="tb" text-anchor="start" fill="#B8860B">u is a tandem-repeat indel</text>
+<text x="584.0" y="129.0" class="t" text-anchor="start" fill="#B8860B">vote; weight 0.1</text>
+<rect x="400.0" y="38.0" width="364.0" height="96.0" rx="0" fill="none" stroke="#C7D1DB" stroke-width="0.8" opacity="1"/>
+<line x1="400.0" y1="54.0" x2="764.0" y2="54.0" stroke="#C7D1DB" stroke-width="0.8" stroke-linecap="butt"/>
+<text x="400.0" y="158.0" class="s" text-anchor="start">the vote names a haplotype for v given hap(u)</text>
+<text x="400.0" y="173.0" class="sb" text-anchor="start" fill="#16233D">P → v<tspan font-size="72%" dy="-4.2">r</tspan><tspan dy="4.2"></tspan> on hap(u<tspan font-size="72%" dy="-4.2">r</tspan><tspan dy="4.2"></tspan>);   Q → v<tspan font-size="72%" dy="-4.2">r</tspan><tspan dy="4.2"></tspan> on hap(u<tspan font-size="72%" dy="-4.2">a</tspan><tspan dy="4.2"></tspan>)</text>
+<text x="400.0" y="208.0" class="pl" text-anchor="start">c</text>
+<text x="414.0" y="208.0" class="h" text-anchor="start">Single-read guard</text>
+<line x1="436.0" y1="306.0" x2="744.0" y2="306.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<text x="400.0" y="280.0" class="sb" text-anchor="start" fill="#16233D">P + Q</text>
+<text x="400.0" y="318.0" class="s" text-anchor="start">votes received by v</text>
+<rect x="444.0" y="300.2" width="20.0" height="5.8" rx="1" fill="#B8860B" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="480.0" y="299.4" width="20.0" height="6.6" rx="1" fill="#B8860B" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="516.0" y="298.5" width="20.0" height="7.5" rx="1" fill="#B8860B" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="552.0" y="297.6" width="20.0" height="8.4" rx="1" fill="#B8860B" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="588.0" y="290.6" width="20.0" height="15.4" rx="1" fill="#1266B0" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="624.0" y="284.0" width="20.0" height="22.0" rx="1" fill="#1266B0" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="660.0" y="275.6" width="20.0" height="30.4" rx="1" fill="#1266B0" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="696.0" y="260.6" width="20.0" height="45.4" rx="1" fill="#1266B0" stroke="none" stroke-width="0.8" opacity="1"/>
+<line x1="436.0" y1="297.6" x2="744.0" y2="297.6" stroke="#B8860B" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2.5"/>
+<text x="750.0" y="300.6" class="sb" text-anchor="start" fill="#B8860B">P + Q ≤ 1</text>
+<text x="478.0" y="254.0" class="sb" text-anchor="start" fill="#B8860B">4 votes rest on a single read</text>
+<rect x="400.0" y="328.0" width="364.0" height="42.0" rx="2" fill="#FBF0D5" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="400.0" y="328.0" width="2.2" height="42.0" rx="0" fill="#B8860B" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="412.0" y="344.0" class="tb" text-anchor="start" fill="#16233D">&gt; 3 such votes → recompute h<tspan font-size="72%" dy="2.6">1</tspan><tspan dy="-2.6"></tspan>, h<tspan font-size="72%" dy="2.6">2</tspan><tspan dy="-2.6"></tspan></text>
+<text x="412.0" y="360.0" class="tb" text-anchor="start" fill="#16233D">from s &lt; 0.2, non-indel votes only</text>
 </svg>

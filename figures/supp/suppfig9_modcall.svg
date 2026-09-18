@@ -1,102 +1,144 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="600" viewBox="0 0 1100 600">
-<title>Allele-specific methylation calling (modcall)</title>
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="498" viewBox="0 0 780 498">
+<title>Allele-specific methylation calling with modcall</title>
 
 <style>
  text{font-family:"Helvetica Neue",Helvetica,Arial,"Liberation Sans",sans-serif;fill:#16233D}
- .pl{font-size:22px;font-weight:700}
- .h{font-size:15px;font-weight:600}
- .t{font-size:13px}
- .tb{font-size:13px;font-weight:600}
- .s{font-size:11px;fill:#6F8090}
- .sb{font-size:11px;font-weight:600}
- .m{font-size:13px;font-style:italic}
- .code{font-family:Menlo,Consolas,"Courier New",monospace;font-size:11.5px}
- .w{fill:#ffffff}
+ .pl{font-size:14px;font-weight:700}
+ .h{font-size:11px;font-weight:600}
+ .t{font-size:10px}
+ .tb{font-size:10px;font-weight:600}
+ .s{font-size:9px;fill:#6E7C8C}
+ .sb{font-size:9px;font-weight:600}
+ .n{font-size:8.5px;font-weight:700}
+ .m{font-size:10px;font-style:italic}
+ .mb{font-size:10px;font-style:italic;font-weight:600}
+ .eq{font-size:10.5px}
+ .code{font-family:"SF Mono",Menlo,Consolas,"Courier New",monospace;font-size:9px}
 </style>
 
-<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6F8090"/></marker><marker id="arrd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16233D"/></marker></defs>
-<rect width="1100" height="600" fill="#ffffff"/>
-<text x="20" y="34" class="pl" text-anchor="start">a</text>
-<text x="42" y="34" class="h" text-anchor="start">Per-read CpG state from ML probability</text>
-<line x1="60" y1="90" x2="460" y2="90" stroke="#16233D" stroke-width="1.5" stroke-linecap="round"/>
-<line x1="60" y1="85" x2="60" y2="95" stroke="#16233D" stroke-width="1.5" stroke-linecap="round"/>
-<text x="60" y="110" class="s" text-anchor="middle">0</text>
-<line x1="140.0" y1="85" x2="140.0" y2="95" stroke="#16233D" stroke-width="1.5" stroke-linecap="round"/>
-<text x="140.0" y="110" class="s" text-anchor="middle">0.2</text>
-<line x1="380.0" y1="85" x2="380.0" y2="95" stroke="#16233D" stroke-width="1.5" stroke-linecap="round"/>
-<text x="380.0" y="110" class="s" text-anchor="middle">0.8</text>
-<line x1="460" y1="85" x2="460" y2="95" stroke="#16233D" stroke-width="1.5" stroke-linecap="round"/>
-<text x="460" y="110" class="s" text-anchor="middle">1</text>
-<rect x="60" y="60" width="80.0" height="22" rx="3" fill="#E3F1FA" stroke="none" stroke-width="1" opacity="1"/>
-<text x="100.0" y="76" class="sb" text-anchor="middle" fill="#1687C9">unmethylated</text>
-<rect x="140.0" y="60" width="240.0" height="22" rx="3" fill="#EEF2F5" stroke="none" stroke-width="1" opacity="1"/>
-<text x="260.0" y="76" class="sb" text-anchor="middle" fill="#6F8090">noise (ignored)</text>
-<rect x="380.0" y="60" width="80.0" height="22" rx="3" fill="#FBE7E6" stroke="none" stroke-width="1" opacity="1"/>
-<text x="420.0" y="76" class="sb" text-anchor="middle" fill="#DC2B23">methylated</text>
-<text x="60" y="134" class="s" text-anchor="start">ML tag / 255; thresholds --modThreshold 0.8, --unModThreshold 0.2</text>
-<text x="20" y="170" class="pl" text-anchor="start">b</text>
-<text x="42" y="170" class="h" text-anchor="start">CpG strand pairing and site genotype</text>
-<text x="40" y="215" class="s" text-anchor="start">5′ … C G … 3′   forward-strand reads report C;  reverse-strand reads report the G position</text>
-<text x="40" y="231" class="s" text-anchor="start">→ reverse-strand calls are mapped to the forward CpG coordinate and the two strands are pooled</text>
-<text x="40" y="259" class="s" text-anchor="start">m = methylated reads, u = unmethylated reads, noise = depth − m − u</text>
-<text x="40" y="285" class="tb" text-anchor="start">heterozygous (allele-specific) if  min(m,u)/max(m,u) ≥ 0.6  and  noise/depth ≤ 0.2</text>
-<text x="40" y="305" class="s" text-anchor="start">otherwise homozygous methylated (m ≥ u) or unmethylated → excluded from phasing</text>
-<rect x="40" y="330" width="130.0" height="16" rx="2" fill="#DC2B23" stroke="none" stroke-width="1" opacity="1"/>
-<rect x="170.0" y="330" width="111.42857142857143" height="16" rx="2" fill="#1687C9" stroke="none" stroke-width="1" opacity="1"/>
-<rect x="281.42857142857144" y="330" width="18.571428571428573" height="16" rx="2" fill="#CBD5DE" stroke="none" stroke-width="1" opacity="1"/>
-<text x="310" y="342" class="s" text-anchor="start">m=14, u=12, noise=2</text>
-<text x="470" y="342" class="sb" text-anchor="start" fill="#2E8B57">0/1</text>
-<rect x="40" y="356" width="232.14285714285714" height="16" rx="2" fill="#DC2B23" stroke="none" stroke-width="1" opacity="1"/>
-<rect x="272.1428571428571" y="356" width="18.571428571428573" height="16" rx="2" fill="#1687C9" stroke="none" stroke-width="1" opacity="1"/>
-<rect x="290.7142857142857" y="356" width="9.285714285714286" height="16" rx="2" fill="#CBD5DE" stroke="none" stroke-width="1" opacity="1"/>
-<text x="310" y="368" class="s" text-anchor="start">m=25, u=2, noise=1</text>
-<text x="470" y="368" class="sb" text-anchor="start" fill="#6F8090">1/1</text>
-<rect x="40" y="382" width="83.57142857142857" height="16" rx="2" fill="#DC2B23" stroke="none" stroke-width="1" opacity="1"/>
-<rect x="123.57142857142857" y="382" width="74.28571428571429" height="16" rx="2" fill="#1687C9" stroke="none" stroke-width="1" opacity="1"/>
-<rect x="197.85714285714286" y="382" width="102.14285714285714" height="16" rx="2" fill="#CBD5DE" stroke="none" stroke-width="1" opacity="1"/>
-<text x="310" y="394" class="s" text-anchor="start">m=9, u=8, noise=11</text>
-<text x="470" y="394" class="sb" text-anchor="start" fill="#6F8090">excluded (noise)</text>
-<text x="600" y="34" class="pl" text-anchor="start">c</text>
-<text x="622" y="34" class="h" text-anchor="start">Refinement by co-segregation with SNVs</text>
-<text x="650" y="86" class="s" text-anchor="middle">SNV</text>
-<circle cx="650" cy="110" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
-<text x="650" y="114" class="s" text-anchor="middle" fill="#fff">r</text>
-<circle cx="650" cy="170" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
-<text x="650" y="174" class="s" text-anchor="middle" fill="#fff">a</text>
-<text x="730" y="86" class="s" text-anchor="middle">CpG</text>
-<circle cx="730" cy="110" r="10" fill="#16233D" stroke="#16233D" stroke-width="1.5"/>
-<circle cx="730" cy="170" r="10" fill="#fff" stroke="#16233D" stroke-width="1.5"/>
-<text x="810" y="86" class="s" text-anchor="middle">SNV</text>
-<circle cx="810" cy="110" r="10" fill="#1687C9" stroke="#1687C9" stroke-width="1.5"/>
-<text x="810" y="114" class="s" text-anchor="middle" fill="#fff">r</text>
-<circle cx="810" cy="170" r="10" fill="#DC2B23" stroke="#DC2B23" stroke-width="1.5"/>
-<text x="810" y="174" class="s" text-anchor="middle" fill="#fff">a</text>
-<text x="890" y="86" class="s" text-anchor="middle">CpG</text>
-<circle cx="890" cy="110" r="10" fill="#16233D" stroke="#16233D" stroke-width="1.5"/>
-<circle cx="890" cy="170" r="10" fill="#fff" stroke="#16233D" stroke-width="1.5"/>
-<text x="970" y="86" class="s" text-anchor="middle">CpG</text>
-<circle cx="970" cy="110" r="10" fill="#16233D" stroke="#16233D" stroke-width="1.5"/>
-<circle cx="970" cy="170" r="10" fill="#fff" stroke="#16233D" stroke-width="1.5"/>
-<line x1="660" y1="110" x2="720" y2="110" stroke="#2E8B57" stroke-width="4" stroke-linecap="round"/>
-<line x1="660" y1="170" x2="720" y2="170" stroke="#2E8B57" stroke-width="4" stroke-linecap="round"/>
-<text x="690.0" y="92" class="sb" text-anchor="middle" fill="#2E8B57">strong</text>
-<line x1="740" y1="110" x2="800" y2="110" stroke="#2E8B57" stroke-width="4" stroke-linecap="round"/>
-<line x1="740" y1="170" x2="800" y2="170" stroke="#2E8B57" stroke-width="4" stroke-linecap="round"/>
-<line x1="820" y1="110" x2="880" y2="110" stroke="#CBD5DE" stroke-width="2" stroke-linecap="round"/>
-<line x1="820" y1="170" x2="880" y2="170" stroke="#CBD5DE" stroke-width="2" stroke-linecap="round"/>
-<text x="850.0" y="92" class="sb" text-anchor="middle" fill="#6F8090">weak</text>
-<line x1="900" y1="110" x2="960" y2="110" stroke="#E0A030" stroke-width="3" stroke-linecap="round"/>
-<line x1="900" y1="170" x2="960" y2="170" stroke="#E0A030" stroke-width="3" stroke-linecap="round"/>
-<text x="930.0" y="92" class="sb" text-anchor="middle" fill="#E0A030">CpG–CpG</text>
-<text x="620" y="215" class="s" text-anchor="start">strong anchor: CpG state co-segregates with an SNV within the next</text>
-<text x="620" y="231" class="s" text-anchor="start">20 variants on &gt; max(6, (d₁+d₂)/4) reads with majority ratio ≥ 0.9</text>
-<text x="620" y="255" class="s" text-anchor="start">weak CpG: no qualifying SNV link; accepted only if it co-segregates</text>
-<text x="620" y="271" class="s" text-anchor="start">with an already accepted CpG (iterative expansion, 2 rounds)</text>
-<text x="620" y="295" class="s" text-anchor="start">adjacent CpG coordinates are merged and represented by the first</text>
-<text x="600" y="340" class="pl" text-anchor="start">d</text>
-<text x="622" y="340" class="h" text-anchor="start">Output VCF record</text>
-<text x="620" y="372" class="code" text-anchor="start">chr1  10469  .  N  .  .  PASS  RS=P;MR=read3,read7,...;NR=read1,read4,...</text>
-<text x="620" y="390" class="code" text-anchor="start">GT:MD:UD:DP  0/1:14:12:28</text>
-<text x="620" y="416" class="s" text-anchor="start">RS strand; MR/NR methylated and unmethylated read names (used by phase</text>
-<text x="620" y="432" class="s" text-anchor="start">to attach 5mC alleles to reads); MD/UD/DP depths. Phased output adds PS and 0|1.</text>
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6E7C8C"/></marker><marker id="arrd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16233D"/></marker><marker id="arra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B8860B"/></marker></defs>
+<rect width="780" height="498" fill="#ffffff"/>
+<line x1="408.0" y1="18.0" x2="408.0" y2="482.0" stroke="#C7D1DB" stroke-width="0.8" stroke-linecap="round"/>
+<text x="16.0" y="24.0" class="pl" text-anchor="start">a</text>
+<text x="30.0" y="24.0" class="h" text-anchor="start">Per-read CpG state from the ML probability</text>
+<rect x="60.0" y="46.0" width="64.0" height="16.0" rx="1" fill="#DCEAF6" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="92.0" y="57.5" class="sb" text-anchor="middle" fill="#1266B0">unmethylated</text>
+<rect x="124.0" y="46.0" width="192.0" height="16.0" rx="1" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="220.0" y="57.5" class="sb" text-anchor="middle" fill="#6E7C8C">ambiguous</text>
+<rect x="316.0" y="46.0" width="64.0" height="16.0" rx="1" fill="#FAE3DD" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="348.0" y="57.5" class="sb" text-anchor="middle" fill="#CE4125">methylated</text>
+<line x1="60.0" y1="66.0" x2="380.0" y2="66.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<line x1="60.0" y1="66.0" x2="60.0" y2="71.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<text x="60.0" y="82.0" class="s" text-anchor="middle">0</text>
+<line x1="124.0" y1="66.0" x2="124.0" y2="71.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<text x="124.0" y="82.0" class="s" text-anchor="middle">0.2</text>
+<line x1="316.0" y1="66.0" x2="316.0" y2="71.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<text x="316.0" y="82.0" class="s" text-anchor="middle">0.8</text>
+<line x1="380.0" y1="66.0" x2="380.0" y2="71.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<text x="380.0" y="82.0" class="s" text-anchor="middle">1</text>
+<text x="16.0" y="82.0" class="s" text-anchor="start">ML / 255</text>
+<text x="16.0" y="118.0" class="pl" text-anchor="start">b</text>
+<text x="30.0" y="118.0" class="h" text-anchor="start">CpG strand pooling</text>
+<rect x="110.0" y="145.0" width="150.0" height="14.0" rx="1" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="110.0" y="171.0" width="150.0" height="14.0" rx="1" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="104.0" y="156.0" class="s" text-anchor="end">5′</text>
+<text x="266.0" y="156.0" class="s" text-anchor="start">3′</text>
+<text x="104.0" y="182.0" class="s" text-anchor="end">3′</text>
+<text x="266.0" y="182.0" class="s" text-anchor="start">5′</text>
+<text x="176.0" y="156.0" class="code" text-anchor="middle" fill="#CE4125">C</text>
+<text x="192.0" y="156.0" class="code" text-anchor="middle" fill="#16233D">G</text>
+<text x="176.0" y="182.0" class="code" text-anchor="middle" fill="#16233D">G</text>
+<text x="192.0" y="182.0" class="code" text-anchor="middle" fill="#CE4125">C</text>
+<path d="M196,178 C220,174 218,157 184,162" stroke="#B8860B" stroke-width="1" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="1" marker-end="url(#arra)"/>
+<text x="278.0" y="156.0" class="s" text-anchor="start">forward call</text>
+<text x="278.0" y="182.0" class="s" text-anchor="start">reverse call → forward coordinate</text>
+<text x="16.0" y="206.0" class="s" text-anchor="start">M, U, A = methylated, unmethylated, ambiguous reads after pooling</text>
+<text x="16.0" y="234.0" class="pl" text-anchor="start">c</text>
+<text x="30.0" y="234.0" class="h" text-anchor="start">Site genotype</text>
+<rect x="16.0" y="248.0" width="378.0" height="32.0" rx="2" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="16.0" y="248.0" width="2.2" height="32.0" rx="0" fill="#16233D" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="26.0" y="263.0" class="tb" text-anchor="start" fill="#16233D">heterozygous if  min(M,U) / max(M,U) ≥ 0.6</text>
+<text x="26.0" y="275.0" class="s" text-anchor="start">and  A / (M+U+A) ≤ 0.2;  otherwise homozygous or excluded</text>
+<rect x="112.0" y="296.0" width="98.0" height="14.0" rx="1" fill="#CE4125" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="210.0" y="296.0" width="84.0" height="14.0" rx="1" fill="#1266B0" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="294.0" y="296.0" width="14.0" height="14.0" rx="1" fill="#C7D1DB" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="106.0" y="307.0" class="s" text-anchor="end">M 14   U 12   A 2</text>
+<text x="318.0" y="307.0" class="tb" text-anchor="start" fill="#1F7A4D">0/1</text>
+<rect x="112.0" y="320.0" width="175.0" height="14.0" rx="1" fill="#CE4125" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="287.0" y="320.0" width="14.0" height="14.0" rx="1" fill="#1266B0" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="301.0" y="320.0" width="7.0" height="14.0" rx="1" fill="#C7D1DB" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="106.0" y="331.0" class="s" text-anchor="end">M 25   U 2   A 1</text>
+<text x="318.0" y="331.0" class="tb" text-anchor="start" fill="#6E7C8C">1/1</text>
+<rect x="112.0" y="344.0" width="63.0" height="14.0" rx="1" fill="#CE4125" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="175.0" y="344.0" width="56.0" height="14.0" rx="1" fill="#1266B0" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="231.0" y="344.0" width="77.0" height="14.0" rx="1" fill="#C7D1DB" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="106.0" y="355.0" class="s" text-anchor="end">M 9   U 8   A 11</text>
+<text x="318.0" y="355.0" class="tb" text-anchor="start" fill="#6E7C8C">excluded</text>
+<rect x="16.0" y="374.0" width="10.0" height="10.0" rx="1" fill="#CE4125" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="30.0" y="383.0" class="s" text-anchor="start">methylated</text>
+<rect x="92.0" y="374.0" width="10.0" height="10.0" rx="1" fill="#1266B0" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="106.0" y="383.0" class="s" text-anchor="start">unmethylated</text>
+<rect x="178.8" y="374.0" width="10.0" height="10.0" rx="1" fill="#C7D1DB" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="192.8" y="383.0" class="s" text-anchor="start">ambiguous</text>
+<text x="16.0" y="418.0" class="pl" text-anchor="start">e</text>
+<text x="30.0" y="418.0" class="h" text-anchor="start">Output record</text>
+<rect x="16.0" y="430.0" width="378.0" height="52.0" rx="2" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="26.0" y="446.0" class="code" text-anchor="start">chr1 10469 . N . . PASS RS=P;MR=read3,read7;NR=read1,read4</text>
+<text x="26.0" y="459.0" class="code" text-anchor="start">GT:MD:UD:DP   0/1:14:12:28</text>
+<text x="26.0" y="475.0" class="s" text-anchor="start">MR / NR read names attach the 5mC alleles to reads in phase</text>
+<text x="428.0" y="24.0" class="pl" text-anchor="start">d</text>
+<text x="442.0" y="24.0" class="h" text-anchor="start">Co-segregation with a neighbouring marker</text>
+<text x="432.0" y="62.0" class="eq" text-anchor="start" fill="#16233D">linkage  =</text>
+<text x="556.0" y="54.5" class="s" text-anchor="middle">max(RR + AA,  RA + AR)</text>
+<line x1="498.0" y1="58.0" x2="614.0" y2="58.0" stroke="#16233D" stroke-width="0.8" stroke-linecap="butt"/>
+<text x="556.0" y="68.5" class="s" text-anchor="middle">RR + AA + RA + AR</text>
+<text x="624.0" y="62.0" class="tb" text-anchor="start" fill="#1F7A4D">≥ 0.9</text>
+<text x="428.0" y="96.0" class="sb" text-anchor="start" fill="#16233D">SNV-anchored</text>
+<circle cx="490.0" cy="128.0" r="9" fill="#1266B0" stroke="#1266B0" stroke-width="0"/>
+<text x="490.0" y="131.0" class="n" text-anchor="middle" fill="#fff">R</text>
+<circle cx="490.0" cy="156.0" r="9" fill="#CE4125" stroke="#CE4125" stroke-width="0"/>
+<text x="490.0" y="159.0" class="n" text-anchor="middle" fill="#fff">A</text>
+<text x="490.0" y="114.0" class="s" text-anchor="middle">SNV</text>
+<circle cx="570.0" cy="128.0" r="8" fill="#16233D" stroke="#16233D" stroke-width="0"/>
+<circle cx="570.0" cy="156.0" r="8" fill="#fff" stroke="#16233D" stroke-width="1.2"/>
+<text x="570.0" y="114.0" class="s" text-anchor="middle">CpG</text>
+<line x1="499.0" y1="128.0" x2="561.0" y2="128.0" stroke="#1F7A4D" stroke-width="2.4" stroke-linecap="round"/>
+<line x1="499.0" y1="156.0" x2="561.0" y2="156.0" stroke="#1F7A4D" stroke-width="2.4" stroke-linecap="round"/>
+<text x="604.0" y="145.0" class="sb" text-anchor="start" fill="#1F7A4D">accepted</text>
+<text x="428.0" y="178.0" class="s" text-anchor="start">SNV within the next 20 variants, on &gt; max(6, (d<tspan font-size="72%" dy="2.6">1</tspan><tspan dy="-2.6"></tspan>+d<tspan font-size="72%" dy="2.6">2</tspan><tspan dy="-2.6"></tspan>)/4) reads</text>
+<line x1="428.0" y1="186.0" x2="764.0" y2="186.0" stroke="#C7D1DB" stroke-width="0.8" stroke-linecap="butt"/>
+<text x="428.0" y="194.0" class="sb" text-anchor="start" fill="#16233D">no SNV in range</text>
+<circle cx="490.0" cy="226.0" r="9" fill="#1266B0" stroke="#1266B0" stroke-width="0"/>
+<text x="490.0" y="229.0" class="n" text-anchor="middle" fill="#fff">R</text>
+<circle cx="490.0" cy="254.0" r="9" fill="#CE4125" stroke="#CE4125" stroke-width="0"/>
+<text x="490.0" y="257.0" class="n" text-anchor="middle" fill="#fff">A</text>
+<text x="490.0" y="212.0" class="s" text-anchor="middle">SNV</text>
+<circle cx="570.0" cy="226.0" r="8" fill="#16233D" stroke="#16233D" stroke-width="0"/>
+<circle cx="570.0" cy="254.0" r="8" fill="#fff" stroke="#16233D" stroke-width="1.2"/>
+<text x="570.0" y="212.0" class="s" text-anchor="middle">CpG</text>
+<line x1="499.0" y1="226.0" x2="561.0" y2="226.0" stroke="#C7D1DB" stroke-width="2.4" stroke-linecap="round"/>
+<line x1="499.0" y1="254.0" x2="561.0" y2="254.0" stroke="#C7D1DB" stroke-width="2.4" stroke-linecap="round"/>
+<text x="604.0" y="243.0" class="sb" text-anchor="start" fill="#6E7C8C">weak</text>
+<text x="428.0" y="276.0" class="s" text-anchor="start">held for methylation-only mode</text>
+<line x1="428.0" y1="284.0" x2="764.0" y2="284.0" stroke="#C7D1DB" stroke-width="0.8" stroke-linecap="butt"/>
+<text x="428.0" y="292.0" class="sb" text-anchor="start" fill="#16233D">CpG–CpG expansion</text>
+<circle cx="490.0" cy="324.0" r="8" fill="#16233D" stroke="#16233D" stroke-width="0"/>
+<circle cx="490.0" cy="352.0" r="8" fill="#fff" stroke="#16233D" stroke-width="1.2"/>
+<text x="490.0" y="310.0" class="s" text-anchor="middle">CpG</text>
+<circle cx="570.0" cy="324.0" r="8" fill="#16233D" stroke="#16233D" stroke-width="0"/>
+<circle cx="570.0" cy="352.0" r="8" fill="#fff" stroke="#16233D" stroke-width="1.2"/>
+<text x="570.0" y="310.0" class="s" text-anchor="middle">CpG</text>
+<line x1="499.0" y1="324.0" x2="561.0" y2="324.0" stroke="#B8860B" stroke-width="2.4" stroke-linecap="round"/>
+<line x1="499.0" y1="352.0" x2="561.0" y2="352.0" stroke="#B8860B" stroke-width="2.4" stroke-linecap="round"/>
+<circle cx="650.0" cy="324.0" r="8" fill="#16233D" stroke="#16233D" stroke-width="0"/>
+<circle cx="650.0" cy="352.0" r="8" fill="#fff" stroke="#16233D" stroke-width="1.2"/>
+<text x="650.0" y="310.0" class="s" text-anchor="middle">CpG</text>
+<line x1="579.0" y1="324.0" x2="641.0" y2="324.0" stroke="#B8860B" stroke-width="2.4" stroke-linecap="round"/>
+<line x1="579.0" y1="352.0" x2="641.0" y2="352.0" stroke="#B8860B" stroke-width="2.4" stroke-linecap="round"/>
+<text x="684.0" y="341.0" class="sb" text-anchor="start" fill="#B8860B">accepted</text>
+<text x="428.0" y="374.0" class="s" text-anchor="start">linked to an accepted CpG; 2 rounds, adjacent CpGs merged</text>
+<circle cx="434.0" cy="400.0" r="6" fill="#16233D" stroke="#16233D" stroke-width="0"/>
+<text x="444.0" y="403.0" class="s" text-anchor="start">methylated allele</text>
+<circle cx="552.0" cy="400.0" r="6" fill="#fff" stroke="#16233D" stroke-width="1.2"/>
+<text x="562.0" y="403.0" class="s" text-anchor="start">unmethylated allele</text>
 </svg>

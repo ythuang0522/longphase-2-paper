@@ -380,6 +380,19 @@ Duet\cite{zhou2022duet} & BMC Bioinformatics 2022 & comparison method for SV pha
 \textbf{b}, Definitions of block intersection, phased fraction, block N50 and switch error rate as implemented in \code{longphase compare}.}
 \end{figure}
 
+\begin{figure}[h]
+\centering
+\fbox{\begin{minipage}{0.97\textwidth}\vspace{3em}\centering\small\itshape Placeholder --- panels to be regenerated with the submitted version.\vspace{3em}\end{minipage}}
+\caption{\textbf{Calibration of the voting and read-filtering constants.} Each panel is a sweep on HG002 at 10--60$\times$; the value adopted in \toolname is marked.
+\textbf{a}, Distribution of pair ambiguity $s=\min(P,Q)/\max(P,Q)$ over all assessed pairs and over the subset that participate in a switch error, showing that both mass and residual error concentrate below $s=0.1$ and motivating $\alpha = 0.1$ as the boundary of the up-weighted class.
+\textbf{b}, Switch errors and block N50 as a function of the no-vote threshold $\beta$. Switch errors fall monotonically as $\beta$ decreases, so switch error alone does not identify an optimum; $\beta = 0.7$ is the smallest value at which block N50 is not yet degraded, and is adopted on that basis.
+\textbf{c}, Switch errors as a function of the up-weight $w$ applied when $s < \alpha$, at each coverage; the reduction saturates by $w \approx 20$.
+\textbf{d}, Distribution of base quality over all bases and over bases carrying a sequencing error, showing errors concentrated below Q10 and motivating $\theta = 12$; and switch errors as a function of $\theta$.
+\textbf{e}, Switch errors over the grid of single-read-guard parameters $N$ (number of single-read votes that triggers the guard) and $\mu$ (ambiguity cut applied to the surviving votes), and switch errors with and without the guard at each coverage.
+\todo{All five panels exist as figures in the group's thesis material (Po-Hui Tzeng, 2026, Figs.~3.7, 3.10--3.12, 3.14, 3.17, 3.18, 3.21) and should be regenerated with the submitted version on the Clair3 calls and coverages used here, then redrawn to a single consistent style. Two caveats to carry over honestly: in \textbf{b} the switch-error curve does not have an interior optimum, so the choice of $\beta$ rests on the N50 trade-off and must be presented that way; and in \textbf{e} the guard slightly \emph{increased} switch errors at 10$\times$ in the original sweep, which should be shown rather than cropped.}}
+\label{fig:supp_calibration}
+\end{figure}
+
 \clearpage
 \bibliography{references}
 \end{document}
