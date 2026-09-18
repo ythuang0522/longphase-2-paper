@@ -83,7 +83,7 @@
 <text x="158.0" y="355.0" class="t" text-anchor="start">687,358, compiled into the binary</text>
 <rect x="16.0" y="360.0" width="330.0" height="16.0" rx="0" fill="#F7F9FB" stroke="none" stroke-width="0.8" opacity="1"/>
 <text x="22.0" y="371.0" class="tb" text-anchor="start">attention cost</text>
-<text x="158.0" y="371.0" class="t" text-anchor="start">dense O(N²), N ≤ 256</text>
+<text x="158.0" y="371.0" class="t" text-anchor="start">dense O(N²), N ≤ 82 (cap 256)</text>
 <rect x="16.0" y="376.0" width="330.0" height="16.0" rx="0" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
 <text x="22.0" y="387.0" class="tb" text-anchor="start">numerics</text>
 <text x="158.0" y="387.0" class="t" text-anchor="start">exact GELU, LayerNorm ε = 10<tspan font-size="72%" baseline-shift="super">−5</tspan></text>

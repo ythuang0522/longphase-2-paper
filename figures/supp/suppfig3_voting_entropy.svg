@@ -132,7 +132,7 @@
 <rect x="496.0" y="177.0" width="70.0" height="14.0" rx="1" fill="#1266B0" stroke="none" stroke-width="0.8" opacity="1"/>
 <rect x="566.0" y="177.0" width="70.0" height="14.0" rx="1" fill="#CE4125" stroke="none" stroke-width="0.8" opacity="1"/>
 <text x="648.0" y="188.0" class="tb" text-anchor="start" fill="#B8860B">PE = 1.000</text>
-<text x="442.0" y="230.0" class="sb" text-anchor="start" fill="#B8860B">PE ≥ 0.80 → a GNN window is opened (Fig. 6)</text>
+<text x="442.0" y="230.0" class="sb" text-anchor="start" fill="#B8860B">PE ≥ 0.80 → a GNN window is opened (Suppl. Fig. 6)</text>
 <text x="442.0" y="248.0" class="s" text-anchor="start">written to VCF as INFO/PE, INFO/H1, INFO/H2</text>
 <circle cx="448.0" cy="273.0" r="5" fill="#1266B0" stroke="#1266B0" stroke-width="0"/>
 <text x="458.0" y="276.0" class="s" text-anchor="start">allele on haplotype 1</text>

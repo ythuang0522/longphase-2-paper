@@ -63,7 +63,7 @@ The repository ships a 500-kb demonstration (chr1:121.5--122.0~Mb; \code{demo/de
 \addcontentsline{toc}{section}{Supplementary Tables}
 
 \begin{table}[h]
-\caption{\textbf{Node features of the graph neural network.} Each allele node of a window carries 31 features; \# is the index in the feature vector. $h_1$, $h_2$: weighted haplotype votes (taken from the DOT edge labels when available, otherwise from \code{INFO/H1}, \code{INFO/H2}); PE: phasing entropy; PS: phase set; ``centre'' is the trigger variant of the window. Genomic-context features are computed from the reference when \code{-r} is given and are zero otherwise.}
+\caption{\textbf{Node features of the graph neural network.} Each allele node of a window carries 31 features; \# is the 1-based index in the feature vector (\code{GNNProcess.cpp}, \code{f[0]}--\code{f[30]}), listed here by group rather than by index. $h_1$, $h_2$: weighted haplotype votes (taken from the DOT edge labels when available, otherwise from \code{INFO/H1}, \code{INFO/H2}); PE: phasing entropy; PS: phase set; ``centre'' is the trigger variant of the window. Genomic-context features are computed from the reference when \code{-r} is given and are zero otherwise.}
 \label{tab:nodefeat}
 \small
 \begin{tabular}{@{}r L{3.3cm} L{9.6cm}@{}}
@@ -84,8 +84,8 @@ The repository ships a 500-kb demonstration (chr1:121.5--122.0~Mb; \code{demo/de
 11 & total\_votes & $h_1 + h_2$ \\
 12 & vote\_ratio & $\max(h_1,h_2)/(h_1+h_2)$ \\
 13 & log\_total & $\log_2(1 + h_1 + h_2)$ \\
-14 & log\_h1 & $\log_2(1 + h_1)$ \\
-15 & log\_h2 & $\log_2(1 + h_2)$ \\
+14 & log\_h1 & $\ln(1 + h_1)$ \\
+15 & log\_h2 & $\ln(1 + h_2)$ \\
 25 & rel\_vote\_depth & $\log_2\big((h_1+h_2)/\overline{(h_1+h_2)}_{\pm 10\,\mathrm{variants}}\big)$ \\
 \addlinespace
 \multicolumn{3}{@{}l}{\textit{Genomic context (6)}}\\
@@ -94,12 +94,12 @@ The repository ships a 500-kb demonstration (chr1:121.5--122.0~Mb; \code{demo/de
 18 & str\_context & longest tandem-repeat unit count (unit 2--4~bp) in $\pm 15$~bp, /10, capped at 1 \\
 19 & seq\_entropy & Shannon entropy of the $\pm 15$~bp sequence (bits) \\
 20 & neigh\_dens & (number of variants within $\pm 500$~bp $-$ 1)/20 \\
-21 & dist\_near\_indel & $\log_{10}(1 + $ distance to nearest indel$)$, capped at $\log_{10}(10001)$ \\
+24 & dist\_near\_indel & $\log_{10}(1 + $ distance to nearest indel$)$, capped at $\log_{10}(10001)$ \\
 \addlinespace
 \multicolumn{3}{@{}l}{\textit{Graph structure (5)}}\\
-22 & out\_degree & number of distinct target positions of outgoing DOT edges, /10, capped at 1 \\
-23 & ps\_block\_size & $\log(1 + $ variants in the PS$) / \log(101)$ \\
-24 & log\_center\_dist & $\log_{10}(1 + |$pos $-$ pos$_c|)$ \\
+21 & out\_degree & number of distinct target positions of outgoing DOT edges, /10, capped at 1 \\
+22 & ps\_block\_size & $\ln(1 + $ variants in the PS$) / \ln(101)$ \\
+23 & log\_center\_dist & $\log_{10}(1 + |$pos $-$ pos$_c|)$ \\
 26 & out\_weight\_std & s.d.\ of outgoing DOT edge weights, /100, capped at 1 \\
 27 & is\_bridge & 1 if removing the variant disconnects the window graph \\
 \addlinespace
@@ -119,7 +119,7 @@ The repository ships a 500-kb demonstration (chr1:121.5--122.0~Mb; \code{demo/de
 \midrule
 1 & weight & $1/(1 + e^{-w})$ \\
 2 & log\_dist & $\log_{10}(1 + |$pos$_{\mathrm{dst}} - $pos$_{\mathrm{src}}|)$ \\
-3 & log\_weight & $\log(1 + w)$ \\
+3 & log\_weight & $\ln(1 + w)$ \\
 4 & is\_same\_hp & 1 if the two allele nodes have the same allele index \\
 5 & is\_inter\_ps & 1 if the two variants belong to different phase sets \\
 6 & weight\_ratio & $w$ / (sum of outgoing edge weights of the source allele node) \\
@@ -144,7 +144,7 @@ Fusion & $x \leftarrow x + \mathrm{local} + \mathrm{global}$; LayerNorm ($\varep
 Feed-forward & 128 $\rightarrow$ 256 $\rightarrow$ 128, GELU, residual, LayerNorm \\
 Classifier & concat[$h_i$, $\sum_j w_{ij}$, $\max_j w_{ij}$] (130) $\rightarrow$ 128 (GELU) $\rightarrow$ 2, softmax \\
 Parameters & 687,358 (float32, 2.75~MB, embedded in the binary) \\
-Window & trigger PE $\ge 0.80$; $\pm 20$ variants; $\le 256$ nodes \\
+Window & trigger PE $\ge 0.80$; $\pm 20$ variants ($\le 41$ variants, $\le 82$ allele nodes; a 256-node cap exists but is never reached at this window size) \\
 Decision & unphase if mean $P(\mathrm{error}) \ge 0.30$ over the two allele nodes and all covering windows \\
 Post-processing & split disconnected phase sets (largest component keeps PS); bridge protection off \\
 Training & \todo{data, labels, loss, optimizer, epochs} \\
@@ -161,7 +161,7 @@ Training & \todo{data, labels, loss, optimizer, epochs} \\
 \toprule
 Parameter & Default & Meaning \\
 \midrule
-\code{--ont} / \code{--pb} & -- & sequencing platform (enables nanopore-specific homopolymer filter) \\
+\code{--ont} / \code{--pb} & -- & sequencing platform (required; \code{--ont} enables the homopolymer SNV filter) \\
 \code{--indels} & off & phase small indels \\
 \code{--indelQuality} & 0 & exclude indels with QUAL below this value \\
 \code{--sv-file}, \code{--mod-file} & -- & SV VCF (Sniffles2/cuteSV with read names); 5mC VCF from \code{modcall} \\
@@ -173,8 +173,8 @@ Parameter & Default & Meaning \\
 \code{-d, --distance} & 300,000 & maximum distance (bp) between linked variants \\
 \code{-1, --edgeThreshold} & 0.7 & pair casts no vote if $\min(P,Q)/\max(P,Q)$ exceeds this (0.3 for SNV--5mC) \\
 \code{-L, --overlapThreshold} & 0.2 & overlap fraction above which the shorter of two alignments of a read is dropped \\
-\code{-w, --sv-window} & 20 & CIGAR operations scanned around an SV start \\
-\code{-h, --sv-threshold} & 0.10 & relative length tolerance for a CIGAR indel to support an SV \\
+\code{-w, --svWindow} & 20 & CIGAR operations scanned around an SV start (the help text prints \code{--sv-window}, which does not parse) \\
+\code{-h, --svThreshold} & 0.10 & relative length tolerance for a CIGAR indel to support an SV (help text: \code{--sv-threshold}) \\
 \code{-m, --readConfidence} & 0.65 & minimum majority fraction to tag a read in read-based correction \\
 \code{-n, --snpConfidence} & 0.75 & minimum confidence to keep a variant's phase after read-based correction \\
 \code{--dot} & off & export the phasing graph (required by \code{gnn}) \\
@@ -183,7 +183,7 @@ Parameter & Default & Meaning \\
 \end{table}
 
 \begin{table}[h]
-\caption{\textbf{Parameters of \code{longphase modcall} and their defaults.} Values are those set in the source; the on-line help text lists 0.7 for \code{--heterRatio} and 6 for \code{--connectAdjacent} (\todo{reconcile}).}
+\caption{\textbf{Parameters of \code{longphase modcall} and their defaults.} Values are the compiled-in defaults (\code{ModCall.cpp}:67--73 at commit cc17fb1); the on-line help text advertises 0.7 for \code{--heterRatio} and 6 for \code{--connectAdjacent} and the long option for the BAM input is \code{--methylbamfile} (\todo{fix the help text and confirm the values used for the benchmarks}).}
 \label{tab:modcallparams}
 \small
 \begin{tabular}{@{}L{4.2cm} c L{8.3cm}@{}}
@@ -245,9 +245,9 @@ minimap2 & \todo{--} & \code{-ax map-ont -y} \\
 Clair3 & \todo{--} & SNV and indel calls \\
 Sniffles2 & \todo{--} & \code{--output-rnames} \\
 GIAB v4.2.1 HG002 & v4.2.1 & GRCh38-based small-variant benchmark \\
-HG002 Q100 (T2T-based) & \todo{v?} & referred to as v5.0q \\
+T2T-HG002 v1.1 small-variant benchmark\cite{hansen2026q100,giab2025q100} & GIAB v5 draft \todo{file names, date} & projected onto GRCh38; referred to as v5.0q \\
 WhatsHap & 2.8 & \todo{options} \\
-HapCUT2 & 1.3.4 & \todo{options} \\
+HapCUT2 & 1.3.4 & \todo{options; state whether default likelihood-based pruning was enabled} \\
 \longphase~1.0 & 1.0.x \todo{exact} & \code{--ont} \\
 \toolname & \todo{release} & \code{--ont}; \code{gnn} with defaults \\
 \bottomrule
@@ -283,7 +283,7 @@ GNAS transcripts in PHP1B\cite{iwasaki2025gnas} & PNAS 2025 & phasing of Clair3 
 Ultrarapid diagnostics in critical care\cite{smits2025nanopore} & Eur.\ J.\ Hum.\ Genet.\ 2025 & read phasing (v1.0.7) \\
 HYDIN in primary ciliary dyskinesia\cite{fleming2024hydin} & Eur.\ J.\ Hum.\ Genet.\ 2024 & phasing of Clair3 calls \\
 Antisense oligonucleotides in APBD\cite{thomas2025splice} & Nucleic Acids Res.\ 2025 & phasing of Clair3 calls \\
-Native CpG methylation fine-mapping\cite{tian2025finemapping} & HGG Adv.\ 2025 & phasing and haplotagging (chosen for speed and SV support) \\
+Native CpG methylation fine-mapping\cite{tian2025finemapping} & HGG Adv.\ 2026 & phasing and haplotagging (chosen for speed and SV support) \\
 Canadian national platform benchmark\cite{galvez2026benchmarking} & Front.\ Genet.\ 2026 & phasing inside the Clair3 workflow \\
 Pallas's cat genome\cite{flack2023pallas} & NAR Genom.\ Bioinform.\ 2023 & haplotagging for allele-specific methylation \\
 \addlinespace
@@ -305,7 +305,7 @@ Duet\cite{zhou2022duet} & BMC Bioinformatics 2022 & comparison method for SV pha
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig1_observations.pdf}
 \caption{\textbf{Read-level allele observations and pre-graph filters.}
 \textbf{a}, For every alignment, each overlapped variant yields an allele observation with an associated quality: SNVs from the aligned base (Phred quality), indels from CIGAR operations starting at the site, SVs from CIGAR operations of matching length or from the caller's read list, and 5mC from the \code{modcall} read lists. The table summarizes how each class enters the edge weights.
-\textbf{b}, Nanopore-specific homopolymer filter: when two SNVs both lie in homopolymers of length $\ge 3$ and are $\le 2$~bp apart, the downstream SNV is removed.
+\textbf{b}, Homopolymer SNV filter, applied under \code{--ont}: when two SNVs both lie in homopolymers of length $\ge 3$ and are $\le 2$~bp apart, the downstream SNV is removed.
 \textbf{c}, Overlapping-alignment filter for supplementary alignments of one read.
 \textbf{d}, Indels in tandem repeats are flagged and vote with weight 0.1.
 The strip at the bottom gives the order in which the filters are applied; the copy-number-aware filter of Supplementary Fig.~4 acts last, immediately before graph construction.}
@@ -348,7 +348,7 @@ The strip at the bottom gives the order in which the filters are applied; the co
 \caption{\textbf{Window construction for the graph neural network.}
 \textbf{a}, A window of $\pm 20$ variants (two allele nodes each) is opened around every phased variant with PE $\ge 0.8$; edges are the DOT edges with both endpoints in the window (blue and red arcs) plus self-loops; a dashed grey edge marks a cross-haplotype link. Predictions are read only in the central zone.
 \textbf{b}, Bridge-vertex feature: a variant whose removal disconnects the window graph.
-\textbf{c}, Definition of the central zone. A window holds at most 41 variants and 82 allele nodes, and windows exceeding 256 nodes are skipped; SNV, indel, SV and 5mC records are merged and sorted by position before nodes are created. Edges are the DOT edges with both endpoints in the window, symmetrized, plus one self-loop per node whose features are the mean over that node's incident edges. The predictions of the two allele nodes of a variant are averaged, and a variant covered by several windows receives the mean over those windows.}
+\textbf{c}, Definition of the central zone. A window holds at most 41 variants and 82 allele nodes (a 256-node cap exists but is never reached at the default window size); SNV, indel, SV and 5mC records are merged and sorted by position before nodes are created. Because offsets are normalized by the largest offset in the window, $r_{\max}=1$ in practice and the retained zone is the central half of the window's genomic span. Edges are the DOT edges with both endpoints in the window, symmetrized, plus one self-loop per node whose features are the mean over that node's incident edges. The predictions of the two allele nodes of a variant are averaged, and a variant covered by several windows receives the mean over those windows.}
 \end{figure}
 
 \begin{figure}[h]

@@ -241,7 +241,7 @@ def fig_s1():
            cls="sb", fill=AMBER)
 
     # -- b ---------------------------------------------------------------
-    S.panel(XR, 24, "b", "Homopolymer SNV filter (nanopore)")
+    S.panel(XR, 24, "b", "Homopolymer SNV filter (nanopore, --ont)")
     yb, x0, dx = 62, 466, 17
     S.text(XR + 12, yb + 3, "ref", cls="s", anchor="end")
     S.rect(x0 + 2 * dx - 8.5, yb - 11, dx * 5, 16, fill=AMBERL, r=2)
@@ -272,7 +272,7 @@ def fig_s1():
     S.text(XL, 350, "order of operations", cls="sb", fill=INK)
     steps = [("extract", GREENL, GREEN), ("b  homopolymer", VLGREY, INK),
              ("c  overlap", VLGREY, INK), ("d  repeat flag", AMBERL, AMBER),
-             ("Fig. 4  copy number", VLGREY, INK), ("graph", GREENL, GREEN)]
+             ("Suppl. Fig. 4  copy number", VLGREY, INK), ("graph", GREENL, GREEN)]
     x = 132
     for i, (lab, fill, tc) in enumerate(steps):
         w = S.chip(x, 340, lab, fill=fill, tc=tc)
@@ -454,7 +454,7 @@ def fig_s3():
         pe = -(p1 * math.log2(p1) + p2 * math.log2(p2))
         S.text(x0 + bw + 12, y + 11, f"PE = {pe:.3f}", cls="tb",
                fill=AMBER if pe >= 0.8 else INK)
-    S.text(XR + 4, 230, "PE ≥ 0.80 → a GNN window is opened (Fig. 6)",
+    S.text(XR + 4, 230, "PE ≥ 0.80 → a GNN window is opened (Suppl. Fig. 6)",
            cls="sb", fill=AMBER)
     S.text(XR + 4, 248, "written to VCF as INFO/PE, INFO/H1, INFO/H2", cls="s")
     kx = XR + 10
@@ -580,16 +580,17 @@ def fig_s5():
         S.text(512, y + 3, lab, cls="sb", fill=c)
         S.text(568, y + 3, frac, cls="s")
     n1, n2 = "n" + sub("1"), "n" + sub("2")
-    S.callout(XL, 210, 660, 38, fill=VLGREY, accent=INK)
-    S.text(XL + 12, 235, "tagged if  max(" + n1 + "," + n2 + ") / (" + n1 + " + " + n2
-           + ")  &gt; 0.65   and   ≥ 2 informative alleles", cls="tb", fill=INK)
-    S.text(XL + 12, 241, "allele weights: SNV 1, SV 1, indel 0.1, 5mC 0", cls="s")
+    S.callout(XL, 208, 660, 42, fill=VLGREY, accent=INK)
+    S.text(XL + 12, 226, "tagged if  max(" + n1 + "," + n2 + ") / (" + n1 + " + " + n2
+           + ")  &gt; 0.65   and   weighted evidence &gt; 1", cls="tb", fill=INK)
+    S.text(XL + 12, 242, "allele weights: SNV 1, SV 1, indel 0.1, 5mC 0   "
+           "(so ≥ 2 SNV/SV alleles are needed)", cls="s")
 
     S.rule(XL, 264, W - XL)
 
     # -- b ---------------------------------------------------------------
     S.panel(XL, 288, "b", "Step 2  —  re-derive each variant's phase from tagged reads")
-    boxes = [(XL, "v3", "1", "2", "2", "3", "0.67", "≤ 0.75", AMBERL, AMBER,
+    boxes = [(XL, "v3", "2", "1", "2", "3", "0.67", "≤ 0.75", AMBERL, AMBER,
               "unphased, GT 0/1"),
              (396, "v1", "3", "0", "3", "3", "1.00", "&gt; 0.75", H1L, H1,
               "phased, GT 0|1")]
@@ -691,6 +692,8 @@ def fig_s6():
            cls="eq", fill=INK)
     S.text(466, 374, "kept if  r ≤ min(1, 10 / round(20 · r" + sub("max") + "))",
            cls="eq", fill=INK)
+    S.text(466, 392, "r" + sub("max") + " = 1 in practice, so the zone is the central half of the span",
+           cls="s")
 
     S.save("suppfig6_gnn_window.svg")
 
@@ -755,7 +758,7 @@ def fig_s7():
 
     S.table(16, 344, [136, 194],
             [("parameters", "687,358, compiled into the binary"),
-             ("attention cost", "dense O(N²), N ≤ 256"),
+             ("attention cost", "dense O(N²), N ≤ 82 (cap 256)"),
              ("numerics", "exact GELU, LayerNorm ε = 10" + sup("−5")),
              ("isolated nodes", "attend uniformly to all nodes")],
             rowh=16)

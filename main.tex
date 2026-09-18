@@ -48,7 +48,7 @@ Jyun-Hong Lin$^{1}$, \todo{co-authors}, Yao-Ting Huang$^{1,\ast}$\\[4pt]
 \maketitle
 
 \begin{abstract}
-Read-based phasing resolves haplotypes from long reads, yet current methods phase only single-nucleotide variants, weigh all read evidence equally and report no measure of confidence, so that switch errors propagate unnoticed into downstream analyses. Here we present \toolname, which co-phases SNVs, indels, structural variants and allele-specific methylation in a single weighted graph, calibrates every observation by base quality and sequence context, and attaches a phasing entropy to each variant. An optional graph neural network inspects high-entropy sites and removes unreliable phase assignments without altering genotypes. On HG002 nanopore data, \toolname reduces switch errors 3--5-fold relative to WhatsHap and HapCUT2 while running 6--8 times faster, extends haplotype blocks by up to 70\% through co-phasing, and reveals that GRCh38-based benchmarks conceal most of the errors exposed by telomere-to-telomere truth sets. \toolname is a drop-in replacement for the version already embedded in Clair3, ClairS, Severus and EPI2ME workflows.
+Read-based phasing reconstructs haplotypes from long reads, yet current phasers are built around single-nucleotide variants, weigh every read observation alike and report phase as an unqualified binary state, so that switch errors pass silently into every analysis built on them. Here we present \toolname, which co-phases SNVs, small indels, structural variants and allele-specific methylation in one weighted graph, calibrates each observation by base quality and sequence context, and attaches a phasing entropy to every variant. A compact graph neural network inspects high-entropy sites and withholds, but never flips, the phase assignments it predicts to be wrong. On HG002 nanopore data at 10--60$\times$ coverage, \toolname makes three- to fivefold fewer switch errors than WhatsHap and HapCUT2 while running six- to eightfold faster, lengthens haplotype blocks by up to 70\% through co-phasing, and shows that GRCh38-based benchmarks conceal most of the errors that a telomere-to-telomere truth set exposes. As a drop-in replacement for the LongPhase versions embedded in Clair3, ClairS, Severus and EPI2ME, it delivers longer, more accurate and self-assessed haplotypes to existing pipelines unchanged.
 \end{abstract}
 
 \section*{Introduction}
@@ -60,8 +60,8 @@ Read-based phasing resolves haplotypes from long reads, yet current methods phas
   \caption{\textbf{Overview of \toolname.}
   \textbf{a}, Heterogeneous molecular evidence (SNVs, small indels, structural variants and 5mC calls) from the same long reads is integrated into a single haplotype-resolution problem.
   \textbf{b}, Weighted phasing graph. Allele nodes are connected by read-supported edges; evidence is calibrated by base quality and sequence-context reliability (homopolymers, tandem repeats, miscalled heterozygous sites in copy-number-altered regions) before multi-neighbour haplotype voting and read-based correction.
-  \textbf{c}, Optional uncertainty correction. Per-variant phasing entropy selects loci for a graph neural network that combines local attention over the phasing graph (GATv2) with window-wide attention (Transformer); variants predicted to be misphased are unphased and the affected phase set is split, preserving the genotype.
-  \textbf{d}, Outputs: phased VCFs for all variant classes and haplotagged alignments.}
+  \textbf{c}, Optional uncertainty correction. Per-variant phasing entropy selects loci for a graph neural network. Node features (phase evidence, variant type, genomic context, graph structure) and edge features (link strength, genomic distance, phase-set relation) of the window around the trigger variant (highlighted) enter two parallel branches: local graph attention, in which each node attends to its neighbours in the phasing graph (GATv2), and window-wide self-attention, in which every variant in the window attends to every other (Transformer). The two representations ($h_{\mathrm{local}}$, $h_{\mathrm{global}}$) are fused additively and passed through feed-forward layers (purple) that classify each variant as correctly phased or misphased; misphased variants are unphased (grey) and the affected phase set is split, preserving the genotype. Residual connections and layer normalization are omitted from the schematic (Methods; Supplementary Fig.~7).
+  \textbf{d}, Outputs: two phased haplotypes carrying SNVs, an SV, a small indel and methylated (filled) or unmethylated (open) CpG sites, and reads haplotagged by the alleles they carry.}
   \label{fig:overview}
 \end{figure}
 
@@ -72,12 +72,12 @@ Read-based phasing resolves haplotypes from long reads, yet current methods phas
   \centering
   \includegraphics[width=\textwidth]{fig2_snv_comparison}
   \caption{\textbf{SNV phasing accuracy, block length and runtime compared with WhatsHap and HapCUT2.}
-  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$; SNV-only phasing of identical Clair3 calls; scored against the T2T-based HG002 Q100 (v5.0q) benchmark. Points at 10--20$\times$ are means of ten down-sampling replicates; the shaded region (30--60$\times$) is a single replicate.
+  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$; SNV-only phasing of identical Clair3 calls; scored against the benchmark derived from the complete diploid T2T-HG002 assembly (v5.0q). Points at 10--20$\times$ are means of $n=10$ independent down-sampling replicates\todo{add s.d.\ bands}; the shaded region (30--60$\times$) is a single replicate.
   \textbf{a}, Fraction of benchmark heterozygous SNVs phased.
   \textbf{b}, Switch error rate.
   \textbf{c}, Block-wise Hamming distance.
   \textbf{d}, Phase-block N50.
-  \textbf{e}, Wall-clock runtime (log scale, \todo{$t$} threads); \toolname with correction includes the neural-network stage.
+  \textbf{e}, Wall-clock runtime (log scale, \todo{$t$} threads, whole genome); \toolname with correction includes the neural-network stage.
   Grey, HapCUT2 1.3.4; orange, WhatsHap 2.8; blue, \toolname; red, \toolname with neural-network correction.}
   \label{fig:snv}
 \end{figure}
@@ -85,8 +85,8 @@ Read-based phasing resolves haplotypes from long reads, yet current methods phas
 \begin{figure}[p]
   \centering
   \includegraphics[width=\textwidth]{fig3_two_benchmarks}
-  \caption{\textbf{The same phased VCFs scored against the GRCh38-based GIAB v4.2.1 and the T2T-based v5.0q benchmarks.}
-  SNV-only phasing of HG002 nanopore R10.4.1 data; replicates as in Fig.~\ref{fig:snv}.
+  \caption{\textbf{The same phased VCFs scored against the GRCh38-based GIAB v4.2.1 and the T2T-HG002-derived v5.0q benchmarks.}
+  SNV-only phasing of HG002 nanopore R10.4.1 data; replicates as in Fig.~\ref{fig:snv}. Only the truth set differs between the two columns; v5.0q additionally assesses the segmental duplications, satellite arrays and other repeat-rich sequence that v4.2.1 excludes.
   \textbf{a}, Fraction of benchmark heterozygous SNVs phased (v5.0q).
   \textbf{b},\textbf{c}, Genome-wide switch-error counts under v4.2.1 (\textbf{b}) and v5.0q (\textbf{c}); the two panels share axes.
   \textbf{d}, Phase-block N50 (benchmark independent).
@@ -99,7 +99,7 @@ Read-based phasing resolves haplotypes from long reads, yet current methods phas
   \centering
   \includegraphics[width=\textwidth]{fig4_cophasing}
   \caption{\textbf{Co-phasing of SNVs, indels, SVs and allele-specific methylation.}
-  HG002 nanopore R10.4.1 data, 10--60$\times$; dashed lines, \toolname; solid lines, \toolname with neural-network correction.
+  HG002 nanopore R10.4.1 data, 10--60$\times$; replicates as in Fig.~\ref{fig:snv}; dashed lines, \toolname; solid lines, \toolname with neural-network correction.
   \textbf{a}--\textbf{d}, Fraction of phased SNVs (\textbf{a}), indels (\textbf{b}), allele-specific 5mC sites (\textbf{c}) and SVs (\textbf{d}) in the four-class co-phasing configuration.
   \textbf{e},\textbf{f}, SNV switch error rate (\textbf{e}) and Hamming distance (\textbf{f}) for SNV-only phasing (blue) and four-class co-phasing (red), each with (solid) and without (dashed) correction. Denominators: GIAB v5.0q heterozygous SNVs and indels; Sniffles2 heterozygous SVs; \texttt{modcall} heterozygous 5mC sites.}
   \label{fig:cophasing}
@@ -117,7 +117,7 @@ Read-based phasing resolves haplotypes from long reads, yet current methods phas
   \centering
   \includegraphics[width=\textwidth]{fig6_unphased_analysis}
   \caption{\textbf{Composition of the variants unphased by the neural network.}
-  SNV-only phasing of HG002 nanopore R10.4.1 data (seed 1; break threshold 0.30); every SNV phased by \toolname and unphased after correction is classified against the v5.0q benchmark.
+  SNV-only phasing of HG002 nanopore R10.4.1 data (one down-sampling replicate, seed 1; break threshold 0.30); every SNV phased by \toolname and unphased after correction ($\sim$60,000 per coverage) is classified against the v5.0q benchmark.
   \textbf{a}, Fraction of unphased SNVs that are absent from the benchmark, homozygous in the benchmark or genuine heterozygous sites; only the last category represents lost phasing information.
   \textbf{b}, Within each of the three categories, distribution over read depth (low, normal, high relative to the genome-wide mean) and phasing informativeness (number of informative linking reads); the three bars at each coverage each sum to 100\% of their category.
   \textbf{c}, Prevalence of conditions that overlap the axes of \textbf{b}: phasing entropy of exactly 0, phasing entropy $\ge 0.8$, low genotype quality and clustering within 50~bp of another variant; solid, genuine heterozygous sites; dashed, benchmark-absent calls.}

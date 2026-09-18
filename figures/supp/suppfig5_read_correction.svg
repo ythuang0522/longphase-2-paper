@@ -86,17 +86,17 @@
 <text x="234.0" y="181.0" class="n" text-anchor="middle" fill="#fff">a</text>
 <text x="512.0" y="181.0" class="sb" text-anchor="start" fill="#6E7C8C">untagged</text>
 <text x="568.0" y="181.0" class="s" text-anchor="start">&lt; 2 alleles</text>
-<rect x="16.0" y="210.0" width="660.0" height="38.0" rx="2" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
-<rect x="16.0" y="210.0" width="2.2" height="38.0" rx="0" fill="#16233D" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="28.0" y="235.0" class="tb" text-anchor="start" fill="#16233D">tagged if  max(n<tspan font-size="72%" baseline-shift="sub">1</tspan>,n<tspan font-size="72%" baseline-shift="sub">2</tspan>) / (n<tspan font-size="72%" baseline-shift="sub">1</tspan> + n<tspan font-size="72%" baseline-shift="sub">2</tspan>)  &gt; 0.65   and   ≥ 2 informative alleles</text>
-<text x="28.0" y="241.0" class="s" text-anchor="start">allele weights: SNV 1, SV 1, indel 0.1, 5mC 0</text>
+<rect x="16.0" y="208.0" width="660.0" height="42.0" rx="2" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="16.0" y="208.0" width="2.2" height="42.0" rx="0" fill="#16233D" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="28.0" y="226.0" class="tb" text-anchor="start" fill="#16233D">tagged if  max(n<tspan font-size="72%" baseline-shift="sub">1</tspan>,n<tspan font-size="72%" baseline-shift="sub">2</tspan>) / (n<tspan font-size="72%" baseline-shift="sub">1</tspan> + n<tspan font-size="72%" baseline-shift="sub">2</tspan>)  &gt; 0.65   and   weighted evidence &gt; 1</text>
+<text x="28.0" y="242.0" class="s" text-anchor="start">allele weights: SNV 1, SV 1, indel 0.1, 5mC 0   (so ≥ 2 SNV/SV alleles are needed)</text>
 <line x1="16.0" y1="264.0" x2="764.0" y2="264.0" stroke="#C7D1DB" stroke-width="0.8" stroke-linecap="butt"/>
 <text x="16.0" y="288.0" class="pl" text-anchor="start">b</text>
 <text x="30.0" y="288.0" class="h" text-anchor="start">Step 2  —  re-derive each variant's phase from tagged reads</text>
 <rect x="16.0" y="302.0" width="368.0" height="84.0" rx="2" fill="#FBF0D5" stroke="none" stroke-width="0.8" opacity="1"/>
 <rect x="16.0" y="302.0" width="2.2" height="84.0" rx="0" fill="#B8860B" stroke="none" stroke-width="0.8" opacity="1"/>
 <text x="28.0" y="320.0" class="tb" text-anchor="start" fill="#16233D">variant v<tspan font-size="72%" baseline-shift="sub">3</tspan></text>
-<text x="28.0" y="338.0" class="s" text-anchor="start">n<tspan font-size="72%" baseline-shift="sub">1</tspan> = 1,   n<tspan font-size="72%" baseline-shift="sub">2</tspan> = 2</text>
+<text x="28.0" y="338.0" class="s" text-anchor="start">n<tspan font-size="72%" baseline-shift="sub">1</tspan> = 2,   n<tspan font-size="72%" baseline-shift="sub">2</tspan> = 1</text>
 <text x="28.0" y="353.0" class="s" text-anchor="start">n<tspan font-size="72%" baseline-shift="sub">1</tspan>: hap-1 REF + hap-2 ALT reads</text>
 <text x="28.0" y="366.0" class="s" text-anchor="start">n<tspan font-size="72%" baseline-shift="sub">2</tspan>: hap-1 ALT + hap-2 REF reads</text>
 <text x="204.0" y="344.0" class="eq" text-anchor="start" fill="#16233D">ρ =</text>
