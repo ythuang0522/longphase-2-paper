@@ -19,13 +19,13 @@
 <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6E7C8C"/></marker><marker id="arrd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16233D"/></marker><marker id="arra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B8860B"/></marker></defs>
 <rect width="780" height="426" fill="#ffffff"/>
 <text x="16.0" y="24.0" class="pl" text-anchor="start">a</text>
-<text x="30.0" y="24.0" class="h" text-anchor="start">Step 1  —  assign each read to a haplotype</text>
-<text x="110.0" y="52.0" class="m" text-anchor="middle" fill="#16233D">v1</text>
-<text x="172.0" y="52.0" class="m" text-anchor="middle" fill="#16233D">v2</text>
-<text x="234.0" y="52.0" class="m" text-anchor="middle" fill="#16233D">v3</text>
-<text x="296.0" y="52.0" class="m" text-anchor="middle" fill="#16233D">v4</text>
-<text x="358.0" y="52.0" class="m" text-anchor="middle" fill="#16233D">v5</text>
-<text x="420.0" y="52.0" class="m" text-anchor="middle" fill="#16233D">v6</text>
+<text x="30.0" y="24.0" class="h" text-anchor="start">Step 1: read assignment to haplotypes</text>
+<text x="110.0" y="52.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" baseline-shift="sub">1</tspan></text>
+<text x="172.0" y="52.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" baseline-shift="sub">2</tspan></text>
+<text x="234.0" y="52.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" baseline-shift="sub">3</tspan></text>
+<text x="296.0" y="52.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" baseline-shift="sub">4</tspan></text>
+<text x="358.0" y="52.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" baseline-shift="sub">5</tspan></text>
+<text x="420.0" y="52.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" baseline-shift="sub">6</tspan></text>
 <text x="60.0" y="77.0" class="s" text-anchor="end">read 1</text>
 <line x1="68.0" y1="74.0" x2="500.0" y2="74.0" stroke="#DCEAF6" stroke-width="5" stroke-linecap="round"/>
 <circle cx="110.0" cy="74.0" r="8" fill="#fff" stroke="#1687C9" stroke-width="1.8"/>
@@ -92,7 +92,7 @@
 <text x="28.0" y="242.0" class="s" text-anchor="start">allele weights: SNV 1, SV 1, indel 0.1, 5mC 0   (so ≥ 2 SNV/SV alleles are needed)</text>
 <line x1="16.0" y1="264.0" x2="764.0" y2="264.0" stroke="#C7D1DB" stroke-width="0.8" stroke-linecap="butt"/>
 <text x="16.0" y="288.0" class="pl" text-anchor="start">b</text>
-<text x="30.0" y="288.0" class="h" text-anchor="start">Step 2  —  re-derive each variant's phase from tagged reads</text>
+<text x="30.0" y="288.0" class="h" text-anchor="start">Step 2: phase re-derivation from tagged reads</text>
 <text x="16.0" y="316.0" class="tb" text-anchor="start" fill="#16233D">variant v<tspan font-size="72%" baseline-shift="sub">3</tspan></text>
 <text x="56.0" y="339.0" class="s" text-anchor="end">read 1</text>
 <line x1="62.0" y1="336.0" x2="166.0" y2="336.0" stroke="#6CC8EE" stroke-width="5" stroke-linecap="round"/>

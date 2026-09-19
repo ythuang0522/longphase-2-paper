@@ -127,7 +127,7 @@
 <text x="424.0" y="276.0" class="sb" text-anchor="start" fill="#B8860B">→ discard the shorter alignment A<tspan font-size="72%" baseline-shift="sub">1</tspan></text>
 <line x1="16.0" y1="334.0" x2="764.0" y2="334.0" stroke="#C7D1DB" stroke-width="0.8" stroke-linecap="butt"/>
 <text x="16.0" y="358.0" class="pl" text-anchor="start">e</text>
-<text x="30.0" y="358.0" class="h" text-anchor="start">Copy-number-aware filter: two-state detection of copy-number-altered intervals</text>
+<text x="30.0" y="358.0" class="h" text-anchor="start">Copy-number-aware filter: interval detection</text>
 <rect x="150.0" y="386.0" width="194.7" height="110.0" rx="2" fill="#FBF0D5" stroke="none" stroke-width="0.8" opacity="0.5"/>
 <rect x="57.8" y="442.4" width="4.4" height="5.6" rx="0.5" fill="#1687C9" stroke="none" stroke-width="0.8" opacity="1"/>
 <rect x="57.8" y="448.0" width="4.4" height="5.6" rx="0.5" fill="#DC2B23" stroke="none" stroke-width="0.8" opacity="1"/>
@@ -255,7 +255,7 @@
 <text x="669.0" y="444.0" class="s" text-anchor="middle">≥ c/4 back-clips</text>
 <line x1="16.0" y1="520.0" x2="764.0" y2="520.0" stroke="#C7D1DB" stroke-width="0.8" stroke-linecap="butt"/>
 <text x="16.0" y="544.0" class="pl" text-anchor="start">f</text>
-<text x="30.0" y="544.0" class="h" text-anchor="start">Mismatch load separates true heterozygotes from paralogues</text>
+<text x="30.0" y="544.0" class="h" text-anchor="start">Copy-number-aware filter: site removal</text>
 <text x="22.0" y="578.0" class="eq" text-anchor="start" fill="#16233D">MR  =</text>
 <text x="170.0" y="570.5" class="s" text-anchor="middle">mean R<tspan font-size="72%" baseline-shift="sub">m</tspan> (ALT)</text>
 <line x1="92.0" y1="574.0" x2="248.0" y2="574.0" stroke="#16233D" stroke-width="0.8" stroke-linecap="butt"/>
@@ -355,22 +355,23 @@
 <text x="16.0" y="736.0" class="s" text-anchor="start">grey ticks, reference allele</text>
 <text x="162.0" y="736.0" class="s" text-anchor="start" fill="#DC2B23">red ticks, alternate allele at another heterozygous site</text>
 <line x1="16.0" y1="752.0" x2="764.0" y2="752.0" stroke="#C7D1DB" stroke-width="0.8" stroke-linecap="butt"/>
-<text x="16.0" y="772.0" class="sb" text-anchor="start" fill="#16233D">order of operations</text>
-<rect x="132.0" y="762.0" width="53.2" height="17.0" rx="8" fill="#E4F1EA" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="158.6" y="774.0" class="s" text-anchor="middle" fill="#1F7A4D">extract</text>
-<line x1="188.2" y1="770.5" x2="196.2" y2="770.5" stroke="#C7D1DB" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
-<rect x="199.2" y="762.0" width="92.4" height="17.0" rx="8" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="245.4" y="774.0" class="s" text-anchor="middle" fill="#16233D">b  homopolymer</text>
-<line x1="294.6" y1="770.5" x2="302.6" y2="770.5" stroke="#C7D1DB" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
-<rect x="305.6" y="762.0" width="70.0" height="17.0" rx="8" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="340.6" y="774.0" class="s" text-anchor="middle" fill="#16233D">c  overlap</text>
-<line x1="378.6" y1="770.5" x2="386.6" y2="770.5" stroke="#C7D1DB" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
-<rect x="389.6" y="762.0" width="92.4" height="17.0" rx="8" fill="#FBF0D5" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="435.8" y="774.0" class="s" text-anchor="middle" fill="#B8860B">d  repeat flag</text>
-<line x1="485.0" y1="770.5" x2="493.0" y2="770.5" stroke="#C7D1DB" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
-<rect x="496.0" y="762.0" width="103.6" height="17.0" rx="8" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="547.8" y="774.0" class="s" text-anchor="middle" fill="#16233D">e–f  copy number</text>
-<line x1="602.6" y1="770.5" x2="610.6" y2="770.5" stroke="#C7D1DB" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
-<rect x="613.6" y="762.0" width="42.0" height="17.0" rx="8" fill="#E4F1EA" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="634.6" y="774.0" class="s" text-anchor="middle" fill="#1F7A4D">graph</text>
+<text x="16.0" y="772.0" class="pl" text-anchor="start">g</text>
+<text x="30.0" y="772.0" class="h" text-anchor="start">Order of operations</text>
+<rect x="168.0" y="762.0" width="53.2" height="17.0" rx="8" fill="#E4F1EA" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="194.6" y="774.0" class="s" text-anchor="middle" fill="#1F7A4D">extract</text>
+<line x1="224.2" y1="770.5" x2="232.2" y2="770.5" stroke="#C7D1DB" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<rect x="235.2" y="762.0" width="92.4" height="17.0" rx="8" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="281.4" y="774.0" class="s" text-anchor="middle" fill="#16233D">b  homopolymer</text>
+<line x1="330.6" y1="770.5" x2="338.6" y2="770.5" stroke="#C7D1DB" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<rect x="341.6" y="762.0" width="70.0" height="17.0" rx="8" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="376.6" y="774.0" class="s" text-anchor="middle" fill="#16233D">c  overlap</text>
+<line x1="414.6" y1="770.5" x2="422.6" y2="770.5" stroke="#C7D1DB" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<rect x="425.6" y="762.0" width="92.4" height="17.0" rx="8" fill="#FBF0D5" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="471.8" y="774.0" class="s" text-anchor="middle" fill="#B8860B">d  repeat flag</text>
+<line x1="521.0" y1="770.5" x2="529.0" y2="770.5" stroke="#C7D1DB" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<rect x="532.0" y="762.0" width="103.6" height="17.0" rx="8" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="583.8" y="774.0" class="s" text-anchor="middle" fill="#16233D">e–f  copy number</text>
+<line x1="638.6" y1="770.5" x2="646.6" y2="770.5" stroke="#C7D1DB" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
+<rect x="649.6" y="762.0" width="42.0" height="17.0" rx="8" fill="#E4F1EA" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="670.6" y="774.0" class="s" text-anchor="middle" fill="#1F7A4D">graph</text>
 </svg>

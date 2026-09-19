@@ -280,7 +280,7 @@ def fig_s1():
     S.rule(XL, 334, W - XL)
 
     # -- e  copy-number-aware filter: interval detection ---------------------
-    S.panel(XL, 358, "e", "Copy-number-aware filter: two-state detection of copy-number-altered intervals")
+    S.panel(XL, 358, "e", "Copy-number-aware filter: interval detection")
     x0, x1, yb = 60, 436, 448
     n, dx = 56, (x1 - x0) / 56.0
     rng = random.Random(11)
@@ -336,7 +336,7 @@ def fig_s1():
     S.rule(XL, 520, W - XL)
 
     # -- f  copy-number-aware filter: mismatch load ---------------------------
-    S.panel(XL, 544, "f", "Mismatch load separates true heterozygotes from paralogues")
+    S.panel(XL, 544, "f", "Copy-number-aware filter: site removal")
     Rm = "R" + sub("m")
     S.text(XL + 6, 578, "MR  =", cls="eq", fill=INK)
     S.frac(170, 574, "mean " + Rm + " (ALT)",
@@ -369,11 +369,11 @@ def fig_s1():
 
     # -- pipeline strip ---------------------------------------------------
     S.rule(XL, 752, W - XL)
-    S.text(XL, 772, "order of operations", cls="sb", fill=INK)
+    S.panel(XL, 772, "g", "Order of operations")
     steps = [("extract", GREENL, GREEN), ("b  homopolymer", VLGREY, INK),
              ("c  overlap", VLGREY, INK), ("d  repeat flag", AMBERL, AMBER),
              ("e–f  copy number", VLGREY, INK), ("graph", GREENL, GREEN)]
-    x = 132
+    x = 168
     for i, (lab, fill, tc) in enumerate(steps):
         w = S.chip(x, 762, lab, fill=fill, tc=tc)
         if i < len(steps) - 1:
@@ -602,10 +602,10 @@ def fig_s3():
     XL = 16
 
     # -- a ---------------------------------------------------------------
-    S.panel(XL, 24, "a", "Step 1  —  assign each read to a haplotype")
+    S.panel(XL, 24, "a", "Step 1: read assignment to haplotypes")
     xs = [110 + i * 62 for i in range(6)]
     for i, x in enumerate(xs):
-        S.text(x, 52, f"v{i+1}", cls="m", anchor="middle", fill=INK)
+        S.text(x, 52, "v" + sub(str(i + 1)), cls="m", anchor="middle", fill=INK)
     reads = [([1, 1, 1, 1, None, 1], "hap 1", "5/5", H1),
              ([2, 2, None, 2, 2, 2], "hap 2", "5/5", H2),
              ([1, 1, 2, 1, 1, None], "hap 1", "4/5 = 0.80", H1),
@@ -630,7 +630,7 @@ def fig_s3():
     S.rule(XL, 264, W - XL)
 
     # -- b ---------------------------------------------------------------
-    S.panel(XL, 288, "b", "Step 2  —  re-derive each variant's phase from tagged reads")
+    S.panel(XL, 288, "b", "Step 2: phase re-derivation from tagged reads")
     # evidence at the variant from the tagged reads (read, its haplotype, its allele)
     cases = [(XL,  "v" + sub("3"), [("read 1", 1, "r"), ("read 2", 2, "a"), ("read 3", 1, "a")],
               2, 1, AMBER, "unphased, GT 0/1"),
@@ -901,7 +901,7 @@ def fig_s5():
     XL = 16
 
     # -- a ---------------------------------------------------------------
-    S.panel(XL, 24, "a", "A window is opened around every phased variant with PE ≥ 0.8")
+    S.panel(XL, 24, "a", "Window around a trigger variant (PE ≥ 0.8)")
     n, x0, dx = 13, 76, 52
     yt, yb = 132, 196
     center = 6
@@ -983,7 +983,7 @@ def fig_s5():
 
     # -- d ---------------------------------------------------------------
     S.rule(XL, 410, W - XL)
-    S.panel(XL, 434, "d", "Exported phasing graph (DOT), the input of the module")
+    S.panel(XL, 434, "d", "Exported phasing graph (DOT)")
     S.rect(XL, 442, 400, 24, fill=VLGREY, r=2)
     S.text(XL + 10, 458, "1001.1 -&gt; 1543.1 [label=16.0]     1001.2 -&gt; 1543.2 [label=1.1]", cls="code")
     S.text(436, 458, "position.allele → position.allele,  label = vote weight cast at the source", cls="s")
@@ -993,7 +993,7 @@ def fig_s5():
     # -- e  before correction ---------------------------------------------
     xs = [66 + i * 58 for i in range(10)]
     flagged = 5
-    S.panel(XL, 510, "e", "Before correction  —  one phase set")
+    S.panel(XL, 510, "e", "Before correction: one phase set")
     yt, yb = 564, 610
     for i, x in enumerate(xs):
         if i < 9:
@@ -1014,7 +1014,7 @@ def fig_s5():
     S.rule(XL, 672, W - XL)
 
     # -- f  after correction ------------------------------------------------
-    S.panel(XL, 696, "f", "After correction  —  variant unphased, phase set split")
+    S.panel(XL, 696, "f", "After correction: variant unphased, phase set split")
     yt2, yb2 = 748, 790
     S.rect(xs[0] - 18, yt2 - 18, xs[4] - xs[0] + 36, (yb2 - yt2) + 36, fill="none",
            stroke=H1, sw=0.9, dash="3,2.5", r=3)
@@ -1201,8 +1201,7 @@ def fig_s7():
                 cpg_mark(306, yy, st)
             yy += 12
     S.path(f"M188,{yb+58} L240,{yb+58}", stroke=INK, w=1.2, arrow="arrd")
-    S.text(XL, yb + 112, "5mC is called on one strand at a time; merging gives one "
-           "locus with one read list", cls="s")
+    
 
     # -- c  site genotype ------------------------------------------------
     yc0 = 412
@@ -1251,10 +1250,7 @@ def fig_s7():
     S.frac(XR + 108, 178, "max(P, Q)", "P + Q", cls="s", width=64)
     S.text(XR + 150, 182, "= 0.86", cls="tb", fill=INK)
     S.text(XR + 196, 182, "&lt; 0.9  rejected", cls="tb", fill=AMBER)
-    S.text(XR, 202, "P and Q are the same quantities the phasing graph accumulates,",
-           cls="s")
-    S.text(XR, 213, "so 5mC alleles need no methylation-specific handling in phase.",
-           cls="s")
+    
 
     # -- e  linking modes -------------------------------------------------
     S.panel(XR, 246, "e", "Co-segregation with a neighbouring marker")

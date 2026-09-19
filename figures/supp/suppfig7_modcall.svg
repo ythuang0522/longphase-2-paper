@@ -107,7 +107,6 @@
 <line x1="250.0" y1="356.0" x2="366.0" y2="356.0" stroke="#C7D1DB" stroke-width="1.1" stroke-linecap="round"/>
 <circle cx="306.0" cy="356.0" r="4.4" fill="#ffffff" stroke="#16233D" stroke-width="1.1"/>
 <path d="M188,326 L240,326" stroke="#16233D" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="1" marker-end="url(#arrd)"/>
-<text x="16.0" y="380.0" class="s" text-anchor="start">5mC is called on one strand at a time; merging gives one locus with one read list</text>
 <text x="16.0" y="412.0" class="pl" text-anchor="start">c</text>
 <text x="30.0" y="412.0" class="h" text-anchor="start">Site genotype</text>
 <rect x="16.0" y="424.0" width="374.0" height="30.0" rx="2" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
@@ -170,8 +169,6 @@
 <text x="532.0" y="188.5" class="s" text-anchor="middle">P + Q</text>
 <text x="574.0" y="182.0" class="tb" text-anchor="start" fill="#16233D">= 0.86</text>
 <text x="620.0" y="182.0" class="tb" text-anchor="start" fill="#B8860B">&lt; 0.9  rejected</text>
-<text x="424.0" y="202.0" class="s" text-anchor="start">P and Q are the same quantities the phasing graph accumulates,</text>
-<text x="424.0" y="213.0" class="s" text-anchor="start">so 5mC alleles need no methylation-specific handling in phase.</text>
 <text x="424.0" y="246.0" class="pl" text-anchor="start">e</text>
 <text x="438.0" y="246.0" class="h" text-anchor="start">Co-segregation with a neighbouring marker</text>
 <text x="424.0" y="272.0" class="sb" text-anchor="start" fill="#16233D">SNV-anchored</text>
