@@ -23,3 +23,6 @@ scratch/
 # Python
 __pycache__/
 *.pyc
+
+# GNN training sources (kept locally, deposited separately)
+GNN source/
