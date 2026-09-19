@@ -4,14 +4,6 @@ Germline haplotype phasing from long reads. Co-phases SNVs, small indels, SVs an
 5mC in a single weighted phasing graph, and scores the reliability of every phased
 variant with a GNN that unphases (never flips) variants predicted to be misphased.
 
-Companion manuscripts, both unpublished and both built on the **LongPhase v1.0**
-graph (not on LongPhase 2):
-
-| | scope | status |
-|---|---|---|
-| LongPhase-S  | paired tumour–normal somatic haplotyping, purity estimation | bioRxiv preprint, under review |
-| LongPhase-TO | tumour-only somatic haplotype reconstruction | manuscript in review |
-
 ## Layout
 
 ```
