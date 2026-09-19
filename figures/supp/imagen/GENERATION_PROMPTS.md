@@ -6,7 +6,7 @@ corresponding rendered legacy SVG as the reference image.
 ## Shared art direction
 
 Use case: scientific-educational. Asset type: supplementary methods figure for
-a Nature Methods manuscript. Fully redraw the supplied reference while
+a methods manuscript. Fully redraw the supplied reference while
 preserving its scientific content, topology, panel meanings, labels, formulas,
 thresholds and numerical values. Use a clean white background, flat vector-like
 geometry, crisp hairlines, Helvetica/Arial-like typography, a strict alignment

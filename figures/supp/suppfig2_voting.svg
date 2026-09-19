@@ -1,0 +1,306 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="700" viewBox="0 0 780 700">
+<title>Pairwise allele support, weighted voting and phasing entropy</title>
+
+<style>
+ text{font-family:"Helvetica Neue",Helvetica,Arial,"Liberation Sans",sans-serif;fill:#16233D}
+ .pl{font-size:14px;font-weight:700}
+ .h{font-size:11px;font-weight:600}
+ .t{font-size:10px}
+ .tb{font-size:10px;font-weight:600}
+ .s{font-size:9px;fill:#6E7C8C}
+ .sb{font-size:9px;font-weight:600}
+ .n{font-size:8.5px;font-weight:700}
+ .m{font-size:10px;font-style:italic}
+ .mb{font-size:10px;font-style:italic;font-weight:600}
+ .eq{font-size:10.5px}
+ .code{font-family:"SF Mono",Menlo,Consolas,"Courier New",monospace;font-size:9px}
+</style>
+
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6E7C8C"/></marker><marker id="arrd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16233D"/></marker><marker id="arra" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B8860B"/></marker></defs>
+<rect width="780" height="700" fill="#ffffff"/>
+<line x1="392.0" y1="18.0" x2="392.0" y2="684.0" stroke="#C7D1DB" stroke-width="0.8" stroke-linecap="round"/>
+<line x1="16.0" y1="236.0" x2="764.0" y2="236.0" stroke="#C7D1DB" stroke-width="0.8" stroke-linecap="butt"/>
+<line x1="16.0" y1="466.0" x2="764.0" y2="466.0" stroke="#C7D1DB" stroke-width="0.8" stroke-linecap="butt"/>
+<text x="16.0" y="24.0" class="pl" text-anchor="start">a</text>
+<text x="30.0" y="24.0" class="h" text-anchor="start">Allele-pair support between u and v</text>
+<text x="92.0" y="52.0" class="mb" text-anchor="middle" fill="#16233D">u</text>
+<text x="196.0" y="52.0" class="mb" text-anchor="middle" fill="#16233D">v</text>
+<text x="66.0" y="73.0" class="sb" text-anchor="end" fill="#6E7C8C">× 9</text>
+<line x1="72.0" y1="70.0" x2="216.0" y2="70.0" stroke="#6CC8EE" stroke-width="6" stroke-linecap="round"/>
+<circle cx="92.0" cy="70.0" r="8" fill="#fff" stroke="#1687C9" stroke-width="1.8"/>
+<text x="92.0" y="73.0" class="n" text-anchor="middle" fill="#1687C9">r</text>
+<circle cx="196.0" cy="70.0" r="8" fill="#fff" stroke="#1687C9" stroke-width="1.8"/>
+<text x="196.0" y="73.0" class="n" text-anchor="middle" fill="#1687C9">r</text>
+<text x="230.0" y="73.0" class="sb" text-anchor="start" fill="#1687C9">w<tspan font-size="72%" baseline-shift="sub">rr</tspan> = 9</text>
+<text x="66.0" y="100.0" class="sb" text-anchor="end" fill="#6E7C8C">× 7</text>
+<line x1="72.0" y1="97.0" x2="216.0" y2="97.0" stroke="#F0766C" stroke-width="6" stroke-linecap="round"/>
+<circle cx="92.0" cy="97.0" r="8" fill="#fff" stroke="#DC2B23" stroke-width="1.8"/>
+<text x="92.0" y="100.0" class="n" text-anchor="middle" fill="#DC2B23">a</text>
+<circle cx="196.0" cy="97.0" r="8" fill="#fff" stroke="#DC2B23" stroke-width="1.8"/>
+<text x="196.0" y="100.0" class="n" text-anchor="middle" fill="#DC2B23">a</text>
+<text x="230.0" y="100.0" class="sb" text-anchor="start" fill="#DC2B23">w<tspan font-size="72%" baseline-shift="sub">aa</tspan> = 7</text>
+<text x="66.0" y="127.0" class="sb" text-anchor="end" fill="#6E7C8C">× 1</text>
+<line x1="72.0" y1="124.0" x2="216.0" y2="124.0" stroke="#C7D1DB" stroke-width="6" stroke-linecap="round"/>
+<circle cx="92.0" cy="124.0" r="8" fill="#fff" stroke="#1687C9" stroke-width="1.8"/>
+<text x="92.0" y="127.0" class="n" text-anchor="middle" fill="#1687C9">r</text>
+<circle cx="196.0" cy="124.0" r="8" fill="#fff" stroke="#DC2B23" stroke-width="1.8"/>
+<text x="196.0" y="127.0" class="n" text-anchor="middle" fill="#DC2B23">a</text>
+<text x="230.0" y="127.0" class="sb" text-anchor="start" fill="#6E7C8C">w<tspan font-size="72%" baseline-shift="sub">ra</tspan> = 1</text>
+<text x="66.0" y="154.0" class="sb" text-anchor="end" fill="#6E7C8C">× 1</text>
+<line x1="72.0" y1="151.0" x2="216.0" y2="151.0" stroke="#C7D1DB" stroke-width="6" stroke-linecap="round"/>
+<circle cx="92.0" cy="151.0" r="8" fill="#fff" stroke="#DC2B23" stroke-width="1.8"/>
+<text x="92.0" y="154.0" class="n" text-anchor="middle" fill="#DC2B23">a</text>
+<circle cx="196.0" cy="151.0" r="8" fill="#fff" stroke="#C7D1DB" stroke-width="1.4"/>
+<text x="196.0" y="154.0" class="n" text-anchor="middle" fill="#C7D1DB">r</text>
+<text x="224.0" y="154.0" class="s" text-anchor="start" fill="#B8860B">Q &lt; 12</text>
+<text x="272.0" y="154.0" class="sb" text-anchor="start" fill="#6E7C8C">w<tspan font-size="72%" baseline-shift="sub">ar</tspan> = 0.1</text>
+<text x="230.0" y="166.0" class="s" text-anchor="start">read adds 1 (both bases ≥ Q12) or 0.1</text>
+<text x="78.0" y="188.0" class="s" text-anchor="end">P = w<tspan font-size="72%" baseline-shift="sub">rr</tspan> + w<tspan font-size="72%" baseline-shift="sub">aa</tspan></text>
+<rect x="84.0" y="178.0" width="248.0" height="13.0" rx="1" fill="#1687C9" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="337.0" y="188.0" class="tb" text-anchor="start" fill="#1687C9">16</text>
+<text x="78.0" y="210.0" class="s" text-anchor="end">Q = w<tspan font-size="72%" baseline-shift="sub">ra</tspan> + w<tspan font-size="72%" baseline-shift="sub">ar</tspan></text>
+<rect x="84.0" y="200.0" width="17.1" height="13.0" rx="1" fill="#6E7C8C" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="106.0" y="210.0" class="tb" text-anchor="start" fill="#6E7C8C">1.1</text>
+<text x="16.0" y="228.0" class="tb" text-anchor="start" fill="#16233D">s = min(P, Q) / max(P, Q) = 0.07</text>
+<text x="412.0" y="24.0" class="pl" text-anchor="start">b</text>
+<text x="426.0" y="24.0" class="h" text-anchor="start">Vote rule for the pair (u, v)</text>
+<rect x="446.0" y="83.0" width="30.0" height="18.0" rx="1" fill="#E4F1EA" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="476.0" y="83.0" width="180.0" height="18.0" rx="0" fill="#ffffff" stroke="#C7D1DB" stroke-width="0.8" opacity="1"/>
+<rect x="656.0" y="83.0" width="90.0" height="18.0" rx="1" fill="#F1F4F7" stroke="none" stroke-width="0.8" opacity="1"/>
+<line x1="446.0" y1="101.0" x2="746.0" y2="101.0" stroke="#16233D" stroke-width="1" stroke-linecap="butt"/>
+<line x1="446.0" y1="101.0" x2="446.0" y2="105.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<text x="446.0" y="116.0" class="s" text-anchor="middle">0</text>
+<line x1="476.0" y1="101.0" x2="476.0" y2="105.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<text x="476.0" y="116.0" class="s" text-anchor="middle">0.1</text>
+<line x1="536.0" y1="101.0" x2="536.0" y2="105.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<text x="536.0" y="116.0" class="s" text-anchor="middle">0.3</text>
+<line x1="656.0" y1="101.0" x2="656.0" y2="105.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<text x="656.0" y="116.0" class="s" text-anchor="middle">0.7</text>
+<line x1="746.0" y1="101.0" x2="746.0" y2="105.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<text x="746.0" y="116.0" class="s" text-anchor="middle">1</text>
+<text x="596.0" y="130.0" class="s" text-anchor="middle">pair ambiguity s</text>
+<text x="461.0" y="76.0" class="sb" text-anchor="middle" fill="#1F7A4D">weight 20</text>
+<text x="566.0" y="96.0" class="sb" text-anchor="middle" fill="#16233D">weight 1</text>
+<text x="701.0" y="96.0" class="sb" text-anchor="middle" fill="#6E7C8C">no vote</text>
+<line x1="536.0" y1="83.0" x2="536.0" y2="101.0" stroke="#B8860B" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="2.5,2"/>
+<text x="536.0" y="78.0" class="s" text-anchor="middle" fill="#B8860B">SNV–5mC: 0.3</text>
+<circle cx="420.0" cy="150.0" r="4" fill="#1F7A4D" stroke="#1F7A4D" stroke-width="0"/>
+<text x="430.0" y="153.0" class="s" text-anchor="start">one pairing &lt; 1 unit, the other ≥ 1 → weight 20, any s</text>
+<circle cx="420.0" cy="170.0" r="4" fill="#B8860B" stroke="#B8860B" stroke-width="0"/>
+<text x="430.0" y="173.0" class="s" text-anchor="start">voter u is a tandem-repeat indel → weight 0.1</text>
+<line x1="438.0" y1="200.0" x2="476.0" y2="200.0" stroke="#6CC8EE" stroke-width="4" stroke-linecap="round"/>
+<circle cx="432.0" cy="200.0" r="7" fill="#fff" stroke="#1687C9" stroke-width="1.8"/>
+<text x="432.0" y="203.0" class="n" text-anchor="middle" fill="#1687C9">r</text>
+<circle cx="432.0" cy="224.0" r="7" fill="#fff" stroke="#DC2B23" stroke-width="1.8"/>
+<text x="432.0" y="227.0" class="n" text-anchor="middle" fill="#DC2B23">a</text>
+<circle cx="482.0" cy="200.0" r="7" fill="#fff" stroke="#1687C9" stroke-width="1.8"/>
+<text x="482.0" y="203.0" class="n" text-anchor="middle" fill="#1687C9">r</text>
+<circle cx="482.0" cy="224.0" r="7" fill="#fff" stroke="#DC2B23" stroke-width="1.8"/>
+<text x="482.0" y="227.0" class="n" text-anchor="middle" fill="#DC2B23">a</text>
+<text x="496.0" y="212.0" class="s" text-anchor="start">P → v<tspan font-size="72%" baseline-shift="super">r</tspan> joins hap(u<tspan font-size="72%" baseline-shift="super">r</tspan>)</text>
+<line x1="608.0" y1="220.0" x2="646.0" y2="204.0" stroke="#6CC8EE" stroke-width="4" stroke-linecap="round"/>
+<circle cx="602.0" cy="200.0" r="7" fill="#fff" stroke="#1687C9" stroke-width="1.8"/>
+<text x="602.0" y="203.0" class="n" text-anchor="middle" fill="#1687C9">r</text>
+<circle cx="602.0" cy="224.0" r="7" fill="#fff" stroke="#DC2B23" stroke-width="1.8"/>
+<text x="602.0" y="227.0" class="n" text-anchor="middle" fill="#DC2B23">a</text>
+<circle cx="652.0" cy="200.0" r="7" fill="#fff" stroke="#1687C9" stroke-width="1.8"/>
+<text x="652.0" y="203.0" class="n" text-anchor="middle" fill="#1687C9">r</text>
+<circle cx="652.0" cy="224.0" r="7" fill="#fff" stroke="#DC2B23" stroke-width="1.8"/>
+<text x="652.0" y="227.0" class="n" text-anchor="middle" fill="#DC2B23">a</text>
+<text x="666.0" y="212.0" class="s" text-anchor="start">Q → v<tspan font-size="72%" baseline-shift="super">r</tspan> joins hap(u<tspan font-size="72%" baseline-shift="super">a</tspan>)</text>
+<text x="16.0" y="254.0" class="pl" text-anchor="start">c</text>
+<text x="30.0" y="254.0" class="h" text-anchor="start">Weighted votes from up to k = 35 upstream variants</text>
+<line x1="60.0" y1="322.0" x2="60.0" y2="418.0" stroke="#C7D1DB" stroke-width="0.6" stroke-linecap="round" stroke-dasharray="2,3"/>
+<circle cx="60.0" cy="336.0" r="10" fill="#fff" stroke="#1687C9" stroke-width="1.8"/>
+<text x="60.0" y="339.0" class="n" text-anchor="middle" fill="#1687C9">r</text>
+<circle cx="60.0" cy="404.0" r="10" fill="#fff" stroke="#DC2B23" stroke-width="1.8"/>
+<text x="60.0" y="407.0" class="n" text-anchor="middle" fill="#DC2B23">a</text>
+<line x1="118.0" y1="322.0" x2="118.0" y2="418.0" stroke="#C7D1DB" stroke-width="0.6" stroke-linecap="round" stroke-dasharray="2,3"/>
+<circle cx="118.0" cy="336.0" r="10" fill="#fff" stroke="#DC2B23" stroke-width="1.8"/>
+<text x="118.0" y="339.0" class="n" text-anchor="middle" fill="#DC2B23">r</text>
+<circle cx="118.0" cy="404.0" r="10" fill="#fff" stroke="#1687C9" stroke-width="1.8"/>
+<text x="118.0" y="407.0" class="n" text-anchor="middle" fill="#1687C9">a</text>
+<line x1="176.0" y1="322.0" x2="176.0" y2="418.0" stroke="#C7D1DB" stroke-width="0.6" stroke-linecap="round" stroke-dasharray="2,3"/>
+<circle cx="176.0" cy="336.0" r="10" fill="#fff" stroke="#1687C9" stroke-width="1.8"/>
+<text x="176.0" y="339.0" class="n" text-anchor="middle" fill="#1687C9">r</text>
+<circle cx="176.0" cy="404.0" r="10" fill="#fff" stroke="#DC2B23" stroke-width="1.8"/>
+<text x="176.0" y="407.0" class="n" text-anchor="middle" fill="#DC2B23">a</text>
+<line x1="234.0" y1="322.0" x2="234.0" y2="418.0" stroke="#C7D1DB" stroke-width="0.6" stroke-linecap="round" stroke-dasharray="2,3"/>
+<circle cx="234.0" cy="336.0" r="10" fill="#fff" stroke="#1687C9" stroke-width="1.8"/>
+<text x="234.0" y="339.0" class="n" text-anchor="middle" fill="#1687C9">r</text>
+<circle cx="234.0" cy="404.0" r="10" fill="#fff" stroke="#DC2B23" stroke-width="1.8"/>
+<text x="234.0" y="407.0" class="n" text-anchor="middle" fill="#DC2B23">a</text>
+<line x1="292.0" y1="322.0" x2="292.0" y2="418.0" stroke="#C7D1DB" stroke-width="0.6" stroke-linecap="round" stroke-dasharray="2,3"/>
+<circle cx="292.0" cy="336.0" r="10" fill="#fff" stroke="#DC2B23" stroke-width="1.8"/>
+<text x="292.0" y="339.0" class="n" text-anchor="middle" fill="#DC2B23">r</text>
+<circle cx="292.0" cy="404.0" r="10" fill="#fff" stroke="#1687C9" stroke-width="1.8"/>
+<text x="292.0" y="407.0" class="n" text-anchor="middle" fill="#1687C9">a</text>
+<line x1="350.0" y1="322.0" x2="350.0" y2="418.0" stroke="#C7D1DB" stroke-width="0.6" stroke-linecap="round" stroke-dasharray="2,3"/>
+<circle cx="350.0" cy="336.0" r="10" fill="#fff" stroke="#6E7C8C" stroke-width="1.4"/>
+<text x="350.0" y="339.0" class="n" text-anchor="middle" fill="#6E7C8C">r</text>
+<circle cx="350.0" cy="404.0" r="10" fill="#fff" stroke="#6E7C8C" stroke-width="1.4"/>
+<text x="350.0" y="407.0" class="n" text-anchor="middle" fill="#6E7C8C">a</text>
+<path d="M70,336 C205.0,262.0 205.0,262.0 340,336" stroke="#1687C9" stroke-width="4.815433297614831" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+<rect x="196.0" y="258.0" width="18.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="205.0" y="267.0" class="sb" text-anchor="middle" fill="#1687C9">20</text>
+<path d="M128,336 C234.0,273.6 234.0,273.6 340,336" stroke="#1687C9" stroke-width="2.670367564768983" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+<rect x="225.0" y="269.6" width="18.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="234.0" y="278.6" class="sb" text-anchor="middle" fill="#1687C9">1</text>
+<path d="M186,336 C263.0,285.2 263.0,285.2 340,336" stroke="#1687C9" stroke-width="2.670367564768983" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+<rect x="254.0" y="281.2" width="18.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="263.0" y="290.2" class="sb" text-anchor="middle" fill="#1687C9">1</text>
+<path d="M302,336 C321.0,308.4 321.0,308.4 340,336" stroke="#1687C9" stroke-width="1.4117509926287681" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+<rect x="312.0" y="304.4" width="18.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="321.0" y="313.4" class="sb" text-anchor="middle" fill="#1687C9">0.1</text>
+<path d="M244,404 C292.0,429.6 292.0,429.6 340,404" stroke="#DC2B23" stroke-width="2.670367564768983" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+<rect x="283.0" y="431.6" width="18.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="292.0" y="440.6" class="sb" text-anchor="middle" fill="#DC2B23">1</text>
+<rect x="49.0" y="364.0" width="22.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="60.0" y="373.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" baseline-shift="sub">−5</tspan></text>
+<rect x="107.0" y="364.0" width="22.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="118.0" y="373.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" baseline-shift="sub">−4</tspan></text>
+<rect x="165.0" y="364.0" width="22.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="176.0" y="373.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" baseline-shift="sub">−3</tspan></text>
+<rect x="223.0" y="364.0" width="22.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="234.0" y="373.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" baseline-shift="sub">−2</tspan></text>
+<rect x="281.0" y="364.0" width="22.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="292.0" y="373.0" class="m" text-anchor="middle" fill="#16233D">v<tspan font-size="72%" baseline-shift="sub">−1</tspan></text>
+<rect x="339.0" y="364.0" width="22.0" height="12.0" rx="1" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="350.0" y="373.0" class="m" text-anchor="middle" fill="#16233D">v</text>
+<text x="16.0" y="339.0" class="s" text-anchor="start" fill="#1687C9">hap 1</text>
+<text x="16.0" y="407.0" class="s" text-anchor="start" fill="#DC2B23">hap 2</text>
+<text x="46.0" y="438.0" class="s" text-anchor="end">h<tspan font-size="72%" baseline-shift="sub">1</tspan>(v)</text>
+<rect x="52.0" y="428.0" width="163.5" height="11.0" rx="1" fill="#1687C9" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="220.5" y="437.0" class="tb" text-anchor="start" fill="#1687C9">22.1</text>
+<text x="46.0" y="454.0" class="s" text-anchor="end">h<tspan font-size="72%" baseline-shift="sub">2</tspan>(v)</text>
+<rect x="52.0" y="444.0" width="7.4" height="11.0" rx="1" fill="#DC2B23" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="64.4" y="453.0" class="tb" text-anchor="start" fill="#DC2B23">1</text>
+<text x="252.0" y="458.0" class="sb" text-anchor="start" fill="#1687C9">→ v joins haplotype 1</text>
+<text x="412.0" y="254.0" class="pl" text-anchor="start">d</text>
+<text x="426.0" y="254.0" class="h" text-anchor="start">Single-read guard</text>
+<rect x="472.0" y="282.0" width="23.0" height="102.0" rx="1" fill="#FBF0D5" stroke="none" stroke-width="0.8" opacity="1"/>
+<line x1="472.0" y1="288.0" x2="481.2" y2="288.0" stroke="#B8860B" stroke-width="1.2" stroke-linecap="round"/>
+<circle cx="481.2" cy="288.0" r="2.6" fill="#B8860B" stroke="#B8860B" stroke-width="0"/>
+<line x1="472.0" y1="300.0" x2="485.8" y2="300.0" stroke="#B8860B" stroke-width="1.2" stroke-linecap="round"/>
+<circle cx="485.8" cy="300.0" r="2.6" fill="#B8860B" stroke="#B8860B" stroke-width="0"/>
+<line x1="472.0" y1="312.0" x2="490.4" y2="312.0" stroke="#B8860B" stroke-width="1.2" stroke-linecap="round"/>
+<circle cx="490.4" cy="312.0" r="2.6" fill="#B8860B" stroke="#B8860B" stroke-width="0"/>
+<line x1="472.0" y1="324.0" x2="495.0" y2="324.0" stroke="#B8860B" stroke-width="1.2" stroke-linecap="round"/>
+<circle cx="495.0" cy="324.0" r="2.6" fill="#B8860B" stroke="#B8860B" stroke-width="0"/>
+<line x1="472.0" y1="336.0" x2="531.8" y2="336.0" stroke="#1687C9" stroke-width="1.2" stroke-linecap="round"/>
+<circle cx="531.8" cy="336.0" r="2.6" fill="#1687C9" stroke="#1687C9" stroke-width="0"/>
+<line x1="472.0" y1="348.0" x2="566.3" y2="348.0" stroke="#1687C9" stroke-width="1.2" stroke-linecap="round"/>
+<circle cx="566.3" cy="348.0" r="2.6" fill="#1687C9" stroke="#1687C9" stroke-width="0"/>
+<line x1="472.0" y1="360.0" x2="610.0" y2="360.0" stroke="#1687C9" stroke-width="1.2" stroke-linecap="round"/>
+<circle cx="610.0" cy="360.0" r="2.6" fill="#1687C9" stroke="#1687C9" stroke-width="0"/>
+<line x1="472.0" y1="372.0" x2="688.2" y2="372.0" stroke="#1687C9" stroke-width="1.2" stroke-linecap="round"/>
+<circle cx="688.2" cy="372.0" r="2.6" fill="#1687C9" stroke="#1687C9" stroke-width="0"/>
+<line x1="472.0" y1="384.0" x2="702.0" y2="384.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<line x1="472.0" y1="384.0" x2="472.0" y2="388.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<text x="472.0" y="398.0" class="s" text-anchor="middle">0</text>
+<line x1="495.0" y1="384.0" x2="495.0" y2="388.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<text x="495.0" y="398.0" class="s" text-anchor="middle">1</text>
+<line x1="587.0" y1="384.0" x2="587.0" y2="388.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<text x="587.0" y="398.0" class="s" text-anchor="middle">5</text>
+<line x1="702.0" y1="384.0" x2="702.0" y2="388.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<text x="702.0" y="398.0" class="s" text-anchor="middle">10</text>
+<text x="708.0" y="388.0" class="s" text-anchor="start">P + Q</text>
+<text x="466.0" y="336.0" class="s" text-anchor="end">votes to v</text>
+<text x="499.0" y="276.0" class="sb" text-anchor="start" fill="#B8860B">4 votes rest on one read (P + Q ≤ 1)</text>
+<rect x="412.0" y="418.0" width="352.0" height="34.0" rx="2" fill="#FBF0D5" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="412.0" y="418.0" width="2.2" height="34.0" rx="0" fill="#B8860B" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="422.0" y="432.0" class="tb" text-anchor="start" fill="#16233D">&gt; 3 such votes → recompute h<tspan font-size="72%" baseline-shift="sub">1</tspan>, h<tspan font-size="72%" baseline-shift="sub">2</tspan></text>
+<text x="422.0" y="446.0" class="s" text-anchor="start">from votes with s &lt; 0.2, weight ≥ 1, non-indel voter only</text>
+<text x="16.0" y="484.0" class="pl" text-anchor="start">e</text>
+<text x="30.0" y="484.0" class="h" text-anchor="start">Phasing entropy  PE = − Σ p<tspan font-size="72%" baseline-shift="sub">i</tspan> log<tspan font-size="72%" baseline-shift="sub">2</tspan> p<tspan font-size="72%" baseline-shift="sub">i</tspan></text>
+<rect x="95.4" y="522.0" width="79.2" height="138.0" rx="0" fill="#FBF0D5" stroke="none" stroke-width="0.8" opacity="0.7"/>
+<path d="M58.0,660.0 L59.5,648.9 L61.1,640.5 L62.6,633.2 L64.2,626.6 L65.7,620.5 L67.2,614.8 L68.8,609.5 L70.3,604.5 L71.9,599.8 L73.4,595.3 L74.9,591.0 L76.5,586.9 L78.0,583.1 L79.6,579.4 L81.1,575.8 L82.6,572.5 L84.2,569.2 L85.7,566.1 L87.3,563.2 L88.8,560.4 L90.3,557.7 L91.9,555.1 L93.4,552.6 L95.0,550.3 L96.5,548.0 L98.0,545.9 L99.6,543.9 L101.1,541.9 L102.7,540.1 L104.2,538.4 L105.7,536.7 L107.3,535.2 L108.8,533.7 L110.4,532.4 L111.9,531.1 L113.4,529.9 L115.0,528.8 L116.5,527.8 L118.1,526.9 L119.6,526.0 L121.1,525.2 L122.7,524.6 L124.2,524.0 L125.8,523.4 L127.3,523.0 L128.8,522.6 L130.4,522.4 L131.9,522.2 L133.5,522.0 L135.0,522.0 L136.5,522.0 L138.1,522.2 L139.6,522.4 L141.2,522.6 L142.7,523.0 L144.2,523.4 L145.8,524.0 L147.3,524.6 L148.9,525.2 L150.4,526.0 L151.9,526.9 L153.5,527.8 L155.0,528.8 L156.6,529.9 L158.1,531.1 L159.6,532.4 L161.2,533.7 L162.7,535.2 L164.3,536.7 L165.8,538.4 L167.3,540.1 L168.9,541.9 L170.4,543.9 L172.0,545.9 L173.5,548.0 L175.0,550.3 L176.6,552.6 L178.1,555.1 L179.7,557.7 L181.2,560.4 L182.7,563.2 L184.3,566.1 L185.8,569.2 L187.4,572.5 L188.9,575.8 L190.4,579.4 L192.0,583.1 L193.5,586.9 L195.1,591.0 L196.6,595.3 L198.1,599.8 L199.7,604.5 L201.2,609.5 L202.8,614.8 L204.3,620.5 L205.8,626.6 L207.4,633.2 L208.9,640.5 L210.5,648.9 L212.0,660.0" stroke="#16233D" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="1"/>
+<line x1="58.0" y1="549.6" x2="212.0" y2="549.6" stroke="#B8860B" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2.5"/>
+<text x="216.0" y="552.6" class="sb" text-anchor="start" fill="#B8860B">0.8</text>
+<line x1="58.0" y1="660.0" x2="212.0" y2="660.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<line x1="58.0" y1="660.0" x2="58.0" y2="522.0" stroke="#16233D" stroke-width="1" stroke-linecap="round"/>
+<text x="58.0" y="673.0" class="s" text-anchor="middle">0</text>
+<text x="135.0" y="673.0" class="s" text-anchor="middle">0.5</text>
+<text x="212.0" y="673.0" class="s" text-anchor="middle">1</text>
+<text x="53.0" y="663.0" class="s" text-anchor="end">0</text>
+<text x="53.0" y="525.0" class="s" text-anchor="end">1</text>
+<text x="135.0" y="686.0" class="s" text-anchor="middle">p<tspan font-size="72%" baseline-shift="sub">1</tspan> = h<tspan font-size="72%" baseline-shift="sub">1</tspan> / (h<tspan font-size="72%" baseline-shift="sub">1</tspan> + h<tspan font-size="72%" baseline-shift="sub">2</tspan>)</text>
+<text x="44.0" y="591.0" class="s" text-anchor="middle" transform="rotate(-90 44 591.0)">PE</text>
+<text x="135.0" y="514.0" class="s" text-anchor="middle" fill="#B8860B">GNN window (Suppl. Fig. 4)</text>
+<circle cx="205.3" cy="624.5" r="3.2" fill="#16233D" stroke="#fff" stroke-width="1"/>
+<circle cx="173.5" cy="548.0" r="3.2" fill="#B8860B" stroke="#fff" stroke-width="1"/>
+<circle cx="146.0" cy="524.0" r="3.2" fill="#B8860B" stroke="#fff" stroke-width="1"/>
+<circle cx="135.0" cy="522.0" r="3.2" fill="#B8860B" stroke="#fff" stroke-width="1"/>
+<text x="292.0" y="522.0" class="s" text-anchor="end">h<tspan font-size="72%" baseline-shift="sub">1</tspan> : h<tspan font-size="72%" baseline-shift="sub">2</tspan></text>
+<text x="384.0" y="522.0" class="s" text-anchor="end">PE</text>
+<text x="292.0" y="544.0" class="s" text-anchor="end">22.1 : 1</text>
+<rect x="298.0" y="534.0" width="49.7" height="12.0" rx="1" fill="#1687C9" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="347.7" y="534.0" width="2.3" height="12.0" rx="1" fill="#DC2B23" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="384.0" y="544.0" class="sb" text-anchor="end" fill="#16233D">0.26</text>
+<rect x="250.0" y="555.0" width="138.0" height="22.0" rx="2" fill="#FBF0D5" stroke="none" stroke-width="0.8" opacity="0.7"/>
+<text x="292.0" y="570.0" class="s" text-anchor="end">3 : 1</text>
+<rect x="298.0" y="560.0" width="39.0" height="12.0" rx="1" fill="#1687C9" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="337.0" y="560.0" width="13.0" height="12.0" rx="1" fill="#DC2B23" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="384.0" y="570.0" class="sb" text-anchor="end" fill="#B8860B">0.81</text>
+<rect x="250.0" y="581.0" width="138.0" height="22.0" rx="2" fill="#FBF0D5" stroke="none" stroke-width="0.8" opacity="0.7"/>
+<text x="292.0" y="596.0" class="s" text-anchor="end">4 : 3</text>
+<rect x="298.0" y="586.0" width="29.7" height="12.0" rx="1" fill="#1687C9" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="327.7" y="586.0" width="22.3" height="12.0" rx="1" fill="#DC2B23" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="384.0" y="596.0" class="sb" text-anchor="end" fill="#B8860B">0.99</text>
+<rect x="250.0" y="607.0" width="138.0" height="22.0" rx="2" fill="#FBF0D5" stroke="none" stroke-width="0.8" opacity="0.7"/>
+<text x="292.0" y="622.0" class="s" text-anchor="end">5 : 5</text>
+<rect x="298.0" y="612.0" width="26.0" height="12.0" rx="1" fill="#1687C9" stroke="none" stroke-width="0.8" opacity="1"/>
+<rect x="324.0" y="612.0" width="26.0" height="12.0" rx="1" fill="#DC2B23" stroke="none" stroke-width="0.8" opacity="1"/>
+<text x="384.0" y="622.0" class="sb" text-anchor="end" fill="#B8860B">1.00</text>
+<text x="412.0" y="484.0" class="pl" text-anchor="start">f</text>
+<text x="426.0" y="484.0" class="h" text-anchor="start">Block formation</text>
+<line x1="436.0" y1="548.0" x2="462.0" y2="548.0" stroke="#6CC8EE" stroke-width="5" stroke-linecap="butt"/>
+<line x1="436.0" y1="586.0" x2="462.0" y2="586.0" stroke="#F0766C" stroke-width="5" stroke-linecap="butt"/>
+<line x1="462.0" y1="548.0" x2="488.0" y2="548.0" stroke="#6CC8EE" stroke-width="5" stroke-linecap="butt"/>
+<line x1="462.0" y1="586.0" x2="488.0" y2="586.0" stroke="#F0766C" stroke-width="5" stroke-linecap="butt"/>
+<line x1="488.0" y1="548.0" x2="514.0" y2="548.0" stroke="#6CC8EE" stroke-width="5" stroke-linecap="butt"/>
+<line x1="488.0" y1="586.0" x2="514.0" y2="586.0" stroke="#F0766C" stroke-width="5" stroke-linecap="butt"/>
+<line x1="514.0" y1="548.0" x2="540.0" y2="548.0" stroke="#6CC8EE" stroke-width="5" stroke-linecap="butt"/>
+<line x1="514.0" y1="586.0" x2="540.0" y2="586.0" stroke="#F0766C" stroke-width="5" stroke-linecap="butt"/>
+<line x1="622.0" y1="548.0" x2="648.0" y2="548.0" stroke="#6CC8EE" stroke-width="5" stroke-linecap="butt"/>
+<line x1="622.0" y1="586.0" x2="648.0" y2="586.0" stroke="#F0766C" stroke-width="5" stroke-linecap="butt"/>
+<line x1="648.0" y1="548.0" x2="674.0" y2="548.0" stroke="#6CC8EE" stroke-width="5" stroke-linecap="butt"/>
+<line x1="648.0" y1="586.0" x2="674.0" y2="586.0" stroke="#F0766C" stroke-width="5" stroke-linecap="butt"/>
+<line x1="674.0" y1="548.0" x2="700.0" y2="548.0" stroke="#6CC8EE" stroke-width="5" stroke-linecap="butt"/>
+<line x1="674.0" y1="586.0" x2="700.0" y2="586.0" stroke="#F0766C" stroke-width="5" stroke-linecap="butt"/>
+<circle cx="436.0" cy="548.0" r="6" fill="#1687C9" stroke="#1687C9" stroke-width="0"/>
+<circle cx="436.0" cy="586.0" r="6" fill="#DC2B23" stroke="#DC2B23" stroke-width="0"/>
+<circle cx="462.0" cy="548.0" r="6" fill="#1687C9" stroke="#1687C9" stroke-width="0"/>
+<circle cx="462.0" cy="586.0" r="6" fill="#DC2B23" stroke="#DC2B23" stroke-width="0"/>
+<circle cx="488.0" cy="548.0" r="6" fill="#1687C9" stroke="#1687C9" stroke-width="0"/>
+<circle cx="488.0" cy="586.0" r="6" fill="#DC2B23" stroke="#DC2B23" stroke-width="0"/>
+<circle cx="514.0" cy="548.0" r="6" fill="#1687C9" stroke="#1687C9" stroke-width="0"/>
+<circle cx="514.0" cy="586.0" r="6" fill="#DC2B23" stroke="#DC2B23" stroke-width="0"/>
+<circle cx="540.0" cy="548.0" r="6" fill="#1687C9" stroke="#1687C9" stroke-width="0"/>
+<circle cx="540.0" cy="586.0" r="6" fill="#DC2B23" stroke="#DC2B23" stroke-width="0"/>
+<circle cx="566.0" cy="548.0" r="6" fill="#fff" stroke="#6E7C8C" stroke-width="1.4"/>
+<circle cx="566.0" cy="586.0" r="6" fill="#fff" stroke="#6E7C8C" stroke-width="1.4"/>
+<circle cx="622.0" cy="548.0" r="6" fill="#fff" stroke="#B8860B" stroke-width="1.4"/>
+<circle cx="622.0" cy="586.0" r="6" fill="#fff" stroke="#B8860B" stroke-width="1.4"/>
+<circle cx="648.0" cy="548.0" r="6" fill="#1687C9" stroke="#1687C9" stroke-width="0"/>
+<circle cx="648.0" cy="586.0" r="6" fill="#DC2B23" stroke="#DC2B23" stroke-width="0"/>
+<circle cx="674.0" cy="548.0" r="6" fill="#1687C9" stroke="#1687C9" stroke-width="0"/>
+<circle cx="674.0" cy="586.0" r="6" fill="#DC2B23" stroke="#DC2B23" stroke-width="0"/>
+<circle cx="700.0" cy="548.0" r="6" fill="#1687C9" stroke="#1687C9" stroke-width="0"/>
+<circle cx="700.0" cy="586.0" r="6" fill="#DC2B23" stroke="#DC2B23" stroke-width="0"/>
+<circle cx="738.0" cy="548.0" r="6" fill="#fff" stroke="#6E7C8C" stroke-width="1.4"/>
+<circle cx="738.0" cy="586.0" r="6" fill="#fff" stroke="#6E7C8C" stroke-width="1.4"/>
+<line x1="574.0" y1="567.0" x2="614.0" y2="567.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,3"/>
+<text x="594.0" y="580.0" class="s" text-anchor="middle" fill="#6E7C8C">&gt; 300 kb</text>
+<text x="566.0" y="608.0" class="s" text-anchor="middle" fill="#6E7C8C">skipped</text>
+<text x="622.0" y="534.0" class="sb" text-anchor="middle" fill="#B8860B">tie</text>
+<text x="738.0" y="534.0" class="s" text-anchor="middle" fill="#6E7C8C">singleton</text>
+<text x="738.0" y="608.0" class="s" text-anchor="middle" fill="#6E7C8C">dropped</text>
+<line x1="428.0" y1="600.0" x2="548.0" y2="600.0" stroke="#16233D" stroke-width="1.6" stroke-linecap="butt"/>
+<text x="488.0" y="613.0" class="sb" text-anchor="middle" fill="#16233D">PS 1</text>
+<line x1="614.0" y1="600.0" x2="708.0" y2="600.0" stroke="#16233D" stroke-width="1.6" stroke-linecap="butt"/>
+<text x="661.0" y="613.0" class="sb" text-anchor="middle" fill="#16233D">PS 2</text>
+<text x="418.0" y="551.0" class="s" text-anchor="end" fill="#1687C9">hap 1</text>
+<text x="418.0" y="589.0" class="s" text-anchor="end" fill="#DC2B23">hap 2</text>
+<text x="412.0" y="646.0" class="s" text-anchor="start">PS = position of the first variant of the block</text>
+</svg>

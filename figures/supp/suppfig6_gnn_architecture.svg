@@ -38,12 +38,12 @@
 <rect x="366.0" y="26.0" width="398.0" height="284.0" rx="4" fill="none" stroke="#16233D" stroke-width="1" opacity="1" stroke-dasharray="4,3"/>
 <text x="378.0" y="43.0" class="h" text-anchor="start">GPS layer × 4</text>
 <text x="752.0" y="300.0" class="s" text-anchor="end">hidden 128, 4 heads</text>
-<rect x="382.0" y="54.0" width="176.0" height="34.0" rx="3" fill="#DCEAF6" stroke="#1266B0" stroke-width="0.9" opacity="1"/>
+<rect x="382.0" y="54.0" width="176.0" height="34.0" rx="3" fill="#DCEDEB" stroke="#217F76" stroke-width="0.9" opacity="1"/>
 <text x="470.0" y="69.5" class="tb" text-anchor="middle" fill="#16233D">local  GATv2</text>
 <text x="470.0" y="82.0" class="s" text-anchor="middle">attention over x<tspan font-size="72%" baseline-shift="sub">i</tspan>, x<tspan font-size="72%" baseline-shift="sub">j</tspan>, e<tspan font-size="72%" baseline-shift="sub">ij</tspan></text>
 <text x="470.0" y="101.0" class="s" text-anchor="middle">softmax over incoming edges of i</text>
 <text x="470.0" y="113.0" class="s" text-anchor="middle">edge encoder 6 → 128 per layer</text>
-<rect x="572.0" y="54.0" width="176.0" height="34.0" rx="3" fill="#FAE3DD" stroke="#CE4125" stroke-width="0.9" opacity="1"/>
+<rect x="572.0" y="54.0" width="176.0" height="34.0" rx="3" fill="#E6E2F2" stroke="#5B4B9E" stroke-width="0.9" opacity="1"/>
 <text x="660.0" y="69.5" class="tb" text-anchor="middle" fill="#16233D">global  self-attention</text>
 <text x="660.0" y="82.0" class="s" text-anchor="middle">softmax(QK<tspan font-size="72%" baseline-shift="super">T</tspan>/√d) V over N nodes</text>
 <text x="660.0" y="101.0" class="s" text-anchor="middle">Q, K, V, O projections 128 → 128</text>

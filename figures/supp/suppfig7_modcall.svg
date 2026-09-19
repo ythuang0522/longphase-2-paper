@@ -175,8 +175,8 @@
 <text x="424.0" y="246.0" class="pl" text-anchor="start">e</text>
 <text x="438.0" y="246.0" class="h" text-anchor="start">Co-segregation with a neighbouring marker</text>
 <text x="424.0" y="272.0" class="sb" text-anchor="start" fill="#16233D">SNV-anchored</text>
-<circle cx="454.0" cy="298.0" r="8" fill="#1266B0" stroke="#1266B0" stroke-width="0"/>
-<text x="454.0" y="301.0" class="n" text-anchor="middle" fill="#fff">R</text>
+<circle cx="454.0" cy="298.0" r="8" fill="#fff" stroke="#1687C9" stroke-width="1.8"/>
+<text x="454.0" y="301.0" class="n" text-anchor="middle" fill="#1687C9">R</text>
 <text x="454.0" y="318.0" class="s" text-anchor="middle">SNV</text>
 <circle cx="534.0" cy="298.0" r="7" fill="#16233D" stroke="#16233D" stroke-width="0"/>
 <text x="534.0" y="318.0" class="s" text-anchor="middle">CpG</text>

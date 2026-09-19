@@ -1,8 +1,8 @@
-# LongPhase 2 — manuscript (Nature Methods)
+# LongPhase 2 — manuscript
 
 Germline haplotype phasing from long reads. Co-phases SNVs, small indels, SVs and
-5mC in a single weighted phasing graph, and attaches a per-variant phasing entropy
-plus an optional GNN that unphases (never flips) variants predicted to be misphased.
+5mC in a single weighted phasing graph, and scores the reliability of every phased
+variant with a GNN that unphases (never flips) variants predicted to be misphased.
 
 Companion manuscripts, both unpublished and both built on the **LongPhase v1.0**
 graph (not on LongPhase 2):
@@ -33,9 +33,10 @@ Figure 1 is generated entirely by `figures-source/make_fig1.py` (all four panels
 style of the original vector master), redrawn on 2026-09-18 to the new design: single-row
 legend and six panel-filling reads (a); original graph with long-range read arcs,
 calibration insets, reweighted graph with low-confidence and faded edges (b);
-feature-labelled window → local graph attention (GATv2 star) + window-wide self-attention
-(Transformer token row) → feature fusion → unlabelled feed-forward bars → phase-confidence
-refinement, with residual/norm left to the caption and Supplementary Fig. 7 (c); haplotypes with SV, indel and
+feature-labelled window → local message passing (GATv2 star) + global self-attention
+(Transformer token row) → feature fusion with input skip → feed-forward network with skip,
+framed as repeated layers → phase-confidence refinement; layer norm and classifier head
+left to the caption and Supplementary Fig. 6 (c); haplotypes with SV, indel and
 CpG alleles plus haplotagged reads (d). Edit the script, not the SVG.
 
 ## Before submission
@@ -64,7 +65,21 @@ top-journal revision (main text 29, Methods 50, Supplementary 18). The critical 
    manuscript now positions the GNN against that precedent (Introduction, Discussion) and
    asks for a matched comparison against HapCUT2 pruning (Results todo). State in Methods
    whether HapCUT2's default pruning was enabled in the benchmark runs.
-7. **Main Figs. 2–6 are raster exports** (PNG from the pptx) with in-figure titles,
+7. **Supplementary figures consolidated on 2026-09-19** (12 → 9): S1 now holds all pre-graph
+   filters including the copy-number filter (e–f, rule table replaced by a state diagram);
+   S2 is the six-panel voting figure (pair support, vote rule, votes, single-read guard,
+   entropy, blocks); S5 holds window construction, DOT export and the phase-set update (e–f).
+   Node glyphs and haplotype colours now match Fig. 1 throughout. Order: 1 filters, 2 voting,
+   3 read-based correction, 4 GNN overview, 5 window+update, 6 architecture, 7 modcall,
+   8 metrics, 9 calibration (placeholder). All cross-references updated.
+8. **Source fix to file** (`PhasingGraph.cpp:253–266` at cc17fb1): the `else if` that
+   assigns vote weight 20 chains off `if(debug)` instead of the edge-threshold test.
+   Harmless in release (`debug` is hard-coded false at the only call site, :404) but a
+   latent behaviour change; re-attach it. `findBestEdgePair` also takes an unused `isONT`.
+   Two text errors traced to the same file were corrected on 2026-09-19: `--distance` is a
+   gap test that skips a variant (:350), not a 300 kb cap on edges or votes, and the
+   weight-20 upgrade also fires irrespective of s when one pairing has < 1 unit of support.
+9. **Main Figs. 2–6 are raster exports** (PNG from the pptx) with in-figure titles,
    uppercase panel letters and, in Fig. 6, a caption paragraph inside the artwork.
    Regenerate them as vector figures from the `longphase compare` TSVs: lowercase bold
    panel letters, no titles or "(↑ better)" annotations, s.d. bands for 10–20×.
