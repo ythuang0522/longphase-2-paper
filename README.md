@@ -33,8 +33,8 @@ CpG alleles plus haplotagged reads (d). Edit the script, not the SVG.
 
 ## Before submission
 
-Red `\todo{}` marks flag everything still unverified — 75 as of the 2026-09-20
-proofreading pass (main text 21, Methods 35, Supplementary 19). The critical ones:
+Red `\todo{}` marks flag everything still unverified — 74 as of the 2026-09-20
+proofreading pass (main text 20, Methods 35, Supplementary 19). The critical ones:
 
 1. **Training description is absent.** No training code exists in the LongPhase
    repository on any branch; `prepare_gnn_data.py` and `embed_weights.py` are
