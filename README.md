@@ -33,8 +33,8 @@ CpG alleles plus haplotagged reads (d). Edit the script, not the SVG.
 
 ## Before submission
 
-Red `\todo{}` marks flag everything still unverified — 74 as of the 2026-09-20
-proofreading pass (main text 20, Methods 35, Supplementary 19). The critical ones:
+Red `\todo{}` marks flag everything still unverified — 65 as of the 2026-09-20
+proofreading pass (main text 14, Methods 33, Supplementary 18). The critical ones:
 
 1. **Training description is absent.** No training code exists in the LongPhase
    repository on any branch; `prepare_gnn_data.py` and `embed_weights.py` are
@@ -64,10 +64,10 @@ proofreading pass (main text 20, Methods 35, Supplementary 19). The critical one
    Node glyphs and haplotype colours now match Fig. 1 throughout. Order: 1 filters, 2 voting,
    3 read-based correction, 4 GNN overview, 5 window+update, 6 architecture, 7 modcall,
    8 metrics, 9 calibration (placeholder). All cross-references updated.
-8. **Source fix to file** (`PhasingGraph.cpp:253–266` at cc17fb1): the `else if` that
-   assigns vote weight 20 chains off `if(debug)` instead of the edge-threshold test.
-   Harmless in release (`debug` is hard-coded false at the only call site, :404) but a
-   latent behaviour change; re-attach it. `findBestEdgePair` also takes an unused `isONT`.
+8. **Source fix** (`PhasingGraph.cpp:253–266` at cc17fb1): the `else if` that assigns
+   vote weight 20 chained off `if(debug)` instead of the edge-threshold test. Fixed in the
+   working tree of `../longphase` on 2026-09-20 but not yet committed; commit before the
+   release. `findBestEdgePair` still takes an unused `isONT`.
    Two text errors traced to the same file were corrected on 2026-09-19: `--distance` is a
    gap test that skips a variant (:350), not a 300 kb cap on edges or votes, and the
    weight-20 upgrade also fires irrespective of s when one pairing has < 1 unit of support.
