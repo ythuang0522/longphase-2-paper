@@ -18,8 +18,8 @@ Layout follows the 2026-09-18 redesign raster:
      network (with a skip connection) -> phase-confidence refinement (trigger
      SNP unphased). The block is framed as one of the repeated (GPS) layers;
      layer normalization is omitted (see Supplementary Fig. 6).
-  d  two haplotypes carrying SNVs, an SV, an indel and a CpG, and three
-     haplotagged reads.
+  d  two haplotypes carrying SNVs, an SV, an indel and a CpG, and four
+     haplotagged reads; row labels sit left of each track.
 
 Run:   python3 figures-source/make_fig1.py        (from the repository root)
        rsvg-convert -f pdf -o figures/fig1_overview.pdf figures/fig1_overview.svg
@@ -389,29 +389,35 @@ text(1018, YBc + 90, "Unphased SNP", anchor="middle")
 # ============================================================================
 # Panel d
 # ============================================================================
+# Row labels sit to the left of each track (right-aligned, as in panel a), so
+# the tracks are narrower than in the 2026-09-18 raster and four reads fit.
 text(1156, 722, "d", cls="pl")
-COLS = [1248, 1314, 1393, 1473, 1538, 1604]
+LBX = 1294                                                 # right edge of the label column
+TX0, TX1 = 1306, 1642                                      # track extent
+COLS = [1330 + 57 * i for i in range(6)]
+HY1, HY2 = 744, 806
 
-text(1178, 744, "Haplotype 1", cls="h2", fill=BLUE)
-hedge(1226, 1626, 780, LBLUE, 7)
-snp(COLS[0], 780, "A", BLUE, r=20, fs=22.5); snp(COLS[1], 780, "T", BLUE, r=20, fs=22.5)
-box(COLS[2], 780, "SV", BLUE)
-lollipop(COLS[3], 780, True)
-snp(COLS[4], 780, "A", BLUE, r=20, fs=22.5); snp(COLS[5], 780, "C", BLUE, r=20, fs=22.5)
+text(LBX, HY1 + 7, "Haplotype 1", cls="h2", fill=BLUE, anchor="end")
+hedge(TX0, TX1, HY1, LBLUE, 7)
+snp(COLS[0], HY1, "A", BLUE, r=19, fs=21.5); snp(COLS[1], HY1, "T", BLUE, r=19, fs=21.5)
+box(COLS[2], HY1, "SV", BLUE, w=50)
+lollipop(COLS[3], HY1, True)
+snp(COLS[4], HY1, "A", BLUE, r=19, fs=21.5); snp(COLS[5], HY1, "C", BLUE, r=19, fs=21.5)
 
-text(1178, 828, "Haplotype 2", cls="h2", fill=RED)
-hedge(1226, 1626, 864, LRED, 7)
-snp(COLS[0], 864, "G", RED, r=20, fs=22.5); snp(COLS[1], 864, "C", RED, r=20, fs=22.5)
-lollipop(COLS[3], 864, False)
-box(COLS[4], 864, "CA", RED)
-snp(COLS[5], 864, "T", RED, r=20, fs=22.5)
+text(LBX, HY2 + 7, "Haplotype 2", cls="h2", fill=RED, anchor="end")
+hedge(TX0, TX1, HY2, LRED, 7)
+snp(COLS[0], HY2, "G", RED, r=19, fs=21.5); snp(COLS[1], HY2, "C", RED, r=19, fs=21.5)
+lollipop(COLS[3], HY2, False)
+box(COLS[4], HY2, "CA", RED, w=50)
+snp(COLS[5], HY2, "T", RED, r=19, fs=21.5)
 
-text(1178, 904, "Haplotagging reads", cls="h2")
-for k, (lab, hap, al) in enumerate((("Read 1", 1, "ATAC"), ("Read 2", 1, "ATAC"), ("Read 3", 2, "GCXT"))):
-    y = 934 + k * 33
+text(1178, 864, "Haplotagging reads", cls="h2")
+for k, (lab, hap, al) in enumerate((("Read 1", 1, "ATAC"), ("Read 2", 1, "ATAC"),
+                                    ("Read 3", 2, "GCXT"), ("Read 4", 2, "GCXT"))):
+    y = 890 + k * 32
     col, rf = (BLUE, READ_B) if hap == 1 else (RED, READ_R)
-    text(1216, y + 6, lab, anchor="end", fill=col)
-    rect(1226, y - 5, 400, 10, rf, rx=5)
+    text(LBX, y + 6, lab, anchor="end", fill=col)
+    rect(TX0, y - 5, TX1 - TX0, 10, rf, rx=5)
     snp(COLS[0], y, al[0], col, r=12.5, fs=14); snp(COLS[1], y, al[1], col, r=12.5, fs=14)
     if hap == 1:
         box(COLS[2], y, "SV", col, w=36, h=22, fs=13.5, sw=2.2)

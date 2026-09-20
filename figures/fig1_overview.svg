@@ -496,71 +496,83 @@
 <path d="M1018 978 L1018 936" fill="none" stroke="#103A82" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aNavy)"/>
 <text x="1018.0" y="1000.0" class="lb" fill="#103A82" text-anchor="middle">Unphased SNP</text>
 <text x="1156.0" y="722.0" class="pl" fill="#103A82" text-anchor="start">d</text>
-<text x="1178.0" y="744.0" class="h2" fill="#1687C9" text-anchor="start">Haplotype 1</text>
-<line x1="1226.0" y1="780.0" x2="1626.0" y2="780.0" stroke="#6CC8EE" stroke-width="7" stroke-linecap="butt"/>
-<circle cx="1248.0" cy="780.0" r="20" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
-<text x="1248.0" y="787.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="22.5">A</text>
-<circle cx="1314.0" cy="780.0" r="20" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
-<text x="1314.0" y="787.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="22.5">T</text>
-<rect x="1367.0" y="765.0" width="52.0" height="30.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.6"/>
-<text x="1393.0" y="786.5" class="nt" fill="#1687C9" text-anchor="middle" font-size="18.5">SV</text>
-<line x1="1473.0" y1="788.5" x2="1473.0" y2="810.0" stroke="#16233D" stroke-width="3.2" stroke-linecap="round" stroke-opacity="1.0"/>
-<circle cx="1473.0" cy="780.0" r="8.5" fill="#16233D" stroke="#16233D" stroke-width="2.6"/>
-<circle cx="1538.0" cy="780.0" r="20" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
-<text x="1538.0" y="787.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="22.5">A</text>
-<circle cx="1604.0" cy="780.0" r="20" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
-<text x="1604.0" y="787.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="22.5">C</text>
-<text x="1178.0" y="828.0" class="h2" fill="#DC2B23" text-anchor="start">Haplotype 2</text>
-<line x1="1226.0" y1="864.0" x2="1626.0" y2="864.0" stroke="#F0766C" stroke-width="7" stroke-linecap="butt"/>
-<circle cx="1248.0" cy="864.0" r="20" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
-<text x="1248.0" y="871.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="22.5">G</text>
-<circle cx="1314.0" cy="864.0" r="20" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
-<text x="1314.0" y="871.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="22.5">C</text>
-<line x1="1473.0" y1="872.5" x2="1473.0" y2="894.0" stroke="#16233D" stroke-width="3.2" stroke-linecap="round" stroke-opacity="1.0"/>
-<circle cx="1473.0" cy="864.0" r="8.5" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
-<rect x="1512.0" y="849.0" width="52.0" height="30.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#DC2B23" stroke-width="2.6"/>
-<text x="1538.0" y="870.5" class="nt" fill="#DC2B23" text-anchor="middle" font-size="18.5">CA</text>
-<circle cx="1604.0" cy="864.0" r="20" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
-<text x="1604.0" y="871.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="22.5">T</text>
-<text x="1178.0" y="904.0" class="h2" fill="#103A82" text-anchor="start">Haplotagging reads</text>
-<text x="1216.0" y="940.0" class="lb" fill="#1687C9" text-anchor="end">Read 1</text>
-<rect x="1226.0" y="929.0" width="400.0" height="10.0" rx="5" fill="#D9EEF9" fill-opacity="1.0" stroke="none" stroke-width="1"/>
-<circle cx="1248.0" cy="934.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
-<text x="1248.0" y="938.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="14">A</text>
-<circle cx="1314.0" cy="934.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
-<text x="1314.0" y="938.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="14">T</text>
-<rect x="1375.0" y="923.0" width="36.0" height="22.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.2"/>
-<text x="1393.0" y="938.7" class="nt" fill="#1687C9" text-anchor="middle" font-size="13.5">SV</text>
-<line x1="1473.0" y1="940.0" x2="1473.0" y2="950.0" stroke="#16233D" stroke-width="2.8" stroke-linecap="round" stroke-opacity="1.0"/>
-<circle cx="1473.0" cy="934.0" r="6" fill="#16233D" stroke="#16233D" stroke-width="2.6"/>
-<circle cx="1538.0" cy="934.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
-<text x="1538.0" y="938.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="14">A</text>
-<circle cx="1604.0" cy="934.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
-<text x="1604.0" y="938.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="14">C</text>
-<text x="1216.0" y="973.0" class="lb" fill="#1687C9" text-anchor="end">Read 2</text>
-<rect x="1226.0" y="962.0" width="400.0" height="10.0" rx="5" fill="#D9EEF9" fill-opacity="1.0" stroke="none" stroke-width="1"/>
-<circle cx="1248.0" cy="967.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
-<text x="1248.0" y="971.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="14">A</text>
-<circle cx="1314.0" cy="967.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
-<text x="1314.0" y="971.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="14">T</text>
-<rect x="1375.0" y="956.0" width="36.0" height="22.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.2"/>
-<text x="1393.0" y="971.7" class="nt" fill="#1687C9" text-anchor="middle" font-size="13.5">SV</text>
-<line x1="1473.0" y1="973.0" x2="1473.0" y2="983.0" stroke="#16233D" stroke-width="2.8" stroke-linecap="round" stroke-opacity="1.0"/>
-<circle cx="1473.0" cy="967.0" r="6" fill="#16233D" stroke="#16233D" stroke-width="2.6"/>
-<circle cx="1538.0" cy="967.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
-<text x="1538.0" y="971.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="14">A</text>
-<circle cx="1604.0" cy="967.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
-<text x="1604.0" y="971.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="14">C</text>
-<text x="1216.0" y="1006.0" class="lb" fill="#DC2B23" text-anchor="end">Read 3</text>
-<rect x="1226.0" y="995.0" width="400.0" height="10.0" rx="5" fill="#FBE1DE" fill-opacity="1.0" stroke="none" stroke-width="1"/>
-<circle cx="1248.0" cy="1000.0" r="12.5" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
-<text x="1248.0" y="1004.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="14">G</text>
-<circle cx="1314.0" cy="1000.0" r="12.5" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
-<text x="1314.0" y="1004.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="14">C</text>
-<line x1="1473.0" y1="1006.0" x2="1473.0" y2="1016.0" stroke="#16233D" stroke-width="2.8" stroke-linecap="round" stroke-opacity="1.0"/>
-<circle cx="1473.0" cy="1000.0" r="6" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
-<rect x="1520.0" y="989.0" width="36.0" height="22.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#DC2B23" stroke-width="2.2"/>
-<text x="1538.0" y="1004.7" class="nt" fill="#DC2B23" text-anchor="middle" font-size="13.5">CA</text>
-<circle cx="1604.0" cy="1000.0" r="12.5" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
-<text x="1604.0" y="1004.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="14">T</text>
+<text x="1294.0" y="751.0" class="h2" fill="#1687C9" text-anchor="end">Haplotype 1</text>
+<line x1="1306.0" y1="744.0" x2="1642.0" y2="744.0" stroke="#6CC8EE" stroke-width="7" stroke-linecap="butt"/>
+<circle cx="1330.0" cy="744.0" r="19" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1330.0" y="751.5" class="nt" fill="#1687C9" text-anchor="middle" font-size="21.5">A</text>
+<circle cx="1387.0" cy="744.0" r="19" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1387.0" y="751.5" class="nt" fill="#1687C9" text-anchor="middle" font-size="21.5">T</text>
+<rect x="1419.0" y="729.0" width="50.0" height="30.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1444.0" y="750.5" class="nt" fill="#1687C9" text-anchor="middle" font-size="18.5">SV</text>
+<line x1="1501.0" y1="752.5" x2="1501.0" y2="774.0" stroke="#16233D" stroke-width="3.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="1501.0" cy="744.0" r="8.5" fill="#16233D" stroke="#16233D" stroke-width="2.6"/>
+<circle cx="1558.0" cy="744.0" r="19" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1558.0" y="751.5" class="nt" fill="#1687C9" text-anchor="middle" font-size="21.5">A</text>
+<circle cx="1615.0" cy="744.0" r="19" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1615.0" y="751.5" class="nt" fill="#1687C9" text-anchor="middle" font-size="21.5">C</text>
+<text x="1294.0" y="813.0" class="h2" fill="#DC2B23" text-anchor="end">Haplotype 2</text>
+<line x1="1306.0" y1="806.0" x2="1642.0" y2="806.0" stroke="#F0766C" stroke-width="7" stroke-linecap="butt"/>
+<circle cx="1330.0" cy="806.0" r="19" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1330.0" y="813.5" class="nt" fill="#DC2B23" text-anchor="middle" font-size="21.5">G</text>
+<circle cx="1387.0" cy="806.0" r="19" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1387.0" y="813.5" class="nt" fill="#DC2B23" text-anchor="middle" font-size="21.5">C</text>
+<line x1="1501.0" y1="814.5" x2="1501.0" y2="836.0" stroke="#16233D" stroke-width="3.2" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="1501.0" cy="806.0" r="8.5" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<rect x="1533.0" y="791.0" width="50.0" height="30.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1558.0" y="812.5" class="nt" fill="#DC2B23" text-anchor="middle" font-size="18.5">CA</text>
+<circle cx="1615.0" cy="806.0" r="19" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1615.0" y="813.5" class="nt" fill="#DC2B23" text-anchor="middle" font-size="21.5">T</text>
+<text x="1178.0" y="864.0" class="h2" fill="#103A82" text-anchor="start">Haplotagging reads</text>
+<text x="1294.0" y="896.0" class="lb" fill="#1687C9" text-anchor="end">Read 1</text>
+<rect x="1306.0" y="885.0" width="336.0" height="10.0" rx="5" fill="#D9EEF9" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<circle cx="1330.0" cy="890.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1330.0" y="894.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="14">A</text>
+<circle cx="1387.0" cy="890.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1387.0" y="894.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="14">T</text>
+<rect x="1426.0" y="879.0" width="36.0" height="22.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.2"/>
+<text x="1444.0" y="894.7" class="nt" fill="#1687C9" text-anchor="middle" font-size="13.5">SV</text>
+<line x1="1501.0" y1="896.0" x2="1501.0" y2="906.0" stroke="#16233D" stroke-width="2.8" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="1501.0" cy="890.0" r="6" fill="#16233D" stroke="#16233D" stroke-width="2.6"/>
+<circle cx="1558.0" cy="890.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1558.0" y="894.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="14">A</text>
+<circle cx="1615.0" cy="890.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1615.0" y="894.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="14">C</text>
+<text x="1294.0" y="928.0" class="lb" fill="#1687C9" text-anchor="end">Read 2</text>
+<rect x="1306.0" y="917.0" width="336.0" height="10.0" rx="5" fill="#D9EEF9" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<circle cx="1330.0" cy="922.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1330.0" y="926.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="14">A</text>
+<circle cx="1387.0" cy="922.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1387.0" y="926.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="14">T</text>
+<rect x="1426.0" y="911.0" width="36.0" height="22.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#1687C9" stroke-width="2.2"/>
+<text x="1444.0" y="926.7" class="nt" fill="#1687C9" text-anchor="middle" font-size="13.5">SV</text>
+<line x1="1501.0" y1="928.0" x2="1501.0" y2="938.0" stroke="#16233D" stroke-width="2.8" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="1501.0" cy="922.0" r="6" fill="#16233D" stroke="#16233D" stroke-width="2.6"/>
+<circle cx="1558.0" cy="922.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1558.0" y="926.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="14">A</text>
+<circle cx="1615.0" cy="922.0" r="12.5" fill="#ffffff" stroke="#1687C9" stroke-width="2.6"/>
+<text x="1615.0" y="926.9" class="nt" fill="#1687C9" text-anchor="middle" font-size="14">C</text>
+<text x="1294.0" y="960.0" class="lb" fill="#DC2B23" text-anchor="end">Read 3</text>
+<rect x="1306.0" y="949.0" width="336.0" height="10.0" rx="5" fill="#FBE1DE" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<circle cx="1330.0" cy="954.0" r="12.5" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1330.0" y="958.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="14">G</text>
+<circle cx="1387.0" cy="954.0" r="12.5" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1387.0" y="958.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="14">C</text>
+<line x1="1501.0" y1="960.0" x2="1501.0" y2="970.0" stroke="#16233D" stroke-width="2.8" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="1501.0" cy="954.0" r="6" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<rect x="1540.0" y="943.0" width="36.0" height="22.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#DC2B23" stroke-width="2.2"/>
+<text x="1558.0" y="958.7" class="nt" fill="#DC2B23" text-anchor="middle" font-size="13.5">CA</text>
+<circle cx="1615.0" cy="954.0" r="12.5" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1615.0" y="958.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="14">T</text>
+<text x="1294.0" y="992.0" class="lb" fill="#DC2B23" text-anchor="end">Read 4</text>
+<rect x="1306.0" y="981.0" width="336.0" height="10.0" rx="5" fill="#FBE1DE" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<circle cx="1330.0" cy="986.0" r="12.5" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1330.0" y="990.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="14">G</text>
+<circle cx="1387.0" cy="986.0" r="12.5" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1387.0" y="990.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="14">C</text>
+<line x1="1501.0" y1="992.0" x2="1501.0" y2="1002.0" stroke="#16233D" stroke-width="2.8" stroke-linecap="round" stroke-opacity="1.0"/>
+<circle cx="1501.0" cy="986.0" r="6" fill="#ffffff" stroke="#16233D" stroke-width="2.6"/>
+<rect x="1540.0" y="975.0" width="36.0" height="22.0" rx="4" fill="#ffffff" fill-opacity="1.0" stroke="#DC2B23" stroke-width="2.2"/>
+<text x="1558.0" y="990.7" class="nt" fill="#DC2B23" text-anchor="middle" font-size="13.5">CA</text>
+<circle cx="1615.0" cy="986.0" r="12.5" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
+<text x="1615.0" y="990.9" class="nt" fill="#DC2B23" text-anchor="middle" font-size="14">T</text>
 </svg>
