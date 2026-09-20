@@ -13,7 +13,7 @@ sections/results.tex
 sections/methods.tex
 sections/discussion.tex
 references.bib
-Supplementary.tex         # Supplementary Notes, Tables 1-8, Figs. 1-10 (separate PDF)
+Supplementary.tex         # Supplementary Methods, Notes, Tables 1-6, Figs. 1-9 (separate PDF)
 figures/                  # fig1_overview.svg/.pdf (generated), fig2-6_*.png, supp/
 figures-source/           # make_fig1.py (Fig. 1 vector source); concept drafts
 Makefile                  # `make`, `make wordcount`, `make clean`; rebuilds Fig. 1 from its source
@@ -33,8 +33,8 @@ CpG alleles plus haplotagged reads (d). Edit the script, not the SVG.
 
 ## Before submission
 
-Red `\todo{}` marks flag everything still unverified — 97 as of the 2026-09-18
-top-journal revision (main text 29, Methods 50, Supplementary 18). The critical ones:
+Red `\todo{}` marks flag everything still unverified — 75 as of the 2026-09-20
+proofreading pass (main text 21, Methods 35, Supplementary 19). The critical ones:
 
 1. **Training description is absent.** No training code exists in the LongPhase
    repository on any branch; `prepare_gnn_data.py` and `embed_weights.py` are

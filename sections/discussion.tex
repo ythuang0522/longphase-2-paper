@@ -1,11 +1,10 @@
 % ------------------------------------------------------------------
 %  Discussion (no subheadings, ~1,200 words;
 %  interpretation, relation to prior work, limitations, outlook).
-%  \todo{If the editor enforces a hard 1,000-word Discussion, the two
-%  cheapest cuts are (i) the alternative-route sentence opening the
-%  final paragraph (trio/Hi-C/Strand-seq/imputation, ~55 words) and
-%  (ii) the assembly-graph-GNN analogy in paragraph 3 (~20 words);
-%  neither carries a claim made nowhere else.}
+%  \todo{If the editor enforces a hard 1,000-word Discussion, the
+%  cheapest cut is the alternative-route sentence opening the final
+%  paragraph (trio/Hi-C/Strand-seq/imputation, ~55 words); it carries
+%  no claim made nowhere else.}
 % ------------------------------------------------------------------
 
 \toolname brings together two ideas that read-based phasing has so far kept apart. The first is that every class of heterozygous evidence a read carries belongs in one haplotype model; the second is that a phaser should report, variant by variant, how far its output can be trusted. The first extends an observation made independently for methylation\cite{akbari2021nanomethphase,fu2024methphaser,akbari2023parentoforigin} and for SVs\cite{lin2022longphase,holt2024hiphase}, namely that SNVs alone leave haplotype blocks stranded wherever heterozygosity is low. Calling allele-specific 5mC from modification tags into the same weighted graph as SNVs, indels and SVs raises block N50 above SNV-only phasing by about 70\% at 60$\times$ (5.0 versus 2.9~Mb; 40\% after correction), with no post-processing step and on nanopore rather than HiFi reads, to which joint small- and structural-variant phasing had been confined\cite{holt2024hiphase}. The second idea gives downstream analyses a measure of phase reliability comparable to the genotype quality attached to variant calls, and to the posteriors that statistical phasers have long reported for imputed haplotypes\cite{hofmeister2023shapeit5}. That measure replaces the binary phased-or-unphased state that read-based tools, ours included, have reported until now.

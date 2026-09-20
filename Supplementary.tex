@@ -156,7 +156,7 @@ The model comprises 687,358 float32 values (2,749,432~bytes), namely 124 in the 
 \begin{equation}
 S = R\,\Big(2 - \frac{1}{P}\Big)
 \end{equation}
-was maximized over those thresholds subject to a recall of at least $0.005$, where $P$ and $R$ are the precision and recall of the error class; $S$ is positive only for $P > 0.5$ and is the net fraction of true errors removed under the accounting in which a detection is worth one error and a false detection costs one, so epochs with $P \le 0.5$ were instead ordered by $P - 1$. The best checkpoint was epoch 44, with $S = 0.0235$ at $P = 0.626$, $R = 0.058$ and a threshold of 0.868; no later epoch improved on that checkpoint before early stopping. On the held-out chromosomes chr17, chr21 and chr22 that checkpoint attained an accuracy of 0.941 with error-class precision, recall and F1 of 0.258, 0.499 and 0.340 under the argmax decision, and 0.946 with 0.273, 0.468 and 0.345 at the decision threshold tuned on the validation chromosomes, over 41,378 labelled error nodes. The threshold applied by \code{gnn}, 0.30, is far more permissive than either threshold, because the module's only action is to withhold phase: a false detection costs one phased variant rather than one switch error, so the break-even precision built into $S$ governs checkpoint ranking but not deployment. \todo{State how 0.30 was chosen: a sweep, on which data and against which objective, or an a-priori choice. Add the phased-fraction/switch-error trade-off across thresholds as a supplementary panel.}
+was maximized over those thresholds subject to a recall of at least $0.005$, where $P$ and $R$ are the precision and recall of the error class; $S$ is positive only for $P > 0.5$ and is the net fraction of true errors removed under the accounting in which a detection is worth one error and a false detection costs one, so epochs with $P \le 0.5$ were instead ordered by $P - 1$. The best checkpoint was epoch 44, with $S = 0.0235$ at $P = 0.626$, $R = 0.058$ and a threshold of 0.868; no later epoch improved on that checkpoint before early stopping. On the held-out chromosomes chr17, chr21 and chr22 that checkpoint attained an accuracy of 0.941 with error-class precision, recall and F1 of 0.258, 0.499 and 0.340 under the argmax decision, and 0.946 with 0.273, 0.468 and 0.345 at the decision threshold tuned on the validation chromosomes, over 41,378 labelled error nodes. The threshold applied by \code{gnn}, 0.30, is far more permissive than either threshold, because the module's only action is to withhold phase: a false detection costs one phased variant rather than one switch error, so the break-even precision built into $S$ governs checkpoint ranking but not deployment.
 
 \paragraph{Export and numerical agreement.} The released weights are a single training checkpoint. A dense re-implementation replaces the sparse graph operators with $N \times N$ adjacency and edge tensors, transfers the trained tensors (splitting the fused attention projection into separate Q, K and V matrices), and exports to ONNX at opset 17 with $N$ as a dynamic axis. The logistic transform of the vote weight and the self-loop features are folded into the input convention at this point, so the exported graph and the compiled implementation both receive edge features with those already applied. The ONNX initializers are then read, the architecture dimensions recovered from the tensor shapes, and both written into a generated C++ header as a base64-encoded little-endian float32 blob in a fixed tensor order; the compiled forward pass reads the blob in that order and refuses to run if its length disagrees with the expected parameter count. Agreement was checked at each link of the chain: the dense rewrite against the PyTorch Geometric model, and the ONNX graph against the dense rewrite, on a real training window, with an acceptance bound of $10^{-3}$ on the absolute difference in predicted error probability; and the compiled C++ against ONNX Runtime on six synthetic graphs of 3--120 nodes at edge densities 0.1--0.4, including one graph with a single edge and no other incoming edges, where the largest absolute difference was $3\times 10^{-7}$ against an acceptance bound of $10^{-5}$. \todo{Report the achieved maximum differences for the first two links as well; the export script prints both, but the export log was not retained.}
 
@@ -192,9 +192,9 @@ so a read whose alleles are unanimous receives the ceiling value 40 and a read s
 \todo{Three items for this module. (i) Confirm that the \code{PS} written is always the phase set of the read's own informative variants; it is read from the first variant at or after the alignment start, which coincides with the read's phase set only because the multi-\code{PS} veto has already fired, and the intent should be stated or the code made explicit. (ii) Report the fraction of reads left untagged by the phase-set veto separately from those failing the 0.6 majority, at each coverage; the two have different causes and only the second is a confidence statement. (iii) Decide whether \code{PQ} should be documented as a supported output, in which case it belongs in the README and in the VCF/BAM header description, or removed.}
 
 % ------------------------------------------------------------------
-\subsection*{Supplementary Method 6. Evaluation metrics and region restriction}
+\subsection*{Supplementary Method 6. Evaluation metrics}
 
-Metrics were computed with \code{longphase compare} (Supplementary Fig.~8), a C++ re-implementation of the \code{whatshap compare} algorithm\cite{patterson2015whatshap}. The first VCF on the command line is the truth set and every further VCF is a query, so several tools can be scored against one truth set in a single invocation and reported side by side.
+Metrics were computed with \code{longphase compare} (Supplementary Fig.~8), a C++ re-implementation of the \code{whatshap compare} algorithm\cite{patterson2015whatshap}.
 
 \paragraph{Block intersection.} For each chromosome, heterozygous records common to the truth and a query are intersected by position and by REF/ALT alleles. The intersection is partitioned into maximal runs that lie in one truth phase set and one query phase set simultaneously; runs of length one carry no phase information and are discarded. Only variants inside the surviving blocks enter any metric, so the denominators of the switch error rate and the Hamming distance are the same for every tool scored in the same run.
 
@@ -204,9 +204,6 @@ Metrics were computed with \code{longphase compare} (Supplementary Fig.~8), a C+
 
 \paragraph{Block N50.} Block spans in bp are sorted in decreasing order and the N50 is the span at which the cumulative sum first reaches half the total, which is the span-weighted median. It is computed twice: once per chromosome, and once over the block spans of all chromosomes pooled. The values plotted in Figs.~2d, 3d and 5 are the pooled, genome-wide N50 of the query, which does not depend on the truth set.
 
-\paragraph{Region restriction.} Comparison can be restricted to a set of intervals, either inline with \code{--regions} (comma-separated \code{chrN}, \code{chrN:start-end} or \code{chrN:pos}, 1-based inclusive) or from a file with \code{--regions-bed} (0-based half-open); the two can be combined, and their union is used. This is the mechanism by which a benchmark high-confidence BED is applied. With \code{--only-snvs} all non-SNV records are dropped before intersection, which is how the cross-tool comparisons in this paper were restricted to SNVs so that co-phasing additional classes does not change the evaluated set. With \code{--sw-bed} the position of every switch error is written as a BED record carrying the error type and the truth and query phase sets, which is the input of the unphased-variant analysis in Fig.~6. \code{--sample} selects the sample column and \code{--ignore-sample-name} accepts single-sample VCFs whose sample names differ.
-
-\todo{Report the concordance of \code{longphase compare} with \code{whatshap compare} explicitly: identical switch-error and Hamming counts on all autosomes for all four tools at one coverage, with the \code{whatshap compare} version used, in a supplementary table. State whether the results in this paper were produced with a region restriction and, if so, which BED.}
 
 \clearpage
 % ==================================================================
@@ -350,110 +347,6 @@ Selected checkpoint & epoch 44; $S = 0.0235$ at $P = 0.626$, $R = 0.058$, thresh
 Held-out test (chr17, 21, 22) & argmax: accuracy 0.941, error-class $P/R/F_1 = 0.258/0.499/0.340$; tuned threshold: 0.946, $0.273/0.468/0.345$; $n = 41{,}378$ error nodes \\
 Deployment threshold & 0.30, more permissive than the selection threshold because the only action is to withhold phase \\
 Export & ONNX opset 17, dynamic $N$; base64 float32 blob compiled into the binary; C++ vs.\ ONNX Runtime max.\ absolute difference $3 \times 10^{-7}$ \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\clearpage
-\begin{table}[h]
-\caption{\textbf{Parameters of \code{longphase phase} and their defaults.}}
-\label{tab:phaseparams}
-\small
-\begin{tabular}{@{}L{4.2cm} c L{8.3cm}@{}}
-\toprule
-Parameter & Default & Meaning \\
-\midrule
-\code{--ont} / \code{--pb} & -- & sequencing platform (required; \code{--ont} enables the homopolymer SNV filter) \\
-\code{--indels} & off & phase small indels \\
-\code{--indelQuality} & 0 & exclude indels with QUAL below this value \\
-\code{--sv-file}, \code{--mod-file} & -- & SV VCF (Sniffles2/cuteSV with read names); 5mC VCF from \code{modcall} \\
-\code{-q, --mappingQuality} & 1 & minimum mapping quality of alignments \\
-\code{-x, --mismatchRate} & 3 & mark reads as unreliable above this mismatch rate \\
-\code{-p, --baseQuality} & 12 & base quality below which an observation is down-weighted \\
-\code{-e, --edgeWeight} & 0.1 & weight of a down-weighted observation (otherwise 1) \\
-\code{-a, --connectAdjacent} & 35 & number of downstream variants each variant is linked to \\
-\code{-d, --distance} & 300,000 & a variant is skipped (no votes, no haplotype) when the next heterozygous variant is further away than this; edges and votes themselves are not distance-limited \\
-\code{-1, --edgeThreshold} & 0.7 & pair casts no vote if $\min(P,Q)/\max(P,Q)$ exceeds this (0.3 for SNV--5mC) \\
-\code{-L, --overlapThreshold} & 0.2 & overlap fraction above which the shorter of two alignments of a read is dropped \\
-\code{-w, --svWindow} & 20 & CIGAR operations scanned around an SV start (the help text prints \code{--sv-window}, which does not parse) \\
-\code{-h, --svThreshold} & 0.10 & relative length tolerance for a CIGAR indel to support an SV (help text: \code{--sv-threshold}) \\
-\code{-m, --readConfidence} & 0.65 & minimum majority fraction to tag a read in read-based correction \\
-\code{-n, --snpConfidence} & 0.75 & minimum confidence to keep a variant's phase after read-based correction \\
-\code{--dot} & off & export the phasing graph (required by \code{gnn}) \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[h]
-\caption{\textbf{Parameters of \code{longphase modcall} and their defaults.} Values are the compiled-in defaults at commit cc17fb1; the on-line help text advertises 0.7 for \code{--heterRatio} and 6 for \code{--connectAdjacent} and the long option for the BAM input is \code{--methylbamfile} (\todo{fix the help text and confirm the values used for the benchmarks}).}
-\label{tab:modcallparams}
-\small
-\begin{tabular}{@{}L{4.2cm} c L{8.3cm}@{}}
-\toprule
-Parameter & Default & Meaning \\
-\midrule
-\code{-m, --modThreshold} & 0.8 & ML probability at or above which a base is methylated \\
-\code{-u, --unModThreshold} & 0.2 & ML probability at or below which a base is unmethylated \\
-\code{-e, --heterRatio} & 0.6 & minimum $\min(m,u)/\max(m,u)$ for a heterozygous site \\
-\code{-i, --noiseRatio} & 0.2 & maximum fraction of reads with intermediate probability \\
-\code{-a, --connectAdjacent} & 20 & neighbouring variants searched for SNV co-segregation \\
-\code{-c, --connectConfidence} & 0.9 & minimum majority ratio of co-segregating reads \\
-\code{--iterCount} & 2 & rounds of weak-point expansion against accepted CpGs \\
-\code{--all} & off & also output homozygous modification sites \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[h]
-\caption{\textbf{Parameters of \code{longphase gnn} and \code{longphase haplotag}.}}
-\label{tab:gnnparams}
-\small
-\begin{tabular}{@{}L{4.2cm} c L{8.3cm}@{}}
-\toprule
-Parameter & Default & Meaning \\
-\midrule
-\multicolumn{3}{@{}l}{\textit{gnn}}\\
-\code{-s, --snp-file} & -- & phased SNV/indel VCF from \code{phase} \\
-\code{--sv-file}, \code{--mod-file} & -- & phased SV and 5mC VCFs (corrected copies are written) \\
-\code{--dot-prefix} & from \code{-s} & prefix of the DOT files \\
-\code{-r, --reference} & -- & reference FASTA (enables genomic-context features) \\
-\code{--pe-threshold} & 0.8 & phasing entropy that opens a window \\
-\code{--window} & 20 & variants on each side of the trigger \\
-\code{-B, --break-threshold} & 0.30 & error probability at or above which a variant is unphased \\
-\code{--respect-bridge} & off & never unphase bridge vertices \\
-\code{--no-split-blocks} & off & keep the original PS even if the block becomes disconnected \\
-\addlinespace
-\multicolumn{3}{@{}l}{\textit{haplotag}}\\
-\code{-q, --qualityThreshold} & 1 & minimum mapping quality of tagged alignments \\
-\code{-p, --percentageThreshold} & 0.6 & minimum fraction of a read's informative alleles on the majority haplotype \\
-\code{--tagSupplementary} & off & also tag supplementary alignments \\
-\code{--sv-file}, \code{--mod-file} & -- & use phased SVs and 5mC sites as additional tagging evidence \\
-\code{-w, --svWindow} & 20 & CIGAR operations scanned around an SV start (help text: \code{--sv-window}) \\
-\code{-h, --svThreshold} & 0.10 & relative length tolerance for a CIGAR indel to support an SV (help text: \code{--sv-threshold}) \\
-\code{--region} & all & restrict tagging to \code{chrom}, \code{chrom:start} or \code{chrom:start-end} \\
-\code{--log} & off & write a per-read record of the tagging decision \\
-\code{--cram} & off & write CRAM instead of BAM \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\begin{table}[h]
-\caption{\textbf{Parameters of \code{longphase compare}.} The first VCF on the command line is the truth set and every further VCF is a query, so several tools can be scored against one truth set in a single run.}
-\label{tab:compareparams}
-\small
-\begin{tabular}{@{}L{4.2cm} c L{8.3cm}@{}}
-\toprule
-Parameter & Default & Meaning \\
-\midrule
-\code{-o, --out-prefix} & \code{compare\_result} & prefix of the output TSV report \\
-\code{-t, --threads} & 1 & threads for the per-block switch and Hamming computation \\
-\code{-n, --names} & -- & data-set names used in the report, in the order of the VCFs \\
-\code{-s, --sample} & first in VCF & sample column to compare \\
-\code{--ignore-sample-name} & off & accept single-sample VCFs whose sample names differ \\
-\code{--only-snvs} & off & drop all non-SNV records before block intersection \\
-\code{--sw-bed} & -- & write one BED record per switch error (chrom, start, end, type, truth PS, query PS, data-set pair) \\
-\code{--regions} & all & restrict the comparison to \code{chrN}, \code{chrN:start-end} or \code{chrN:pos}, 1-based inclusive, comma separated \\
-\code{--regions-bed} & all & restrict the comparison to the intervals of a BED file, 0-based half-open; combines with \code{--regions} \\
 \bottomrule
 \end{tabular}
 \end{table}
