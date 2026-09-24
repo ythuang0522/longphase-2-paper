@@ -199,7 +199,7 @@ a{{color:var(--accent);}}
 </style>
 <div class="wrap">
   <div class="eyebrow">Manuscript draft · built {date} from <code>{commit}</code>{' (uncommitted edits present)' if dirty else ''}</div>
-  <h1>Co-phasing of genetic and epigenetic variation with learned error detection improves long-read haplotypes</h1>
+  <h1>Uncertainty-aware haplotype phasing of genetic and epigenetic variation from long reads</h1>
   <div class="haps" aria-hidden="true"><span class="h1"></span><span class="h2"></span></div>
   <p class="sub">LongPhase 2 co-phases SNVs, small indels, structural variants and 5mC in one weighted phasing graph, calibrates every read observation by base quality and sequence context, and scores each phased variant with a graph neural network that unphases, never flips, the assignments it predicts to be wrong. Benchmarked on HG002 nanopore R10.4.1 at 10–60× against the GIAB v4.2.1 and T2T-HG002 v5.0q truth sets. Items in red are the facts only the authors can supply before submission.</p>
   <div class="actions">

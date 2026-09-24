@@ -36,7 +36,7 @@
 %  (a) Learned phase-error detection enables accurate co-phasing of variants and methylation from long reads
 %  (b) LongPhase 2 co-phases genetic and epigenetic variation and detects unreliable haplotype assignments
 %  (c) Evidence calibration and learned error detection yield accurate long-read haplotypes
-\title{Co-phasing of genetic and epigenetic variation with learned error detection improves long-read haplotypes}
+\title{Uncertainty-aware haplotype phasing of genetic and epigenetic variation from long reads}
 
 \author{%
 Jyun-Hong Lin$^{1}$, Yang-Ming Yeh$^{2}$, Yao-Ting Huang$^{1,\ast}$\\[4pt]
@@ -52,7 +52,7 @@ Jyun-Hong Lin$^{1}$, Yang-Ming Yeh$^{2}$, Yao-Ting Huang$^{1,\ast}$\\[4pt]
 \maketitle
 
 \begin{abstract}
-Long reads allow haplotypes to be phased from a single sample, but read-based phasers weigh every read observation alike, mostly ignore evidence other than single-nucleotide variants and report phase as a binary state, so switch errors pass unnoticed downstream. Here we present \toolname, which co-phases SNVs, small indels, structural variants and allele-specific methylation in one graph, weights each observation by base quality and sequence context, and assigns every phased variant an uncertainty score. A graph neural network then unphases, rather than flips, the variants it predicts to be misphased. On HG002 nanopore data at 10--60$\times$ coverage, scored against a telomere-to-telomere truth set, \toolname makes 2.6- to 5-fold fewer switch errors than WhatsHap and HapCUT2 (1.1- to 1.3-fold under GIAB v4.2.1) and runs six- to eightfold faster at 60$\times$; co-phasing lengthens haplotype blocks by 40\%. \toolname is a drop-in replacement for the LongPhase versions embedded in Clair3, ClairS, Severus and EPI2ME.
+Long reads allow haplotypes to be phased from a single sample, but read-based phasers weigh every read observation alike, mostly ignore evidence other than single-nucleotide variants and report phase as a binary state, leaving switch errors to pass unnoticed downstream. Here we present \toolname, which co-phases SNVs, small indels, structural variants and allele-specific methylation in one graph, weights each observation by base quality and sequence context, and assigns every phased variant an uncertainty score. A graph neural network then unphases, rather than flips, the variants it predicts to be misphased. On HG002 nanopore data at 10--60$\times$ coverage, scored against a telomere-to-telomere truth set, \toolname makes 2.9- to 4.8-fold fewer switch errors than WhatsHap and HapCUT2 (1.1- to 1.7-fold under GIAB v4.2.1) and runs six- to eightfold faster at 60$\times$; co-phasing lengthens haplotype blocks by 40\%. \toolname is a drop-in replacement for the LongPhase versions embedded in Clair3, ClairS, Severus and EPI2ME.
 \end{abstract}
 
 \section*{Introduction}
@@ -62,10 +62,10 @@ Long reads allow haplotypes to be phased from a single sample, but read-based ph
   \centering
   \includegraphics[width=\textwidth]{fig1_overview}
   \caption{\textbf{Overview of \toolname.}
-  \textbf{a}, Heterogeneous molecular evidence (SNVs, small indels, structural variants and 5mC calls) from the same long reads is integrated into a single haplotype-resolution problem. Alleles are coloured by the haplotype of the read that carries them; at the fifth variant two reads (3 and 4) carry the allele of the other haplotype.
-  \textbf{b}, Weighted phasing graph. Allele nodes are connected by read-supported edges; evidence is weighted by base quality and sequence-context reliability (homopolymers, tandem repeats, miscalled heterozygous sites in copy-number-altered regions) before multi-neighbour haplotype voting and read-based correction. In the sequence-context inset each context shows the haplotype~1 (blue) over the haplotype~2 (red) sequence around an A/CA indel: the insertion is reliable in unique sequence and down-weighted inside a CA repeat, where its placement is ambiguous. In the reweighted graph, down-weighted alleles are outlined with dashes, their edges become low-confidence (dashed) and miscalled variants in the CNV are filtered.
-  \textbf{c}, Uncertainty correction. Each variant receives a phasing-uncertainty score (bars; Methods), and the most uncertain variants (orange) are passed to a graph neural network. Node features (for example phase evidence, variant type and genomic context) and edge features (for example link strength, genomic distance and block membership) of the window around the trigger variant (highlighted) enter two parallel branches: local message passing, in which each node attends to its neighbours in the phasing graph (GATv2), and global self-attention, in which every variant in the window attends to every other (Transformer). The two representations ($h_{\mathrm{local}}$, $h_{\mathrm{global}}$) are fused additively together with a skip connection from the layer input $h^{(l)}$, and passed through a feed-forward network with a second skip connection; the layer is repeated four times and a classifier then labels each variant as correctly phased or misphased. Misphased variants are unphased (grey), preserving the genotype. Here reads spanning the unphased variant still link its neighbours (arcs), so the haplotype block stays intact; a block left disconnected by unphasing is split in two. Layer normalization and the classifier head are omitted from the schematic (Methods; Supplementary Fig.~6).
-  \textbf{d}, Outputs: two phased haplotypes carrying the variants of \textbf{a} (SNVs, an SV, a small indel and methylated (filled) or unmethylated (open) CpG sites), the variant unphased in \textbf{c} (grey) with the per-variant uncertainty score, and reads haplotagged by the alleles they carry.}
+  \textbf{a}, SNVs, small indels, SVs and 5mC sites carried by the same long reads enter one phasing problem; alleles are coloured by read haplotype.
+  \textbf{b}, Weighted phasing graph. Read-supported edges link allele nodes, and each observation is weighted by base quality and sequence context; the inset shows an indel down-weighted inside a tandem repeat.
+  \textbf{c}, Each variant receives a phasing-uncertainty score (Methods), and a graph neural network (GATv2 and Transformer layers; Supplementary Fig.~6) classifies the variants around the most uncertain ones. Variants predicted to be misphased are unphased (grey), not flipped.
+  \textbf{d}, Output: phased haplotypes of all four variant classes with per-variant uncertainty, and haplotagged reads.}
   \label{fig:overview}
 \end{figure}
 
@@ -76,7 +76,7 @@ Long reads allow haplotypes to be phased from a single sample, but read-based ph
   \centering
   \includegraphics[width=\textwidth]{fig2_snv_comparison}
   \caption{\textbf{SNV phasing accuracy, block length and runtime compared with WhatsHap and HapCUT2.}
-  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$; SNV-only phasing of identical Clair3 calls; scored against the benchmark derived from the complete diploid T2T-HG002 assembly (v5.0q). Points at 10--20$\times$ are means of independent down-sampling replicates ($n=10$, except $n=9$ at 10$\times$); the shaded region (30--60$\times$) is a single replicate.
+  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$; SNV-only phasing of identical Clair3 calls; scored against the benchmark derived from the complete diploid T2T-HG002 assembly (v5.0q). Points at 10--20$\times$ are means of independent down-sampling replicates ($n=10$, except $n=9$ at 10$\times$ for \toolname); the shaded region (30--60$\times$) is a single replicate.
   \textbf{a}, Fraction of benchmark heterozygous SNVs phased.
   \textbf{b}, Switch error rate.
   \textbf{c}, Block-wise Hamming distance.

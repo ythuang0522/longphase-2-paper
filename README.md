@@ -38,16 +38,17 @@ Revised 2026-09-24 for Nature Methods print requirements: no text below 5 pt at 
 terminology and indel-as-sequence-box glyph throughout; panel d is the phased result of the
 panel a reads (same seven columns); phasing-entropy track with threshold added to c and a
 per-variant uncertainty strip and the unphased SNV to d; dashed low-confidence
-edges and a down-weighted-allele legend in b; caption now says a phase set is split only if
-unphasing disconnects it (`GNNProcess.cpp:540`, branch `JH`); panel a has a heading and tighter
+edges and a down-weighted-allele legend in b; the block split when unphasing disconnects a phase set (`GNNProcess.cpp:540`, branch `JH`) is
+now stated only in Methods, the Fig. 1 legend having been cut to ~100 words (2026-09-24); panel a has a heading and tighter
 reads, no panel carries a heading, the sequence-context inset is coloured by haplotype, and the compacted top half brings the
 canvas to 1680×1046. Plain wording in the figure: "phasing uncertainty" for phasing entropy
 (the caption names PE once and points to Methods), "haplotype block" / "block membership"
 instead of phase set. Wording rule (author, 2026-09-24): headings and captions say "phasing
 uncertainty" (entropy is only one measure of it); body text says "haplotype block" for phase set
 and keeps "phasing entropy" only where a sentence is about the metric's value (Results, Fig. 6c).
-Panel c shows the uncertainty bars with a y-axis label and no threshold line, and three example
-node and edge features each followed by an ellipsis (the model has 31 node features). Open polish: the PDF still embeds five Type 3 fonts (rsvg-convert output).
+Panel c shows the uncertainty bars with a y-axis label and no threshold line, and node (31) and
+edge (6) feature-vector strips segmented by feature group (16/6/5/4 and 3/1/1/1, from
+`GNNProcess.cpp` nf[0..30] and ep[0..5] and the Methods grouping). Open polish: the PDF still embeds five Type 3 fonts (rsvg-convert output).
 
 ## Before submission
 
@@ -228,6 +229,27 @@ SV/5mC). Author decisions, 2026-09-24, not to be re-raised: no Zenodo/DOI deposi
 (the public repository is the only deposit for code, data and tables), and no
 `longphase compare` vs `whatshap compare` validation in the paper.
 
+**Introduction rewrite and Discussion alignment, 2026-09-24 (later pass).** Supersedes
+the novelty and HiPhase statements in the entry below. LongHap (Pfennig & Akey, bioRxiv
+2026; `pfennig2026longhap`) co-phases SNVs, indels and SVs and adds 5mC in a final
+gap-bridging stage, so the four-class novelty sentence was removed from Introduction and
+Discussion; both now contrast joint (LongPhase 2) with post-hoc use of methylation
+(NanoMethPhase, MethPhaser, HapBridge, LongHap). WhatsHap is stated to co-phase small and
+large indels (`martin2016whatshap`), and the HiPhase "HiFi-only joint indel+SV" claim is
+gone. First limitation is now 5mC only; the indel-noise sentence was dropped. Third
+limitation: LongPhase 1.x per-read `PQ`/`haplotag --log` support described (issues #19,
+#28; not cited); GCphase (not learning-based) replaced by NeurHap (`xue2022neurhap`) in
+Introduction and Discussion. Benchmark paragraph rewritten from Hansen 2026 and Wagner
+2022 (v4.2.1 omits 12% of autosomes; phase on 74% of heterozygous variants, from
+trio/WhatsHap agreement; 85→92% coverage exposed 8× more false negatives). Downstream
+tools now cite both WhatsHap and LongPhase; the citing-study clause and the only
+main-text pointer to Supplementary Table 6 were removed, so Table 6 is now unreferenced
+from the main text (open). Final paragraph cut to the four answers to the limitations,
+with no numbers and no Fig. 1 reference. Discussion: v4.2.1 exclusions/700 Mb moved to
+the Introduction; added 5mC limitations (male LCL autosomes only, tissue dependence,
+X inactivation) and the missing comparison with methylation-aware phasers. Word counts:
+Introduction ~1,000, Discussion ~1,300.
+
 **Introduction and abstract review, 2026-09-24.** Novelty claim kept as "no
 *published* method places all four evidence classes in one model" (author decision,
 not to be re-raised): the indel/5mC co-phasing in LongPhase releases 1.5–1.7 is
@@ -247,6 +269,32 @@ does not); the HapCUT2-pruning contrast is stated as an expectation, with an
 `[optional experiment]` comment for the matched comparison. The co-phasing Results
 heading ("up to 75% but raises the SNV switch error rate") was left as is: it
 describes uncorrected co-phasing and is accurate.
+
+**Competitor tables, 2026-09-24.** JHL pushed `20260924_v50q.txt`, `20260924_GIAB421.txt`
+and `20260924_cophase_v50q.txt` (`longphase compare` output; WhatsHap 2.8 default and
+`--only-snvs`, HapCUT2 1.3.4, and GNN-corrected LongPhase 2 SNV-only, +indel, +SV and
++indel+SV; ten replicates at 10–20×, seed 10 included). The SNV-only corrected LongPhase 2
+rows are identical to `GNN source/sw_longphase_v2.0.2_SNVonly_GNN.log` plus the new 10×
+seed-10 row; the four-class (with 5mC) configuration is not in the new tables. All WhatsHap
+(`--only-snvs`) and HapCUT2 values in Results, Discussion, Introduction and abstract are now
+exact, and fold-changes are recomputed from rates: with correction 2.9–3.7× vs WhatsHap and
+3.3–4.8× vs HapCUT2 (v5.0q, 10–60×); 1.1–1.7× under v4.2.1 (1.1–1.3× at 30–60×); without
+correction 1.9–2.5× and 2.2–3.3×. LongPhase 2 values stay on the n = 9 tables at 10× so
+that corrected and uncorrected remain paired; WhatsHap/HapCUT2 are n = 10 (Methods, Fig. 2
+legend updated). Still plot-read: LongPhase 1.0, uncorrected LongPhase 2 under v4.2.1,
+runtimes. Unused so far: default WhatsHap phases indels (32.9–49.8% of benchmark indels vs
+30.5–45.4% for LongPhase 2) at far higher SNV switch error and Hamming distance (9–13%),
+which would support an indel co-phasing comparison.
+
+**Style pass, 2026-09-24 (author request).** Removed every ", so " clause (58 in rendered
+text, including `\todo`s; `%` comments untouched) from `sections/*.tex`, `main.tex` and
+`Supplementary.tex`, rewriting each as a subordinate "because" clause, a semicolon, a new
+sentence or a participle. Also cut rhetorical AI-style phrasing: "is not free", "Perhaps
+the most consequential finding", "designed to complement…, not to replace it", "conditions
+on something else", "one might object", "an expectation, not a result", "a trade-off we
+have accepted rather than solved", "The reason is practical.", "honestly", "in any case",
+"on the same footing", "altogether … in the meantime", "actually". Wording only; no claim
+or number changed.
 
 Figure numbers currently come from `LongPhaseGNN_0902_2-1.pptx` (slides 7–11) and are
 approximate to plot resolution; replace with exact values from the `longphase compare`
