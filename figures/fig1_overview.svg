@@ -232,7 +232,9 @@
 <line x1="786.0" y1="292.0" x2="778.0" y2="280.0" stroke="#29B6E8" stroke-width="2.6" stroke-linecap="round" stroke-opacity="1.0"/>
 <line x1="800.0" y1="290.0" x2="800.0" y2="276.0" stroke="#29B6E8" stroke-width="2.6" stroke-linecap="round" stroke-opacity="1.0"/>
 <line x1="814.0" y1="292.0" x2="822.0" y2="280.0" stroke="#29B6E8" stroke-width="2.6" stroke-linecap="round" stroke-opacity="1.0"/>
-<text x="702.0" y="362.0" class="lb" fill="#103A82" text-anchor="start">Phred quality</text>
+<line x1="710.0" y1="350.0" x2="710.0" y2="430.0" stroke="#103A82" stroke-width="2" stroke-linecap="butt" stroke-opacity="1.0"/>
+<text x="688.0" y="390.0" class="sm" fill="#103A82" text-anchor="middle" transform="rotate(-90 688 390)">Phred</text>
+<text x="705.0" y="390.0" class="sm" fill="#103A82" text-anchor="middle" transform="rotate(-90 705 390)">quality</text>
 <rect x="719.0" y="378.0" width="34.0" height="52.0" rx="1.5" fill="#6F8090" fill-opacity="1.0" stroke="none" stroke-width="1"/>
 <rect x="783.0" y="410.0" width="34.0" height="20.0" rx="1.5" fill="#F2A33C" fill-opacity="1.0" stroke="none" stroke-width="1"/>
 <rect x="847.0" y="386.0" width="34.0" height="44.0" rx="1.5" fill="#6F8090" fill-opacity="1.0" stroke="none" stroke-width="1"/>
@@ -428,17 +430,33 @@
 <text x="267.0" y="859.5" class="nt" fill="#1687C9" text-anchor="middle" font-size="21.5">T</text>
 <circle cx="267.0" cy="910.0" r="19" fill="#ffffff" stroke="#DC2B23" stroke-width="2.6"/>
 <text x="267.0" y="917.5" class="nt" fill="#DC2B23" text-anchor="middle" font-size="21.5">C</text>
-<text x="40.0" y="972.0" class="h2" fill="#103A82" text-anchor="start">Node features</text>
-<text x="40.0" y="996.0" class="sm" fill="#103A82" text-anchor="start">Phase evidence</text>
-<text x="40.0" y="1015.0" class="sm" fill="#103A82" text-anchor="start">Variant type</text>
-<text x="40.0" y="1034.0" class="sm" fill="#103A82" text-anchor="start">Genomic context</text>
-<text x="40.0" y="1053.0" class="sm" fill="#103A82" text-anchor="start">…</text>
+<text x="40.0" y="972.0" class="lbb" fill="#103A82" text-anchor="start">31 node features</text>
+<rect x="40.0" y="980.0" width="72.3" height="13.0" rx="0" fill="#103A82" fill-opacity="1.0" stroke="#ffffff" stroke-width="1.2"/>
+<rect x="112.3" y="980.0" width="27.1" height="13.0" rx="0" fill="#3F6DB5" fill-opacity="1.0" stroke="#ffffff" stroke-width="1.2"/>
+<rect x="139.4" y="980.0" width="22.6" height="13.0" rx="0" fill="#86A6D6" fill-opacity="1.0" stroke="#ffffff" stroke-width="1.2"/>
+<rect x="161.9" y="980.0" width="18.1" height="13.0" rx="0" fill="#C9D7EE" fill-opacity="1.0" stroke="#ffffff" stroke-width="1.2"/>
+<rect x="40.0" y="1000.0" width="11.0" height="11.0" rx="1.5" fill="#103A82" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<text x="56.0" y="1010.0" class="sm" fill="#103A82" text-anchor="start">Phase evidence</text>
+<rect x="40.0" y="1017.0" width="11.0" height="11.0" rx="1.5" fill="#3F6DB5" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<text x="56.0" y="1027.0" class="sm" fill="#103A82" text-anchor="start">Genomic context</text>
+<rect x="40.0" y="1034.0" width="11.0" height="11.0" rx="1.5" fill="#86A6D6" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<text x="56.0" y="1044.0" class="sm" fill="#103A82" text-anchor="start">Graph structure</text>
+<rect x="40.0" y="1051.0" width="11.0" height="11.0" rx="1.5" fill="#C9D7EE" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<text x="56.0" y="1061.0" class="sm" fill="#103A82" text-anchor="start">Variant type</text>
 <path d="M104 954 C108 946 118 940 125 932" fill="none" stroke="#103A82" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aNavy)"/>
-<text x="190.0" y="972.0" class="h2" fill="#103A82" text-anchor="start">Edge features</text>
-<text x="190.0" y="996.0" class="sm" fill="#103A82" text-anchor="start">Link strength</text>
-<text x="190.0" y="1015.0" class="sm" fill="#103A82" text-anchor="start">Genomic distance</text>
-<text x="190.0" y="1034.0" class="sm" fill="#103A82" text-anchor="start">Block membership</text>
-<text x="190.0" y="1053.0" class="sm" fill="#103A82" text-anchor="start">…</text>
+<text x="200.0" y="972.0" class="lbb" fill="#103A82" text-anchor="start">6 edge features</text>
+<rect x="200.0" y="980.0" width="60.0" height="13.0" rx="0" fill="#46566A" fill-opacity="1.0" stroke="#ffffff" stroke-width="1.2"/>
+<rect x="260.0" y="980.0" width="20.0" height="13.0" rx="0" fill="#7C8DA0" fill-opacity="1.0" stroke="#ffffff" stroke-width="1.2"/>
+<rect x="280.0" y="980.0" width="20.0" height="13.0" rx="0" fill="#AEBBC8" fill-opacity="1.0" stroke="#ffffff" stroke-width="1.2"/>
+<rect x="300.0" y="980.0" width="20.0" height="13.0" rx="0" fill="#D5DDE5" fill-opacity="1.0" stroke="#ffffff" stroke-width="1.2"/>
+<rect x="200.0" y="1000.0" width="11.0" height="11.0" rx="1.5" fill="#46566A" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<text x="216.0" y="1010.0" class="sm" fill="#103A82" text-anchor="start">Read support</text>
+<rect x="200.0" y="1017.0" width="11.0" height="11.0" rx="1.5" fill="#7C8DA0" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<text x="216.0" y="1027.0" class="sm" fill="#103A82" text-anchor="start">Distance</text>
+<rect x="200.0" y="1034.0" width="11.0" height="11.0" rx="1.5" fill="#AEBBC8" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<text x="216.0" y="1044.0" class="sm" fill="#103A82" text-anchor="start">Allele match</text>
+<rect x="200.0" y="1051.0" width="11.0" height="11.0" rx="1.5" fill="#D5DDE5" fill-opacity="1.0" stroke="none" stroke-width="1"/>
+<text x="216.0" y="1061.0" class="sm" fill="#103A82" text-anchor="start">Block membership</text>
 <path d="M238 954 C240 944 244 934 244 918" fill="none" stroke="#103A82" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="1.0" marker-end="url(#aNavy)"/>
 <rect x="386.0" y="708.0" width="510.0" height="293.0" rx="12" fill="none" fill-opacity="1.0" stroke="#C9D2DC" stroke-width="1.6"/>
 <rect x="378.0" y="716.0" width="510.0" height="293.0" rx="12" fill="none" fill-opacity="1.0" stroke="#C9D2DC" stroke-width="1.6"/>

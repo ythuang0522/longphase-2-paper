@@ -17,8 +17,8 @@ Layout follows the 2026-09-18 redesign raster:
      (down-weighted C and CA dashed, their edges low-confidence dashed, filtered
      CNV variants); grey cross-links are left unstyled.
   c  per-variant phasing uncertainty bars (y-axis label; trigger orange, no
-     threshold line) above the window; three example node and edge features
-     each, then an ellipsis, below it -> local message passing (star;
+     threshold line) above the window; node (31) and edge (6) feature-vector
+     strips below it, segmented by feature group -> local message passing (star;
      GATv2) and global self-attention over the window (token row; Transformer)
      -> feature fusion (with a skip connection from the input h(l)) ->
      feed-forward network (with a skip connection) -> phase-confidence
@@ -238,7 +238,9 @@ snp(830 + BX, 318, "C", RED, r=20, fs=22.5, dash="6 4.5")
 box(894 + BX, 318, "CA", RED, w=48, h=36, fs=20)
 for x1, y1, x2, y2 in ((816, 292, 808, 280), (830, 290, 830, 276), (844, 292, 852, 280)):
     line(x1 + BX, y1, x2 + BX, y2, CYAN, 2.6)            # rays: an uncertain call
-text(732 + BX, 362, "Phred quality")
+line(740 + BX, 350, 740 + BX, 430, NAVY, 2, cap="butt")                 # y-axis, labelled like panel c
+for dx, t in ((-22, "Phred"), (-5, "quality")):
+    text(740 + BX + dx, 390, t, cls="sm", anchor="middle", extra=f' transform="rotate(-90 {740 + BX + dx} 390)"')
 rect(749 + BX, 378, 34, 52, UNPH, rx=1.5); rect(813 + BX, 410, 34, 20, ORANGE, rx=1.5); rect(877 + BX, 386, 34, 44, UNPH, rx=1.5)
 line(740 + BX, 430, 920 + BX, 430, NAVY, 2, cap="butt")
 
@@ -329,14 +331,35 @@ for dx, s in ((-20, "Phasing"), (-3, "uncertainty")):
     text(AX + dx, 765, s, cls="sm", anchor="middle", extra=f' transform="rotate(-90 {AX + dx} 765)"')
 window_graph(XS, YTc, YBc, "ATCGT", "GCTAC", r=19, fs=21.5, centre=CTR)
 
-# --- node and edge features of the window (below it) -------------------------
-text(40, 972, "Node features", cls="h2")
-for k, s in enumerate(("Phase evidence", "Variant type", "Genomic context", "…")):
-    text(40, 996 + 19 * k, s, cls="sm")
+# --- node and edge feature vectors (below the window) ------------------------
+# One strip per vector, segments sized by the number of features in each group
+# (Methods; Supplementary Tables 1-2): node 16 phase evidence + 6 genomic
+# context + 5 graph structure + 4 variant type = 31, grouped as in Supplementary
+# Table 1 (rel_vote_depth, nf[24], counts as phase evidence); edge 3 read
+# support (weight, log_weight, weight_ratio) + distance + allele match + block
+# relation = 6, as in Supplementary Table 2 (GNNProcess.cpp nf[0..30], ep[0..5]).
+NODE_RAMP = ("#103A82", "#3F6DB5", "#86A6D6", "#C9D7EE")
+EDGE_RAMP = ("#46566A", "#7C8DA0", "#AEBBC8", "#D5DDE5")
+
+def feature_strip(x0, title, groups, ramp, width):
+    text(x0, 972, title, cls="lbb")
+    total, x = sum(n for n, _ in groups), x0
+    for (n, _), col in zip(groups, ramp):
+        w = width * n / total
+        rect(x, 980, w, 13, col, rx=0, stroke="#ffffff", sw=1.2)
+        x += w
+    for k, ((_, name), col) in enumerate(zip(groups, ramp)):
+        y = 1010 + 17 * k
+        rect(x0, y - 10, 11, 11, col, rx=1.5)
+        text(x0 + 16, y, name, cls="sm")
+
+feature_strip(40, "31 node features",
+              ((16, "Phase evidence"), (6, "Genomic context"), (5, "Graph structure"), (4, "Variant type")),
+              NODE_RAMP, 140)
 path(f"M104 954 C108 946 118 940 {XS[1] - 4} {YBc + 22}", stroke=NAVY, w=1.6, arrow="aNavy")
-text(190, 972, "Edge features", cls="h2")
-for k, s in enumerate(("Link strength", "Genomic distance", "Block membership", "…")):
-    text(190, 996 + 19 * k, s, cls="sm")
+feature_strip(200, "6 edge features",
+              ((3, "Read support"), (1, "Distance"), (1, "Allele match"), (1, "Block membership")),
+              EDGE_RAMP, 120)
 path(f"M238 954 C240 944 244 934 244 {YBc + 8}", stroke=NAVY, w=1.6, arrow="aNavy")
 
 # --- repeated GPS layers: stacked frame around the block ---------------------
