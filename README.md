@@ -23,7 +23,7 @@ Build: `make` (latexmk + `naturemag.bst`, both in TeX Live 2025; `rsvg-convert` 
 
 Shared hub (compiled PDFs, page reader, figure gallery, open items):
 https://claude.ai/artifact/339iTVSwod8JqKgQASYfZm — rebuilt by `python3 notes/hub/build_hub.py`
-after `make` and republished to the same URL (see `CLAUDE.md`).
+and republished to the same URL only on request (see `CLAUDE.md`).
 
 Figure 1 is generated entirely by `figures-source/make_fig1.py` (all four panels, house
 style of the original vector master), redrawn on 2026-09-18 to the new design: single-row
@@ -34,20 +34,30 @@ feature-labelled window → local message passing (GATv2 star) + global self-att
 framed as repeated layers → phase-confidence refinement; layer norm and classifier head
 left to the caption and Supplementary Fig. 6 (c); haplotypes with SV, indel and
 CpG alleles plus haplotagged reads (d). Edit the script, not the SVG.
+Revised 2026-09-24 for Nature Methods print requirements: no text below 5 pt at 180 mm; SNV
+terminology and indel-as-sequence-box glyph throughout; panel d is the phased result of the
+panel a reads (same seven columns); phasing-entropy track with threshold added to c and a
+per-variant uncertainty strip and the unphased SNV to d; dashed low-confidence
+edges and a down-weighted-allele legend in b; caption now says a phase set is split only if
+unphasing disconnects it (`GNNProcess.cpp:540`, branch `JH`); panel a has a heading and tighter
+reads, no panel carries a heading, the sequence-context inset is coloured by haplotype, and the compacted top half brings the
+canvas to 1680×1046. Plain wording in the figure: "phasing uncertainty" for phasing entropy
+(the caption names PE once and points to Methods), "haplotype block" / "block membership"
+instead of phase set. Wording rule (author, 2026-09-24): headings and captions say "phasing
+uncertainty" (entropy is only one measure of it); body text says "haplotype block" for phase set
+and keeps "phasing entropy" only where a sentence is about the metric's value (Results, Fig. 6c).
+Panel c shows the uncertainty bars with a y-axis label and no threshold line, and three example
+node and edge features each followed by an ellipsis (the model has 31 node features). Open polish: the PDF still embeds five Type 3 fonts (rsvg-convert output).
 
 ## Before submission
 
-Red `\todo{}` marks are reserved for what blocks submission: 37 remain after the
-2026-09-21 triage and source sweep (main text 6, Methods 21, Supplementary 10),
-down from 65 on 2026-09-20. That triage sorted them into six work items: cut the release (4 marks),
-the missing WhatsHap/HapCUT2/LongPhase 1.0 and runtime tables (13), the sequencing
-and tool metadata table (10, mostly read provenance), deposition (3), the Fig. 6
-definitions and provenance (3), and the constant justifications including the
-Supplementary Fig. 9 produce-or-remove decision (4). All but a handful are one-line
-facts only the authors can supply (versions, accessions, command lines, hardware,
-seeds; seven of them are cells of Supplementary Table 5) plus the plot-read
-WhatsHap/HapCUT2/LongPhase 1.0 numbers, the runtime figure, the Fig. 6 definitions,
-and the data/code deposition items.
+Red `\todo{}` marks are reserved for what blocks submission: 26 remain after the
+2026-09-24 pass (main text 6, Methods 15, Supplementary 5), down from 65 on 2026-09-20.
+What is left: the missing WhatsHap/HapCUT2/LongPhase 1.0 and runtime tables (the
+largest block), the release and training-code deposition, the Fig. 6 definitions and
+plotting script, the constant justifications and the Supplementary Fig. 9 decision, the
+ten seed values, the chr1-22 derivation of the v5.0q VCF, source data, and one new flag
+on the Clair3 model (below).
 
 Everything else was moved out of the rendered text into `%  [tag]` source comments
 next to the paragraph it concerns (grep `^%  \[` in `sections/*.tex` and
@@ -112,6 +122,31 @@ flip. Do not substitute current releases: the run predates several of them.
 has a single 1.0 tag, `v1.0` (`fe8c1fd`, 2022-03-09), so the old "1.0.x" was simply
 wrong. Fixed in Methods and Supplementary Table 5; that closes both marks.
 
+**2026-09-24, author decisions and read provenance.** The authors confirmed minimap2
+2.30, samtools 1.23.1 and Clair3 v2.0.1 with `r1041_e82_400bps_sup_v500` (inferred
+marks removed), 60 training runs, and that the v4.2.1 benchmark BED was applied
+(chr1-22); the Zenodo data deposition is dropped at their request, and the code
+availability todos no longer ask for Zenodo DOIs.
+
+The previous LongPhase papers do not describe these reads: LongPhase 1.0 (2022) used
+the 2019 UCSC ultra-long PromethION HG002 data (R9.4.1), and LongPhase-S and
+LongPhase-TO use cancer cell lines only. The provenance was recovered instead from
+the reads of `demo/demo.bam` in the source repository, whose basecaller tags name
+flow cells PAG65784 and PAG68757, 4 kHz sampling, November 2022 start times and 5mC/5hmC
+calls. Those are the two HG002 flow cells of ONT's open-data release
+`giab_lsk114_2022.12` (FLO-PRO114M, SQK-LSK114, 400 bps). ONT's workflow report for its
+`hg002_sup_v4` output basecalls with Dorado `dna_r10.4.1_e8.2_400bps_sup@v4.0.0` +
+`5mCG_5hmCG@v2`, and 12 of 12 demo read IDs match that output with identical read
+lengths. Read N50 29.2/29.4 kb (MinKNOW run reports); mean autosomal depth 70.4x (ONT's
+released mosdepth distribution); licence CC BY-NC 4.0. All of it is now in Methods,
+Data availability and Supplementary Table 5.
+
+**New flag:** the confirmed Clair3 model `r1041_e82_400bps_sup_v500` is trained on
+5 kHz Dorado v5.0.0 SUP data, but these reads are a 4 kHz `sup@v4.0.0` basecall. The
+matched model is `r1041_e82_400bps_sup_v400` (Rerio), or `sup_v410` among those bundled
+with Clair3. The earlier `sup_v500` inference rested on the wrong (2025.01) read-source
+hypothesis. Flagged inline in Methods.
+
 The reasoning behind the window: nothing in `GNN source/`, this repo or
 `../longphase` records the minimap2, samtools or Clair3 version. The dating
 argument, kept as a `%  [note on versions]` comment above
@@ -172,6 +207,26 @@ The critical ones:
    uppercase panel letters and, in Fig. 6, a caption paragraph inside the artwork.
    Regenerate them as vector figures from the `longphase compare` TSVs: lowercase bold
    panel letters, no titles or "(↑ better)" annotations, s.d. bands for 10–20×.
+
+**Methods review, 2026-09-24 (text-only fixes).** Fixed SV/indel/5mC observation
+qualities stated as numbers (60; 30 for reference-allele SV reads, which still vote at
+weight 1 under the default `--baseQuality 12`; `PhasingGraph.cpp:838–862`); modcall
+stated to read only the 5mC (`m`) probability, so 5hmC counts as unmethylated
+(`ModCallParsingBam.cpp:169`); the flip/unphase/break labels named in Methods;
+cross-tool comparisons stated as SNV-only LongPhase 2 (WhatsHap/HapCUT2 *can* phase
+indels); HapCUT2 pruning added to the command-line todo; the generalization
+limitations moved from Methods ("Hold-out design") to the Discussion; asides cut and
+procedural tense made past. Still open from that review, needing decisions or new
+analysis (the v5.0q-without-BED item was a text error: per the authors, both truth
+sets were scored within their benchmark BEDs; Methods corrected 2026-09-24): the
+selection criterion S (P > 0.5) contradicts the deployed 0.30 threshold, and test
+accuracy 0.941 is below the all-correct baseline 0.970; no statement that test
+chromosomes were unused during architecture search; GNN applied outside its training
+configuration (SNV-only, 30–60×); no dispersion at 30–60× (per-chromosome bootstrap
+possible); SV/5mC phased-fraction denominator undefined (the truth sets carry no
+SV/5mC). Author decisions, 2026-09-24, not to be re-raised: no Zenodo/DOI deposit
+(the public repository is the only deposit for code, data and tables), and no
+`longphase compare` vs `whatshap compare` validation in the paper.
 
 **Introduction and abstract review, 2026-09-24.** Novelty claim kept as "no
 *published* method places all four evidence classes in one model" (author decision,

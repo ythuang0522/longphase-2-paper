@@ -28,7 +28,8 @@ Toolchain on this machine: TeX Live 2025 (`latexmk`, `texcount`, `naturemag.bst`
 
 The compiled manuscript is shared at **https://claude.ai/artifact/339iTVSwod8JqKgQASYfZm** — the
 same pattern as `../../multimodal/multimodal-diagnosis-paper/notes/hub/build_hub.py`. The URL never
-changes. After any change that alters a PDF or a figure, resync it:
+changes. **Publish it only when the user explicitly asks.** Do not rebuild or republish it
+as a side effect of editing the manuscript, rebuilding a PDF or committing. When asked:
 
 1. `make`, then confirm `grep -c undefined main.log Supplementary.log` prints 0 for both.
 2. `python3 notes/hub/build_hub.py` → writes `hub-build/` (gitignored): `index.html`, both PDFs,
@@ -41,9 +42,10 @@ changes. After any change that alters a PDF or a figure, resync it:
    by the script; add `null` entries for any page path the listing shows but the new build lacks.
    Omit `icon` on a redeploy. Report the link and version number.
 
-Keep the hub's stat boxes, flags and captions in `build_hub.py` in step with the manuscript (figure
-count, supplementary counts, the "Open before submission" items from README). Needs poppler
-(`pdfinfo`, `pdftoppm`) and `rsvg-convert`.
+Before such a publish, check that the stat boxes, flags and captions in `build_hub.py` match the
+manuscript (figure count, supplementary counts, the "Open before submission" items from README).
+If the publish is refused because the live version has not been viewed, do not pass `force: true`
+without the user's explicit go-ahead. Needs poppler (`pdfinfo`, `pdftoppm`) and `rsvg-convert`.
 
 ## Manuscript conventions
 

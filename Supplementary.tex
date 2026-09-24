@@ -378,19 +378,16 @@ Export & ONNX opset 17, dynamic $N$; base64 float32 blob compiled into the binar
 \toprule
 Item & Version & Notes \\
 \midrule
-HG002 nanopore R10.4.1 reads & \todo{--} & \todo{flow cell, kit, basecaller model, source} \\
+HG002 nanopore R10.4.1 reads & ONT \code{giab\_lsk114\_}\allowbreak\code{2022.12} & FLO-PRO114M, SQK-LSK114, 4~kHz; Dorado \code{sup@v4.0.0} with \code{5mCG\_5hmCG@v2} \\
 Reference & GRCh38 & \code{GCA\_000001405.15\_GRCh38\_}\allowbreak\code{no\_alt\_analysis\_set}; no-alt analysis set, no decoys \\
-minimap2 & 2.30\,\todo{inferred} & \code{-ax map-ont -y} \\
-Clair3 & 2.0.1\,\todo{inferred} & SNV and indel calls; model \code{r1041\_e82\_400bps\_}\allowbreak\code{sup\_v500}\,\todo{inferred} \\
+minimap2 & 2.30 & \code{-ax map-ont -y} \\
+Clair3 & 2.0.1 & SNV and indel calls; model \code{r1041\_e82\_400bps\_}\allowbreak\code{sup\_v500} \\
 Sniffles2 & 2.8.0 & \code{--output-rnames} \\
 GIAB v4.2.1 HG002 & v4.2.1 & GRCh38-based small-variant benchmark \\
 T2T-HG002 v1.1 small-variant benchmark\cite{hansen2026q100,giab2025q100} & GIAB v5 draft & projected onto GRCh38; \code{HG002\_GRCh38\_v5.0q\_}\allowbreak\code{smvar.chr1\_22.vcf}; referred to as v5.0q \\
 WhatsHap & 2.8 & \todo{options} \\
 HapCUT2 & 1.3.4 & default parameters \\
 \longphase~1.0 & v1.0 & \code{--ont} \\
-% [note] \todo{inferred} marks a version recovered from release dates rather than
-% from a record of the run; see the version note in Methods. Remove the mark once
-% the authors confirm the value.
 \toolname & \todo{release tag; results come from branch JH, commit cc17fb1} & \code{--ont}; \code{gnn} with defaults \\
 \bottomrule
 \end{tabular}
