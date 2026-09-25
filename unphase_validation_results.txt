@@ -1,0 +1,82 @@
+# GNN-unphased SNVs vs the T2T-HG002 assembly
+# generated: 2026-09-25 16:16 UTC
+
+baseline  : /disk/research/longphase/longphase_60x_1.vcf
+corrected : /disk/research/longphase_gnn/longphase_gnn_60x_1.vcf
+resources : .
+output    : .
+
+[1/5] extracting SNV sites
+      phased in baseline : 2425216
+      removed by GNN     : 56076
+      background sample  : 50000
+[2/5] testing against dip.bed
+[3/5] testing against dip.vcf.gz
+[4/5] summarising
+# GNN-removed SNVs classified by the T2T-HG002 assembly
+variant          3180    5.67%
+hom_wt           3421    6.10%
+unassessed      49475   88.23%
+total           56076
+
+# inside dip.bed: removed vs background
+removed       6601 /   56076   11.77%
+background   46318 /   50000   92.64%
+odds ratio 94.3x depletion in the removed set
+
+[5/5] per-chromosome rates
+chrom      bg_out     bg_n   bg_rate   rm_out     rm_n   rm_rate    ratio
+chr19           1     1130    0.0009       59      138    0.4275    475.0
+chr6           91     3135    0.0290      599      676    0.8861     30.6
+chr2          127     3713    0.0342     1789     1930    0.9269     27.1
+chr14          32     1590    0.0201      177      339    0.5221     26.0
+chr5           87     3184    0.0273      773     1249    0.6189     22.7
+chr4          113     3355    0.0337      902     1188    0.7593     22.5
+chr10         103     2478    0.0416     1374     1530    0.8980     21.6
+chr8          139     2707    0.0513     1707     1872    0.9119     17.8
+chr3          173     3467    0.0499     1931     2410    0.8012     16.1
+chr13         110     1801    0.0611     2193     2268    0.9669     15.8
+chr7          162     2949    0.0549     2376     3060    0.7765     14.1
+chr1          267     3787    0.0705     3422     3877    0.8826     12.5
+chr12         221     2420    0.0913     4362     4374    0.9973     10.9
+chr16         124     1496    0.0829     2278     2660    0.8564     10.3
+chr15         129     1482    0.0870      855     1096    0.7801      9.0
+chr20         136     1219    0.1116     1441     1627    0.8857      7.9
+chr11         348     2639    0.1319    10287    10385    0.9906      7.5
+chr9          289     2342    0.1234     1559     1689    0.9230      7.5
+chr17         168     1512    0.1111      931     1373    0.6781      6.1
+chr22         111      756    0.1468      285      321    0.8879      6.0
+chr21         158      781    0.2023      485      545    0.8899      4.4
+chr18         417     1679    0.2484     6855     6988    0.9810      3.9
+chrX          116      263    0.4411     2744     4006    0.6850      1.6
+chrY           60      115    0.5217       91      475    0.1916      0.4
+
+inside smvar.benchmark.bed: 549 sites
+  no variant 136 (24.77%)
+  variant    413 (75.23%)
+
+# densest 1 Mb bins among unassessed sites (count, chrom, Mb)
+   3223 chr11	52
+   3175 chr11	51
+   2846 chr11	53
+   2102 chr12	36
+   1743 chr18	17
+   1663 chr18	16
+   1652 chr12	35
+   1538 chr2	92
+   1502 chr18	18
+   1225 chr1	123
+   1197 chr13	17
+   1111 chr7	59
+   1083 chr16	37
+   1082 chr18	19
+   1059 chrX	60
+   1043 chr11	54
+    966 chr1	124
+    955 chr16	36
+    953 chr9	43
+    945 chr13	16
+
+done
+  report    : ./unphase_validation_results.txt
+  per-site  : ./unphase_validation_removed_classified.tsv
