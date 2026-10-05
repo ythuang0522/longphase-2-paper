@@ -117,7 +117,10 @@ def single_band(ax, lo=25, hi=65):
     ax.axvspan(lo, hi, color="#F0F0F0", lw=0, zorder=0)
 
 
-def snv_series(tool, key, plat="ONT", covs=COVS):
+PLOT_COVS = [10, 20, 30, 40, 50, 60]   # main/supp line plots; every coverage is in the tables
+
+
+def snv_series(tool, key, plat="ONT", covs=PLOT_COVS):
     xs, m, s = [], [], []
     for c in covs:
         runs = D["snv"][plat][XLSX_TOOL[tool]].get(c)
@@ -128,7 +131,7 @@ def snv_series(tool, key, plat="ONT", covs=COVS):
     return xs, m, s
 
 
-def coph_series(cfg, tool, key, covs=COVS):
+def coph_series(cfg, tool, key, covs=PLOT_COVS):
     if cfg == "SNV":
         return snv_series({"longphase_v2.0.1": "lp", "longphase_v2.1": "lp_gnn"}[tool], key, covs=covs)
     xs, m, s = [], [], []
@@ -147,8 +150,8 @@ def coph_series(cfg, tool, key, covs=COVS):
 STY = {
     "lp_gnn": dict(marker="o", ls="-", mfc=None, dx=0.0),
     "lp":     dict(marker="o", ls="--", mfc="white", dx=0.0),
-    "wh":     dict(marker="D", ls="-", mfc=None, dx=-0.5),
-    "hc":     dict(marker="s", ls="--", mfc="white", dx=0.5),
+    "wh":     dict(marker="D", ls="-", mfc=None, dx=0.0),
+    "hc":     dict(marker="s", ls="--", mfc="white", dx=0.0),
     "margin": dict(marker="^", ls="-", mfc=None, dx=0.0),
     "ralphi": dict(marker="v", ls="-", mfc=None, dx=0.0),
     "gc":     dict(marker="P", ls="-", mfc=None, dx=0.0),
@@ -167,10 +170,14 @@ def thandle(t, label=None):
                   mfc=st["mfc"] or C[t], label=label or NAME[t])
 
 
-def line(ax, xs, m, s, color, ls="-", marker="o", label=None, scale=1.0, mfc=None):
+def line(ax, xs, m, s, color, ls="-", marker="o", label=None, scale=1.0, mfc=None, z=3):
+    """Mean line with markers; replicate s.d. as a light band (zero width for single runs)."""
     m = [v * scale for v in m]; s = [v * scale for v in s]
-    ax.errorbar(xs, m, yerr=s, color=color, ls=ls, marker=marker, ms=2.6,
-                mfc=mfc or color, mew=0.6, elinewidth=0.6, capsize=1.2, label=label, zorder=3)
+    if any(s):
+        ax.fill_between(xs, [a - b for a, b in zip(m, s)], [a + b for a, b in zip(m, s)],
+                        color=color, alpha=0.18, lw=0, zorder=z - 1)
+    ax.plot(xs, m, color=color, ls=ls, marker=marker, ms=2.6, mfc=mfc or color, mew=0.6,
+            label=label, zorder=z)
 
 
 def cov_axis(ax, covs=(10, 20, 30, 40, 50, 60)):
@@ -197,7 +204,7 @@ def save(fig, path):
 # ============================================================ Figure 2 =====
 def fig2():
     """SNV-only phasing on nanopore data: LongPhase 2 (full method) vs other tools."""
-    tools = ["hc", "wh", "lp_gnn"]
+    tools = ["wh", "hc", "lp_gnn"]   # HapCUT2 drawn over WhatsHap, where they coincide
     fig, axs = new_fig(100, 2, 3)
     specs = [
         ("psnv_pct", "Phased SNVs (%)", None, 1),
@@ -267,14 +274,15 @@ def f3_runs(src, cov):
 def fig3():
     """The same SNV-only VCFs under GIAB v4.2.1 and v5.0q."""
     fig, axs = new_fig(100, 2, 2)
-    series = [x for x in F3 if x[0] in ("lp_gnn", "wh", "hc")]
+    series = [x for x in F3 if x[0] in ("wh", "hc", "lp_gnn")]
+    series.sort(key=lambda x: ["wh", "hc", "lp_gnn"].index(x[0]))
     panels = [("v421", "sw", "Switch errors", "a"), ("v50q", "sw", "Switch errors", "b"),
               ("v421", "ham", "Hamming distance (%)", "c"), ("v50q", "ham", "Hamming distance (%)", "d")]
     for ax, (bench, key, lab, L) in zip(axs.flat, panels):
         single_band(ax)
         for k, name, col, ls, mk, src, v421name in series:
             xs, m_, s_ = [], [], []
-            for c in COVS:
+            for c in PLOT_COVS:
                 runs = D["v421"][v421name][c] if bench == "v421" else f3_runs(src, c)
                 a_, b_ = ms(runs, key)
                 xs.append(c); m_.append(a_); s_.append(b_)
@@ -312,7 +320,7 @@ def fig4():
             if key == "pindel_pct" and "indel" not in name and "four" not in name:
                 continue
             xs, m_, s_ = [], [], []
-            for c in COVS:
+            for c in PLOT_COVS:
                 a_, b_ = ms(get(c), key)
                 xs.append(c); m_.append(a_); s_.append(b_)
             line(ax, xs, m_, s_, col, ls=ls, marker=mk, scale=sc, label=name)
@@ -494,7 +502,7 @@ def sfig11():
             ax.set_yticks([0.02, 0.05, 0.1]); ax.set_yticklabels(["0.02", "0.05", "0.1"])
         ax.set_ylabel(lab); cov_axis(ax); letter(ax, L)
     ax = axs.flat[4]
-    for plat, covs, ls, mfc in (("ONT", COVS, "-", "black"), ("HiFi", HIFI_COVS, "--", "white")):
+    for plat, covs, ls, mfc in (("ONT", PLOT_COVS, "-", "black"), ("HiFi", HIFI_COVS, "--", "white")):
         xs, a, _ = snv_series("lp", "sw", plat=plat, covs=covs)
         _, b, _ = snv_series("lp_gnn", "sw", plat=plat, covs=covs)
         ax.plot(xs, [100 * (1 - y / x) for x, y in zip(a, b)], color="black", ls=ls, marker="o",

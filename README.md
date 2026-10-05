@@ -398,6 +398,9 @@ Todo count after this pass: Results 10, Methods 20, Supplementary 18 (incl. gene
   to matplotlib); all figures now use Arial with Arial-Bold embedded. Fig. 5 redesigned to mirror
   Fig. 2 a–e (phased SNVs on an 80–90% axis instead of a 0.7-point axis that exaggerated the gap,
   switch error *rate* instead of counts, Hamming and N50 from zero, WhatsHap/LongPhase 2 ratio).
+- Readability (author, 2026-10-06): main line plots show 10, 20, 30, 40, 50 and 60× only (12–18× stay
+  in the tables and Supplementary Data 1), the replicate s.d. is a light band instead of error bars,
+  and the ±0.5× offset is gone; HapCUT2 (dashed, open squares) is drawn over WhatsHap where they coincide.
 
 **Codex review applied, 2026-10-05 (two passes).** Verified against source before editing:
 `compare` computes Hamming over all common variants incl. indels (`CompareProcess.cpp`:579) while
