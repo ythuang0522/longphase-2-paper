@@ -113,8 +113,10 @@ def new_fig(h_mm, nrows=1, ncols=1, **kw):
 
 
 def single_band(ax, lo=25, hi=65):
-    """Grey band over coverages with a single replicate."""
-    ax.axvspan(lo, hi, color="#F0F0F0", lw=0, zorder=0)
+    """No-op. Coverages with a single down-sampling run are explained in the legends and
+    Methods instead of being shaded (author decision, 2026-10-06): subsamples of the
+    70x data set would share 43-85% of reads at 30-60x, so replicates there add nothing."""
+    return
 
 
 PLOT_COVS = [10, 20, 30, 40, 50, 60]   # main/supp line plots; every coverage is in the tables
@@ -249,7 +251,6 @@ def fig2():
     ax.set_xlabel("Switch error rate (%), 10×"); ax.set_ylabel("Block N50 (Mb), 10×")
     letter(ax, "f")
     h = [thandle(t) for t in tools]
-    h.append(Patch(color="#F0F0F0", label="single replicate"))
     fig.legend(handles=h, loc="outside upper center", ncol=4, handlelength=2.6, columnspacing=1.2)
     save(fig, os.path.join(OUT, "fig2_snv_comparison.pdf"))
 
@@ -293,7 +294,6 @@ def fig3():
         top = max(a_.get_ylim()[1], b_.get_ylim()[1])
         a_.set_ylim(0, top); b_.set_ylim(0, top)
     h = [thandle(t) for t in ("lp_gnn", "wh", "hc")]
-    h.append(Patch(color="#F0F0F0", label="single replicate"))
     fig.legend(handles=h, loc="outside upper center", ncol=4, handlelength=2.6, columnspacing=1.2)
     save(fig, os.path.join(OUT, "fig3_two_benchmarks.pdf"))
 
@@ -336,7 +336,6 @@ def fig4():
     ax.set_xlabel("SNV switch error rate (%), 20×"); ax.set_ylabel("Block N50 (Mb), 20×")
     letter(ax, "d")
     h = [Line2D([], [], color=col, ls=ls, marker=mk, ms=2.6, label=name) for name, col, ls, mk, _ in F4]
-    h.append(Patch(color="#F0F0F0", label="single replicate"))
     fig.legend(handles=h, loc="outside upper center", ncol=4, handlelength=2.4, columnspacing=1.2)
     save(fig, os.path.join(OUT, "fig4_cophasing.pdf"))
 
@@ -516,8 +515,7 @@ def sfig11():
     ax.set_ylim(0, 1500); ax.set_ylabel("Switch errors, PacBio HiFi"); cov_axis(ax, HIFI_COVS)
     letter(ax, "f")
     h = [Line2D([], [], color=C["lp_gnn"], ls="--", marker="o", mfc="white", ms=2.6, label="without GNN correction"),
-         Line2D([], [], color=C["lp_gnn"], marker="o", ms=2.6, label="with GNN correction"),
-         Patch(color="#F0F0F0", label="single replicate")]
+         Line2D([], [], color=C["lp_gnn"], marker="o", ms=2.6, label="with GNN correction")]
     fig.legend(handles=h, loc="outside upper center", ncol=3)
     save(fig, os.path.join(SUPP, "suppfig13_gnn_effect.pdf"))
 

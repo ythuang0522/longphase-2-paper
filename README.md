@@ -401,6 +401,10 @@ Todo count after this pass: Results 10, Methods 20, Supplementary 18 (incl. gene
 - Readability (author, 2026-10-06): main line plots show 10, 20, 30, 40, 50 and 60× only (12–18× stay
   in the tables and Supplementary Data 1), the replicate s.d. is a light band instead of error bars,
   and the ±0.5× offset is gone; HapCUT2 (dashed, open squares) is drawn over WhatsHap where they coincide.
+- Replicate design (author, 2026-10-06): the grey "single replicate" shading is removed from every
+  figure; it is not standard in benchmarking figures. Replicates at 30–60× would not be independent
+  (two subsamples of the 70.4× data share 43–85% of reads; 14% at 10×), so Methods now justifies one
+  down-sampling there instead of listing it as a limitation; legends state the design once.
 
 **Codex review applied, 2026-10-05 (two passes).** Verified against source before editing:
 `compare` computes Hamming over all common variants incl. indels (`CompareProcess.cpp`:579) while
