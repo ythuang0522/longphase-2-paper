@@ -119,7 +119,7 @@ def single_band(ax, lo=25, hi=65):
     return
 
 
-PLOT_COVS = [10, 20, 30, 40, 50, 60]   # main/supp line plots; every coverage is in the tables
+PLOT_COVS = COVS   # every coverage, 10-20x in steps of 2 to show low-coverage differences
 
 
 def snv_series(tool, key, plat="ONT", covs=PLOT_COVS):
@@ -150,36 +150,37 @@ def coph_series(cfg, tool, key, covs=PLOT_COVS):
 # low-coverage Hamming distance, so they differ in marker and line style and are
 # dodged by +-0.5x along the coverage axis to keep both visible.
 STY = {
-    "lp_gnn": dict(marker="o", ls="-", mfc=None, dx=0.0),
-    "lp":     dict(marker="o", ls="--", mfc="white", dx=0.0),
-    "wh":     dict(marker="D", ls="-", mfc=None, dx=0.0),
-    "hc":     dict(marker="s", ls="--", mfc="white", dx=0.0),
-    "margin": dict(marker="^", ls="-", mfc=None, dx=0.0),
-    "ralphi": dict(marker="v", ls="-", mfc=None, dx=0.0),
-    "gc":     dict(marker="P", ls="-", mfc=None, dx=0.0),
+    # hollow markers of different shape and size nest inside each other where tools coincide
+    "lp_gnn": dict(marker="o", ls="-", mfc="none", dx=0.0, ms=3.0),
+    "lp":     dict(marker="o", ls="--", mfc="none", dx=0.0, ms=3.0),
+    "wh":     dict(marker="D", ls="-", mfc="none", dx=0.0, ms=2.8),
+    "hc":     dict(marker="s", ls="--", mfc="none", dx=0.0, ms=4.0),
+    "margin": dict(marker="^", ls="-", mfc="none", dx=0.0, ms=3.4),
+    "ralphi": dict(marker="v", ls="-", mfc="none", dx=0.0, ms=3.4),
+    "gc":     dict(marker="P", ls="-", mfc="none", dx=0.0, ms=3.4),
 }
 
 
-def tline(ax, t, xs, m, s, scale=1.0, label=None, ms_=2.6):
+def tline(ax, t, xs, m, s, scale=1.0, label=None):
     st = STY[t]
     line(ax, [x + st["dx"] for x in xs], m, s, C[t], ls=st["ls"], marker=st["marker"],
-         scale=scale, label=label, mfc=st["mfc"])
+         scale=scale, label=label, mfc=st["mfc"], ms=st["ms"])
 
 
 def thandle(t, label=None):
     st = STY[t]
-    return Line2D([], [], color=C[t], ls=st["ls"], marker=st["marker"], ms=2.8,
-                  mfc=st["mfc"] or C[t], label=label or NAME[t])
+    return Line2D([], [], color=C[t], ls=st["ls"], marker=st["marker"], ms=st["ms"] + 0.4,
+                  mfc=st["mfc"], mew=0.8, label=label or NAME[t])
 
 
-def line(ax, xs, m, s, color, ls="-", marker="o", label=None, scale=1.0, mfc=None, z=3):
+def line(ax, xs, m, s, color, ls="-", marker="o", label=None, scale=1.0, mfc=None, z=3, ms=2.6):
     """Mean line with markers; replicate s.d. as a light band (zero width for single runs)."""
     m = [v * scale for v in m]; s = [v * scale for v in s]
     if any(s):
         ax.fill_between(xs, [a - b for a, b in zip(m, s)], [a + b for a, b in zip(m, s)],
                         color=color, alpha=0.18, lw=0, zorder=z - 1)
-    ax.plot(xs, m, color=color, ls=ls, marker=marker, ms=2.6, mfc=mfc or color, mew=0.6,
-            label=label, zorder=z)
+    ax.plot(xs, m, color=color, ls=ls, marker=marker, ms=ms, mfc=mfc or color,
+            mew=0.8 if mfc == "none" else 0.6, label=label, zorder=z)
 
 
 def cov_axis(ax, covs=(10, 20, 30, 40, 50, 60)):
@@ -232,7 +233,7 @@ def fig2():
         _, r, _ = snv_series(ref, "sw_pct")
         st = STY[ref]
         ax.plot(xs, [a / b for a, b in zip(r, q)], color=C[ref], marker=st["marker"], ls=st["ls"],
-                mfc=st["mfc"] or C[ref], ms=2.6)
+                mfc="none", mew=0.8, ms=st["ms"])
     ax.set_ylim(0, 5.2); ax.set_ylabel("Switch-error-rate ratio\n(comparator / LongPhase 2)")
     cov_axis(ax); letter(ax, "e")
     ax.legend(handles=[thandle("wh", "WhatsHap"), thandle("hc", "HapCUT2")],
@@ -241,8 +242,8 @@ def fig2():
     for t in ["hc", "wh", "margin", "lp_gnn"]:
         runs = D["snv"]["ONT"][XLSX_TOOL[t]][10]
         x, sx = ms(runs, "sw_pct"); y, sy = ms(runs, "n50")
-        ax.errorbar([x], [y / 1e6], xerr=[sx], yerr=[sy / 1e6], fmt=STY[t]["marker"], color=C[t], ms=3.2,
-                    mfc=STY[t]["mfc"] or C[t], mew=0.8, elinewidth=0.6, capsize=0)
+        ax.errorbar([x], [y / 1e6], xerr=[sx], yerr=[sy / 1e6], fmt=STY[t]["marker"], color=C[t], ms=STY[t]["ms"] + 1,
+                    mfc="none", mew=0.9, elinewidth=0.6, capsize=0)
         off = {"hc": (0, 6), "wh": (-2, -7), "lp_gnn": (5, 0), "margin": (5, 0)}[t]
         ax.annotate({"wh": "WhatsHap"}.get(t, NAME[t]), (x, y / 1e6), xytext=off,
                     textcoords="offset points", fontsize=5.5, color=C[t], va="center",
@@ -323,7 +324,8 @@ def fig4():
             for c in PLOT_COVS:
                 a_, b_ = ms(get(c), key)
                 xs.append(c); m_.append(a_); s_.append(b_)
-            line(ax, xs, m_, s_, col, ls=ls, marker=mk, scale=sc, label=name)
+            line(ax, xs, m_, s_, col, ls=ls, marker=mk, scale=sc, label=name, mfc="none",
+                 ms=4.0 if mk == "s" else 3.0)
         if key == "sw_pct":
             ax.set_yscale("log"); ax.minorticks_off()
             ax.set_yticks([0.02, 0.05, 0.1, 0.2, 0.3]); ax.set_yticklabels(["0.02", "0.05", "0.1", "0.2", "0.3"])
@@ -331,11 +333,12 @@ def fig4():
     ax = axs.flat[3]
     for name, col, ls, mk, get in F4:
         x, sx = ms(get(20), "sw_pct"); y, sy = ms(get(20), "n50")
-        ax.errorbar([x], [y / 1e6], xerr=[sx], yerr=[sy / 1e6], fmt=mk, color=col, ms=3.4,
-                    mfc=col if ls == "-" else "white", mew=0.8, elinewidth=0.6, capsize=0)
+        ax.errorbar([x], [y / 1e6], xerr=[sx], yerr=[sy / 1e6], fmt=mk, color=col, ms=3.8,
+                    mfc="none", mew=0.9, elinewidth=0.6, capsize=0)
     ax.set_xlabel("SNV switch error rate (%), 20×"); ax.set_ylabel("Block N50 (Mb), 20×")
     letter(ax, "d")
-    h = [Line2D([], [], color=col, ls=ls, marker=mk, ms=2.6, label=name) for name, col, ls, mk, _ in F4]
+    h = [Line2D([], [], color=col, ls=ls, marker=mk, ms=3.4, mfc="none", mew=0.8, label=name)
+         for name, col, ls, mk, _ in F4]
     fig.legend(handles=h, loc="outside upper center", ncol=4, handlelength=2.4, columnspacing=1.2)
     save(fig, os.path.join(OUT, "fig4_cophasing.pdf"))
 
@@ -357,7 +360,7 @@ def fig5():
     ax = axs[4]
     xs, q, _ = snv_series("lp_gnn", "sw_pct", plat="HiFi", covs=HIFI_COVS)
     _, r, _ = snv_series("wh", "sw_pct", plat="HiFi", covs=HIFI_COVS)
-    ax.plot(xs, [a / b for a, b in zip(r, q)], color=C["wh"], marker="D", ms=2.6)
+    ax.plot(xs, [a / b for a, b in zip(r, q)], color=C["wh"], marker="D", ms=2.8, mfc="none", mew=0.8)
     ax.set_ylim(0, 4); ax.set_ylabel("Switch-error-rate ratio\n(WhatsHap / LongPhase 2)")
     cov_axis(ax, HIFI_COVS); letter(ax, "e")
     h = [thandle(t) for t in ("lp_gnn", "wh")]

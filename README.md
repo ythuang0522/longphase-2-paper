@@ -405,6 +405,10 @@ Todo count after this pass: Results 10, Methods 20, Supplementary 18 (incl. gene
   figure; it is not standard in benchmarking figures. Replicates at 30–60× would not be independent
   (two subsamples of the 70.4× data share 43–85% of reads; 14% at 10×), so Methods now justifies one
   down-sampling there instead of listing it as a limitation; legends state the design once.
+- Markers (author, 2026-10-06): all coverages are plotted again (10–20× in steps of 2, to show
+  low-coverage differences). Every tool has an open (unfilled) marker of its own shape and size —
+  LongPhase 2 circle, WhatsHap small diamond, HapCUT2 large square, Margin/Ralphi/GCphase triangles
+  and cross — so coinciding points nest instead of hiding each other.
 
 **Codex review applied, 2026-10-05 (two passes).** Verified against source before editing:
 `compare` computes Hamming over all common variants incl. indels (`CompareProcess.cpp`:579) while
