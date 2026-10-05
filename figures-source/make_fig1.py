@@ -25,8 +25,8 @@ Layout follows the 2026-09-18 redesign raster:
      refinement (trigger SNV unphased; neighbours still linked, so the haplotype
      block stays intact). The block is framed as one of the four repeated (GPS) layers;
      layer normalization is omitted (see Supplementary Fig. 6).
-  d  two haplotypes carrying the alleles of a, the unphased SNV in grey, a
-     per-variant uncertainty strip and four haplotagged reads;
+  d  two haplotypes carrying the alleles of a, the unphased SNV faded, and
+     four haplotagged reads (no uncertainty strip: it repeats c);
      row labels sit left of each track.
 
 Panels c and d are drawn in a 1680 x 1072 frame and lifted 26 px by a group
@@ -42,13 +42,14 @@ import os
 NAVY, BLUE, LBLUE, FBLUE = "#103A82", "#1687C9", "#6CC8EE", "#C5E6F6"
 RED, LRED, FRED = "#DC2B23", "#F0766C", "#F9CFC9"
 GREY, UNPH, UNPHF = "#9BA9B8", "#6F8090", "#EEF1F4"
+FADE, FADEF = "#C3CCD6", "#F7F9FB"            # unphased (ignored) variants: close to the background
 HILITE, INK, ARROW = "#FCF1C7", "#16233D", "#8FA3B6"
 PURPLE, PURPLED = "#9B8CD8", "#6F5EB8"
 READ, READ_B, READ_R = "#C6D0DA", "#D9EEF9", "#FBE1DE"
 ORANGE, CYAN = "#F2A33C", "#29B6E8"
 
 HEADER = """<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="1046" viewBox="0 0 1680 1046">
-<title>LongPhase 2 overview: evidence-calibrated phasing graph and graph-transformer phase-error detection</title>
+<title>LongPhase 2 overview: evidence-weighted phasing graph and graph-transformer phase-error detection</title>
 <defs>
 <style>
  text{font-family:"Helvetica Neue",Helvetica,Arial,"Liberation Sans",sans-serif;
@@ -223,7 +224,7 @@ def block_arrow(x, y1, y2, hw=17, hh=20, sw=7):
 
 stage(138, 168, "Original", "graph")
 block_arrow(548, 190, 262)
-stage(330, 360, "Evidence", "calibration")
+stage(330, 360, "Evidence", "weighting")
 block_arrow(548, 384, 440)
 stage(482, 512, "Reweighted", "graph")
 
@@ -231,17 +232,15 @@ stage(482, 512, "Reweighted", "graph")
 BX = -30                                                  # inset offset (raster places it left of the C node)
 text(828 + BX, 254, "Uncertain base call", cls="h2", anchor="middle")
 text(722 + BX, 324, "Read", anchor="end")
+rect(830 + BX - 27, 290, 54, 430 - 290, HILITE, rx=8)          # highlight column: node + bar, as in panel c
 line(748 + BX, 318, 912 + BX, 318, FRED, 9, cap="butt")
-rect(806 + BX, 342, 46, 88, HILITE, rx=4)
 snp(766 + BX, 318, "G", RED, r=20, fs=22.5)
 snp(830 + BX, 318, "C", RED, r=20, fs=22.5, dash="6 4.5")
 box(894 + BX, 318, "CA", RED, w=48, h=36, fs=20)
-for x1, y1, x2, y2 in ((816, 292, 808, 280), (830, 290, 830, 276), (844, 292, 852, 280)):
-    line(x1 + BX, y1, x2 + BX, y2, CYAN, 2.6)            # rays: an uncertain call
 line(740 + BX, 350, 740 + BX, 430, NAVY, 2, cap="butt")                 # y-axis, labelled like panel c
 for dx, t in ((-22, "Phred"), (-5, "quality")):
     text(740 + BX + dx, 390, t, cls="sm", anchor="middle", extra=f' transform="rotate(-90 {740 + BX + dx} 390)"')
-rect(749 + BX, 378, 34, 52, UNPH, rx=1.5); rect(813 + BX, 410, 34, 20, ORANGE, rx=1.5); rect(877 + BX, 386, 34, 44, UNPH, rx=1.5)
+rect(749 + BX, 378, 34, 52, GREY, rx=2); rect(813 + BX, 410, 34, 20, ORANGE, rx=2, stroke="#C97A0E", sw=1.2); rect(877 + BX, 386, 34, 44, GREY, rx=2)
 line(740 + BX, 430, 920 + BX, 430, NAVY, 2, cap="butt")
 
 # --- inset 2: sequence-context reliability ----------------------------------
@@ -310,7 +309,7 @@ def window_graph(xs, yt, yb, top, bot, r, fs, centre=None, w_h=7, w_x=1.8, arcs=
         path(f"M{xl:.1f} {yb + 4} Q{(xl + xr) / 2:.1f} {yb + 0.9 * d:.0f} {xr:.1f} {yb + 4}", stroke=LRED, w=w_h)
     for i, x in enumerate(xs):
         if centre is not None and i == centre and arcs:
-            snp(x, yt, top[i], UNPH, r=r, fs=fs, fill=UNPHF); snp(x, yb, bot[i], UNPH, r=r, fs=fs, fill=UNPHF)
+            snp(x, yt, top[i], FADE, r=r, fs=fs, fill=FADEF); snp(x, yb, bot[i], FADE, r=r, fs=fs, fill=FADEF)
         else:
             snp(x, yt, top[i], BLUE, r=r, fs=fs); snp(x, yb, bot[i], RED, r=r, fs=fs)
 
@@ -458,47 +457,41 @@ LBX = 1294                                                 # right edge of the l
 TX0, TX1 = 1306, 1652                                      # track extent
 COLS = [1328 + 51 * i for i in range(7)]
 UP = 4                                                     # unphased column
-HY1, HY2 = 748, 808
+HY1, HY2 = 752, 822                                        # enlarged: panel d has no uncertainty strip
+HR, HFS = 21, 23.5                                         # haplotype node radius / letter size
+RR, RFS, RP = 16, 18.5, 40                                 # read node radius / letter size / row pitch
 
 
 def hap_row(y, hap):
     col = BLUE if hap == 1 else RED
     text(LBX, y + 7, f"Haplotype {hap}", cls="h2", fill=col, anchor="end")
-    hedge(TX0, TX1, y, LBLUE if hap == 1 else LRED, 7)
-    snp(COLS[0], y, "A" if hap == 1 else "G", col, r=19, fs=21.5)
-    snp(COLS[1], y, "T" if hap == 1 else "C", col, r=19, fs=21.5)
+    hedge(TX0, TX1, y, LBLUE if hap == 1 else LRED, 8)
+    snp(COLS[0], y, "A" if hap == 1 else "G", col, r=HR, fs=HFS)
+    snp(COLS[1], y, "T" if hap == 1 else "C", col, r=HR, fs=HFS)
     if hap == 1:
-        box(COLS[2], y, "SV", BLUE, w=46)
-    lollipop(COLS[3], y, hap == 1)
-    snp(COLS[UP], y, "C" if hap == 1 else "T", UNPH, r=19, fs=21.5, fill=UNPHF)
-    box(COLS[5], y, "A" if hap == 1 else "CA", col, w=46)
-    snp(COLS[6], y, "G" if hap == 1 else "A", col, r=19, fs=21.5)
+        box(COLS[2], y, "SV", BLUE, w=48, h=34, fs=20)
+    lollipop(COLS[3], y, hap == 1, r=9.5, stem=32)
+    snp(COLS[UP], y, "C" if hap == 1 else "T", FADE, r=HR, fs=HFS, fill=FADEF)
+    box(COLS[5], y, "A" if hap == 1 else "CA", col, w=48, h=34, fs=20)
+    snp(COLS[6], y, "G" if hap == 1 else "A", col, r=HR, fs=HFS)
 
 hap_row(HY1, 1)
 hap_row(HY2, 2)
 
-# per-variant phasing uncertainty (phasing entropy, PE) reported with the phased output
-PEB = 874
-text(LBX, PEB - 20, "Phasing", anchor="end"); text(LBX, PEB - 1, "uncertainty", anchor="end")
-for i, (x, h) in enumerate(zip(COLS, (6, 8, 7, 5, 26, 9, 6))):
-    rect(x - 8, PEB - h, 16, h, ORANGE if i == UP else GREY, rx=1.5,
-         stroke="#C97A0E" if i == UP else "none", sw=1.2)
-line(TX0, PEB, TX1, PEB, UNPH, 1.4, cap="butt")
-
-text(1178, 912, "Haplotagging reads", cls="h2")
+text(1178, 896, "Haplotagging reads", cls="h2")
 for k, (lab, hap) in enumerate((("Read 1", 1), ("Read 2", 1), ("Read 3", 2), ("Read 4", 2))):
-    y = 938 + k * 32
+    y = 928 + k * RP
     col, rf = (BLUE, READ_B) if hap == 1 else (RED, READ_R)
     text(LBX, y + 6, lab, anchor="end", fill=col)
-    rect(TX0, y - 5, TX1 - TX0, 10, rf, rx=5)
-    snp(COLS[0], y, "A" if hap == 1 else "G", col, r=13.5, fs=16.5)
-    snp(COLS[1], y, "T" if hap == 1 else "C", col, r=13.5, fs=16.5)
+    rect(TX0, y - 6, TX1 - TX0, 12, rf, rx=6)
+    snp(COLS[0], y, "A" if hap == 1 else "G", col, r=RR, fs=RFS)
+    snp(COLS[1], y, "T" if hap == 1 else "C", col, r=RR, fs=RFS)
     if hap == 1:
-        box(COLS[2], y, "SV", col, w=38, h=24, fs=16.5, sw=2.2)
-    lollipop(COLS[3], y, hap == 1, r=6, stem=16, sw=2.8)
-    snp(COLS[UP], y, "C" if hap == 1 else "T", UNPH, r=13.5, fs=16.5, fill=UNPHF)
-    box(COLS[5], y, "A" if hap == 1 else "CA", col, w=38, h=24, fs=16.5, sw=2.2)
-    snp(COLS[6], y, "G" if hap == 1 else "A", col, r=13.5, fs=16.5)
+        box(COLS[2], y, "SV", col, w=42, h=28, fs=18, sw=2.4)
+    lollipop(COLS[3], y, hap == 1, r=7, stem=20, sw=3)
+    snp(COLS[UP], y, "C" if hap == 1 else "T", FADE, r=RR, fs=RFS, fill=FADEF)
+    box(COLS[5], y, "A" if hap == 1 else "CA", col, w=42, h=28, fs=18, sw=2.4)
+    snp(COLS[6], y, "G" if hap == 1 else "A", col, r=RR, fs=RFS)
 
 add("</g>")
 add("</svg>")

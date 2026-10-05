@@ -39,7 +39,7 @@
 \title{Uncertainty-aware haplotype phasing of genetic and epigenetic variation from long reads}
 
 \author{%
-Jyun-Hong Lin$^{1}$, Yang-Ming Yeh$^{2}$, Yao-Ting Huang$^{1,\ast}$\\[4pt]
+Jyun-Hong Lin$^{1}$, Yang-Ming Yeh$^{2}$, Yu-Chun Chen$^{1}$, Yao-Ting Huang$^{1,\ast}$\\[4pt]
 \small $^{1}$Department of Computer Science and Information Engineering, National Chung Cheng University, Chiayi, Taiwan\\
 \small $^{2}$Department of Computer Science and Engineering, National Sun Yat-sen University, Kaohsiung, Taiwan\\
 \small $^{\ast}$Correspondence: ythuang@cs.ccu.edu.tw}
@@ -52,7 +52,7 @@ Jyun-Hong Lin$^{1}$, Yang-Ming Yeh$^{2}$, Yao-Ting Huang$^{1,\ast}$\\[4pt]
 \maketitle
 
 \begin{abstract}
-Long reads allow haplotypes to be phased from a single sample, but read-based phasers weigh every read observation alike, mostly ignore evidence other than single-nucleotide variants and report phase as a binary state, leaving switch errors to pass unnoticed downstream. Here we present \toolname, which co-phases SNVs, small indels, structural variants and allele-specific methylation in one graph, weights each observation by base quality and sequence context, and assigns every phased variant an uncertainty score. A graph neural network then unphases, rather than flips, the variants it predicts to be misphased. On HG002 nanopore data at 10--60$\times$ coverage, scored against a telomere-to-telomere truth set, \toolname makes 2.9- to 4.8-fold fewer switch errors than WhatsHap and HapCUT2 (1.1- to 1.7-fold under GIAB v4.2.1) and runs six- to eightfold faster at 60$\times$; co-phasing lengthens haplotype blocks by 40\%. \toolname is a drop-in replacement for the LongPhase versions embedded in Clair3, ClairS, Severus and EPI2ME.
+Read-based phasers of long reads, which recover haplotypes from a single sample, weigh all observations alike, mostly ignore all but single-nucleotide variants and report phase as a binary state. Here we present \toolname, which co-phases SNVs, indels, structural variants and allele-specific methylation in one graph, weights each observation by base quality and sequence context, and scores every variant's phasing uncertainty. A graph neural network then unphases, rather than flips, the variants it predicts to be misphased. On HG002 nanopore data (10--60$\times$), against a telomere-to-telomere truth set, \toolname makes 2.8- to 4.8-fold fewer switch errors than WhatsHap and HapCUT2 (1.1- to 1.7-fold under GIAB v4.2.1) and runs six- to eightfold faster at 60$\times$; co-phasing lengthens haplotype blocks by 40\%. On PacBio HiFi data, without retraining the network, \toolname makes 2.5- to 3.5-fold fewer switch errors than WhatsHap. \toolname is a drop-in replacement for the LongPhase versions in Clair3, ClairS, Severus and EPI2ME.
 \end{abstract}
 
 \section*{Introduction}
@@ -64,8 +64,8 @@ Long reads allow haplotypes to be phased from a single sample, but read-based ph
   \caption{\textbf{Overview of \toolname.}
   \textbf{a}, SNVs, small indels, SVs and 5mC sites carried by the same long reads enter one phasing problem; alleles are coloured by read haplotype.
   \textbf{b}, Weighted phasing graph. Read-supported edges link allele nodes, and each observation is weighted by base quality and sequence context; the inset shows an indel down-weighted inside a tandem repeat.
-  \textbf{c}, Each variant receives a phasing-uncertainty score (Methods), and a graph neural network (GATv2 and Transformer layers; Supplementary Fig.~6) classifies the variants around the most uncertain ones. Variants predicted to be misphased are unphased (grey), not flipped.
-  \textbf{d}, Output: phased haplotypes of all four variant classes with per-variant uncertainty, and haplotagged reads.}
+  \textbf{c}, Each variant receives a phasing-uncertainty score (Methods), and a graph neural network (GATv2 and Transformer layers; Supplementary Fig.~6) classifies the variants around the most uncertain ones. Variants predicted to be misphased are unphased (grey), not flipped; we call this step GNN correction.
+  \textbf{d}, Output: phased haplotypes of all four variant classes, with the misphased variant left unphased (faded), and haplotagged reads.}
   \label{fig:overview}
 \end{figure}
 
@@ -74,57 +74,61 @@ Long reads allow haplotypes to be phased from a single sample, but read-based ph
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=\textwidth]{fig2_snv_comparison}
-  \caption{\textbf{SNV phasing accuracy, block length and runtime compared with WhatsHap and HapCUT2.}
-  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$; SNV-only phasing of identical Clair3 calls; scored against the benchmark derived from the complete diploid T2T-HG002 assembly (v5.0q). Points at 10--20$\times$ are means of independent down-sampling replicates ($n=10$, except $n=9$ at 10$\times$ for \toolname); the shaded region (30--60$\times$) is a single replicate.
+  \includegraphics[width=\textwidth]{fig2_snv_comparison.pdf}
+  \caption{\textbf{SNV phasing compared with WhatsHap, HapCUT2 and Margin.}
+  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$; SNV-only phasing of identical variant calls, scored against the T2T-HG002-derived v5.0q benchmark. Points at 10--20$\times$ are means of ten down-sampling replicates with s.d.; shaded, single replicate. \whatshap and \hapcut points are offset by $\pm0.5\times$ for visibility; their values nearly coincide in \textbf{a} and \textbf{d}.
   \textbf{a}, Fraction of benchmark heterozygous SNVs phased.
-  \textbf{b}, Switch error rate.
+  \textbf{b}, Switch error rate (log scale).
   \textbf{c}, Block-wise Hamming distance.
   \textbf{d}, Phase-block N50.
-  \textbf{e}, Wall-clock runtime (log scale, \todo{$t$} threads, whole genome); \toolname with correction includes the neural-network stage.
-  Grey, HapCUT2 1.3.4; orange, WhatsHap 2.8; blue, \toolname; red, \toolname with neural-network correction.}
+  \textbf{e}, Switch error rate of each comparator divided by that of \toolname.
+  \textbf{f}, Switch error rate against block N50 at 10$\times$; Ralphi and GCphase in Supplementary Fig.~10.}
   \label{fig:snv}
 \end{figure}
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=\textwidth]{fig3_two_benchmarks}
-  \caption{\textbf{The same phased VCFs scored against the GRCh38-based GIAB v4.2.1 and the T2T-HG002-derived v5.0q benchmarks.}
-  SNV-only phasing of HG002 nanopore R10.4.1 data; replicates as in Fig.~\ref{fig:snv}. Only the truth set differs between the two columns; v5.0q additionally assesses the segmental duplications, satellite arrays and other repeat-rich sequence that v4.2.1 excludes.
-  \textbf{a}, Fraction of benchmark heterozygous SNVs phased (v5.0q).
-  \textbf{b},\textbf{c}, Genome-wide switch-error counts under v4.2.1 (\textbf{b}) and v5.0q (\textbf{c}); the two panels share axes.
-  \textbf{d}, Phase-block N50 (benchmark independent).
-  \textbf{e},\textbf{f}, Hamming distance under v4.2.1 (\textbf{e}) and v5.0q (\textbf{f}).
-  Grey, HapCUT2 1.3.4; orange, WhatsHap 2.8; teal, \longphase~1.0; blue, \toolname; red, \toolname with neural-network correction.}
+  \includegraphics[width=\textwidth]{fig3_two_benchmarks.pdf}
+  \caption{\textbf{The same phased VCFs scored against GIAB v4.2.1 and the T2T-HG002-derived v5.0q benchmark.}
+  SNV-only phasing of HG002 nanopore R10.4.1 data; replicates, shading and offsets as in Fig.~\ref{fig:snv}.
+  \textbf{a},\textbf{b}, Genome-wide switch errors under v4.2.1 (\textbf{a}) and v5.0q (\textbf{b}), on a shared axis.
+  \textbf{c},\textbf{d}, Hamming distance under v4.2.1 (\textbf{c}) and v5.0q (\textbf{d}).}
   \label{fig:benchmarks}
 \end{figure}
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=\textwidth]{fig4_cophasing}
-  \caption{\textbf{Co-phasing of SNVs, indels, SVs and allele-specific methylation.}
-  HG002 nanopore R10.4.1 data, 10--60$\times$; replicates as in Fig.~\ref{fig:snv}; dashed lines, \toolname; solid lines, \toolname with neural-network correction.
-  \textbf{a}--\textbf{d}, Fraction of phased SNVs (\textbf{a}), indels (\textbf{b}), allele-specific 5mC sites (\textbf{c}) and SVs (\textbf{d}) in the four-class co-phasing configuration.
-  \textbf{e},\textbf{f}, SNV switch error rate (\textbf{e}) and Hamming distance (\textbf{f}) for SNV-only phasing (blue) and four-class co-phasing (red), each with (solid) and without (dashed) correction. Denominators: GIAB v5.0q heterozygous SNVs and indels; Sniffles2 heterozygous SVs; \texttt{modcall} heterozygous 5mC sites.}
+  \includegraphics[width=\textwidth]{fig4_cophasing.pdf}
+  \caption{\textbf{Co-phasing compared with WhatsHap.}
+  HG002 nanopore R10.4.1 data; \toolname phasing SNVs only, SNVs and indels, or all four classes (SNVs, indels, SVs and 5mC), against \whatshap phasing SNVs only or SNVs and indels; \hapcut for reference. Accuracy is scored on SNVs against v5.0q; replicates and shading as in Fig.~\ref{fig:snv}.
+  \textbf{a}, SNV switch error rate (log scale).
+  \textbf{b}, Phase-block N50.
+  \textbf{c}, Fraction of benchmark heterozygous indels phased.
+  \textbf{d}, SNV switch error rate against block N50 at 20$\times$ (means of ten replicates with s.d.).}
   \label{fig:cophasing}
 \end{figure}
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=0.92\textwidth]{fig5_variant_combinations}
-  \caption{\textbf{Effect of neural-network correction across variant-class combinations.}
-  Each row is a separate phasing run of HG002 nanopore R10.4.1 data with the indicated variant classes; dashed, \toolname; solid, \toolname with correction. Columns: SNV switch error rate, Hamming distance and phase-block N50, scored against the v5.0q benchmark on SNVs. Replicates as in Fig.~\ref{fig:snv}.}
-  \label{fig:combinations}
+  \includegraphics[width=\textwidth]{fig5_hifi.pdf}
+  \caption{\textbf{Phasing of PacBio HiFi data compared with WhatsHap.}
+  HG002 PacBio HiFi (Revio) reads down-sampled to 10--50$\times$, one replicate per coverage\todo{state whether one call set was used for every coverage}; SNV-only phasing scored against v5.0q; \toolname uses the network trained on nanopore data. Panels as in Fig.~\ref{fig:snv}a--e.
+  \textbf{a}, Fraction of benchmark heterozygous SNVs phased.
+  \textbf{b}, Switch error rate.
+  \textbf{c}, Block-wise Hamming distance.
+  \textbf{d}, Phase-block N50.
+  \textbf{e}, Switch error rate of \whatshap divided by that of \toolname.}
+  \label{fig:hifi}
 \end{figure}
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=\textwidth]{fig6_unphased_analysis}
-  \caption{\textbf{Composition of the variants unphased by the neural network.}
-  SNV-only phasing of HG002 nanopore R10.4.1 data (one down-sampling replicate, seed 1; break threshold 0.30); every SNV phased by \toolname and unphased after correction ($\sim$60,000 per coverage) is classified against the v5.0q benchmark.
-  \textbf{a}, Fraction of unphased SNVs that are absent from the benchmark, homozygous in the benchmark or genuine heterozygous sites; only the last category represents lost phasing information.
-  \textbf{b}, Within each of the three categories, distribution over read depth (low, normal, high relative to the genome-wide mean) and phasing informativeness (number of informative linking reads); the three bars at each coverage each sum to 100\% of their category.
-  \textbf{c}, Prevalence of conditions that overlap the axes of \textbf{b}: phasing entropy of exactly 0, phasing entropy $\ge 0.8$, low genotype quality and clustering within 50~bp of another variant; solid, genuine heterozygous sites; dashed, benchmark-absent calls.}
+  \includegraphics[width=\textwidth]{fig6_unphased_analysis.pdf}
+  \caption{\textbf{SNVs left unphased by \toolname and by WhatsHap.}
+  HG002 nanopore R10.4.1 data, SNV-only phasing, replicate 1; heterozygous SNV calls present in both output VCFs.
+  \textbf{a}, Calls left unphased by \toolname only, by both tools or by \whatshap only.
+  \textbf{b}, Enrichment of each tool-specific set in genomic intervals containing switch disagreements between the other tool and the truth set, relative to that tool's genome-wide rate; a measure of regional co-location, not of site-level correctness.
+  \textbf{c}, Read-depth distribution of the three sets at 60$\times$ (2$\times$ bins); the grey bin collects sites at or above the depth cap of the variant caller.}
   \label{fig:unphased}
 \end{figure}
 

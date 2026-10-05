@@ -14,8 +14,8 @@ sections/methods.tex
 sections/discussion.tex
 references.bib
 Supplementary.tex         # Supplementary Methods, Notes, Tables 1-6, Figs. 1-9 (separate PDF)
-figures/                  # fig1_overview.svg/.pdf (generated), fig2-6_*.png, supp/
-figures-source/           # make_fig1.py (Fig. 1 vector source); concept drafts
+figures/                  # fig1_overview.svg/.pdf, fig2-6_*.pdf (generated), supp/
+figures-source/           # make_fig1.py (Fig. 1); make_results_figs.py + results_data.py (Figs. 2-6, Supp. Figs. 10-14, Supp. Tables 7-12)
 Makefile                  # `make`, `make wordcount`, `make clean`; rebuilds Fig. 1 from its source
 ```
 
@@ -37,7 +37,7 @@ CpG alleles plus haplotagged reads (d). Edit the script, not the SVG.
 Revised 2026-09-24 for Nature Methods print requirements: no text below 5 pt at 180 mm; SNV
 terminology and indel-as-sequence-box glyph throughout; panel d is the phased result of the
 panel a reads (same seven columns); phasing-entropy track with threshold added to c and a
-per-variant uncertainty strip and the unphased SNV to d; dashed low-confidence
+the unphased SNV (faded) to d, whose uncertainty strip was later dropped as a repeat of c and its glyphs enlarged (2026-09-25); dashed low-confidence
 edges and a down-weighted-allele legend in b; the block split when unphasing disconnects a phase set (`GNNProcess.cpp:540`, branch `JH`) is
 now stated only in Methods, the Fig. 1 legend having been cut to ~100 words (2026-09-24); panel a has a heading and tighter
 reads, no panel carries a heading, the sequence-context inset is coloured by haplotype, and the compacted top half brings the
@@ -204,7 +204,7 @@ The critical ones:
    Two text errors traced to the same file were corrected on 2026-09-19: `--distance` is a
    gap test that skips a variant (:350), not a 300 kb cap on edges or votes, and the
    weight-20 upgrade also fires irrespective of s when one pairing has < 1 unit of support.
-9. **Main Figs. 2–6 are raster exports** (PNG from the pptx) with in-figure titles,
+9. **(Resolved 2026-10-05 — see the Results redesign entry below.)** Main Figs. 2–6 were raster exports (PNG from the pptx) with in-figure titles,
    uppercase panel letters and, in Fig. 6, a caption paragraph inside the artwork.
    Regenerate them as vector figures from the `longphase compare` TSVs: lowercase bold
    panel letters, no titles or "(↑ better)" annotations, s.d. bands for 10–20×.
@@ -285,6 +285,148 @@ legend updated). Still plot-read: LongPhase 1.0, uncorrected LongPhase 2 under v
 runtimes. Unused so far: default WhatsHap phases indels (32.9–49.8% of benchmark indels vs
 30.5–45.4% for LongPhase 2) at far higher SNV switch error and Hamming distance (9–13%),
 which would support an indel co-phasing comparison.
+
+**Discussion review for Nature Methods, 2026-09-26.** Every number re-derived from
+`20260924_v50q.txt`, `20260924_GIAB421.txt` and `GNN source/sw_*.log`. Four factual errors
+fixed: (1) "every tool accumulates more switch errors under the T2T-based benchmark" was
+false: corrected LongPhase 2 makes *fewer* under v5.0q (1,820 → 1,518 at 10×; 1,676 → 496 at
+60×) and WhatsHap is level at 60× (1,801 vs 1,785); the paragraph now separates the
+competitors' rise from a ~1,600-error floor shared by all tools under v4.2.1 that is more
+plausibly benchmark discordance (new `[optional experiment]`: intersect those switch
+positions); spread restated in rates (1.2–1.3 → 4.3–4.8-fold, matching Results);
+(2) corrected four-class co-phasing is more accurate than *uncorrected* SNV-only only
+(0.027% vs 0.034%; corrected SNV-only 0.023%); (3) the denominator defence of the GNN was a
+non sequitur and is replaced by its price (~2,400 benchmark hets unphased for 247 fewer
+switches at 60×); (4) "86–96%" was quoted for 10× alone, and clustered/low-GQ sites are about
+half, not "most", of benchmark-absent calls. Uncertainty claims narrowed: `gnn` writes no
+error probability (only `phase` writes PE/H1/H2, `ParsingBam.cpp:226–228`) and no link
+entropy exists, entropy = 0 for 22–43% of removed genuine hets (Fig. 6c), and calibration is
+untested (Supp. Fig. 9 placeholder); the genotype-quality analogy now appears only as a
+goal. Limitations added: genome-wide rates include training chromosomes, single replicate at
+30–60×, indel/SV/5mC phase accuracy not assessed, unsupervised SV/5mC corrections, polyploidy.
+Indel trade-off stated once. Discussion now ~1,400 words (texcount), from ~1,300.
+**Still open:** Results heading "A telomere-to-telomere benchmark exposes switch errors hidden
+by the GRCh38 truth set" holds for WhatsHap/HapCUT2 only; re-scoring chr17/21/22 is now the
+most important cheap analysis, because the Discussion names the train/test overlap as a limitation.
+
+**Results redesign from JHL's new data, 2026-10-05.** Inputs: JHL's seven commits of 26 Sep – 5 Oct
+(`supplementary.xlsx`, HiFi/MethPhaser/Venn/composition JSX drafts, `run_t2t_validation.sh`,
+`unphase_validation_*`). Changes:
+
+- **Figures regenerated as vectors from exact data** by `figures-source/make_results_figs.py`
+  (+ `results_data.py`): Fig. 2 SNV-only vs WhatsHap/HapCUT2 (runtime panel dropped — no exact
+  source); Fig. 3 two benchmarks as grouped bars incl. WhatsHap with indels and LongPhase 2
+  +indel/+indel+SV (LongPhase 1.0 and uncorrected v4.2.1 dropped — plot-read only); Fig. 4 merges
+  old Figs. 4+5 (switch-rate vs N50 trade-off at 10×/60×, SNV vs four-class across coverage);
+  **new Fig. 5 HiFi**; Fig. 6 composition (exact), T2T-assembly status, per-chromosome depletion,
+  WhatsHap give-up comparison and cross-enrichment. Old PNGs removed; old Fig. 6 kept as Supp. Fig. 13.
+- **New Supplementary items**: Figs. 10 (Margin/Ralphi/GCphase), 11 (MethPhaser), 12 (depth of
+  give-up sets), 13 (old Fig. 6 raster), 14 (all co-phasing configurations); Tables 7 (call sets),
+  8 (SNV-only, 7 tools), 9 (two benchmarks), 10 (co-phasing), 11 (HiFi), 12 (T2T classification);
+  Supplementary Data 1 = `supplementary.xlsx`. Supp. Table 5 gained Margin/Ralphi/GCphase/
+  MethPhaser/HiFi rows (versions todo).
+- **Results rewritten** (7 subsections). All numbers exact; n = 10 at 10× for LongPhase 2 too (the
+  xlsx has seed 10), so the abstract's 2.9 became 2.8-fold, correction is 31–33% (not 31–34%),
+  N50 loss 2–5% from 30× (40× is 4.9%), WhatsHap phases 0.7–1.0 pp more. New findings: SV/5mC
+  co-phasing costs no accuracy after correction (SNV+5mC 0.0227% = SNV-only, +8% N50); correction
+  halves the indel cost; LongPhase 2 with indels beats WhatsHap with indels 3.0–3.7× (Hamming 3.5 vs
+  9.3%); HiFi transfer without retraining (19–28% of switches removed; 2.5–3.5× fewer than WhatsHap);
+  88% of GNN-removed SNVs lie outside the 1:1 T2T alignment (94× depletion), half the assessable rest
+  are not variants; LongPhase/WhatsHap give-ups are each enriched up to 10× in the other's errors;
+  Margin has fewer switches at 10× only by 3× shorter blocks. Methods gained "Analysis of unphased
+  SNVs" and the HiFi/extra-tool runs; statistics paragraph now n = 10 throughout.
+- **Discussion revised**: co-phasing paragraph (per-class costs; WhatsHap shows the same indel noise),
+  benchmark inversion now WhatsHap(indels)/HapCUT2, network paragraph reinterpreted through the
+  assembly analysis and the WhatsHap complementarity, HiFi transfer, Margin caveat; limitations
+  updated (HiFi tested on one individual; MethPhaser compared). ~1,700 words (texcount), up from
+  ~1,400; the Margin and Ralphi/NeurHap sentences are the cheapest cuts.
+
+**New blocking flags from this data (all `\todo` in the text):**
+1. ~~**Variant caller**~~ — resolved the same day (author): PEPPER-Margin-DeepVariant, see below.
+2. **MethPhaser output equals its input** to every digit at all six coverages (= uncorrected
+   SNV-only LongPhase 2, replicate 1). Probably the input VCF was scored or MethPhaser did not run.
+3. **HiFi call sets are coverage-independent** (2,367,609–2,367,619 het SNVs at 10–50×): one call
+   set reused, so the 87% phased fraction at 10× is not comparable with ONT; HiFi data source,
+   caller and commands missing from Methods.
+4. **Unphased-SNV totals disagree**: composition 60,267 at 60× vs 56,076 in the T2T script (same
+   replicate); only 549 removed sites inside the benchmark BED (413 variants) vs `compare`'s net loss
+   of 2,055 phased benchmark SNVs vs 2,411 "heterozygous" in the composition (VCF incl. outside BED).
+5. **GCphase** Hamming 32–40% (near random): check its parameters.
+6. Runtimes, SV/5mC phased fractions and Supp. Fig. 13 values still have no exact source; the
+   WhatsHap-only median depth (18×) and zero-entropy share (57.6%) come only from a commit message.
+
+Todo count after this pass: Results 10, Methods 20, Supplementary 18 (incl. generated tables).
+
+**Caller, abstract and Results wording, 2026-10-05 (later pass, author request).**
+- **Small-variant caller is PEPPER-Margin-DeepVariant** (`shafin2021margin`), not Clair3: changed in
+  Methods (input paragraph, Benchmark data, comparison methods), Results, Supp. Table 5 and the
+  generated Supp. Table 7 caption. Clair3 v2.0.1 and the `sup_v500` model todo are gone; a new todo
+  asks for the PEPPER release, model preset and confirmation that its phased output was discarded.
+  The Clair3 version-dating comments in Methods are kept as history, marked superseded. Clair3 is
+  still cited where it is a downstream pipeline that embeds LongPhase (abstract, Discussion, Supp. Table 6).
+- **Abstract** now reports HiFi (2.5–3.5-fold fewer switch errors than WhatsHap, network not
+  retrained); opening sentence tightened to stay at 150 words (texcount).
+- **Results wording review**: "correction" defined once and used for the step (the network only
+  where the model itself is meant); "genuine heterozygotes" → "benchmark heterozygotes" (the
+  composition counts benchmark-VCF records outside the BED), also in the Discussion and Supp. Fig. 13;
+  "give-ups" removed; per-chromosome values described as ratios of the outside-alignment share, not
+  "depletion"; odds ratio stated as such; GCphase "order of magnitude" → "four to seven times";
+  Margin "made the fewest switch errors" → lowest rate; HiFi N50 ratio 4.6 (was "five times");
+  WhatsHap indel cost 17–20% (was 18–20%), Hamming ratio 37–56% (was "less than half", true only
+  from 16×); co-phasing heading now names methylation only (SVs add 1% N50) and "at least halves";
+  interpretive clauses on depth and caller artefacts softened to "consistent with"; three ", so"
+  clauses removed (style rule of 2026-09-24).
+
+**Results split into competitors vs internal modules, 2026-10-06 (author request).**
+- Figures were not Nature Methods compliant: tight-cropped to 151–153 mm, so placement at 183 mm
+  would push fonts to 7.8 pt; Fig. 2 spent a panel on a legend; Fig. 3 used hatched grouped bars.
+  All results figures are now exactly 183 mm wide (constrained layout), 5–7 pt Helvetica, 8 pt bold
+  lowercase letters, keys inside the figure, no empty panels, no bars for trends.
+- "LongPhase 2 + correction" was undefined in the figures and collided with the read-based
+  correction inside `phase`. The step is now "GNN correction" (defined in Fig. 1 legend, Results,
+  Methods); in main figures "LongPhase 2" is the complete method, GNN included.
+- Results now has two parts. *Comparison with existing phasers* (main Figs. 2–6): SNV phasing vs
+  WhatsHap/HapCUT2 with Margin in Fig. 2f; benchmark dependence (Fig. 3, SNV-only tools); indel and
+  four-class co-phasing vs WhatsHap (new Fig. 4); HiFi vs WhatsHap (Fig. 5, two tools); unphased sets
+  vs WhatsHap (new Fig. 6). *Contribution of the internal modules* (Supplementary only): GNN effect
+  (Supp. Fig. 13), co-phasing configurations with/without GNN (14, 15), what the GNN withholds (16, 17).
+- Supplementary figures renumbered by citation order: 10 other tools, 11 MethPhaser, 12 depth of
+  unphased sets, 13 GNN effect, 14 co-phasing with/without GNN (former Fig. 4), 15 all
+  configurations, 16 GNN-removed SNVs (former Fig. 6a–c), 17 old raster. Methods cross-references
+  updated. Part headings are plain `\subsection*`, findings are declarative `\paragraph`s.
+- Later the same day: panel letters had never been bold (Helvetica.ttc exposes only its regular face
+  to matplotlib); all figures now use Arial with Arial-Bold embedded. Fig. 5 redesigned to mirror
+  Fig. 2 a–e (phased SNVs on an 80–90% axis instead of a 0.7-point axis that exaggerated the gap,
+  switch error *rate* instead of counts, Hamming and N50 from zero, WhatsHap/LongPhase 2 ratio).
+
+**Codex review applied, 2026-10-05 (two passes).** Verified against source before editing:
+`compare` computes Hamming over all common variants incl. indels (`CompareProcess.cpp`:579) while
+switch errors are SNV-only; the region filter also applies to the query (`:353`, though N50 is
+identical under both truth sets, so the BED was probably not passed); the training-label parser
+matches truth by position only and accepts unphased truth (`prepare_gnn_data_10.py`:343, 440);
+`run_t2t_validation.sh` samples its background from all pre-correction phased SNVs (:75), tests
+the assembly VCF by start coordinate only (:104) and includes chrX/chrY; the indel-cost reduction
+is 41-67% (not "at least half"); four-class Hamming falls 34-54% (not "halved").
+
+*Pass 1, corrections:* six overstatements fixed in Results/Discussion ("at least halves", "exactly
+as accurate", "halved", indel cost "in the evidence itself", Margin "by fragmenting", "no threshold
+on a variant's own votes"); co-phasing Hamming values flagged as SNV+indel (`\todo`); assembly
+analysis narrowed to "no assembly VCF record at the same coordinate", chr19 475-fold headline
+dropped, rebuild requirements as `\todo`; WhatsHap comparison restated as regional co-location;
+benchmark paragraph replaced by the unresolved-contributions sentence; "error probability" ->
+"phase-error score" (Methods, Supplementary); Fig. 1 stage label "Evidence calibration" ->
+"Evidence weighting"; stale HiFi statements fixed (methods :36, :126); Supplementary "share one
+denominator" corrected; N50/BED and paired-difference `\todo`s added; held-out chr17/21/22,
+matched-retention comparison and training-label audit promoted to `\todo`. Figures: Fig. 2e
+relabelled "switch-error-rate ratio", legend moved off the panel; Fig. 3 colours now match Fig. 2
+(hatching for indel/SV runs), panel f from zero; Fig. 4 s.d. on both endpoints; Supp. Fig. 12
+capped bin marked censored; legends updated.
+
+*Pass 2, length:* Results 2,575 -> 1,377 words, seven subsections with one finding, one
+representative comparison and its cost each (coverage-by-coverage values left to Supp. Tables
+7-12); Discussion 1,673 -> 620 words in four paragraphs (contribution; weighting and withholding;
+limits; one downstream test). Word counts exclude `\todo`s and comments; Introduction (1,017)
+untouched. The cut is reviewable on its own: `notes/length_cut_2026-10-05_{results,discussion}.diff`.
 
 **Style pass, 2026-09-24 (author request).** Removed every ", so " clause (58 in rendered
 text, including `\todo`s; `%` comments untouched) from `sections/*.tex`, `main.tex` and

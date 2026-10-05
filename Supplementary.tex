@@ -38,7 +38,7 @@
 
 \title{Supplementary Information\\[6pt]
 \large Uncertainty-aware haplotype phasing of genetic and epigenetic variation from long reads}
-\author{Jyun-Hong Lin, Yang-Ming Yeh, Yao-Ting Huang}
+\author{Jyun-Hong Lin, Yang-Ming Yeh, Yu-Chun Chen, Yao-Ting Huang}
 \date{}
 
 \begin{document}
@@ -130,7 +130,7 @@ Two behaviours are worth stating explicitly because they are not evident from th
 %  emits genome-wide, their total span and the number of variants removed, and
 %  add the TP/FP histogram of MR(v) with the 0.7 threshold marked as
 %  Supplementary Fig. 1g (the slide version used DeepVariant calls and a pre-
-%  release build; regenerate with the submitted version on the Clair3 calls used
+%  release build; regenerate with the submitted version on the PEPPER calls used
 %  here).
 
 \subsection*{Supplementary Method 3. Calibration of the voting and read-filtering constants}
@@ -159,7 +159,7 @@ The model comprises 687,358 float32 values (2,749,432~bytes), namely 124 in the 
 
 \paragraph{Class balance and loss.} Among the labelled central nodes of the training split, 17,812,710 (97.04\%) were \emph{correct} and 544,170 (2.96\%) \emph{error}, and 21.5\% of windows contained at least one error node; the prevalence is far above the genome-wide switch-error rate because windows are opened only at high-entropy triggers and because the label is assigned relative to a window-local anchor rather than to a whole phase block. The imbalance is handled by subsampling, not by re-weighting the full distribution. Each minibatch keeps all of its error nodes and draws correct nodes uniformly at random to at most four times that number (\code{--ratio\_corr 4}). The gradient is thus taken on an approximately 1:4 subset, and because the draw is independent at every step the network still sees the whole set of correct nodes over training. The cross-entropy on that subset is focal-weighted\cite{lin2017focal} by $(1-p_t)^{\gamma}$ with $\gamma = 1.5$ and uses label smoothing of 0.05. A differentiable surrogate for the selection metric below is implemented in the training script but was disabled for the released model ($\alpha = 0$); the reported weights were trained on the focal loss alone.
 
-\paragraph{Model selection.} Checkpoints were selected on the validation chromosomes by a net-gain criterion instead of validation loss or F1. At each epoch the predicted error probability was thresholded at each of 81 values spanning $[0.01, 0.99]$ and the score
+\paragraph{Model selection.} Checkpoints were selected on the validation chromosomes by a net-gain criterion instead of validation loss or F1. At each epoch the predicted phase-error score was thresholded at each of 81 values spanning $[0.01, 0.99]$ and the score
 \begin{equation}
 S = R\,\Big(2 - \frac{1}{P}\Big)
 \end{equation}
@@ -167,7 +167,7 @@ was maximized over those thresholds subject to a recall of at least $0.005$, whe
 
 %  [optional] Report the achieved maximum differences for the first two links as
 %  well; the export script prints both, but the export log was not retained.
-\paragraph{Export and numerical agreement.} The released weights are a single training checkpoint. A dense re-implementation replaces the sparse graph operators with $N \times N$ adjacency and edge tensors, transfers the trained tensors (splitting the fused attention projection into separate Q, K and V matrices), and exports to ONNX at opset 17 with $N$ as a dynamic axis. The logistic transform of the vote weight and the self-loop features are folded into the input convention at this point, and the exported graph and the compiled implementation both receive edge features with those already applied. The ONNX initializers are then read, the architecture dimensions recovered from the tensor shapes, and both written into a generated C++ header as a base64-encoded little-endian float32 blob in a fixed tensor order; the compiled forward pass reads the blob in that order and refuses to run if its length disagrees with the expected parameter count. Agreement was checked at each link of the chain: the dense rewrite against the PyTorch Geometric model, and the ONNX graph against the dense rewrite, on a real training window, with an acceptance bound of $10^{-3}$ on the absolute difference in predicted error probability; and the compiled C++ against ONNX Runtime on six synthetic graphs of 3--120 nodes at edge densities 0.1--0.4, including one graph with a single edge and no other incoming edges, where the largest absolute difference was $3\times 10^{-7}$ against an acceptance bound of $10^{-5}$. 
+\paragraph{Export and numerical agreement.} The released weights are a single training checkpoint. A dense re-implementation replaces the sparse graph operators with $N \times N$ adjacency and edge tensors, transfers the trained tensors (splitting the fused attention projection into separate Q, K and V matrices), and exports to ONNX at opset 17 with $N$ as a dynamic axis. The logistic transform of the vote weight and the self-loop features are folded into the input convention at this point, and the exported graph and the compiled implementation both receive edge features with those already applied. The ONNX initializers are then read, the architecture dimensions recovered from the tensor shapes, and both written into a generated C++ header as a base64-encoded little-endian float32 blob in a fixed tensor order; the compiled forward pass reads the blob in that order and refuses to run if its length disagrees with the expected parameter count. Agreement was checked at each link of the chain: the dense rewrite against the PyTorch Geometric model, and the ONNX graph against the dense rewrite, on a real training window, with an acceptance bound of $10^{-3}$ on the absolute difference in predicted phase-error score; and the compiled C++ against ONNX Runtime on six synthetic graphs of 3--120 nodes at edge densities 0.1--0.4, including one graph with a single edge and no other incoming edges, where the largest absolute difference was $3\times 10^{-7}$ against an acceptance bound of $10^{-5}$. 
 
 % ------------------------------------------------------------------
 \subsection*{Supplementary Method 5. Read haplotagging}
@@ -214,7 +214,7 @@ so a read whose alleles are unanimous receives the ceiling value 40 and a read s
 
 Metrics were computed with \code{longphase compare} (Supplementary Fig.~8), a C++ re-implementation of the \code{whatshap compare} algorithm\cite{patterson2015whatshap}.
 
-\paragraph{Block intersection.} For each chromosome, heterozygous records common to the truth and a query are intersected by position and by REF/ALT alleles. The intersection is partitioned into maximal runs that lie in one truth phase set and one query phase set simultaneously; runs of length one carry no phase information and are discarded. The switch error rate and the Hamming distance of a query are computed over the variants inside its surviving blocks and therefore share one denominator; the phased fraction is counted before this partition, as the number of truth heterozygous variants whose position, REF and first ALT match a query record that is heterozygous and phased, over all truth heterozygous variants of the class.
+\paragraph{Block intersection.} For each chromosome, heterozygous records common to the truth and a query are intersected by position and by REF/ALT alleles. The intersection is partitioned into maximal runs that lie in one truth phase set and one query phase set simultaneously; runs of length one carry no phase information and are discarded. The switch errors and the Hamming distance of a query are computed inside its surviving blocks but with different denominators: the switch error rate divides SNV switch errors by the number of consecutive SNV pairs assessed, whereas the Hamming distance divides misassigned variants, of every class present in both files, by the number of compared variants; the phased fraction is counted before this partition, as the number of truth heterozygous variants whose position, REF and first ALT match a query record that is heterozygous and phased, over all truth heterozygous variants of the class.
 
 \paragraph{Switch errors and flips.} Each block yields two binary strings, the truth haplotype assignment $p_0$ and the query assignment $q_0$ of its variants. Both are converted to \emph{switch encoding}, the string of relative changes between consecutive positions, which removes the arbitrary orientation of the block. Switch errors are the Hamming distance between the two switch-encoded strings. The decomposition into isolated switches and flips follows WhatsHap's \code{compute\_switch\_flips}: a maximal run of $k$ consecutive disagreements in switch space is charged as $\lfloor k/2 \rfloor$ flips and $k \bmod 2$ switches. A single variant assigned to the wrong haplotype thus counts as one flip, not two switches. The \emph{switch error rate} is the total number of switch errors divided by the number of assessed consecutive pairs.
 
@@ -381,12 +381,17 @@ Item & Version & Notes \\
 HG002 nanopore R10.4.1 reads & ONT \code{giab\_lsk114\_}\allowbreak\code{2022.12} & FLO-PRO114M, SQK-LSK114, 4~kHz; Dorado \code{sup@v4.0.0} with \code{5mCG\_5hmCG@v2} \\
 Reference & GRCh38 & \code{GCA\_000001405.15\_GRCh38\_}\allowbreak\code{no\_alt\_analysis\_set}; no-alt analysis set, no decoys \\
 minimap2 & 2.30 & \code{-ax map-ont -y} \\
-Clair3 & 2.0.1 & SNV and indel calls; model \code{r1041\_e82\_400bps\_}\allowbreak\code{sup\_v500} \\
+PEPPER-Margin-DeepVariant\cite{shafin2021margin} & \todo{release} & SNV and indel calls; \todo{model preset} \\
 Sniffles2 & 2.8.0 & \code{--output-rnames} \\
 GIAB v4.2.1 HG002 & v4.2.1 & GRCh38-based small-variant benchmark \\
 T2T-HG002 v1.1 small-variant benchmark\cite{hansen2026q100,giab2025q100} & GIAB v5 draft & projected onto GRCh38; \code{HG002\_GRCh38\_v5.0q\_}\allowbreak\code{smvar.chr1\_22.vcf}; referred to as v5.0q \\
 WhatsHap & 2.8 & \todo{options} \\
 HapCUT2 & 1.3.4 & default parameters \\
+Margin & 2.3.1 & SNV-only comparison, 10--20$\times$ \todo{command line} \\
+Ralphi & \todo{version} & SNV-only comparison, 10--20$\times$ \todo{command line, model} \\
+GCphase & \todo{version} & SNV-only comparison, 10--20$\times$ \todo{command line} \\
+MethPhaser & \todo{version} & run on the uncorrected SNV-only \toolname output, replicate~1 \todo{command line} \\
+HG002 PacBio HiFi reads & Revio, \todo{release} & down-sampled to 10--50$\times$, one replicate \todo{source, chemistry, aligner, variant caller} \\
 \longphase~1.0 & v1.0 & \code{--ont} \\
 \toolname & \todo{release tag; results come from branch JH, commit cc17fb1} & \code{--ont}; \code{gnn} with defaults \\
 \bottomrule
@@ -441,6 +446,12 @@ Duet\cite{zhou2022duet} & BMC Bioinformatics 2022 & comparison method for SV pha
 
 \clearpage
 % ==================================================================
+\clearpage
+\input{figures-source/supp_tables}
+
+\paragraph{Supplementary Data 1.} \code{supplementary.xlsx}: per-run metrics behind Figs.~2--6, Supplementary Figs.~10--16 and Supplementary Tables~7--11, with one row per coverage and down-sampling replicate. Sheet \code{Variant\_Calling}, input call sets; \code{SNV\_Detail}, SNV-only phasing by every tool on nanopore and HiFi data; \code{co-phase\_Detail}, the six co-phasing configurations of \toolname without (\code{longphase\_v2.0.1}) and with (\code{longphase\_v2.1}) GNN correction, and \whatshap with indels. Blank cells are runs that were not performed.
+
+\clearpage
 \section*{Supplementary Figures}
 \addcontentsline{toc}{section}{Supplementary Figures}
 
@@ -479,7 +490,7 @@ Duet\cite{zhou2022duet} & BMC Bioinformatics 2022 & comparison method for SV pha
 \caption{\textbf{Overview of the graph neural network correction module.}
 \textbf{a}, \code{phase} phases the called variants from the long-read alignments; every phased variant whose phasing entropy reaches 0.8 (amber) becomes the trigger of a window of $\pm 20$ variants.
 \textbf{b}, The window is encoded as a graph whose nodes are the two alleles of each variant and whose edges are the surviving DOT edges (Supplementary Fig.~5d). Each allele node carries 31 features in four groups and each edge six features (Supplementary Tables~1 and~2); the shaded squares stand for the individual features of a group, not for their values.
-\textbf{c}, Each of four GPS layers passes the graph through a local branch, in which a node attends to its neighbours in the phasing graph (GATv2), and a global branch, in which every allele node in the window attends to every other. The two representations are fused additively with a skip connection from the layer input (dashed grey) and passed through a feed-forward block with a second skip connection. A classifier head then assigns each allele node a probability of being misphased, and the two allele nodes of a variant are averaged.
+\textbf{c}, Each of four GPS layers passes the graph through a local branch, in which a node attends to its neighbours in the phasing graph (GATv2), and a global branch, in which every allele node in the window attends to every other. The two representations are fused additively with a skip connection from the layer input (dashed grey) and passed through a feed-forward block with a second skip connection. A classifier head then assigns each allele node a phase-error score, and the two allele nodes of a variant are averaged.
 \textbf{d}, Variants whose predicted error probability reaches 0.30 are unphased: the genotype is written unphased and without a phase set, the genotype itself is never flipped, and connectivity over the surviving edges splits the phase set in two.
 Detailed views of the window, the network and the phase-set update are given in Supplementary Figs.~5 and~6.}
 \end{figure}
@@ -542,8 +553,72 @@ Detailed views of the window, the network and the phase-set update are given in 
 \textbf{c}, Switch errors as a function of the up-weight $w$ applied when $s \le \alpha$, at each coverage; the reduction saturates by $w \approx 20$.
 \textbf{d}, Distribution of base quality over all bases and over bases carrying a sequencing error, showing errors concentrated below Q10 and motivating $\theta = 12$; and switch errors as a function of $\theta$.
 \textbf{e}, Switch errors over the grid of single-read-guard parameters $N$ (number of single-read votes that triggers the guard) and $\mu$ (ambiguity cut applied to the surviving votes), and switch errors with and without the guard at each coverage.
-\todo{Placeholder: produce or remove. The five panels exist in the group's thesis material (Po-Hui Tzeng, 2026, Figs.~3.7, 3.10--3.12, 3.14, 3.17, 3.18, 3.21) and would be regenerated with the submitted version on the Clair3 calls and coverages used here, in one consistent style; state two caveats: in \textbf{b} the switch-error curve has no interior optimum and $\beta$ rests on the N50 trade-off, and in \textbf{e} the guard slightly \emph{increased} switch errors at 10$\times$. If the figure is removed, delete the sentences citing it in Methods and Supplementary Method 3.}}
+\todo{Placeholder: produce or remove. The five panels exist in the group's thesis material (Po-Hui Tzeng, 2026, Figs.~3.7, 3.10--3.12, 3.14, 3.17, 3.18, 3.21) and would be regenerated with the submitted version on the PEPPER-Margin-DeepVariant calls and coverages used here, in one consistent style; state two caveats: in \textbf{b} the switch-error curve has no interior optimum and $\beta$ rests on the N50 trade-off, and in \textbf{e} the guard slightly \emph{increased} switch errors at 10$\times$. If the figure is removed, delete the sentences citing it in Methods and Supplementary Method 3.}}
 \label{fig:supp_calibration}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig10_more_tools.pdf}
+\caption{\textbf{SNV-only phasing compared with Margin, Ralphi and GCphase.} HG002 nanopore R10.4.1 data at 10--20$\times$, means of ten replicates with s.d., scored against v5.0q; \toolname with GNN correction.
+\textbf{a}, Switch error rate. \textbf{b}, Hamming distance. \textbf{c}, Block N50; Ralphi is omitted because its blocks sum to more than the autosome length. \textbf{d}, Number of phase blocks. Values in Supplementary Table~8.}
+\label{fig:supp_tools}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig11_methphaser.pdf}
+\caption{\textbf{Joint methylation co-phasing compared with MethPhaser.} HG002 nanopore R10.4.1 data, replicate 1, scored on SNVs against v5.0q. MethPhaser was given the SNV-only output of \toolname without GNN correction.
+\textbf{a}, Switch errors. \textbf{b}, Fraction of benchmark heterozygous SNVs phased. \textbf{c}, Hamming distance. \textbf{d}, Block N50.
+\todo{The MethPhaser curve coincides exactly with its input; confirm that the MethPhaser output was scored before this figure is used.}}
+\label{fig:supp_methphaser}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig12_giveup_depth.pdf}
+\caption{\textbf{Read depth at heterozygous SNV calls left unphased by \toolname, by \whatshap or by both.} HG002 nanopore R10.4.1 data, replicate 1, at 10$\times$ (\textbf{a}), 30$\times$ (\textbf{b}) and 60$\times$ (\textbf{c}); 2$\times$ bins. The grey bin collects every site at or above the depth cap of the variant caller (about 125$\times$), whose true depth is censored. Sets as in Fig.~6a.}
+\label{fig:supp_giveup}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig13_gnn_effect.pdf}
+\caption{\textbf{Effect of GNN correction on SNV-only phasing.} \toolname with and without GNN correction; HG002 nanopore R10.4.1 data unless stated; means of ten replicates with s.d.\ at 10--20$\times$; shaded, single replicate.
+\textbf{a}, Fraction of benchmark heterozygous SNVs phased. \textbf{b}, Switch error rate. \textbf{c}, Hamming distance. \textbf{d}, Block N50.
+\textbf{e}, Fraction of switch errors removed by GNN correction on nanopore and PacBio HiFi data.
+\textbf{f}, Switch errors on PacBio HiFi data, with the network trained on nanopore data.}
+\label{fig:supp_gnn}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig14_cophase_gnn.pdf}
+\caption{\textbf{Co-phasing configurations with and without GNN correction.} HG002 nanopore R10.4.1 data; seven combinations of variant classes, each phased separately; SNV metrics against v5.0q.
+\textbf{a},\textbf{b}, SNV switch error rate against block N50 at 10$\times$ (\textbf{a}; means of ten replicates with s.d.) and 60$\times$ (\textbf{b}); arrows run from the result without (open) to the result with (filled) GNN correction.
+\textbf{c},\textbf{d}, SNV switch error rate (\textbf{c}) and Hamming distance (\textbf{d}; computed over SNVs and indels for four-class phasing) for SNV-only and four-class phasing.}
+\label{fig:supp_cophase_gnn}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig15_cophasing_all.pdf}
+\caption{\textbf{All co-phasing configurations across coverage.} HG002 nanopore R10.4.1 data; means of ten replicates with s.d.\ at 10--20$\times$; shaded, single replicate. Top row without, bottom row with GNN correction.
+\textbf{a},\textbf{e}, SNV switch error rate. \textbf{b},\textbf{f}, Hamming distance (over SNVs and indels where indels are phased). \textbf{c},\textbf{g}, Block N50. \textbf{d},\textbf{h}, Fraction of benchmark heterozygous SNVs phased. Values in Supplementary Table~10.}
+\label{fig:supp_cophase_all}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig16_gnn_removed.pdf}
+\caption{\textbf{SNVs unphased by GNN correction.} HG002 nanopore R10.4.1 data, SNV-only phasing, replicate 1.
+\textbf{a}, Classification against the v5.0q benchmark VCF; numbers above bars, total unphased.
+\textbf{b}, Status in the T2T-HG002 v1.1 assembly of the SNVs unphased at 60$\times$ and of a random sample of SNVs phased before GNN correction: inside or outside the regions where both assembled haplotypes align 1:1 to GRCh38, and, inside, whether an assembly variant record starts at the same coordinate.
+\textbf{c}, Per chromosome, fraction of each set outside the 1:1 alignment. Values in Supplementary Table~12.
+\todo{Rebuild from one site-level table (autosomes only, control excluding removed sites, allele-aware assembly comparison) before submission.}}
+\label{fig:supp_gnn_removed}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig17_unphased_depth_entropy.png}
+\caption{\textbf{Read depth, phasing informativeness and phasing entropy of the SNVs unphased by GNN correction.} SNV-only phasing, seed 1. Panel \textbf{a} is superseded by Supplementary Fig.~16a.
+\textbf{b}, Within the benchmark-absent, homozygous and heterozygous categories, distribution over read depth and phasing informativeness.
+\textbf{c}, Prevalence of phasing entropy of exactly 0, phasing entropy $\ge 0.8$, low genotype quality and clustering within 50~bp; solid, benchmark heterozygous sites; dashed, benchmark-absent calls.
+\todo{Raster carried over from the former main Fig.~6 (pptx), with uppercase panel letters and a caption inside the artwork; regenerate panels b and c from their source table, define the depth and informativeness bins (Methods), and drop panel a and the embedded caption.}}
+\label{fig:supp_unphased_old}
 \end{figure}
 
 \clearpage
