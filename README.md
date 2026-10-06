@@ -220,7 +220,8 @@ limitations moved from Methods ("Hold-out design") to the Discussion; asides cut
 procedural tense made past. Still open from that review, needing decisions or new
 analysis (the v5.0q-without-BED item was a text error: per the authors, both truth
 sets were scored within their benchmark BEDs; Methods corrected 2026-09-24): the
-selection criterion S (P > 0.5) contradicts the deployed 0.30 threshold, and test
+deployment threshold needed a separate selection rationale (resolved by the author on
+2026-10-06: an end-to-end phasing cost trade-off, distinct from checkpoint criterion S); test
 accuracy 0.941 is below the all-correct baseline 0.970; no statement that test
 chromosomes were unused during architecture search; GNN applied outside its training
 configuration (SNV-only, 30–60×); no dispersion at 30–60× (per-chromosome bootstrap
@@ -348,9 +349,10 @@ most important cheap analysis, because the Discussion names the train/test overl
 3. **HiFi call sets are coverage-independent** (2,367,609–2,367,619 het SNVs at 10–50×): one call
    set reused, so the 87% phased fraction at 10× is not comparable with ONT; HiFi data source,
    caller and commands missing from Methods.
-4. **Unphased-SNV totals disagree**: composition 60,267 at 60× vs 56,076 in the T2T script (same
-   replicate); only 549 removed sites inside the benchmark BED (413 variants) vs `compare`'s net loss
-   of 2,055 phased benchmark SNVs vs 2,411 "heterozygous" in the composition (VCF incl. outside BED).
+4. **Unphased-SNV total resolved (author, 2026-10-06): 56,076 at 60×.** The old composition
+   total of 60,267 is superseded. Its three benchmark-classification counts still need replacement
+   from the confirmed set; 549 sites inside the benchmark BED (413 variants), `compare`'s net loss
+   of 2,055 phased benchmark SNVs and the old 2,411 heterozygotes have different eligibility rules.
 5. **GCphase** Hamming 32–40% (near random): check its parameters.
 6. Runtimes, SV/5mC phased fractions and Supp. Fig. 13 values still have no exact source; the
    WhatsHap-only median depth (18×) and zero-entropy share (57.6%) come only from a commit message.
@@ -409,6 +411,33 @@ Todo count after this pass: Results 10, Methods 20, Supplementary 18 (incl. gene
   low-coverage differences). Every tool has an open (unfilled) marker of its own shape and size —
   LongPhase 2 circle, WhatsHap small diamond, HapCUT2 large square, Margin/Ralphi/GCphase triangles
   and cross — so coinciding points nest instead of hiding each other.
+
+**Unphased-SNV total confirmed, 2026-10-06 (author).** The accepted 60× total is 56,076.
+The Results range now includes that count, and the resolved total mismatch is no longer an
+open question. The old 60× benchmark-composition percentages were removed from the Results
+pending replacement category counts; the independently supplied assembly counts and
+Supplementary Table 12 already use 56,076. Supplementary Fig. 16a still uses the old
+composition source and requires the updated absent/homozygous/heterozygous breakdown.
+The author has been asked for those three counts; none was inferred from the new total.
+
+**Deployment-threshold rationale, 2026-10-06 (author-provided correspondence).**
+Methods and Supplementary Method 4 now document the 0.05–0.95 threshold sweep over 60 HG002
+nanopore runs at 10–20×. The author clarified that B=0.30 was an empirical balance: it removed more switch errors
+than B=0.40 at the cost of withholding additional phased SNVs, while retaining most phased
+sites. B=0.40 had the lower unit cost. The text does not present 0.30 as a mathematical
+optimum or imply a formally enforced cost constraint. This is separate from the classifier metric used to select the checkpoint.
+The TODO asking for the reason for choosing 0.30 is resolved; the existing request to provide
+the sweep source data and trade-off panel remains.
+
+The supplied screenshot gives B=0.30: 1,863,972 phased SNVs, 1,658 switch errors, 8,569 SNVs
+withheld, 1,150 switch errors removed (cost 7.45); B=0.40: 1,866,521, 1,765, 6,020 and 1,043
+(cost 5.77). Both imply a baseline of 1,872,541 phased SNVs and 2,808 switch errors.
+The table's coverage/replicate/aggregation is unspecified, so its counts were not added as
+manuscript results. The accompanying statement that total phased-SNV loss was below 0.2%
+needs its denominator and aggregation clarified: this table gives 0.458% at B=0.30 and
+0.321% at B=0.40 relative to the common pre-correction phased count. The 0.2% statement
+was omitted in favour of the qualitative trade-off explanation requested by the author;
+clarifying that unused percentage is not a blocker for this wording change.
 
 **Subsampling interpretation corrected, 2026-10-06 (author request).** The Results section no longer
 uses read overlap to justify a single high-coverage subsample. Methods now states

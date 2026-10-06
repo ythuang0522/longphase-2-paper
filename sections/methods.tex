@@ -70,8 +70,8 @@ Checkpoints were selected on chr15--16 by maximizing
 \begin{equation}
 S=R\left(2-\frac{1}{P}\right)
 \end{equation}
-over 81 score thresholds from 0.01 to 0.99, subject to $R\ge0.005$, where $P$ and $R$ are error-class precision and recall.  The selected checkpoint was epoch 44; validation and held-out classification metrics are given in Supplementary Table~4.  Deployment used a score threshold of 0.30 because the only correction action is to withhold phase, whose cost differs from the net-gain objective.
-\todo{State how the deployment threshold 0.30 was chosen and add its phased-fraction/switch-error trade-off across thresholds as a supplementary panel.}
+over 81 score thresholds from 0.01 to 0.99, subject to $R\ge0.005$, where $P$ and $R$ are error-class precision and recall.  The selected checkpoint was epoch 44; validation and held-out classification metrics are given in Supplementary Table~4.  The deployment threshold $B=0.30$ was chosen empirically from a sweep of 0.05--0.95 across the 60 HG002 nanopore runs at 10--20$\times$, balancing switch-error reduction against retention of phased SNVs. Compared with $B=0.40$, the chosen threshold removed more switch errors at the cost of withholding additional phased SNVs, favouring greater error reduction while retaining most phased sites (Supplementary Method~4).
+\todo{Provide the per-run threshold-sweep results and the phased-fraction/switch-error trade-off panel.}
 
 \subsection*{GNN correction and phase-set update}
 A variant with mean score at least 0.30 was unphased while preserving its genotype. Bridge protection was disabled. If removing these variants disconnected a block, the surviving connected components became separate phase sets (Supplementary Method~4).
