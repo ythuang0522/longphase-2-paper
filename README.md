@@ -402,19 +402,53 @@ Todo count after this pass: Results 10, Methods 20, Supplementary 18 (incl. gene
   in the tables and Supplementary Data 1), the replicate s.d. is a light band instead of error bars,
   and the ±0.5× offset is gone; HapCUT2 (dashed, open squares) is drawn over WhatsHap where they coincide.
 - Replicate design (author, 2026-10-06): the grey "single replicate" shading is removed from every
-  figure; it is not standard in benchmarking figures. Replicates at 30–60× would not be independent
-  (two subsamples of the 70.4× data share 43–85% of reads; 14% at 10×), so Methods now justifies one
-  down-sampling there instead of listing it as a limitation; legends state the design once.
+  figure; it is not standard in benchmarking figures. Legends state the replicate design once.
+  The original rationale that overlapping reads make independent random subsampling impossible
+  was withdrawn on author review: read overlap does not establish dependence between random draws.
 - Markers (author, 2026-10-06): all coverages are plotted again (10–20× in steps of 2, to show
   low-coverage differences). Every tool has an open (unfilled) marker of its own shape and size —
   LongPhase 2 circle, WhatsHap small diamond, HapCUT2 large square, Margin/Ralphi/GCphase triangles
   and cross — so coinciding points nest instead of hiding each other.
 
+**Subsampling interpretation corrected, 2026-10-06 (author request).** The Results section no longer
+uses read overlap to justify a single high-coverage subsample. Methods now states
+the observed design without the invalid independence rationale: ten nanopore subsamples per
+coverage at 10–20×, one at 30–60×, and one HiFi subsample per coverage. The standard deviations
+quantify read-subsampling variation conditional on the source data set, not variability among
+independent sequencing experiments. Subsampling variability at 30–60× and for HiFi was not
+estimated. No additional experiments or measurements are implied. The earlier September n=9 descriptions
+refer to the older local logs; they were superseded by the October input data and do not
+describe the current manuscript, which uses n=10 at 10–20×.
+
+**Methods condensation and prior-art wording, 2026-10-06 (author request).**
+The abstract and Introduction now acknowledge quality-weighted and probabilistic phasing,
+including WhatsHap's weighted objective and HapCUT2's quality-aware likelihood and confidence
+pruning. The contribution is framed around joint evidence integration, genomic context and
+learned phase-error detection; the uniform-weighting and categorical confidence claims were removed.
+Methods now follows the scientific workflow rather than command boundaries. Its prose was
+reduced from 6,239 to 2,592 words (TeXcount, excluding source comments, TODO text and headings),
+a 58% reduction. Core equations, decision thresholds, train/validation/test chromosomes,
+replicate design and metric definitions remain in the main text.
+Supplementary Methods retain the detailed input eligibility, 5mC/5hmC interpretation, graph
+features, architecture, training configuration and phase-set update. The software's integration
+of GNN correction into phasing does not change this conceptual description.
+The historical weight-20 source-release reminder remains tracked in this README rather than
+in the manuscript. No result tables, measurements or figure artwork were changed. Both PDFs
+were rebuilt successfully with TeX Live; the changed Abstract/Introduction, Methods and
+supplementary pages were rendered and checked. There are no undefined references/citations,
+missing characters or new overfull-box warnings. The main PDF is now 22 pages; Supplementary
+Information is 36 pages. The existing title/affiliation overfull box and Supplementary Table 4
+float-size warning are unchanged.
+
+**Review correction, 2026-10-06 (author request).** Removed the training-label audit/retraining
+TODO from the Discussion and item 12 from `notes/SUSPECTED_ERRORS.md`. No incorrectly labelled
+training record had been demonstrated; parser checks alone did not establish a defect in the
+actual training data. This concern is withdrawn and is not a submission blocker.
+
 **Codex review applied, 2026-10-05 (two passes).** Verified against source before editing:
 `compare` computes Hamming over all common variants incl. indels (`CompareProcess.cpp`:579) while
 switch errors are SNV-only; the region filter also applies to the query (`:353`, though N50 is
-identical under both truth sets, so the BED was probably not passed); the training-label parser
-matches truth by position only and accepts unphased truth (`prepare_gnn_data_10.py`:343, 440);
+identical under both truth sets, so the BED was probably not passed);
 `run_t2t_validation.sh` samples its background from all pre-correction phased SNVs (:75), tests
 the assembly VCF by start coordinate only (:104) and includes chrX/chrY; the indel-cost reduction
 is 41-67% (not "at least half"); four-class Hamming falls 34-54% (not "halved").
@@ -428,7 +462,7 @@ benchmark paragraph replaced by the unresolved-contributions sentence; "error pr
 "phase-error score" (Methods, Supplementary); Fig. 1 stage label "Evidence calibration" ->
 "Evidence weighting"; stale HiFi statements fixed (methods :36, :126); Supplementary "share one
 denominator" corrected; N50/BED and paired-difference `\todo`s added; held-out chr17/21/22,
-matched-retention comparison and training-label audit promoted to `\todo`. Figures: Fig. 2e
+matched-retention comparison promoted to `\todo`. Figures: Fig. 2e
 relabelled "switch-error-rate ratio", legend moved off the panel; Fig. 3 colours now match Fig. 2
 (hatching for indel/SV runs), panel f from zero; Fig. 4 s.d. on both endpoints; Supp. Fig. 12
 capped bin marked censored; legends updated.
