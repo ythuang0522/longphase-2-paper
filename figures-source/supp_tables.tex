@@ -25,7 +25,7 @@ HiFi & 50$\times$ & 2,367,619 & 2,081,661 & 425,793 & -- & -- & -- \\
 
 {\scriptsize\setlength{\tabcolsep}{3.5pt}
 \begin{longtable}{@{}llrrrrrr@{}}
-\caption{\textbf{SNV-only phasing of HG002 nanopore R10.4.1 data by seven configurations.} Scored against v5.0q (chr1--22, benchmark BED). Values at 10--20$\times$ are means (s.d.) over ten down-sampling replicates; 30--60$\times$, one replicate. Phased SNVs are given as a percentage of the 2,398,880 heterozygous SNVs of the benchmark. Margin, Ralphi and GCphase were run at 10--20$\times$ only. Ralphi's phase blocks sum to 4.3--5.8~Gb, more than the length of the autosomes, so its block N50 is not comparable with that of the other tools.}\label{tab:snvall}\\
+\caption{\textbf{SNV-only phasing of HG002 nanopore R10.4.1 data by six configurations.} Scored against the v5.0q VCF (chr1--22, no benchmark BED applied). Values at 10--20$\times$ are means (s.d.) over ten down-sampling replicates; 30--60$\times$, one replicate. Phased SNVs are given as a percentage of the 2,398,880 heterozygous SNVs of the benchmark. Margin and Ralphi were run at 10--20$\times$ only; GCphase was not included (Methods). Ralphi's phase blocks sum to 4.3--5.8~Gb, more than the length of the autosomes, so its block N50 is not comparable with that of the other tools.}\label{tab:snvall}\\
 \toprule Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead
 \toprule Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead
 LongPhase 2 & 10$\times$ & 77.83 (0.07) & 1,518 (29) & 0.082 (0.002) & 5.33 (0.25) & 7,143 (30) & 0.84 (0.01) \\
@@ -85,13 +85,6 @@ Ralphi & 10$\times$ & 78.52 (0.08) & 3,784 (104) & 0.201 (0.006) & 7.48 (0.27) &
  & 16$\times$ & 90.17 (0.04) & 3,176 (104) & 0.147 (0.005) & 7.60 (0.52) & 3,681 (36) & 30.67 (12.45) \\
  & 18$\times$ & 91.07 (0.03) & 2,979 (163) & 0.137 (0.007) & 7.14 (0.51) & 3,463 (30) & 39.14 (14.83) \\
  & 20$\times$ & 91.50 (0.02) & 2,874 (96) & 0.131 (0.004) & 6.56 (0.53) & 3,314 (37) & 47.11 (6.72) \\
-\midrule
-GCphase & 10$\times$ & 86.11 (0.08) & 39,581 (293) & 1.919 (0.014) & 38.09 (0.23) & 3,479 (62) & 1.72 (0.04) \\
- & 12$\times$ & 90.35 (0.09) & 36,810 (275) & 1.700 (0.012) & 39.82 (0.24) & 2,428 (31) & 2.84 (0.05) \\
- & 14$\times$ & 92.26 (0.18) & 31,332 (245) & 1.417 (0.010) & 39.09 (0.32) & 2,393 (29) & 3.02 (0.07) \\
- & 16$\times$ & 93.36 (0.08) & 25,516 (248) & 1.140 (0.011) & 37.17 (0.19) & 2,682 (40) & 2.74 (0.11) \\
- & 18$\times$ & 93.87 (0.13) & 20,885 (149) & 0.928 (0.006) & 34.80 (0.32) & 2,990 (36) & 2.42 (0.08) \\
- & 20$\times$ & 94.17 (0.12) & 17,642 (268) & 0.782 (0.011) & 32.47 (0.41) & 3,169 (39) & 2.21 (0.06) \\
 \bottomrule
 \end{longtable}}
 

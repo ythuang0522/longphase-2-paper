@@ -369,14 +369,15 @@ def fig5():
 
 
 # ============================================================ Figure 6 =====
-# Source: UnphasedComposition.jsx (JHL, 2026-09-26). SNV-only, seed 1; SNVs
-# phased by LongPhase 2 and unphased after correction, classified against the
-# v5.0q benchmark VCF (records outside the benchmark BED included).
+# Source: gnn_prepare/unphased_e6/unphased_grid.tsv (analyze_unphased.py,
+# 2026-10-07; final GNN model). SNV-only, seed 1; SNVs phased by LongPhase 2
+# and unphased after correction, matched to the v5.0q benchmark VCF by position
+# (no benchmark BED).
 COMPOSITION = {  # cov: (absent, hom-alt, het)
-    10: (51760, 3364, 8673), 12: (53909, 3100, 7419), 14: (55121, 2782, 6084),
-    16: (55776, 2486, 5176), 18: (55976, 2366, 4760), 20: (57256, 2382, 3937),
-    30: (55055, 2148, 3239), 40: (55848, 1944, 2837), 50: (54762, 1988, 2695),
-    60: (56069, 1787, 2411),
+    10: (46276, 2830, 6650), 12: (48906, 2613, 5734), 14: (49490, 2373, 4928),
+    16: (50781, 2223, 4242), 18: (52143, 2151, 3868), 20: (52592, 2069, 3207),
+    30: (52290, 1916, 2896), 40: (52775, 1845, 2425), 50: (51769, 1818, 2320),
+    60: (52167, 1694, 2215),
 }
 # Source: UnphaseVenn3.jsx (JHL, 2026-09-27). Heterozygous SNVs present in both
 # output VCFs, replicate 1; LongPhase 2 = with correction.
@@ -468,8 +469,8 @@ def fig6():
 
 # ============================================== Supplementary Fig. 10 =====
 def sfig10():
-    """Margin, Ralphi and GCphase at 10-20x."""
-    tools = ["hc", "wh", "ralphi", "gc", "margin", "lp_gnn"]
+    """Margin and Ralphi at 10-20x (GCphase not included; see Methods)."""
+    tools = ["hc", "wh", "ralphi", "margin", "lp_gnn"]
     covs = [10, 12, 14, 16, 18, 20]
     fig, axs = new_fig(52, 1, 4)
     specs = [("sw_pct", "Switch error rate (%)", "log", 1), ("ham", "Hamming distance (%)", "log", 1),
@@ -742,10 +743,10 @@ def tables():
     # ---- Table 8: SNV-only, all tools, nanopore
     w(r"{\scriptsize\setlength{\tabcolsep}{3.5pt}")
     w(r"\begin{longtable}{@{}llrrrrrr@{}}")
-    w(r"\caption{\textbf{SNV-only phasing of HG002 nanopore R10.4.1 data by seven configurations.} Scored against v5.0q (chr1--22, benchmark BED). Values at 10--20$\times$ are means (s.d.) over ten down-sampling replicates; 30--60$\times$, one replicate. Phased SNVs are given as a percentage of the 2,398,880 heterozygous SNVs of the benchmark. Margin, Ralphi and GCphase were run at 10--20$\times$ only. Ralphi's phase blocks sum to 4.3--5.8~Gb, more than the length of the autosomes, so its block N50 is not comparable with that of the other tools.}\label{tab:snvall}\\")
+    w(r"\caption{\textbf{SNV-only phasing of HG002 nanopore R10.4.1 data by six configurations.} Scored against the v5.0q VCF (chr1--22, no benchmark BED applied). Values at 10--20$\times$ are means (s.d.) over ten down-sampling replicates; 30--60$\times$, one replicate. Phased SNVs are given as a percentage of the 2,398,880 heterozygous SNVs of the benchmark. Margin and Ralphi were run at 10--20$\times$ only; GCphase was not included (Methods). Ralphi's phase blocks sum to 4.3--5.8~Gb, more than the length of the autosomes, so its block N50 is not comparable with that of the other tools.}\label{tab:snvall}\\")
     w(r"\toprule Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead")
     w(r"\toprule Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead")
-    for t in ["lp_gnn", "lp", "wh", "hc", "margin", "ralphi", "gc"]:
+    for t in ["lp_gnn", "lp", "wh", "hc", "margin", "ralphi"]:
         for c in COVS:
             runs = D["snv"]["ONT"][XLSX_TOOL[t]].get(c)
             if not runs:

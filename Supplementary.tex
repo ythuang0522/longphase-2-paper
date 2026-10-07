@@ -388,18 +388,17 @@ Item & Version & Notes \\
 \midrule
 HG002 nanopore R10.4.1 reads & ONT \code{giab\_lsk114\_}\allowbreak\code{2022.12} & FLO-PRO114M, SQK-LSK114, 4~kHz; Dorado \code{sup@v4.0.0} with \code{5mCG\_5hmCG@v2} \\
 Reference & GRCh38 & \code{GCA\_000001405.15\_GRCh38\_}\allowbreak\code{no\_alt\_analysis\_set}; no-alt analysis set, no decoys \\
-minimap2 & 2.30 & \code{-ax map-ont -y} \\
-PEPPER-Margin-DeepVariant\cite{shafin2021margin} & \todo{release} & SNV and indel calls; \todo{model preset} \\
+minimap2 & 2.24-r1122 & \code{-y -ax map-ont} (alignment by Oxford Nanopore; reads with mean quality $\ge 10$) \\
+PEPPER-Margin-DeepVariant\cite{shafin2021margin} & r0.8 & SNV and indel calls (unphased genotypes); \todo{model preset} \\
 Sniffles2 & 2.8.0 & \code{--output-rnames} \\
 GIAB v4.2.1 HG002 & v4.2.1 & GRCh38-based small-variant benchmark \\
 T2T-HG002 v1.1 small-variant benchmark\cite{hansen2026q100,giab2025q100} & GIAB v5 draft & projected onto GRCh38; \code{HG002\_GRCh38\_v5.0q\_}\allowbreak\code{smvar.chr1\_22.vcf}; referred to as v5.0q \\
-WhatsHap & 2.8 & \code{--only-snvs} for SNV comparisons; default indel phasing for indel comparisons; \todo{remaining options} \\
-HapCUT2 & 1.3.4 & default parameters \\
-Margin & 2.3.1 & SNV-only comparison, 10--20$\times$ \todo{command line} \\
-Ralphi & \todo{version} & SNV-only comparison, 10--20$\times$ \todo{command line, model} \\
-GCphase & \todo{version} & SNV-only comparison, 10--20$\times$ \todo{command line} \\
-MethPhaser & \todo{version} & run on the uncorrected SNV-only \toolname output, replicate~1 \todo{command line} \\
-HG002 PacBio HiFi reads & Revio, \todo{release} & down-sampled to 10--50$\times$, one replicate \todo{source, chemistry, aligner, variant caller} \\
+WhatsHap & 2.8 & \code{phase --ignore-read-groups --reference}; \code{--only-snvs} for SNV comparisons; default indel phasing for indel comparisons \\
+HapCUT2 & 1.3.4 & \code{extractHAIRS --ont 1}, then \code{HAPCUT2} with default parameters (default pruning); input restricted to heterozygous SNVs \\
+Margin & 2.3.1 & SNV-only comparison, 10--20$\times$; phasing parameters \code{allParams.phase\_vcf.ont.json}; input restricted to SNVs \\
+Ralphi & v0.0.1 (commit \code{d7d17b1}) & SNV-only comparison, 10--20$\times$; model \code{ralphi.v1.long.pt}, ONT configuration with \code{max\_coverage 15}, \code{mapq 20}, read selection and bad-read filtering \\
+MethPhaser & 0.0.4 & run on the uncorrected SNV-only \toolname output (same SNV phasing as the joint SNV+5mC run), replicate~1 \todo{command line} \\
+HG002 PacBio HiFi reads & Revio, PacBio release 2023-10-31 & ccs 7.0.0, lima 2.7.1, primrose 1.4.0; aligned with pbmm2 1.10.0 (48$\times$); down-sampled with samtools 1.23.1 (seed 1) to 10--40$\times$, 48$\times$ used as 50$\times$; PEPPER-Margin-DeepVariant r0.8 \todo{calls being regenerated per coverage} \\
 \longphase~1.0 & v1.0 & \code{--ont}; commit \code{fe8c1fdff11ba2a082d3}\allowbreak\code{63a7ffcb5c923cacc316} \\
 \toolname & \todo{release tag; results come from branch JH, commit cc17fb1} & Nanopore mode; GNN correction with defaults \\
 \bottomrule
@@ -567,7 +566,7 @@ Detailed views of the window, the network and the phase-set update are given in 
 
 \begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig10_more_tools.pdf}
-\caption{\textbf{SNV-only phasing compared with Margin, Ralphi and GCphase.} HG002 nanopore R10.4.1 data at 10--20$\times$, means of ten replicates with s.d., scored against v5.0q; \toolname with GNN correction.
+\caption{\textbf{SNV-only phasing compared with Margin and Ralphi.} HG002 nanopore R10.4.1 data at 10--20$\times$, means of ten replicates with s.d., scored against v5.0q; \toolname with GNN correction.
 \textbf{a}, Switch error rate. \textbf{b}, Hamming distance. \textbf{c}, Block N50; Ralphi is omitted because its blocks sum to more than the autosome length. \textbf{d}, Number of phase blocks. Values in Supplementary Table~8.}
 \label{fig:supp_tools}
 \end{figure}
@@ -575,8 +574,7 @@ Detailed views of the window, the network and the phase-set update are given in 
 \begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig11_methphaser.pdf}
 \caption{\textbf{Joint methylation co-phasing compared with MethPhaser.} HG002 nanopore R10.4.1 data, replicate 1, scored on SNVs against v5.0q. MethPhaser was given the SNV-only output of \toolname without GNN correction.
-\textbf{a}, Switch errors. \textbf{b}, Fraction of benchmark heterozygous SNVs phased. \textbf{c}, Hamming distance. \textbf{d}, Block N50.
-\todo{The MethPhaser curve coincides exactly with its input; confirm that the MethPhaser output was scored before this figure is used.}}
+\textbf{a}, Switch errors. \textbf{b}, Fraction of benchmark heterozygous SNVs phased. \textbf{c}, Hamming distance. \textbf{d}, Block N50.}
 \label{fig:supp_methphaser}
 \end{figure}
 
@@ -612,8 +610,8 @@ Detailed views of the window, the network and the phase-set update are given in 
 
 \begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig16_gnn_removed.pdf}
-\caption{\textbf{SNVs unphased by GNN correction.} HG002 nanopore R10.4.1 data, SNV-only phasing, replicate 1.
-\textbf{a}, Classification against the v5.0q benchmark VCF; numbers above bars, total unphased.
+\caption{\textbf{SNVs unphased by GNN correction.} HG002 nanopore R10.4.1 data, SNV-only phasing, replicate 1, final GNN model.
+\textbf{a}, Classification against the v5.0q benchmark VCF, matched by position without a benchmark BED; numbers above bars, total unphased.
 \textbf{b}, Status in the T2T-HG002 v1.1 assembly of the SNVs unphased at 60$\times$ and of a random sample of SNVs phased before GNN correction: inside or outside the regions where both assembled haplotypes align 1:1 to GRCh38, and, inside, whether an assembly variant record starts at the same coordinate.
 \textbf{c}, Per chromosome, fraction of each set outside the 1:1 alignment. Values in Supplementary Table~12.
 \todo{Rebuild from one site-level table (autosomes only, control excluding removed sites, allele-aware assembly comparison) before submission.}}
