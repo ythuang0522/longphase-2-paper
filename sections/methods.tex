@@ -70,7 +70,10 @@ Checkpoints were selected on chr15--16 by maximizing
 \begin{equation}
 S=R\left(2-\frac{1}{P}\right)
 \end{equation}
-over 81 score thresholds from 0.01 to 0.99, subject to $R\ge0.005$, where $P$ and $R$ are error-class precision and recall.  The selected checkpoint was epoch 44; validation and held-out classification metrics are given in Supplementary Table~4.  The deployment threshold $B=0.30$ was chosen empirically from a sweep of 0.05--0.95 across the 60 HG002 nanopore runs at 10--20$\times$, balancing switch-error reduction against retention of phased SNVs. Compared with $B=0.40$, the chosen threshold removed more switch errors at the cost of withholding additional phased SNVs, favouring greater error reduction while retaining most phased sites (Supplementary Method~4).
+over 81 score thresholds from 0.01 to 0.99, subject to $R\ge0.005$, where $P$ and $R$ are error-class precision and recall.  The selected checkpoint was epoch 44; validation and held-out classification metrics are given in Supplementary Table~4.  The deployment threshold $B=0.30$ was chosen from a sweep of 0.05--0.95 across the 60 HG002 nanopore runs at 10--20$\times$ as the threshold that removed the most switch errors while withholding at most ten phased SNVs per removed error (33.1\% of switch errors at 8.3 withheld SNVs per removed error; 21.2\% at 10.5 on the held-out chromosomes; Supplementary Method~4).
+%  [provenance] 33.1% / 8.3: supplementary.xlsx SNV_Detail, longphase_v2.0.1 vs longphase_v2.1, ONT 10-20x
+%  (60 runs pooled, genome-wide v5.0q); 21.2% / 10.5: notes/heldout/ (issue #2), same runs on chr17/21/22.
+%  Recompute both if the released model changes (GNN retraining 2026-10).
 \todo{Provide the per-run threshold-sweep results and the phased-fraction/switch-error trade-off panel.}
 
 \subsection*{GNN correction and phase-set update}
