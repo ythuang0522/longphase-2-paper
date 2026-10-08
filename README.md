@@ -195,9 +195,14 @@ The critical ones:
    Node glyphs and haplotype colours now match Fig. 1 throughout. Order: 1 filters, 2 voting,
    3 read-based correction, 4 GNN overview, 5 window+update, 6 architecture, 7 modcall,
    8 metrics, 9 calibration (placeholder). All cross-references updated.
-8. **Source fixes** (status at v2.1, 2026-10-07: (a) is **not** in v2.1, still at
-   `PhasingGraph.cpp:218–231`, so pass it to the maintainers; (b) **is** in v2.1): (a) `PhasingGraph.cpp:253–266` at cc17fb1, the `else if` that assigns vote
-   weight 20 chained off `if(debug)` instead of the edge-threshold test (local fix of 2026-09-20 discarded 2026-10-05);
+8. **Source fixes** (status at v2.1, 2026-10-07: (a) is **not** in v2.1; (b) **is** in v2.1):
+   (a) `PhasingGraph.cpp:253–266` at cc17fb1, the `else if` that assigns vote
+   weight 20 chained off `if(debug)` instead of the edge-threshold test, fixed 2026-09-20;
+   **(update 2026-10-07)** this fix did not make it into the v2.1 release (v2.1
+   `PhasingGraph.cpp:229` still has `else if`). It was committed on JH as `e5963b0`
+   (PR twolinin/longphase#131 → develop) and will ship in LongPhase v2.1.1 or later. Results are
+   unaffected: the only caller passes `debug=false`, and the HG002 10× replicate-1 output is
+   identical with and without the fix;
    (b) `GNNModel.h` lines 6, 43 and 60 described the edge tensor and encoder as 7-wide
    (`[N, N, 7]`, `[7,128]`) although `kEdgeFeat` is 6, comment corrected 2026-09-20.
    `findBestEdgePair` still takes an unused `isONT`.
@@ -353,7 +358,7 @@ most important cheap analysis, because the Discussion names the train/test overl
    total of 60,267 is superseded. Its three benchmark-classification counts still need replacement
    from the confirmed set; 549 sites inside the benchmark BED (413 variants), `compare`'s net loss
    of 2,055 phased benchmark SNVs and the old 2,411 heterozygotes have different eligibility rules.
-5. **GCphase** Hamming 32–40% (near random): check its parameters.
+5. **(Resolved 2026-10-07 — GCphase removed; see the entry below.)** GCphase Hamming 32–40% (near random).
 6. Runtimes, SV/5mC phased fractions and Supp. Fig. 13 values still have no exact source; the
    WhatsHap-only median depth (18×) and zero-entropy share (57.6%) come only from a commit message.
 
@@ -557,6 +562,42 @@ or number changed.
 Figure numbers currently come from `LongPhaseGNN_0902_2-1.pptx` (slides 7–11) and are
 approximate to plot resolution; replace with exact values from the `longphase compare`
 TSVs.
+
+**GCphase removed from the comparison, 2026-10-07 (author decision).** GCphase was run with the
+command from its README (`python GCphase.py -vcf … -bam … -output …`; GitHub `baimawjy/GCphase`
+main `ffa7e8b`, 2023-10-17), on the full PEPPER-Margin-DeepVariant output. Its source shows why the
+results were near random (read, not run): `get_info.py:18-19` is its only genotype test and skips
+records whose genotype starts with `1`; it does not read FILTER, so refCall `0/0` records are kept;
+`get_info.py:128-135` compares single read bases with the REF/ALT strings (indels and multi-allelic
+sites cannot match); `phasingSNP.py:76-82` drops only sites with ≥85% one allele or a single
+minority read; `outputResult.py` rewrites every phased position to `0|1`/`1|0`. In the 10× replicate-1
+output, 1,194,969 of 3,470,770 phased sites (34.4%) were refCall `0/0`, 99.4% of them with a PEPPER
+VAF ≥ 0.15. GCphase therefore needs a VCF of biallelic heterozygous (`0/1`) SNVs only. Changes:
+Methods (comparison paragraph) states the exclusion and the reason; Results drops the GCphase
+fold-change and its todo ("three" → "two further phasers"); Fig. 2 legend (f), Supplementary
+Table 5 (row removed), Supplementary Fig. 10 caption, Supplementary Table 8 (rows removed, "seven" →
+"six configurations") and `make_results_figs.py` (`sfig10` tools, Table 8 loop) updated. The
+GCphase entry in Supplementary Table 6 (studies that use LongPhase) is unrelated and kept.
+**Not yet regenerated** (no TeX/matplotlib on the analysis machine): `suppfig10_more_tools.pdf` still
+draws GCphase — run `python3 figures-source/make_results_figs.py` and `make`. The `gcphase` columns
+remain in `supplementary.xlsx` (Supplementary Data 1); delete them or mark them as excluded.
+
+**Review round, 2026-10-07.** (H1) Methods now state that accuracy was scored with
+`longphase compare` on chr1–22 without a benchmark BED, name the v4.2.1 hifiasm phase-transfer
+file and how it was filtered, and give the out-of-BED shares (9.3% v5.0q, 3.4% v4.2.1).
+(H2) MethPhaser rationale: it was given LongPhase 2 SNV-only output (no GNN) so that both runs start
+from the same SNV phasing. (H3) HiFi call sets are being regenerated per coverage (current calls all
+come from 10×, median DP 10); Methods, Results and Supplementary Table 5 say so. (M1) Down-sampling
+seeds, minimap2 2.24 / samtools versions, PEPPER r0.8, WhatsHap/HapCUT2/Margin/Ralphi command lines,
+HiFi source and the runtime machine filled in; only the PEPPER model preset is still open.
+(M2) Unphased-SNV classification re-run with the final GNN model
+(`gnn_prepare/unphased_e6/`, replicate 1, 10–60×): 55,756–58,162 unphased; at 60× 2,215
+benchmark-het by position, 2,055 with matching alleles, which equals the `compare` loss. The old
+"BED" explanation was wrong; the gap was the matching rule. `COMPOSITION` in `make_results_figs.py`
+updated; Supplementary Fig. 16 must be regenerated, and Supplementary Fig. 17 is still the old raster.
+(M3) SV/5mC phased fractions replaced by exact values (four-class, before GNN: 5mC 99.0–99.4%,
+SV 68.1–70.1%; GNN unphases 1.4–4.6% and 2.4–3.8%). (L1) See item 8(a): the debug fix ships in
+v2.1.1 or later.
 
 ## References
 
