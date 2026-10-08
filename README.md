@@ -745,6 +745,5 @@ Fig. 13e,f must be regenerated (`make results-figs`) and the PDFs rebuilt.**
   14–20% (held-out) with the chromosome-difficulty caveat. Results `\todo` item (i) removed;
   matched-retention and paired-uncertainty items remain.
 - New Supplementary Table 15 (`heldout_table()`), v5.0q and v4.2.1, all coverages.
-- Open: per-run held-out values are only in `notes/heldout/`, not yet in Supplementary Data 1.
-  Optional reviewer check: GNN reduction per chromosome (all 22) to separate unseen sequence from
-  chromosome difficulty.
+- Not done, by author decision (2026-10-09): the per-run held-out values stay in `notes/heldout/`
+  and are not added to Supplementary Data 1; no per-chromosome GNN reduction.
