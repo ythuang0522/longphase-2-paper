@@ -2,7 +2,7 @@
 
 Each item is a suspicion raised while redesigning the Results, not a confirmed bug. Every one is
 also a red `\todo{}` in the manuscript. Paths into `longphase/` refer to
-[twolinin/longphase](https://github.com/twolinin/longphase), branch **JH** (line numbers checked at `f7bd878`, 2026-10-06; unchanged since `cc17fb1`).
+[twolinin/longphase](https://github.com/twolinin/longphase), release **v2.1** on `main` (`46ba470`; line numbers checked 2026-10-07).
 `GNN source/` is local-only (gitignored); ask JHL for the files.
 
 ## Data and analysis inconsistencies

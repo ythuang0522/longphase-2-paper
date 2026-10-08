@@ -1,7 +1,5 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## What this is
 
 The LaTeX manuscript for LongPhase 2 (Nature-style article + Supplementary Information). Not a software project: the deliverables are `main.pdf` and `Supplementary.pdf`. `README.md` is the authoritative status log (todo triage, review history, known text↔code discrepancies) — read it before editing any claim, and update it when the state of the manuscript changes.
@@ -11,7 +9,6 @@ The LaTeX manuscript for LongPhase 2 (Nature-style article + Supplementary Infor
 ```sh
 make                 # main.pdf + Supplementary.pdf (latexmk, naturemag.bst; rebuilds Fig. 1 from source)
 make wordcount       # texcount on the Introduction only
-make clean           # latexmk -C + bbl/blg
 latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex   # one document
 ```
 
@@ -29,23 +26,9 @@ Toolchain on this machine: TeX Live 2025 (`latexmk`, `texcount`, `naturemag.bst`
 The compiled manuscript is shared at **https://claude.ai/artifact/339iTVSwod8JqKgQASYfZm** — the
 same pattern as `../../multimodal/multimodal-diagnosis-paper/notes/hub/build_hub.py`. The URL never
 changes. **Publish it only when the user explicitly asks.** Do not rebuild or republish it
-as a side effect of editing the manuscript, rebuilding a PDF or committing. When asked:
-
-1. `make`, then confirm `grep -c undefined main.log Supplementary.log` prints 0 for both.
-2. `python3 notes/hub/build_hub.py` → writes `hub-build/` (gitignored): `index.html`, both PDFs,
-   `pages/main-NN.jpg` / `pages/supp-NN.jpg` at 110 dpi, `figures/figN.png` and `figures/suppfigN.png`,
-   plus `files.json` (publish list) and `files_with_removals.json` (same plus `null` for page paths a
-   longer earlier build may have left behind).
-3. In a new session, first run the Artifact tool with `action: list`, `scope: files` on that URL
-   (required before a republish is accepted).
-4. Publish `hub-build/index.html` with `url` = that URL, `root: hub-build`, `files` = the list printed
-   by the script; add `null` entries for any page path the listing shows but the new build lacks.
-   Omit `icon` on a redeploy. Report the link and version number.
-
-Before such a publish, check that the stat boxes, flags and captions in `build_hub.py` match the
-manuscript (figure count, supplementary counts, the "Open before submission" items from README).
-If the publish is refused because the live version has not been viewed, do not pass `force: true`
-without the user's explicit go-ahead. Needs poppler (`pdfinfo`, `pdftoppm`) and `rsvg-convert`.
+as a side effect of editing the manuscript, rebuilding a PDF or committing. When asked, follow
+the `publish-hub` skill (`.claude/skills/publish-hub/SKILL.md`). Never pass `force: true` to a
+refused publish without the user's explicit go-ahead.
 
 ## Manuscript conventions
 
@@ -62,5 +45,5 @@ Numerical claims must trace to one of these, not to the figures:
 
 - `supplementary.xlsx` (JHL, 2026-10-04): per-run v5.0q metrics for every tool, configuration, coverage and replicate (ONT 10 replicates at 10–20× for every tool; HiFi 10–50×). `longphase_v2.0.1` = LongPhase 2 without correction, `longphase_v2.1` = with correction. `20260924_GIAB421.txt` holds the v4.2.1 counterparts.
 - `GNN source/` (gitignored, local only): the complete training chain (`prepare_gnn_data_10.py`, `train_gnn_29.py`, `export_onnx_2.py`, `embed_weights.py`, driver scripts, `model_e6.{pt,onnx}`), `train_e6.log` (split, label counts, held-out metrics) and the four `longphase compare` tables `sw_longphase_v2.0.2_{SNVonly,cophase}[_GNN].log` (10× has 9 replicates; seed 10 missing).
-- LongPhase source: `../longphase` (`/Users/ythuang/Desktop/Paper/LongPhase-2/longphase`), branch `JH` (tip `cc17fb1`). `gnn` and `compare` exist only on that branch; tag v2.0.2 on `main` cannot reproduce the paper. Methods flags text↔code discrepancies inline with `file:line` into that tree.
+- LongPhase source: `../longphase` (`/Users/ythuang/Desktop/Paper/LongPhase-2/longphase`), official release **v2.1** on `main` (commit `46ba470`). `file:line` references point into v2.1. The results were produced at `cc17fb1` (branch `JH`) with `phase --dot` followed by the separate `gnn` command; v2.1 runs the GNN inside `phase` by default (`--disableGNN` for the uncorrected runs) with byte-identical outputs (commit `97d7367`), so cite v2.1. Tag v2.0.2 cannot reproduce the paper.
 - `citing_papers_europepmc.json`: the citing-article dump behind Supplementary Table 6.

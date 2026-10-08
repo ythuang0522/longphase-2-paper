@@ -83,7 +83,16 @@ Reads were tagged from the phased SNV, indel, SV and 5mC alleles they carried.  
 The benchmark used HG002 (NA24385) Oxford Nanopore R10.4.1 reads from the ONT \texttt{giab\_lsk114\_2022.12} release: two PromethION flow cells (PAG65784 and PAG68757), SQK-LSK114, 400 bases per second and 4-kHz sampling, basecalled with Dorado \texttt{dna\_r10.4.1\_e8.2\_400bps\_sup@v4.0.0} and \texttt{5mCG\_5hmCG@v2}; their read N50 values were 29.2 and 29.4~kb.  Reads were aligned to the GRCh38 no-alt analysis set with minimap2 v2.30.  The 70.4$\times$ alignment was down-sampled to 10, 12, 14, 16, 18, 20, 30, 40, 50 and 60$\times$ with samtools v1.23.1\cite{danecek2021samtools}.  Ten replicates were used at 10--20$\times$ and one at 30--60$\times$; variants were called separately at every coverage and replicate.  SNVs and indels came from PEPPER-Margin-DeepVariant, SVs from Sniffles2 v2.8.0, and allele-specific 5mC sites from \toolname.
 \todo{Give the ten down-sampling seeds and the PEPPER-Margin-DeepVariant release/model, and state that any phased caller output was discarded.}
 
-Accuracy was scored against the GIAB v4.2.1 HG002 small-variant benchmark\cite{wagner2022giab} and the T2T-HG002-derived v5.0q benchmark\cite{hansen2026q100,giab2025q100}.  Each truth set was restricted to its own benchmark BED and chr1--chr22; chrX, chrY and chrM were not scored.  The v5.0q set adds 701~Mb of autosomal sequence, mainly satellite and segmental-duplication sequence, that v4.2.1 does not assess\cite{hansen2026q100}.
+Accuracy was assessed against two HG002 small-variant benchmarks: GIAB v4.2.1\cite{wagner2022giab}, integrated from mapping-based call sets, and GIAB v5.0q\cite{olson2026giabv5}, derived from the diploid T2T-HG002 assembly\cite{hansen2026q100}, in which every heterozygous variant is phased.  Each benchmark was evaluated within its own benchmark regions on autosomes 1--22.  Of these regions, 2,496~Mb are common to both; v5.0q additionally covers 83~Mb, including 16~Mb of tandem repeats and 13~Mb of homopolymers, whereas the 46~Mb covered only by v4.2.1 include 29~Mb of segmental duplications.  Satellite sequence is largely excluded from both (less than 3~Mb each), as determined with the GIAB v3.6 genome stratifications\cite{dwarshuis2024stratifications}.
+%  [citation] Benchmark extent (2026-10-07): computed from HG002_GRCh38_v5.0q_smvar.benchmark.bed,
+%  HG002_GRCh38_1_22_v4.2.1_benchmark_noinconsistent.bed and the GIAB v3.6 GRCh38 stratifications
+%  (segdups, satellites_slop5, AllTandemRepeats, AllHomopolymers_ge7bp_imperfectge11bp_slop5),
+%  chr1-22, merged-interval arithmetic in Python (bedtools absent). Mb: shared 2,496;
+%  v5.0q-only 83.1 (TR 16.3, HP 13.3, segdup 11.7, overlapping); v4.2.1-only 46.0 (segdup 28.6).
+%  Segdups assessed: v4.2.1 84.0, v5.0q 67.2 of 143.3 -- v5.0q assesses LESS segdup sequence
+%  on the autosomes. TR 60.1 -> 74.1 of 156.3; HP 62.8 -> 75.5 of 79.0; satellites 2.7 / 2.2
+%  of 69.8. Het SNVs: biallelic, inside the v5.0q BED, all phased. The earlier text ("adds
+%  701 Mb, mainly satellite and segdup") used the T2T assembly figure from Hansen et al. 2026.
 
 \subsection*{Comparison with other methods}
 \whatshap~v2.8\cite{patterson2015whatshap} and \hapcut~v1.3.4\cite{edge2017hapcut2} were run on the same alignments and variant calls; cross-tool SNV comparisons used SNV-only phasing, with indel phasing disabled in \whatshap.  \longphase~1.0\cite{lin2022longphase} and \toolname were run with the nanopore setting, and GNN correction used PE trigger 0.8, score threshold 0.30, no bridge protection and block splitting.  Co-phasing experiments separately evaluated the seven variant-class combinations listed in Supplementary Table~10, with and without correction.  Indel co-phasing was also compared with \whatshap's default indel phasing.  Margin v2.3.1\cite{shafin2021margin}, Ralphi\cite{battistella2025ralphi}, GCphase\cite{luo2024gcphase} and MethPhaser\cite{fu2024methphaser} were evaluated as described in Supplementary Table~5.  HG002 PacBio HiFi (Revio) reads were down-sampled to 10, 20, 30, 40 and 50$\times$ and phased SNV-only with \toolname, with and without correction, and \whatshap; the GNN weights were trained on nanopore data.
@@ -108,14 +117,18 @@ Ten nanopore down-sampling replicates at 10--20$\times$ were summarized by their
 Further information on research design is available in the Nature Portfolio Reporting Summary linked to this article.
 
 \subsection*{Data availability}
-The GRCh38 no-alt reference is available from NCBI as \texttt{GCA\_000001405.15\_}\allowbreak\texttt{GRCh38\_no\_alt\_analysis\_set.fna.gz}.  The GIAB HG002 v4.2.1 files are \texttt{HG002\_GRCh38\_1\_22\_}\allowbreak\texttt{v4.2.1\_benchmark.vcf.gz} and \texttt{HG002\_GRCh38\_1\_22\_}\allowbreak\texttt{v4.2.1\_benchmark\_noinconsistent.bed}.  The v5.0q release contains \texttt{GRCh38\_HG2-T2TQ100-V1.1\_}\allowbreak\texttt{smvar.vcf.gz} and \texttt{GRCh38\_HG2-T2TQ100-V1.1\_}\allowbreak\texttt{smvar.benchmark.bed}; the scored VCF is its chr1--chr22 subset, \texttt{HG002\_GRCh38\_v5.0q\_}\allowbreak\texttt{smvar.chr1\_22.vcf}.  HG002 nanopore reads and alignments are available from ONT's \texttt{giab\_lsk114\_2022.12} open-data release under CC BY-NC 4.0.  The source URLs are listed here for reproducibility:
-\begin{itemize}
-\item NCBI GRCh38 no-alt analysis set: \url{https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/};
-\item GIAB v4.2.1: \url{https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38/};
-\item GIAB v5.0q: \url{https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/data/AshkenazimTrio/analysis/NIST_HG002_DraftBenchmark_defrabbV0.020-20250117/};
-\item ONT reads: \texttt{s3://ont-open-data/giab\_lsk114\_2022.12/}.
-\end{itemize}
+The data analysed in this study are publicly available: the GRCh38 no-alt analysis set from NCBI (\url{https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/001/405/GCA_000001405.15_GRCh38/seqs_for_alignment_pipelines.ucsc_ids/}); the GIAB HG002 v4.2.1 (\url{https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38/}) and v5.0q (\url{https://ftp-trace.ncbi.nlm.nih.gov/ReferenceSamples/giab/release/AshkenazimTrio/HG002_NA24385_son/v5.0q/}) benchmarks from the GIAB FTP site; and the HG002 nanopore R10.4.1 reads and alignments from the ONT open-data archive (\texttt{s3://ont-open-data/giab\_lsk114\_2022.12/}) under a CC BY-NC 4.0 licence.  The benchmark files used are listed in Supplementary Table~5.
+%  [provenance] 2026-10-07: scoring used the pre-release draft (defrabb v0.020, 2025-01-17,
+%  GRCh38_HG2-T2TQ100-V1.1_smvar.*). MD5 of draft and release GRCh38 smvar files compared after
+%  download from both FTP directories. VCF c71acc71069bf7cd7f51eb8fb0c1a1ab, BED
+%  3366858af85875cbb3c579412ffa4c56; identical. No rescoring needed.
 \todo{State the command used to derive the v5.0q chr1--chr22 subset and provide source data for Figs.~2--6 and every Supplementary figure with plotted values, including any access restrictions.}
 
 \subsection*{Code availability}
-\toolname is open source under the GNU General Public License v3.0 at \url{https://github.com/twolinin/longphase}; the repository includes a demonstration data set and workflow.  \todo{Give the exact release tag and full commit hash used for the reported results and cite the archived release.}  The training chain, released model, plotting code and validation scripts are not yet deposited with the public repository.  \todo{Deposit the training and figure-generation files under an OSI-approved licence, parameterize development-machine paths, and cite the deposited archive here.}
+\toolname is open source under the GNU General Public License v3.0 at \url{https://github.com/twolinin/longphase}; the repository includes a demonstration data set and workflow.  The reported results correspond to release v2.1 (commit \texttt{46ba47025b2704ab00cf54a35d3d4fead3eb148c}).
+%  [provenance] Runs were made at commit cc17fb1 (branch JH) with `phase --dot`
+%  then the separate `gnn` command. v2.1 makes the GNN a default stage of
+%  `phase` (--disableGNN for uncorrected runs); commit 97d7367 reports
+%  byte-identical outputs on the demo and HG002 10x_1/20x_1, SNV-only and
+%  four-class. Other replicates/coverages were not re-run at v2.1.
+  The training chain, released model, plotting code and validation scripts are not yet deposited with the public repository.  \todo{Deposit the training and figure-generation files under an OSI-approved licence, parameterize development-machine paths, and cite the deposited archive here.}

@@ -237,7 +237,7 @@ Metrics were computed with \code{longphase compare} (Supplementary Fig.~8), a C+
 \addcontentsline{toc}{section}{Supplementary Notes}
 
 \subsection*{Supplementary Note 1. Reading the phasing graph export}
-With \code{--dot}, \code{longphase phase} writes one file per chromosome, \code{<prefix>.<chrom>.dot}, containing one line per voting pair, \code{P.a -> Q.b [label=w]}, where \code{P} and \code{Q} are 1-based positions, \code{a}, \code{b} $\in \{1, 2\}$ index the reference (1) and alternate (2) allele, and \code{w} is the weighted haplotype vote accumulated at \code{P} for that allele at the time the vote was cast. The companion VCF carries, for every phased variant, the fields \code{INFO/H1}, \code{INFO/H2} (weighted votes for haplotype 1 and 2) and \code{INFO/PE} (their normalized Shannon entropy). These exports record the graph evidence used to construct the local GNN windows.
+With \code{--dot}, \code{longphase phase} writes one file per chromosome, \code{<prefix>.<chrom>.dot}, containing one line per voting pair, \code{P.a -> Q.b [label=w]}, where \code{P} and \code{Q} are 1-based positions, \code{a}, \code{b} $\in \{1, 2\}$ index the reference (1) and alternate (2) allele, and \code{w} is the weighted haplotype vote accumulated at \code{P} for that allele at the time the vote was cast. The companion VCF carries, for every phased variant, the fields \code{INFO/H1}, \code{INFO/H2} (weighted votes for haplotype 1 and 2) and \code{INFO/PE} (their normalized Shannon entropy). These exports record the graph evidence used to construct the local GNN windows; the GNN stage of \code{phase} receives the same edges and weights in memory, so \code{--dot} is needed only to inspect them.
 
 \subsection*{Supplementary Note 2. Reproducing the demonstration}
 The repository ships a 500-kb demonstration (chr1:121.5--122.0~Mb; \code{demo/demo.sh}) that performs methylation calling, SNV-only and four-class phasing with and without GNN correction, and comparison against a truth VCF, and prints switch errors, phased SNV counts and Hamming distance for the four configurations. Total runtime is under two minutes on four threads.
@@ -391,8 +391,8 @@ Reference & GRCh38 & \code{GCA\_000001405.15\_GRCh38\_}\allowbreak\code{no\_alt\
 minimap2 & 2.30 & \code{-ax map-ont -y} \\
 PEPPER-Margin-DeepVariant\cite{shafin2021margin} & \todo{release} & SNV and indel calls; \todo{model preset} \\
 Sniffles2 & 2.8.0 & \code{--output-rnames} \\
-GIAB v4.2.1 HG002 & v4.2.1 & GRCh38-based small-variant benchmark \\
-T2T-HG002 v1.1 small-variant benchmark\cite{hansen2026q100,giab2025q100} & GIAB v5 draft & projected onto GRCh38; \code{HG002\_GRCh38\_v5.0q\_}\allowbreak\code{smvar.chr1\_22.vcf}; referred to as v5.0q \\
+GIAB v4.2.1 HG002 & v4.2.1 & GRCh38 small-variant benchmark; \code{HG002\_GRCh38\_1\_22\_}\allowbreak\code{v4.2.1\_benchmark.vcf.gz} with \code{HG002\_GRCh38\_1\_22\_}\allowbreak\code{v4.2.1\_benchmark\_}\allowbreak\code{noinconsistent.bed} \\
+GIAB v5.0q HG002 benchmark\cite{hansen2026q100,olson2026giabv5} & v5.0q & GRCh38 small-variant benchmark derived from the T2T-HG002 v1.1 assembly; \code{HG002\_GRCh38\_v5.0q\_}\allowbreak\code{smvar.vcf.gz} (chr1--chr22) with \code{HG002\_GRCh38\_v5.0q\_}\allowbreak\code{smvar.benchmark.bed} \\
 WhatsHap & 2.8 & \code{--only-snvs} for SNV comparisons; default indel phasing for indel comparisons; \todo{remaining options} \\
 HapCUT2 & 1.3.4 & default parameters \\
 Margin & 2.3.1 & SNV-only comparison, 10--20$\times$ \todo{command line} \\
@@ -401,7 +401,7 @@ GCphase & \todo{version} & SNV-only comparison, 10--20$\times$ \todo{command lin
 MethPhaser & \todo{version} & run on the uncorrected SNV-only \toolname output, replicate~1 \todo{command line} \\
 HG002 PacBio HiFi reads & Revio, \todo{release} & down-sampled to 10--50$\times$, one replicate \todo{source, chemistry, aligner, variant caller} \\
 \longphase~1.0 & v1.0 & \code{--ont}; commit \code{fe8c1fdff11ba2a082d3}\allowbreak\code{63a7ffcb5c923cacc316} \\
-\toolname & \todo{release tag; results come from branch JH, commit cc17fb1} & Nanopore mode; GNN correction with defaults \\
+\toolname & v2.1, commit \code{46ba470} & Nanopore mode; GNN correction with defaults \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -509,7 +509,7 @@ Detailed views of the window, the network and the phase-set update are given in 
 \textbf{a}, A window of $\pm 20$ variants (two allele nodes each) is opened around every phased variant with PE $\ge 0.8$; edges are the DOT edges with both endpoints in the window (blue and red arcs) plus self-loops; a dashed grey edge marks a cross-haplotype link. Predictions are read only in the central zone.
 \textbf{b}, Bridge-vertex feature: a variant whose removal disconnects the window graph.
 \textbf{c}, Definition of the central zone. A window holds at most 41 variants and 82 allele nodes (a 256-node cap exists but is never reached at the default window size); SNV, indel, SV and 5mC records are merged and sorted by position before nodes are created. The retained zone is the central half of the window's genomic span: variants no further from the trigger than half the largest trigger distance in the window. The same rule, with the same constant, defines which labelled nodes carried a training loss, and the zone scored at inference is the zone the network was trained on. Edges are the DOT edges with both endpoints in the window, symmetrized, plus one self-loop per node whose features are the mean over that node's incident edges. The predictions of the two allele nodes of a variant are averaged, and a variant covered by several windows receives the mean over those windows.
-\textbf{d}, The exported phasing graph (DOT) that the module reads: one line per voting pair, source and target written as position.allele, and the vote weight accumulated at the source as the label.
+\textbf{d}, The phasing graph that the module reads, shown in its DOT export format (\code{--dot}): one line per voting pair, source and target written as position.allele, and the vote weight accumulated at the source as the label.
 \textbf{e}, Phase-set update, before correction: a variant with predicted phase-error score $\ge 0.30$ (amber) inside a phase set.
 \textbf{f}, After correction the variant is written as an unphased genotype without PS; connectivity of the remaining variants is recomputed over the surviving DOT edges, the largest component keeps the original PS and every other component receives a new PS equal to the position of its first variant. Genotypes are never flipped.}
 \end{figure}

@@ -38,7 +38,7 @@ Revised 2026-09-24 for Nature Methods print requirements: no text below 5 pt at 
 terminology and indel-as-sequence-box glyph throughout; panel d is the phased result of the
 panel a reads (same seven columns); phasing-entropy track with threshold added to c and a
 the unphased SNV (faded) to d, whose uncertainty strip was later dropped as a repeat of c and its glyphs enlarged (2026-09-25); dashed low-confidence
-edges and a down-weighted-allele legend in b; the block split when unphasing disconnects a phase set (`GNNProcess.cpp:540`, branch `JH`) is
+edges and a down-weighted-allele legend in b; the block split when unphasing disconnects a phase set (`PhasingProcess.cpp:830` in v2.1; `GNNProcess.cpp:540` at `cc17fb1`) is
 now stated only in Methods, the Fig. 1 legend having been cut to ~100 words (2026-09-24); panel a has a heading and tighter
 reads, no panel carries a heading, the sequence-context inset is coloured by haplotype, and the compacted top half brings the
 canvas to 1680×1046. Plain wording in the figure: "phasing uncertainty" for phasing entropy
@@ -48,7 +48,7 @@ uncertainty" (entropy is only one measure of it); body text says "haplotype bloc
 and keeps "phasing entropy" only where a sentence is about the metric's value (Results, Fig. 6c).
 Panel c shows the uncertainty bars with a y-axis label and no threshold line, and node (31) and
 edge (6) feature-vector strips segmented by feature group (16/6/5/4 and 3/1/1/1, from
-`GNNProcess.cpp` nf[0..30] and ep[0..5] and the Methods grouping). Open polish: the PDF still embeds five Type 3 fonts (rsvg-convert output).
+`PhasingProcess.cpp` nf[0..30] and ep[0..5] in v2.1 and the Methods grouping). Open polish: the PDF still embeds five Type 3 fonts (rsvg-convert output).
 
 ## Before submission
 
@@ -170,9 +170,9 @@ The critical ones:
    describes training in full from those files; the scripts carry absolute paths
    (`/ssd/longphase_process/...`, `/disk/software/...`) and must be parameterized
    and deposited.
-2. **`gnn` and `compare` exist only on branch JH** (tip `cc17fb1`, 2026-08-25, the
-   latest source; re-checked after `git fetch` on 2026-09-18). Tag v2.0.2 on `main`
-   cannot reproduce any result in this paper. Merge and tag before submission.
+2. **(Resolved 2026-10-07.)** The source baseline is the official release v2.1 on `main`
+   (`46ba470`), which contains all of branch JH. The results were produced at `cc17fb1`;
+   v2.1 folds `gnn` into `phase` with byte-identical outputs (see the 2026-10-07 entry).
 3. **Everything is HG002, one chemistry**, and the GNN was trained on it. No second
    individual, no PacBio HiFi, no downstream demonstration (the ClairS purity-sweep
    experiment in the algorithm slides is the natural candidate; see the Results todo).
@@ -180,7 +180,7 @@ The critical ones:
    The six Supplementary matching errors were fixed on 2026-09-18 (Table 1 log bases and
    feature order, Table 3 node cap, Table 4 `--svWindow`/`--svThreshold` and `--ont`,
    Table 5 caption, Fig. S1b/S6c legends). One earlier flag was itself wrong and has been
-   removed: the homopolymer SNV filter *is* gated on `--ont` (`PhasingProcess.cpp:122`).
+   removed: the homopolymer SNV filter *is* gated on `--ont` (`PhasingProcess.cpp:161` in v2.1; `:122` at `cc17fb1`).
 5. **Speed claim** is now stated consistently as six- to eightfold at 60× (5–8× across
    30–60×) in abstract, introduction and results; still to be confirmed from the TSVs.
 6. **Novelty claim on phase confidence** was corrected: HapCUT2 already emits per-variant
@@ -195,9 +195,9 @@ The critical ones:
    Node glyphs and haplotype colours now match Fig. 1 throughout. Order: 1 filters, 2 voting,
    3 read-based correction, 4 GNN overview, 5 window+update, 6 architecture, 7 modcall,
    8 metrics, 9 calibration (placeholder). All cross-references updated.
-8. **Source fixes, uncommitted** in the working tree of `../longphase` (commit before the
-   release): (a) `PhasingGraph.cpp:253–266` at cc17fb1, the `else if` that assigns vote
-   weight 20 chained off `if(debug)` instead of the edge-threshold test, fixed 2026-09-20;
+8. **Source fixes** (status at v2.1, 2026-10-07: (a) is **not** in v2.1, still at
+   `PhasingGraph.cpp:218–231`, so pass it to the maintainers; (b) **is** in v2.1): (a) `PhasingGraph.cpp:253–266` at cc17fb1, the `else if` that assigns vote
+   weight 20 chained off `if(debug)` instead of the edge-threshold test (local fix of 2026-09-20 discarded 2026-10-05);
    (b) `GNNModel.h` lines 6, 43 and 60 described the edge tensor and encoder as 7-wide
    (`[N, N, 7]`, `[7,128]`) although `kEdgeFeat` is 6, comment corrected 2026-09-20.
    `findBestEdgePair` still takes an unused `isONT`.
@@ -469,6 +469,48 @@ missing characters or new overfull-box warnings. The main PDF is now 22 pages; S
 Information is 36 pages. The existing title/affiliation overfull box and Supplementary Table 4
 float-size warning are unchanged.
 
+**GIAB v5.0q preprint, 2026-10-07 (author request).** Olson et al., bioRxiv
+10.64898/2026.09.23.752440, is the formal v5.0q benchmark paper; it replaces the `@misc`
+`giab2025q100` (which pointed at the wrong `T2T-Q100/` directory) as `olson2026giabv5`
+(65 authors, from the bioRxiv `citation_author` tags). The release GRCh38 smvar VCF and BED
+(`release/.../v5.0q/`) have the same MD5 as the defrabb v0.020 draft that was scored, so no
+rescoring. Correction: Methods said v5.0q "adds 701 Mb of autosomal sequence, mainly satellite
+and segmental-duplication sequence"; 701 Mb is the T2T assembly figure (Hansen 2026). Measured on
+chr1–22 with the GIAB v3.6 stratifications: the two BEDs share 2,496 Mb; v5.0q adds 83 Mb
+(16 Mb tandem repeats, 13 Mb homopolymers) and omits 46 Mb (29 Mb segdups). v5.0q assesses
+*less* segdup sequence than v4.2.1 (67 vs 84 Mb of 143 Mb) and almost no satellite (2 Mb of
+70 Mb), so neither "satellites" nor "segmental duplications" may be claimed as gains; the
+preprint's 1.2× segdup gain does not hold on the autosomes. All 2,180,776 het SNVs in the
+v5.0q BED are phased. Methods, the Introduction's last benchmark sentence, the Results scope
+sentence and the Supp. table of versions were rewritten (Nature Methods register, second
+pass after author review); Data availability names the release files and URL. The
+Introduction keeps the 701 Mb assembly figure, which is correct for the assembly. Open
+opportunity (not done): the release `stvar` benchmark is phased and could score SV phase.
+
+**Benchmark finding promoted, 2026-10-07 (author request).** Abstract now names "the GIAB
+v5.0q benchmark derived from the telomere-to-telomere assembly" (145 words). The benchmark
+sentence was moved out of the Discussion limitations into a short paragraph of its own (before
+the limitations): v4.2.1 convergence vs 4.3–4.8-fold separation under v5.0q, >96% shared
+regions, the v5.0q release paper evaluated calls but not phase, and phaser comparisons used
+mapping-confined truth sets. Next analyses suggested, not done: indel phase accuracy against
+v5.0q `smvar`; switch errors in shared vs v5.0q-only regions and GIAB v3.6 TR/HP/segdup strata;
+SV phase against `stvar`; an independent individual (Platinum Pedigree).
+
+**Source baseline moved to release v2.1, 2026-10-07 (author request).** `../longphase` is now
+checked out on `main` at the official release v2.1 (`46ba470`). JH tip `f7bd878` is an ancestor;
+the two differ only in README images. Since `cc17fb1` (the commit behind the results), commit
+`97d7367` made the GNN a default stage of `phase` (`--disableGNN`, `--gnnBreakThreshold` 0.30,
+`--gnnPeThreshold` 0.80, `--gnnWindow` 20 — the manuscript's values) and removed the `gnn`
+command; the commit reports byte-identical outputs on the demo and HG002 10x_1/20x_1 (SNV-only
+and four-class). `--dot` still exists; the GNN now gets the edges in memory. Edits: Supp. Table
+of versions and Methods code availability now name v2.1 (`46ba470`), with a `[provenance]`
+comment; Supp. Note 1 and the Supp. Fig. 5d legend say the GNN reads the graph in memory.
+Line map `cc17fb1` → v2.1: `GNNProcess.cpp:540` → `PhasingProcess.cpp:830`;
+`PhasingProcess.cpp:122` → `:161`; `PhasingGraph.cpp:253–266` → `:218–231`;
+`PhasingGraph.cpp:838–862` → `:804–828`; `ParsingBam.cpp:226–228` → `:236–238` (the PE header
+now says 0 also means no incoming votes). `CompareProcess.cpp` and `ModCallParsingBam.cpp`
+references are unchanged. Dated entries below keep their `cc17fb1` line numbers.
+
 **Review correction, 2026-10-06 (author request).** Removed the training-label audit/retraining
 TODO from the Discussion and item 12 from `notes/SUSPECTED_ERRORS.md`. No incorrectly labelled
 training record had been demonstrated; parser checks alone did not establish a defect in the
@@ -528,3 +570,37 @@ haplotyping (Akbari 2023), long-read 5mC caller comparison (Sigurpalsdottir 2024
 clinical long-read references (Eisfeldt 2025; Negi 2025). Three entries with raw HTML in
 their titles (`<scp>`, `<i>`) and two malformed author lists were repaired; they printed
 verbatim in the compiled bibliography.
+
+**Results and Discussion editorial revision, 2026-10-08 (Codex).**
+Revised the current working-tree text, including the new benchmark-extent description and
+standalone benchmark Discussion paragraph. Results retains the competitor/component structure
+and uses switch error rate, phased fraction and block N50 consistently. Long sentences were
+split, comparator and coverage scopes made explicit, and interpretive claims separated from
+measurements. Discussion now follows five paragraphs: contribution, selective withholding,
+benchmark dependence, evaluation limits and downstream testing.
+
+The revision removes unsupported causal interpretations of capped read depth and benchmark
+VCF absence. The assembly comparison is explicitly exploratory, coordinate-based and not an
+independent validation; its pre-correction background remains identified. PE = 0 is described
+as either unanimous votes or no incoming votes at a block start, consistent with Methods and
+the v2.1 VCF header. The MethPhaser comparison remains provisional. Greater separation under
+v5.0q is not presented as independent evidence of benchmark phase accuracy. All 12 Results
+TODOs are preserved, and no measurements, analyses, figure artwork or data tables were changed.
+
+Validation: main.pdf rebuilt successfully with TeX Live. Results/Discussion pages 3, 5–9 and 13
+were rendered and inspected. No undefined references/citations, missing characters or new
+box warnings were found. The existing title/affiliation overfull box and figure-caption
+underfull boxes are unchanged. The compiled main document has 23 pages. No hub publication
+was performed.
+
+**Figs. 2 and 5 panels reordered, 2026-10-08 (author request).** Accuracy now leads: Fig. 2
+a switch error rate, b ratio to comparators, c Hamming distance, d block N50, e switch error
+rate against N50 at 10×, f phased SNVs (was a, b, c, d, e, f = phased, rate, Hamming, N50,
+ratio, trade-off). Fig. 5 follows the same order (a rate, b ratio, c Hamming, d N50, e phased).
+LongPhase 2 is first in both legends. Legends, Results panel citations and the Fig. 5
+"panels as in Fig. 2a–d,f" cross-reference updated; the N50 sentence now precedes the
+phased-fraction sentence so that panels are cited in order. No data changed. A runtime panel
+was not added: the timing todo in Results still has no source table.
+Same day, Fig. 2e: the single 10× scatter (the one coverage at which Margin has a lower switch
+error rate than LongPhase 2) is replaced by one switch-rate/N50 path per tool over 10–20×, the
+coverages at which Margin was run. Results text unchanged (it already gives 10× and 12–20×).

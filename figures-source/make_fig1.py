@@ -336,7 +336,7 @@ window_graph(XS, YTc, YBc, "ATCGT", "GCTAC", r=19, fs=21.5, centre=CTR)
 # context + 5 graph structure + 4 variant type = 31, grouped as in Supplementary
 # Table 1 (rel_vote_depth, nf[24], counts as phase evidence); edge 3 read
 # support (weight, log_weight, weight_ratio) + distance + allele match + block
-# relation = 6, as in Supplementary Table 2 (GNNProcess.cpp nf[0..30], ep[0..5]).
+# relation = 6, as in Supplementary Table 2 (PhasingProcess.cpp nf[0..30], ep[0..5], v2.1).
 NODE_RAMP = ("#103A82", "#3F6DB5", "#86A6D6", "#C9D7EE")
 EDGE_RAMP = ("#46566A", "#7C8DA0", "#AEBBC8", "#D5DDE5")
 

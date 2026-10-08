@@ -206,16 +206,18 @@ def save(fig, path):
 
 # ============================================================ Figure 2 =====
 def fig2():
-    """SNV-only phasing on nanopore data: LongPhase 2 (full method) vs other tools."""
+    """SNV-only phasing on nanopore data: LongPhase 2 (full method) vs other tools.
+    Accuracy panels first (a-c), then contiguity (d), the 10-20x trade-off (e) and phased fraction (f)."""
     tools = ["wh", "hc", "lp_gnn"]   # HapCUT2 drawn over WhatsHap, where they coincide
     fig, axs = new_fig(100, 2, 3)
+    ax_sw, ax_ratio, ax_ham, ax_n50, ax_tradeoff, ax_psnv = axs.flat
     specs = [
-        ("psnv_pct", "Phased SNVs (%)", None, 1),
-        ("sw_pct", "Switch error rate (%)", "log", 1),
-        ("ham", "Hamming distance (%)", None, 1),
-        ("n50", "Block N50 (Mb)", None, 1e-6),
+        (ax_sw, "sw_pct", "Switch error rate (%)", "log", 1, "a"),
+        (ax_ham, "ham", "Hamming distance (%)", None, 1, "c"),
+        (ax_n50, "n50", "Block N50 (Mb)", None, 1e-6, "d"),
+        (ax_psnv, "psnv_pct", "Phased SNVs (%)", None, 1, "f"),
     ]
-    for ax, (key, lab, yscale, sc), L in zip(axs.flat, specs, "abcd"):
+    for ax, key, lab, yscale, sc, L in specs:
         single_band(ax)
         for t in tools:
             xs, m, s_ = snv_series(t, key)
@@ -226,7 +228,7 @@ def fig2():
             ax.set_yticklabels(["0.02", "0.05", "0.1", "0.2", "0.3"])
             ax.minorticks_off()
         ax.set_ylabel(lab); cov_axis(ax); letter(ax, L)
-    ax = axs.flat[4]
+    ax = ax_ratio
     single_band(ax)
     xs, q, _ = snv_series("lp_gnn", "sw_pct")
     for ref in ("wh", "hc"):
@@ -235,23 +237,31 @@ def fig2():
         ax.plot(xs, [a / b for a, b in zip(r, q)], color=C[ref], marker=st["marker"], ls=st["ls"],
                 mfc="none", mew=0.8, ms=st["ms"])
     ax.set_ylim(0, 5.2); ax.set_ylabel("Switch-error-rate ratio\n(comparator / LongPhase 2)")
-    cov_axis(ax); letter(ax, "e")
+    cov_axis(ax); letter(ax, "b")
     ax.legend(handles=[thandle("wh", "WhatsHap"), thandle("hc", "HapCUT2")],
               loc="lower right", fontsize=5.5, handlelength=2.6)
-    ax = axs.flat[5]
+    ax = ax_tradeoff   # one path per tool over 10-20x (Margin was run at 10-20x only)
+    path_covs = [10, 12, 14, 16, 18, 20]
+    lab = {  # name offset (points) from the 14x point, alignment
+        "lp_gnn": ((6, 0), "left"), "margin": ((6, 0), "left"),
+        "wh": ((-6, 0), "right"), "hc": ((6, 0), "left")}
     for t in ["hc", "wh", "margin", "lp_gnn"]:
-        runs = D["snv"]["ONT"][XLSX_TOOL[t]][10]
-        x, sx = ms(runs, "sw_pct"); y, sy = ms(runs, "n50")
-        ax.errorbar([x], [y / 1e6], xerr=[sx], yerr=[sy / 1e6], fmt=STY[t]["marker"], color=C[t], ms=STY[t]["ms"] + 1,
-                    mfc="none", mew=0.9, elinewidth=0.6, capsize=0)
-        off = {"hc": (0, 6), "wh": (-2, -7), "lp_gnn": (5, 0), "margin": (5, 0)}[t]
-        ax.annotate({"wh": "WhatsHap"}.get(t, NAME[t]), (x, y / 1e6), xytext=off,
-                    textcoords="offset points", fontsize=5.5, color=C[t], va="center",
-                    ha="center" if t in ("hc", "wh") else "left")
-    ax.set_xlim(0.04, 0.31); ax.set_ylim(0.15, 1.1)
-    ax.set_xlabel("Switch error rate (%), 10×"); ax.set_ylabel("Block N50 (Mb), 10×")
-    letter(ax, "f")
-    h = [thandle(t) for t in tools]
+        runs = D["snv"]["ONT"][XLSX_TOOL[t]]
+        xs = [ms(runs[c], "sw_pct")[0] for c in path_covs]
+        ys = [ms(runs[c], "n50")[0] / 1e6 for c in path_covs]
+        st = STY[t]
+        ax.plot(xs, ys, color=C[t], ls=st["ls"], marker=st["marker"], ms=st["ms"], mfc="none", mew=0.8)
+        off, ha = lab[t]
+        ax.annotate({"wh": "WhatsHap"}.get(t, NAME[t]), (xs[2], ys[2]), xytext=off,
+                    textcoords="offset points", fontsize=5.5, color=C[t], va="center", ha=ha)
+        if t in ("lp_gnn", "margin"):
+            for c, x, y, dy in ((10, xs[0], ys[0], -5), (20, xs[-1], ys[-1], 5)):
+                ax.annotate(f"{c}×", (x, y), xytext=(0, dy), textcoords="offset points",
+                            fontsize=5, color=C[t], ha="center", va="center")
+    ax.set_xlim(0, 0.3); ax.set_ylim(0, 1.85)
+    ax.set_xlabel("Switch error rate (%)"); ax.set_ylabel("Block N50 (Mb)")
+    letter(ax, "e")
+    h = [thandle(t) for t in ("lp_gnn", "wh", "hc")]
     fig.legend(handles=h, loc="outside upper center", ncol=4, handlelength=2.6, columnspacing=1.2)
     save(fig, os.path.join(OUT, "fig2_snv_comparison.pdf"))
 
@@ -345,24 +355,24 @@ def fig4():
 
 # ============================================================ Figure 5 =====
 def fig5():
-    """PacBio HiFi: LongPhase 2 vs WhatsHap, laid out like Fig. 2 (one replicate per coverage)."""
+    """PacBio HiFi: LongPhase 2 vs WhatsHap, panels in Fig. 2 order (one replicate per coverage)."""
     tools = ["wh", "lp_gnn"]
     fig, axs = new_fig(56, 1, 5)
-    specs = [("psnv_pct", "Phased SNVs (%)", (80, 90), 1),
-             ("sw_pct", "Switch error rate (%)", (0, 0.15), 1),
+    specs = [("sw_pct", "Switch error rate (%)", (0, 0.15), 1),
              ("ham", "Hamming distance (%)", (0, 2), 1),
-             ("n50", "Block N50 (kb)", (0, 600), 1e-3)]
-    for ax, (key, lab, ylim, sc), L in zip(axs, specs, "abcd"):
+             ("n50", "Block N50 (kb)", (0, 600), 1e-3),
+             ("psnv_pct", "Phased SNVs (%)", (80, 90), 1)]
+    for ax, (key, lab, ylim, sc), L in zip([axs[0], axs[2], axs[3], axs[4]], specs, "acde"):
         for t in tools:
             xs, m, s_ = snv_series(t, key, plat="HiFi", covs=HIFI_COVS)
             tline(ax, t, xs, m, s_, scale=sc, label=NAME[t])
         ax.set_ylim(*ylim); ax.set_ylabel(lab); cov_axis(ax, HIFI_COVS); letter(ax, L)
-    ax = axs[4]
+    ax = axs[1]
     xs, q, _ = snv_series("lp_gnn", "sw_pct", plat="HiFi", covs=HIFI_COVS)
     _, r, _ = snv_series("wh", "sw_pct", plat="HiFi", covs=HIFI_COVS)
     ax.plot(xs, [a / b for a, b in zip(r, q)], color=C["wh"], marker="D", ms=2.8, mfc="none", mew=0.8)
     ax.set_ylim(0, 4); ax.set_ylabel("Switch-error-rate ratio\n(WhatsHap / LongPhase 2)")
-    cov_axis(ax, HIFI_COVS); letter(ax, "e")
+    cov_axis(ax, HIFI_COVS); letter(ax, "b")
     h = [thandle(t) for t in ("lp_gnn", "wh")]
     fig.legend(handles=h, loc="outside upper center", ncol=2, handlelength=2.2)
     save(fig, os.path.join(OUT, "fig5_hifi.pdf"))

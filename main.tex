@@ -52,7 +52,7 @@ Jyun-Hong Lin$^{1}$, Yang-Ming Yeh$^{2}$, Yu-Chun Chen$^{1}$, Yao-Ting Huang$^{1
 \maketitle
 
 \begin{abstract}
-Long reads link genetic variants and native methylation signals, but integrating these observations into reliable haplotypes remains challenging in repetitive regions. Here we present \toolname, which co-phases SNVs, indels, structural variants and allele-specific methylation in one graph, uses quality- and context-aware weighting, and scores every variant's phasing uncertainty. A graph neural network then unphases, rather than flips, the variants it predicts to be misphased. On HG002 nanopore data (10--60$\times$), against a telomere-to-telomere truth set, \toolname makes 2.8- to 4.8-fold fewer switch errors than WhatsHap and HapCUT2 (1.1- to 1.7-fold under GIAB v4.2.1) and runs six- to eightfold faster at 60$\times$; co-phasing lengthens haplotype blocks by 40\%. On PacBio HiFi data, without retraining the network, \toolname makes 2.5- to 3.5-fold fewer switch errors than WhatsHap. \toolname is a drop-in replacement for the LongPhase versions in Clair3, ClairS, Severus and EPI2ME.
+Long reads link genetic variants and native methylation, but turning them into reliable haplotypes remains difficult in repetitive regions. Here we present \toolname, which co-phases SNVs, indels, structural variants and allele-specific methylation in one graph, uses quality- and context-aware weighting, and scores every variant's phasing uncertainty. A graph neural network then unphases, rather than flips, predicted misphased variants. On HG002 nanopore data (10--60$\times$), scored against a benchmark built from a telomere-to-telomere assembly, \toolname makes 2.8- to 4.8-fold fewer switch errors than WhatsHap and HapCUT2 and runs six- to eightfold faster at 60$\times$; co-phasing lengthens haplotype blocks by 40\%. Against the earlier mapping-based benchmark, the same outputs differ only 1.1- to 1.7-fold, suggesting that such truth sets mask differences between methods. On PacBio HiFi data, without retraining, \toolname makes 2.5- to 3.5-fold fewer switch errors than WhatsHap. It is a drop-in replacement in Clair3, ClairS, Severus and EPI2ME.
 \end{abstract}
 
 \section*{Introduction}
@@ -76,13 +76,13 @@ Long reads link genetic variants and native methylation signals, but integrating
   \centering
   \includegraphics[width=\textwidth]{fig2_snv_comparison.pdf}
   \caption{\textbf{SNV phasing compared with WhatsHap, HapCUT2 and Margin.}
-  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$; SNV-only phasing of identical variant calls, scored against the T2T-HG002-derived v5.0q benchmark. Values at 10--20$\times$ are means of ten down-sampling replicates, with the s.d.\ as a light band (often narrower than the line); values at 30--60$\times$ come from one down-sampling of the 70$\times$ data set (Methods). Open symbols of different shape and size remain visible where tools coincide, as \whatshap and \hapcut do in \textbf{a} and \textbf{d}.
-  \textbf{a}, Fraction of benchmark heterozygous SNVs phased.
-  \textbf{b}, Switch error rate (log scale).
+  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$; SNV-only phasing of identical variant calls, scored against the T2T-HG002-derived v5.0q benchmark. Values at 10--20$\times$ are means of ten down-sampling replicates, with the s.d.\ as a light band (often narrower than the line); values at 30--60$\times$ come from one down-sampling of the 70$\times$ data set (Methods). Open symbols of different shape and size remain visible where tools coincide, as \whatshap and \hapcut do in \textbf{d} and \textbf{f}.
+  \textbf{a}, Switch error rate (log scale).
+  \textbf{b}, Switch error rate of each comparator divided by that of \toolname.
   \textbf{c}, Block-wise Hamming distance.
   \textbf{d}, Phase-block N50.
-  \textbf{e}, Switch error rate of each comparator divided by that of \toolname.
-  \textbf{f}, Switch error rate against block N50 at 10$\times$; Ralphi and GCphase in Supplementary Fig.~10.}
+  \textbf{e}, Switch error rate against block N50 at 10--20$\times$ (means of ten replicates), one path per tool from 10$\times$ (bottom) to 20$\times$ (top), with Margin, which was run at these coverages only; Ralphi and GCphase in Supplementary Fig.~10.
+  \textbf{f}, Fraction of benchmark heterozygous SNVs phased.}
   \label{fig:snv}
 \end{figure}
 
@@ -112,12 +112,12 @@ Long reads link genetic variants and native methylation signals, but integrating
   \centering
   \includegraphics[width=\textwidth]{fig5_hifi.pdf}
   \caption{\textbf{Phasing of PacBio HiFi data compared with WhatsHap.}
-  HG002 PacBio HiFi (Revio) reads down-sampled to 10--50$\times$, one replicate per coverage\todo{state whether one call set was used for every coverage}; SNV-only phasing scored against v5.0q; \toolname uses the network trained on nanopore data. Panels as in Fig.~\ref{fig:snv}a--e.
-  \textbf{a}, Fraction of benchmark heterozygous SNVs phased.
-  \textbf{b}, Switch error rate.
+  HG002 PacBio HiFi (Revio) reads down-sampled to 10--50$\times$, one replicate per coverage\todo{state whether one call set was used for every coverage}; SNV-only phasing scored against v5.0q; \toolname uses the network trained on nanopore data. Panels as in Fig.~\ref{fig:snv}a--d,f.
+  \textbf{a}, Switch error rate.
+  \textbf{b}, Switch error rate of \whatshap divided by that of \toolname.
   \textbf{c}, Block-wise Hamming distance.
   \textbf{d}, Phase-block N50.
-  \textbf{e}, Switch error rate of \whatshap divided by that of \toolname.}
+  \textbf{e}, Fraction of benchmark heterozygous SNVs phased.}
   \label{fig:hifi}
 \end{figure}
 
