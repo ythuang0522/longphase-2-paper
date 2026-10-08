@@ -492,6 +492,21 @@ pass after author review); Data availability names the release files and URL. Th
 Introduction keeps the 701 Mb assembly figure, which is correct for the assembly. Open
 opportunity (not done): the release `stvar` benchmark is phased and could score SV phase.
 
+**Issue #1 results written in, 2026-10-08 (author request).** From JHL's
+`notes/benchmark_strata/` (numbers rechecked from `item4_strata.tsv`, `item4_overlap.tsv`,
+`item3_indel.tsv`). Results: scope sentence now says both truth sets were used in full (the
+region-overlap sentences were wrong for BED-free scoring); v5.0q BED-restricted robustness
+(2.1–4.0× vs WhatsHap, 2.6–10× vs HapCUT2); new paragraph locating switch errors (93% of
+LongPhase 2 errors at 60× coincide with both tools under v4.2.1 vs 37% under v5.0q; shared
+regions 1,127–1,492 vs 32–393 at 30–60×; outside-BED sites carry most v5.0q separation;
+segdups largest ratio, non-difficult 1.7–2.0×); indel accuracy in the co-phasing paragraph
+(8–31× lower indel-pair switch error rate than WhatsHap; GNN −29–39%). Discussion benchmark
+paragraph rewritten (two effects; truth-error reading flagged as unverified); indel removed
+from the limitations. Abstract: "at high coverage, most switch errors coincide across tools".
+Methods: pair-level re-scoring described. Two JHL statements not used (see `[claim]` comment
+in results.tex). Open: package the tables as Supplementary Data 2 (todo in Data availability);
+check coincident v4.2.1 errors in reads before calling them truth errors.
+
 **Benchmark finding promoted, 2026-10-07 (author request).** Abstract now names "the GIAB
 v5.0q benchmark derived from the telomere-to-telomere assembly" (145 words). The benchmark
 sentence was moved out of the Discussion limitations into a short paragraph of its own (before
