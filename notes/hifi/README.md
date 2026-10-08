@@ -41,6 +41,20 @@ Scoring, as for the nanopore tables (release v2.1, v5.0q chr1–22, no BED):
 longphase compare --ignore-sample-name HG002_GRCh38_v5.0q_smvar.chr1_22.vcf OUT.vcf -o sw_OUT
 ```
 
+## Variant calls (`Variant_Calling`, Supplementary Table 7)
+
+| Coverage | Het. SNV | Hom. SNV | Het. indel | Median DP | Het. SNV precision | Het. SNV recall |
+|---|---|---|---|---|---|---|
+| 10× | 2,367,609 | 2,081,641 | 425,786 | 11 | 0.894 | 0.877 |
+| 20× | 2,485,185 | 2,318,132 | 442,122 | 20 | 0.900 | 0.924 |
+| 30× | 2,468,170 | 2,428,526 | 432,578 | 29 | 0.908 | 0.926 |
+| 40× | 2,438,078 | 2,508,667 | 425,166 | 38 | 0.919 | 0.926 |
+| 50× (48×) | 2,410,815 | 2,566,571 | 420,096 | 45 | 0.926 | 0.923 |
+
+Median DP: FORMAT/DP of PASS het. SNV calls on chr20. Precision and recall: PASS
+het. SNV calls on chr1–22 matched by position and ALT to the v5.0q heterozygous SNVs.
+The earlier rows (one call set for every coverage) had 2,367,609–2,367,619 het. SNVs.
+
 ## Results (replicate 1, v5.0q, no BED)
 
 | Coverage | Het. SNV calls | WhatsHap SW | LongPhase 2 no GNN SW | LongPhase 2 GNN SW | WhatsHap / GNN |
