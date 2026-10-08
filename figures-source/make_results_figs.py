@@ -713,6 +713,88 @@ def sfig17():
     save(fig, os.path.join(SUPP, "suppfig12_giveup_depth.pdf"))
 
 
+# ------------------------------------------- issue #1 tables (Tables 13-14) ---
+STRATA = os.path.join(ROOT, "notes", "benchmark_strata")
+S_TOOLS = (("longphase_gnn", "LongPhase 2"), ("whatshap_v28_onlySNVs", "WhatsHap"), ("hapcut2_v134", "HapCUT2"))
+S_COVS = (10, 20, 30, 60)
+
+
+def _tsv(name):
+    import csv
+    return list(csv.DictReader(open(os.path.join(STRATA, name)), delimiter="\t"))
+
+
+def _group(rows, keyf):
+    g = {}
+    for r in rows:
+        g.setdefault(keyf(r), []).append(r)
+    return g
+
+
+def strata_tables(w, L):
+    S = _group(_tsv("item4_strata.tsv"),
+               lambda r: (r["tool"], int(r["coverage"]), r["truth"], r["region"], r["stratum"]))
+    # ---- Table 13a: switch errors by truth set and region
+    w(r"{\scriptsize\setlength{\tabcolsep}{3.2pt}")
+    w(r"\begin{longtable}{@{}llrrrrrrrr@{}}")
+    w(r"\caption{\textbf{Location of SNV switch errors by truth set and benchmark region.} \textbf{a}, switch errors by truth set and region; \textbf{b}, by genomic stratum within the v5.0q benchmark regions; \textbf{c}, switch errors shared by the three tools. SNV-only phasing of HG002 nanopore R10.4.1 data; \toolname with GNN correction. A variant pair is assigned to a region when both of its variants lie in it, so region counts do not sum to the total. \emph{Shared}, inside both sets of benchmark regions; \emph{v5.0q only}, inside the v5.0q regions only; \emph{outside}, outside both. Means over ten replicates at 10 and 20$\times$; one replicate at 30 and 60$\times$. Rates are switch errors per assessed SNV pair. Per-run values for every coverage, region and stratum are in Supplementary Data~1.}\label{tab:strata}\\")
+    hdr = (r"\toprule & & \multicolumn{2}{c}{v4.2.1} & \multicolumn{6}{c}{v5.0q} \\ \cmidrule(lr){3-4}\cmidrule(l){5-10}"
+           r" Tool & Cov. & All & Shared & All & \shortstack[r]{Inside\\v5.0q} & \shortstack[r]{Rate inside\\v5.0q (\%)} & Shared & \shortstack[r]{v5.0q\\only} & \shortstack[r]{Outside\\(rate, \%)} \\ \midrule")
+    w(hdr + r"\endfirsthead")
+    w(hdr + r"\endhead")
+    for tool, name in S_TOOLS:
+        for c in S_COVS:
+            def sw(truth, region, stratum="any", key="snv_sw", d=0):
+                return f"{ms(S[(tool, c, truth, region, stratum)], key)[0]:,.{d}f}"
+            w(f"{name if c == S_COVS[0] else ''} & {c}$\\times$ & {sw('v4', 'all')} & {sw('v4', 'shared')} & {sw('v5', 'all')} & "
+              f"{sw('v5', 'v5bed')} & {sw('v5', 'v5bed', key='snv_sw_rate%', d=4)} & {sw('v5', 'shared')} & {sw('v5', 'v5only')} & "
+              f"{sw('v5', 'neither')} ({sw('v5', 'neither', key='snv_sw_rate%', d=2)}) \\\\")
+        w(r"\midrule")
+    L[-1] = r"\bottomrule"
+    w(r"\end{longtable}")
+    # panel b: strata inside the v5.0q benchmark regions
+    w(r"\par\medskip\noindent\textbf{b}\enspace Within the v5.0q benchmark regions, by GIAB v3.6 stratum\par\smallskip")
+    w(r"\noindent\begin{tabular}{@{}llrrrrrr@{}}\toprule")
+    w(r"Tool & Cov. & \shortstack[r]{Segmental\\duplication} & \shortstack[r]{Low mappability\\or seg.\ dup.} & \shortstack[r]{Tandem\\repeat} & Homopolymer & Satellite & \shortstack[r]{Not\\difficult} \\ \midrule")
+    for tool, name in S_TOOLS:
+        for c in S_COVS:
+            cells = [f"{ms(S[(tool, c, 'v5', 'v5bed', st_)], 'snv_sw')[0]:,.0f}"
+                     for st_ in ("segdup", "lowmap_segdup", "tandem_repeat", "homopolymer", "satellite", "not_difficult")]
+            w(f"{name if c == S_COVS[0] else ''} & {c}$\\times$ & " + " & ".join(cells) + r" \\")
+        w(r"\midrule")
+    L[-1] = r"\bottomrule\end{tabular}"
+    # panel c: coincident switch errors (replicate 1)
+    O = {(r["truth"], r["run"]): r for r in _tsv("item4_overlap.tsv")}
+    w(r"\par\medskip\noindent\textbf{c}\enspace Switch errors at identical SNV pairs across tools, replicate 1\par\smallskip")
+    w(r"\noindent\begin{tabular}{@{}llrrrrr@{}}\toprule")
+    w(r"Truth & Cov. & \toolname & \whatshap & \hapcut & All three & \shortstack[r]{All three\\(\% of \toolname)} \\ \midrule")
+    for truth, lab in (("v4", "v4.2.1"), ("v5", "v5.0q")):
+        for c in S_COVS:
+            r = O[(truth, f"{c}x_1")]
+            lp, a3 = int(r["LP2"]), int(r["all3"])
+            w(f"{lab if c == S_COVS[0] else ''} & {c}$\\times$ & {lp:,} & {int(r['WH']):,} & {int(r['HC2']):,} & {a3:,} & {100 * a3 / lp:.0f} \\\\")
+        w(r"\midrule")
+    L[-1] = r"\bottomrule\end{tabular}}" + "\n"
+    # ---- Table 14: indel phase accuracy
+    I = _group(_tsv("item3_indel.tsv"), lambda r: (r["config"], int(r["coverage"]), r["region"]))
+    cfgs = (("longphase_coh_indel_gnn", r"\toolname, +indel"), ("longphase_coh_indel", r"same, no GNN"),
+            ("longphase_cophasing_gnn", r"\toolname, four classes"), ("whatshap_v28", r"\whatshap, +indel"))
+    w(r"{\scriptsize\setlength{\tabcolsep}{2.5pt}")
+    w(r"\begin{longtable}{@{}llrrrrrr@{}}")
+    w(r"\caption{\textbf{Phase accuracy of indels against v5.0q.} HG002 nanopore R10.4.1 data, co-phasing runs. Indel-pair switch errors are counted over consecutive variant pairs of an intersected block that include at least one indel; the indel Hamming distance uses the block orientation chosen on all variants. Truth VCF used in full; the last column restricts the indel-pair rate to the v5.0q benchmark regions. Means (s.d.) over ten replicates at 10 and 20$\times$; one replicate at 30 and 60$\times$. Per-run values are in Supplementary Data~1.}\label{tab:indel}\\")
+    hdr = (r"\toprule Configuration & Cov. & \shortstack[r]{Phased\\indels} & \shortstack[r]{Indel-pair\\switch errors} & \shortstack[r]{Indel-pair\\rate (\%)} & \shortstack[r]{SNV+indel\\rate (\%)} & \shortstack[r]{Indel\\Hamming (\%)} & \shortstack[r]{Indel-pair rate,\\inside v5.0q (\%)} \\ \midrule")
+    w(hdr + r"\endfirsthead")
+    w(hdr + r"\endhead")
+    for cfg, name in cfgs:
+        for c in S_COVS:
+            a, b = I[(cfg, c, "all")], I[(cfg, c, "v5bed")]
+            w(f"{name if c == S_COVS[0] else ''} & {c}$\\times$ & {cell(a, 'phased_indel', 0)} & {cell(a, 'indel_sw', 0)} & "
+              f"{cell(a, 'indel_sw_rate%', 3)} & {cell(a, 'snv_indel_sw_rate%', 3)} & {cell(a, 'indel_hamming%', 2)} & {cell(b, 'indel_sw_rate%', 3)} \\\\")
+        w(r"\midrule")
+    w(r"\bottomrule")
+    w(r"\end{longtable}}" + "\n")
+
+
 # ================================================== Supplementary tables ===
 def f(x, d=2):
     return f"{x:,.{d}f}"
@@ -838,6 +920,7 @@ def tables():
     for d in sorted(T["chroms"], key=lambda d: order.index(d["chrom"])):
         w(f"{d['chrom']} & {d['bg_n']:,} & {100 * d['bg_rate']:.2f} & {d['rm_n']:,} & {100 * d['rm_rate']:.2f} & {d['ratio']:.1f} \\\\")
     w(r"\bottomrule\end{tabular}\end{table}" + "\n")
+    strata_tables(w, L)
     path = os.path.join(ROOT, "figures-source", "supp_tables.tex")
     open(path, "w").write("\n".join(L) + "\n")
     print("wrote", os.path.relpath(path, ROOT))

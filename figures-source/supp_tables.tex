@@ -272,3 +272,84 @@ chrX & 263 & 44.11 & 4,006 & 68.50 & 1.6 \\
 chrY & 115 & 52.17 & 475 & 19.16 & 0.4 \\
 \bottomrule\end{tabular}\end{table}
 
+{\scriptsize\setlength{\tabcolsep}{3.2pt}
+\begin{longtable}{@{}llrrrrrrrr@{}}
+\caption{\textbf{Location of SNV switch errors by truth set and benchmark region.} \textbf{a}, switch errors by truth set and region; \textbf{b}, by genomic stratum within the v5.0q benchmark regions; \textbf{c}, switch errors shared by the three tools. SNV-only phasing of HG002 nanopore R10.4.1 data; \toolname with GNN correction. A variant pair is assigned to a region when both of its variants lie in it, so region counts do not sum to the total. \emph{Shared}, inside both sets of benchmark regions; \emph{v5.0q only}, inside the v5.0q regions only; \emph{outside}, outside both. Means over ten replicates at 10 and 20$\times$; one replicate at 30 and 60$\times$. Rates are switch errors per assessed SNV pair. Per-run values for every coverage, region and stratum are in Supplementary Data~1.}\label{tab:strata}\\
+\toprule & & \multicolumn{2}{c}{v4.2.1} & \multicolumn{6}{c}{v5.0q} \\ \cmidrule(lr){3-4}\cmidrule(l){5-10} Tool & Cov. & All & Shared & All & \shortstack[r]{Inside\\v5.0q} & \shortstack[r]{Rate inside\\v5.0q (\%)} & Shared & \shortstack[r]{v5.0q\\only} & \shortstack[r]{Outside\\(rate, \%)} \\ \midrule\endfirsthead
+\toprule & & \multicolumn{2}{c}{v4.2.1} & \multicolumn{6}{c}{v5.0q} \\ \cmidrule(lr){3-4}\cmidrule(l){5-10} Tool & Cov. & All & Shared & All & \shortstack[r]{Inside\\v5.0q} & \shortstack[r]{Rate inside\\v5.0q (\%)} & Shared & \shortstack[r]{v5.0q\\only} & \shortstack[r]{Outside\\(rate, \%)} \\ \midrule\endhead
+LongPhase 2 & 10$\times$ & 1,820 & 1,445 & 1,518 & 938 & 0.0527 & 805 & 41 & 438 (1.19) \\
+ & 20$\times$ & 1,656 & 1,169 & 823 & 271 & 0.0130 & 196 & 30 & 446 (0.95) \\
+ & 30$\times$ & 1,635 & 1,127 & 680 & 117 & 0.0056 & 62 & 25 & 454 (0.99) \\
+ & 60$\times$ & 1,676 & 1,178 & 496 & 66 & 0.0032 & 33 & 15 & 348 (0.81) \\
+\midrule
+WhatsHap & 10$\times$ & 2,773 & 2,235 & 4,383 & 1,992 & 0.1112 & 1,483 & 266 & 2,030 (4.63) \\
+ & 20$\times$ & 1,972 & 1,372 & 3,067 & 723 & 0.0347 & 340 & 240 & 2,065 (3.75) \\
+ & 30$\times$ & 1,850 & 1,238 & 2,524 & 444 & 0.0211 & 134 & 205 & 1,829 (3.34) \\
+ & 60$\times$ & 1,801 & 1,245 & 1,785 & 235 & 0.0112 & 63 & 88 & 1,337 (2.61) \\
+\midrule
+HapCUT2 & 10$\times$ & 3,050 & 2,432 & 5,018 & 2,445 & 0.1364 & 1,686 & 322 & 2,175 (4.93) \\
+ & 20$\times$ & 2,346 & 1,633 & 3,825 & 1,264 & 0.0606 & 613 & 315 & 2,262 (4.10) \\
+ & 30$\times$ & 2,202 & 1,492 & 3,280 & 937 & 0.0446 & 393 & 268 & 2,053 (3.74) \\
+ & 60$\times$ & 2,088 & 1,435 & 2,309 & 676 & 0.0321 & 273 & 148 & 1,430 (2.78) \\
+\bottomrule
+\end{longtable}
+\par\medskip\noindent\textbf{b}\enspace Within the v5.0q benchmark regions, by GIAB v3.6 stratum\par\smallskip
+\noindent\begin{tabular}{@{}llrrrrrr@{}}\toprule
+Tool & Cov. & \shortstack[r]{Segmental\\duplication} & \shortstack[r]{Low mappability\\or seg.\ dup.} & \shortstack[r]{Tandem\\repeat} & Homopolymer & Satellite & \shortstack[r]{Not\\difficult} \\ \midrule
+LongPhase 2 & 10$\times$ & 51 & 55 & 5 & 1 & 2 & 604 \\
+ & 20$\times$ & 37 & 39 & 3 & 0 & 2 & 135 \\
+ & 30$\times$ & 29 & 29 & 0 & 0 & 0 & 45 \\
+ & 60$\times$ & 18 & 19 & 0 & 0 & 0 & 20 \\
+\midrule
+WhatsHap & 10$\times$ & 264 & 279 & 33 & 6 & 12 & 1,079 \\
+ & 20$\times$ & 232 & 239 & 29 & 5 & 10 & 240 \\
+ & 30$\times$ & 202 & 205 & 16 & 5 & 3 & 91 \\
+ & 60$\times$ & 80 & 82 & 15 & 0 & 0 & 38 \\
+\midrule
+HapCUT2 & 10$\times$ & 292 & 308 & 54 & 19 & 12 & 1,040 \\
+ & 20$\times$ & 275 & 283 & 45 & 21 & 10 & 244 \\
+ & 30$\times$ & 247 & 254 & 36 & 19 & 6 & 100 \\
+ & 60$\times$ & 120 & 124 & 25 & 21 & 3 & 40 \\
+\bottomrule\end{tabular}
+\par\medskip\noindent\textbf{c}\enspace Switch errors at identical SNV pairs across tools, replicate 1\par\smallskip
+\noindent\begin{tabular}{@{}llrrrrr@{}}\toprule
+Truth & Cov. & \toolname & \whatshap & \hapcut & All three & \shortstack[r]{All three\\(\% of \toolname)} \\ \midrule
+v4.2.1 & 10$\times$ & 1,829 & 2,775 & 3,041 & 1,145 & 63 \\
+ & 20$\times$ & 1,680 & 1,922 & 2,292 & 1,405 & 84 \\
+ & 30$\times$ & 1,635 & 1,850 & 2,202 & 1,474 & 90 \\
+ & 60$\times$ & 1,676 & 1,801 & 2,088 & 1,556 & 93 \\
+\midrule
+v5.0q & 10$\times$ & 1,510 & 4,258 & 4,920 & 543 & 36 \\
+ & 20$\times$ & 922 & 2,735 & 3,552 & 289 & 31 \\
+ & 30$\times$ & 680 & 2,524 & 3,280 & 236 & 35 \\
+ & 60$\times$ & 496 & 1,785 & 2,309 & 183 & 37 \\
+\bottomrule\end{tabular}}
+
+{\scriptsize\setlength{\tabcolsep}{2.5pt}
+\begin{longtable}{@{}llrrrrrr@{}}
+\caption{\textbf{Phase accuracy of indels against v5.0q.} HG002 nanopore R10.4.1 data, co-phasing runs. Indel-pair switch errors are counted over consecutive variant pairs of an intersected block that include at least one indel; the indel Hamming distance uses the block orientation chosen on all variants. Truth VCF used in full; the last column restricts the indel-pair rate to the v5.0q benchmark regions. Means (s.d.) over ten replicates at 10 and 20$\times$; one replicate at 30 and 60$\times$. Per-run values are in Supplementary Data~1.}\label{tab:indel}\\
+\toprule Configuration & Cov. & \shortstack[r]{Phased\\indels} & \shortstack[r]{Indel-pair\\switch errors} & \shortstack[r]{Indel-pair\\rate (\%)} & \shortstack[r]{SNV+indel\\rate (\%)} & \shortstack[r]{Indel\\Hamming (\%)} & \shortstack[r]{Indel-pair rate,\\inside v5.0q (\%)} \\ \midrule\endfirsthead
+\toprule Configuration & Cov. & \shortstack[r]{Phased\\indels} & \shortstack[r]{Indel-pair\\switch errors} & \shortstack[r]{Indel-pair\\rate (\%)} & \shortstack[r]{SNV+indel\\rate (\%)} & \shortstack[r]{Indel\\Hamming (\%)} & \shortstack[r]{Indel-pair rate,\\inside v5.0q (\%)} \\ \midrule\endhead
+\toolname, +indel & 10$\times$ & 157,148 (247) & 300 (23) & 0.101 (0.008) & 0.090 (0.001) & 6.78 (0.46) & 0.080 (0.007) \\
+ & 20$\times$ & 211,933 (164) & 206 (10) & 0.052 (0.003) & 0.045 (0.001) & 5.72 (0.37) & 0.032 (0.003) \\
+ & 30$\times$ & 224,081 & 179 & 0.043 & 0.037 & 4.89 & 0.023 \\
+ & 60$\times$ & 234,254 & 130 & 0.030 & 0.027 & 3.52 & 0.015 \\
+\midrule
+same, no GNN & 10$\times$ & 159,017 (231) & 495 (31) & 0.165 (0.010) & 0.150 (0.003) & 10.83 (0.41) & 0.133 (0.009) \\
+ & 20$\times$ & 213,062 (161) & 305 (10) & 0.076 (0.002) & 0.073 (0.002) & 9.49 (0.34) & 0.050 (0.003) \\
+ & 30$\times$ & 224,926 & 236 & 0.056 & 0.058 & 8.08 & 0.031 \\
+ & 60$\times$ & 234,940 & 183 & 0.042 & 0.042 & 6.40 & 0.022 \\
+\midrule
+\toolname, four classes & 10$\times$ & 157,408 (252) & 311 (21) & 0.104 (0.007) & 0.091 (0.001) & 6.98 (0.43) & 0.084 (0.005) \\
+ & 20$\times$ & 212,187 (161) & 200 (11) & 0.050 (0.003) & 0.044 (0.001) & 6.08 (0.53) & 0.030 (0.003) \\
+ & 30$\times$ & 224,236 & 181 & 0.043 & 0.039 & 5.59 & 0.022 \\
+ & 60$\times$ & 234,414 & 138 & 0.031 & 0.027 & 3.46 & 0.015 \\
+\midrule
+\whatshap, +indel & 10$\times$ & 169,742 (173) & 2,685 (57) & 0.840 (0.018) & 0.350 (0.005) & 12.54 (0.32) & 0.734 (0.014) \\
+ & 20$\times$ & 228,884 (187) & 3,379 (55) & 0.788 (0.013) & 0.272 (0.006) & 11.91 (0.62) & 0.700 (0.013) \\
+ & 30$\times$ & 243,513 & 3,764 & 0.827 & 0.262 & 10.37 & 0.751 \\
+ & 60$\times$ & 257,426 & 4,377 & 0.911 & 0.253 & 9.81 & 0.858 \\
+\midrule
+\bottomrule
+\end{longtable}}
+
