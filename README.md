@@ -353,7 +353,7 @@ most important cheap analysis, because the Discussion names the train/test overl
 1. ~~**Variant caller**~~ — resolved the same day (author): PEPPER-Margin-DeepVariant, see below.
 2. **MethPhaser output equals its input** to every digit at all six coverages (= uncorrected
    SNV-only LongPhase 2, replicate 1). Probably the input VCF was scored or MethPhaser did not run.
-3. **HiFi call sets are coverage-independent** (2,367,609–2,367,619 het SNVs at 10–50×): one call
+3. ~~**HiFi call sets are coverage-independent**~~ — resolved 2026-10-09 (issue #4, see below). Was: (2,367,609–2,367,619 het SNVs at 10–50×): one call
    set reused, so the 87% phased fraction at 10× is not comparable with ONT; HiFi data source,
    caller and commands missing from Methods.
 4. **Unphased-SNV total resolved (author, 2026-10-06): 56,076 at 60×.** The old composition
@@ -710,3 +710,41 @@ strengths of LongPhase 2 to move into the main figures.
   switch errors; shared regions 1,193 vs 41). Open author decision: headline fold changes are still
   genome-wide (truth VCF in full); inside the benchmark regions they are 2.1–4.0× (WhatsHap) and
   2.6–10× (HapCUT2).
+
+**HiFi rescored with per-coverage calls, 2026-10-09 (issue #4, `notes/hifi/README.md`).**
+PEPPER-Margin-DeepVariant r0.8 `--hifi` was run on each HiFi coverage's own alignment (10–40×
+down-sampled from the 48× GIAB Revio BAM with seed 1; 48× used as 50×). SNV-only phasing with
+release v2.1 (GNN and `--disableGNN`) and WhatsHap 2.8 `--only-snvs`, scored with `compare`
+v2.1 against v5.0q without a BED. `supplementary.xlsx` HiFi rows of `Variant_Calling` and
+`SNV_Detail` replaced (no other cell changed); Supplementary Tables 7 and 11 regenerated
+(`tables()` only). LongPhase 2 now has 2.2–2.6-fold fewer switch errors than WhatsHap (was
+2.5–3.5): abstract, Results HiFi paragraph (title, rates, Hamming no longer lower at 50×,
+N50 ratio 4.3; GNN removes 19–25% of HiFi switch errors, was 19–28%), Fig. 5 legend, Methods (model presets, HiFi data, replicates) and
+Supplementary Table 5 updated; HiFi `\todo`s removed. `Homo. SNV` counts PASS 1/1 plus
+refCall 0/0 records (checked against the nanopore and old HiFi rows); Table 7 caption says so.
+**Not done here (no matplotlib fonts/LaTeX on the lab server): Fig. 5 and Supplementary
+Fig. 13e,f must be regenerated (`make results-figs`) and the PDFs rebuilt.**
+
+**Held-out chromosomes written in; main merged, 2026-10-09 (issue #2; author decision on B).**
+- `origin/main` (JHL: issue #2 `1702d2c`, HiFi issue #4 `9fb0cc4`/`9054c87`) merged into the
+  redesign branch. Conflicts: HiFi paragraph and Fig. 5 legend (main's text, this branch's panel
+  letters, Fig. 5 has no ratio panel), README (both entries kept). Fig. 5 and Supplementary
+  Fig. 13e,f regenerated from the new HiFi rows; Fig. 5d axis 84–94% (HiFi phased SNVs now 87–92%).
+- All `notes/heldout/` numbers recomputed from the raw tables and reproduced; 33.1%/8.3 reproduced
+  from `supplementary.xlsx`; PR #42/#52/#82 dates checked in `../longphase`.
+- Deployment threshold (author, 2026-10-09): JHL's formal rule stands — largest fraction of switch
+  errors removed at ≤10 withheld SNVs per removed error. This supersedes the 2026-10-06 "empirical
+  balance" account. Methods and Supplementary Method 4 now say that on chr17/21/22 the cost is 10.5,
+  slightly above the limit, and that the threshold was not re-selected there. JHL's "thresholds
+  meeting it lay between 0.30 and 0.40 … their optima also fell in it" was rewritten (the rule picks
+  one threshold; a sweep limited to 0.30–0.40 cannot have an optimum outside it); a `[check]`
+  comment asks JHL which model the full 0.05–0.95 sweep used.
+- Results: held-out sentence (2.8–3.9× vs WhatsHap, 3.3–4.9× vs HapCUT2 at 10–20×; 30–60× from
+  single runs with 37–83 switch errors); Margin beats LongPhase 2 on chr17/21/22 at 10–12× (0.099 vs
+  0.127% at 10×, N50 0.22 vs 0.72 Mb); Part 2 GNN effect gives both 31–33% (genome) and 20–23% /
+  14–20% (held-out) with the chromosome-difficulty caveat. Results `\todo` item (i) removed;
+  matched-retention and paired-uncertainty items remain.
+- New Supplementary Table 15 (`heldout_table()`), v5.0q and v4.2.1, all coverages.
+- Open: per-run held-out values are only in `notes/heldout/`, not yet in Supplementary Data 1.
+  Optional reviewer check: GNN reduction per chromosome (all 22) to separate unseen sequence from
+  chromosome difficulty.
