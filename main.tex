@@ -82,50 +82,46 @@ Long-read phasers use only part of the evidence in each read and seldom report w
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=\textwidth]{fig2_snv_comparison.pdf}
-  \caption{\textbf{SNV phasing compared with WhatsHap, HapCUT2 and Margin.}
-  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$; SNV-only phasing of identical variant calls, scored against the T2T-HG002-derived v5.0q benchmark. Values at 10--20$\times$ are means of ten down-sampling replicates, with the s.d.\ as a light band (often narrower than the line); values at 30--60$\times$ come from one down-sampling of the 70$\times$ data set (Methods). Open symbols of different shape and size remain visible where tools coincide, as \whatshap and \hapcut do in \textbf{d} and \textbf{f}.
-  \textbf{a}, Switch error rate (log scale).
-  \textbf{b}, Switch error rate of each comparator divided by that of \toolname.
-  \textbf{c}, Block-wise Hamming distance.
-  \textbf{d}, Phase-block N50.
-  \textbf{e}, Switch error rate against block N50 at 10--20$\times$ (means of ten replicates), one path per tool from 10$\times$ (bottom) to 20$\times$ (top), with Margin, which was run at these coverages only; Ralphi in Supplementary Fig.~10.
-  \textbf{f}, Fraction of benchmark heterozygous SNVs phased.}
-  \label{fig:snv}
+  \includegraphics[width=\textwidth]{fig2_phaser_comparison.pdf}
+  \caption{\textbf{\toolname compared with other phasers for each type of phasing evidence.}
+  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$; identical variant calls for every tool, scored against the T2T-HG002-derived v5.0q benchmark. Values at 10--20$\times$ are means of ten down-sampling replicates with the s.d.\ as a light band; values at 30--60$\times$ come from one down-sampling (Methods). Columns show the switch error rate (log scale), block-wise Hamming distance, phase-block N50 and the fraction of benchmark heterozygous variants phased.
+  \textbf{a}--\textbf{d}, SNV phasing compared with \whatshap and \hapcut.
+  \textbf{e}--\textbf{h}, SNV and indel co-phasing compared with \whatshap. In \textbf{e}, solid lines score consecutive SNV pairs and dotted lines consecutive pairs that include an indel; \textbf{f} and \textbf{h} refer to indels (Supplementary Table~14).
+  \textbf{i}--\textbf{l}, SNV and 5mC co-phasing compared with MethPhaser, replicate~1; MethPhaser was given the SNV-only output of \toolname without GNN correction (Methods).}
+  \label{fig:phasers}
 \end{figure}
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=\textwidth]{fig3_two_benchmarks.pdf}
-  \caption{\textbf{The same phased VCFs scored against GIAB v4.2.1 and the T2T-HG002-derived v5.0q benchmark.}
-  SNV-only phasing of HG002 nanopore R10.4.1 data; replicates as in Fig.~\ref{fig:snv}.
-  \textbf{a},\textbf{b}, Genome-wide switch errors under v4.2.1 (\textbf{a}) and v5.0q (\textbf{b}), on a shared axis.
-  \textbf{c},\textbf{d}, Hamming distance under v4.2.1 (\textbf{c}) and v5.0q (\textbf{d}).}
-  \label{fig:benchmarks}
-\end{figure}
-
-\begin{figure}[p]
-  \centering
-  \includegraphics[width=\textwidth]{fig4_cophasing.pdf}
-  \caption{\textbf{Co-phasing compared with WhatsHap.}
-  HG002 nanopore R10.4.1 data; \toolname phasing SNVs only, SNVs and indels, or all four classes (SNVs, indels, SVs and 5mC), against \whatshap phasing SNVs only or SNVs and indels; \hapcut for reference. Accuracy is scored on SNVs against v5.0q; replicates as in Fig.~\ref{fig:snv}.
+  \includegraphics[width=\textwidth]{fig3_evidence_classes.pdf}
+  \caption{\textbf{Phasing accuracy and contiguity as evidence classes are added.}
+  HG002 nanopore R10.4.1 data; \toolname phasing SNVs alone, with 5mC, with indels, or with indels, SVs and 5mC (all four classes); SNV accuracy against v5.0q; replicates as in Fig.~\ref{fig:phasers}. Every configuration is shown in Supplementary Fig.~15.
   \textbf{a}, SNV switch error rate (log scale).
   \textbf{b}, Phase-block N50.
-  \textbf{c}, Fraction of benchmark heterozygous indels phased.
-  \textbf{d}, SNV switch error rate against block N50 at 20$\times$ (means of ten replicates with s.d.).}
-  \label{fig:cophasing}
+  \textbf{c}, SNV switch error rate against block N50 at 10, 20, \ldots, 60$\times$, one path per configuration from 10$\times$ (bottom) to 60$\times$ (top), with \whatshap phasing SNVs alone or with indels.}
+  \label{fig:evidence}
+\end{figure}
+
+\begin{figure}[p]
+  \centering
+  \includegraphics[width=\textwidth]{fig4_two_benchmarks.pdf}
+  \caption{\textbf{The same phased VCFs scored against GIAB v4.2.1 and the T2T-HG002-derived v5.0q benchmark.}
+  SNV-only phasing of HG002 nanopore R10.4.1 data; replicates as in Fig.~\ref{fig:phasers}; both truth VCFs used in full.
+  \textbf{a},\textbf{b}, Genome-wide switch errors under v4.2.1 (\textbf{a}) and v5.0q (\textbf{b}).
+  \textbf{c}, Switch errors at 60$\times$; grey, switch errors made by all three tools at the same SNV pair, with their share of each tool's total.
+  \textbf{d},\textbf{e}, Switch error rate against v5.0q at 10$\times$ (\textbf{d}) and 60$\times$ (\textbf{e}) inside the v5.0q benchmark regions, in two GIAB v3.6 strata within them, and, below the dashed line, outside the benchmark regions of both truth sets, where the truth phase is least certain (exploratory); a variant pair is assigned to a region when both of its variants lie in it (Supplementary Table~13).}
+  \label{fig:benchmarks}
 \end{figure}
 
 \begin{figure}[p]
   \centering
   \includegraphics[width=\textwidth]{fig5_hifi.pdf}
   \caption{\textbf{Phasing of PacBio HiFi data compared with WhatsHap.}
-  HG002 PacBio HiFi (Revio) reads down-sampled to 10--50$\times$, one replicate per coverage\todo{state whether one call set was used for every coverage}; SNV-only phasing scored against v5.0q; \toolname uses the network trained on nanopore data. Panels as in Fig.~\ref{fig:snv}a--d,f.
+  HG002 PacBio HiFi (Revio) reads down-sampled to 10--50$\times$, one replicate per coverage\todo{state whether one call set was used for every coverage}; SNV-only phasing scored against v5.0q; \toolname uses the network trained on nanopore data. Panels as in Fig.~\ref{fig:phasers}a--d.
   \textbf{a}, Switch error rate.
-  \textbf{b}, Switch error rate of \whatshap divided by that of \toolname.
-  \textbf{c}, Block-wise Hamming distance.
-  \textbf{d}, Phase-block N50.
-  \textbf{e}, Fraction of benchmark heterozygous SNVs phased.}
+  \textbf{b}, Block-wise Hamming distance.
+  \textbf{c}, Phase-block N50.
+  \textbf{d}, Fraction of benchmark heterozygous SNVs phased.}
   \label{fig:hifi}
 \end{figure}
 

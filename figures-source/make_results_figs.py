@@ -67,7 +67,7 @@ C = {
     "margin": "#1B7837",
     "ralphi": "#762A83",
     "gc":     "#BF812D",
-    "meth":   "#35978F",
+    "meth":   "#6A3D9A",
 }
 NAME = {
     "lp_gnn": "LongPhase 2", "lp": "LongPhase 2 without GNN",
@@ -83,15 +83,17 @@ BAR_COVS = [10, 20, 30, 40, 50, 60]
 HIFI_COVS = [10, 20, 30, 40, 50]
 
 # Co-phasing configurations: xlsx sheet label -> display name, colour.
+# SNV, +5mC, +indel and all four share their colours with main Fig. 3 (STRAT).
 CFG = [
-    ("SNV", "SNV", "#4D4D4D"),
+    ("SNV", "SNV", "#B2182B"),
     ("SV", "+SV", "#80CDC1"),
-    ("Mod", "+5mC", "#35978F"),
-    ("Indel", "+indel", "#FDB863"),
-    ("Indel+SV", "+indel+SV", "#E08214"),
-    ("Mod+Indel", "+indel+5mC", "#B35806"),
-    ("Indel+Mod+SV", "all four", "#542788"),
+    ("Mod", "+5mC", "#1B9E77"),
+    ("Indel", "+indel", "#C66A00"),
+    ("Indel+SV", "+indel+SV", "#FDB863"),
+    ("Mod+Indel", "+indel+5mC", "#8C510A"),
+    ("Indel+Mod+SV", "all four", "#1A1A1A"),
 ]
+CFGC = {k: c for k, _, c in CFG}
 
 
 FIGW = 183 * MM          # Nature double-column width; figures are saved at exactly this width
@@ -158,6 +160,7 @@ STY = {
     "margin": dict(marker="^", ls="-", mfc="none", dx=0.0, ms=3.4),
     "ralphi": dict(marker="v", ls="-", mfc="none", dx=0.0, ms=3.4),
     "gc":     dict(marker="P", ls="-", mfc="none", dx=0.0, ms=3.4),
+    "meth":   dict(marker="^", ls="-", mfc="none", dx=0.0, ms=3.4),
 }
 
 
@@ -194,7 +197,7 @@ def save(fig, path):
     r = fig.canvas.get_renderer()
     fig.set_layout_engine("none")
     W, H = fig.get_size_inches() * fig.dpi
-    for ax, s_ in [(a, l) for a, l in _LETTERS if a.figure is fig]:
+    for ax, s_ in [(a, l) for a, l in _LETTERS if a.get_figure(root=True) is fig]:
         tb = ax.get_tightbbox(r)
         fig.text(max(tb.x0, 0) / W, min(tb.y1, H) / H, s_, fontsize=8, fontweight="bold",
                  va="top", ha="left")
@@ -205,69 +208,200 @@ def save(fig, path):
 
 
 # ============================================================ Figure 2 =====
+# MethPhaser values: MethPhaserCompare.jsx (JHL, 2026-10-03). They are identical,
+# to every printed digit, to the uncorrected SNV-only LongPhase 2 run that was
+# MethPhaser's input (xlsx SNV_Detail, longphase_v2.0.1, replicate 1).
+METH = {10: (2277, 78.11491, 6.92789, 0.9395), 20: (1311, 91.08722, 3.98836, 1.6993),
+        30: (1004, 91.60825, 2.40328, 1.9689), 40: (878, 91.63726, 2.37294, 2.2887),
+        50: (883, 91.5461, 1.8627, 2.5705), 60: (743, 91.43292, 1.75198, 2.9108)}
+
+
+def rep1(cfg, tool, cov, key):
+    runs = D["coph"][cfg][tool][cov]
+    return [r for r in runs if r["rep"] == 1][0][key]
+
+
+def meth_value(cov, key):
+    """MethPhaser metric at one coverage. The draft gives counts, phased fraction, Hamming
+    distance and N50 but not the switch error rate; because the output equals its input
+    (checked here), the rate is taken from that input run."""
+    run = [r for r in D["snv"]["ONT"]["longphase_v2.0.1"][cov] if r["rep"] == 1][0]
+    sw, psnv, ham, n50 = METH[cov]
+    assert run["sw"] == sw and abs(run["ham"] - ham) < 1e-3 and abs(run["n50"] / 1e6 - n50) < 1e-3
+    return run[key]
+
+
+def _series(get, covs):
+    """(xs, means, s.d.) of a getter cov -> list of replicate dicts, for one metric key."""
+    def f(key):
+        xs, m, s = [], [], []
+        for c in covs:
+            runs = get(c)
+            if not runs:
+                continue
+            a, b = ms(runs, key)
+            xs.append(c); m.append(a); s.append(b)
+        return xs, m, s
+    return f
+
+
+def _row_header(sf, title):
+    """Bold row title, left-aligned; space for it is reserved by constrained layout."""
+    sf.suptitle(title, x=0.0, ha="left", fontsize=7, fontweight="bold")
+
+
+def _row_keys(fig, sfs, keys):
+    """Each row's key on the line of its title, right-aligned. Placed after a first draw,
+    outside constrained layout, so that it shares the line instead of adding one."""
+    fig.canvas.draw()
+    r = fig.canvas.get_renderer()
+    H = fig.get_size_inches()[1] * fig.dpi
+    for sf, handles in zip(sfs, keys):
+        bb = sf._suptitle.get_window_extent(r)
+        sf.legend(handles=handles, loc="center right", bbox_to_anchor=(1.0, (bb.y0 + bb.y1) / 2 / H),
+                  bbox_transform=fig.transFigure, ncol=len(handles), handlelength=2.6,
+                  columnspacing=1.6, borderaxespad=0.0, borderpad=0.0)
+
+
+def _log_rate_axis(ax, ticks=(0.02, 0.05, 0.1, 0.2), lim=(0.018, 0.32)):
+    ax.set_yscale("log"); ax.minorticks_off()
+    ax.set_yticks(list(ticks)); ax.set_yticklabels([f"{t:g}" for t in ticks])
+    ax.set_ylim(*lim)
+
+
+def _indel_runs(config):
+    """Per-replicate indel accuracy of one co-phasing run type (issue #1 item 3, whole genome)."""
+    g = {}
+    for r in _tsv("item3_indel.tsv"):
+        if r["config"] == config and r["region"] == "all":
+            g.setdefault(int(r["coverage"]), []).append(
+                {"indel_sw_pct": float(r["indel_sw_rate%"]), "indel_ham": float(r["indel_hamming%"])})
+    return lambda c: g.get(c)
+
+
 def fig2():
-    """SNV-only phasing on nanopore data: LongPhase 2 (full method) vs other tools.
-    Accuracy panels first (a-c), then contiguity (d), the 10-20x trade-off (e) and phased fraction (f)."""
-    tools = ["wh", "hc", "lp_gnn"]   # HapCUT2 drawn over WhatsHap, where they coincide
-    fig, axs = new_fig(100, 2, 3)
-    ax_sw, ax_ratio, ax_ham, ax_n50, ax_tradeoff, ax_psnv = axs.flat
-    specs = [
-        (ax_sw, "sw_pct", "Switch error rate (%)", "log", 1, "a"),
-        (ax_ham, "ham", "Hamming distance (%)", None, 1, "c"),
-        (ax_n50, "n50", "Block N50 (Mb)", None, 1e-6, "d"),
-        (ax_psnv, "psnv_pct", "Phased SNVs (%)", None, 1, "f"),
+    """LongPhase 2 against other phasers for each evidence type (nanopore, v5.0q).
+    Rows: SNV phasing (WhatsHap, HapCUT2), SNV and indel co-phasing (WhatsHap), SNV and
+    5mC co-phasing (MethPhaser). Columns: switch error rate, Hamming distance, block N50,
+    phased fraction; in the indel row the accuracy panels also score the indels themselves
+    (Supplementary Table 14)."""
+    fig = plt.figure(figsize=(FIGW, 150 * MM), layout="constrained")
+    fig.get_layout_engine().set(w_pad=2 * MM, h_pad=1.2 * MM, wspace=0.05, hspace=0.0)
+    sfs = fig.subfigures(3, 1, hspace=0.035)
+    snv = lambda tool: (lambda c: D["snv"]["ONT"][XLSX_TOOL[tool]].get(c))
+    ind = lambda tool: (lambda c: D["coph"]["Indel"][tool].get(c))
+    mod1 = lambda c: [r for r in D["coph"]["Mod"]["longphase_v2.1"][c] if r["rep"] == 1]
+    meth = lambda c: [{k: meth_value(c, k) for k in ("sw_pct", "ham", "n50", "psnv_pct")}]
+    rows = [  # title, coverages, tools (key, name, getter), phased-fraction key, label, limits
+        ("SNV phasing", PLOT_COVS,
+         [("lp_gnn", "LongPhase 2", snv("lp_gnn")), ("wh", "WhatsHap", snv("wh")), ("hc", "HapCUT2", snv("hc"))],
+         "psnv_pct", "Phased SNVs (%)", (76, 94)),
+        ("SNV and indel co-phasing", PLOT_COVS,
+         [("lp_gnn", "LongPhase 2", ind("longphase_v2.1")), ("wh", "WhatsHap", ind("whatshap_v28"))],
+         "pindel_pct", "Phased indels (%)", (28, 52)),
+        ("SNV and 5mC co-phasing", BAR_COVS,
+         [("lp_gnn", "LongPhase 2", mod1), ("meth", "MethPhaser", meth)],
+         "psnv_pct", "Phased SNVs (%)", (76, 94)),
     ]
-    for ax, key, lab, yscale, sc, L in specs:
-        single_band(ax)
-        for t in tools:
-            xs, m, s_ = snv_series(t, key)
-            tline(ax, t, xs, m, s_, scale=sc, label=NAME[t])
-        if yscale:
-            ax.set_yscale(yscale)
-            ax.set_yticks([0.02, 0.05, 0.1, 0.2, 0.3])
-            ax.set_yticklabels(["0.02", "0.05", "0.1", "0.2", "0.3"])
-            ax.minorticks_off()
-        ax.set_ylabel(lab); cov_axis(ax); letter(ax, L)
-    ax = ax_ratio
-    single_band(ax)
-    xs, q, _ = snv_series("lp_gnn", "sw_pct")
-    for ref in ("wh", "hc"):
-        _, r, _ = snv_series(ref, "sw_pct")
-        st = STY[ref]
-        ax.plot(xs, [a / b for a, b in zip(r, q)], color=C[ref], marker=st["marker"], ls=st["ls"],
-                mfc="none", mew=0.8, ms=st["ms"])
-    ax.set_ylim(0, 5.2); ax.set_ylabel("Switch-error-rate ratio\n(comparator / LongPhase 2)")
-    cov_axis(ax); letter(ax, "b")
-    ax.legend(handles=[thandle("wh", "WhatsHap"), thandle("hc", "HapCUT2")],
-              loc="lower right", fontsize=5.5, handlelength=2.6)
-    ax = ax_tradeoff   # one path per tool over 10-20x (Margin was run at 10-20x only)
-    path_covs = [10, 12, 14, 16, 18, 20]
-    lab = {  # name offset (points) from the 14x point, alignment
-        "lp_gnn": ((6, 0), "left"), "margin": ((6, 0), "left"),
-        "wh": ((-6, 0), "right"), "hc": ((6, 0), "left")}
-    for t in ["hc", "wh", "margin", "lp_gnn"]:
-        runs = D["snv"]["ONT"][XLSX_TOOL[t]]
-        xs = [ms(runs[c], "sw_pct")[0] for c in path_covs]
-        ys = [ms(runs[c], "n50")[0] / 1e6 for c in path_covs]
-        st = STY[t]
-        ax.plot(xs, ys, color=C[t], ls=st["ls"], marker=st["marker"], ms=st["ms"], mfc="none", mew=0.8)
-        off, ha = lab[t]
-        ax.annotate({"wh": "WhatsHap"}.get(t, NAME[t]), (xs[2], ys[2]), xytext=off,
-                    textcoords="offset points", fontsize=5.5, color=C[t], va="center", ha=ha)
-        if t in ("lp_gnn", "margin"):
-            for c, x, y, dy in ((10, xs[0], ys[0], -5), (20, xs[-1], ys[-1], 5)):
-                ax.annotate(f"{c}×", (x, y), xytext=(0, dy), textcoords="offset points",
-                            fontsize=5, color=C[t], ha="center", va="center")
-    ax.set_xlim(0, 0.3); ax.set_ylim(0, 1.85)
-    ax.set_xlabel("Switch error rate (%)"); ax.set_ylabel("Block N50 (Mb)")
-    letter(ax, "e")
-    h = [thandle(t) for t in ("lp_gnn", "wh", "hc")]
-    fig.legend(handles=h, loc="outside upper center", ncol=4, handlelength=2.6, columnspacing=1.2)
-    save(fig, os.path.join(OUT, "fig2_snv_comparison.pdf"))
+    indel = {"lp_gnn": _indel_runs("longphase_coh_indel_gnn"), "wh": _indel_runs("whatshap_v28")}
+    letters = iter("abcdefghijkl")
+    keys = []
+    for r, (sf, (title, covs, tools, pkey, plab, plim)) in enumerate(zip(sfs, rows)):
+        axs = sf.subplots(1, 4)
+        for t, _name, get in reversed(tools):   # LongPhase 2 drawn last, on top
+            f = _series(get, covs)
+            tline(axs[0], t, *f("sw_pct"))
+            if r == 1:   # indel row: indel-pair switch errors and indel Hamming distance
+                g = _series(indel[t], covs)
+                xs, m, s_ = g("indel_sw_pct")
+                line(axs[0], xs, m, s_, C[t], ls=":", marker=STY[t]["marker"], ms=STY[t]["ms"])
+                tline(axs[1], t, *g("indel_ham"))
+            else:
+                tline(axs[1], t, *f("ham"))
+            tline(axs[2], t, *f("n50"), scale=1e-6)
+            tline(axs[3], t, *f(pkey))
+        if r == 1:
+            _log_rate_axis(axs[0], ticks=(0.02, 0.05, 0.1, 0.2, 0.5, 1), lim=(0.018, 1.4))
+            axs[0].set_ylabel("Switch error rate (%)")
+            axs[1].set_ylabel("Indel Hamming distance (%)")
+        else:
+            _log_rate_axis(axs[0])
+            axs[0].set_ylabel("Switch error rate (%)")
+            axs[1].set_ylabel("Hamming distance (%)")
+        axs[1].set_ylim(bottom=0)
+        axs[2].set_ylim(0, 4.6); axs[2].set_yticks([0, 1, 2, 3, 4]); axs[2].set_ylabel("Block N50 (Mb)")
+        axs[3].set_ylim(*plim); axs[3].set_ylabel(plab)
+        if pkey == "psnv_pct":
+            axs[3].set_yticks([76, 80, 84, 88, 92])
+        for ax in axs:
+            cov_axis(ax)
+            if r < 2:
+                ax.set_xlabel("")
+            letter(ax, next(letters))
+        _row_header(sf, title)
+        k = [thandle(t, name) for t, name, _ in tools]
+        if r == 1:
+            k += [Line2D([], [], color="#555555", ls="-", label="SNV pairs"),
+                  Line2D([], [], color="#555555", ls=":", marker="o", ms=2.6, label="pairs with an indel")]
+        keys.append(k)
+    _row_keys(fig, sfs, keys)
+    save(fig, os.path.join(OUT, "fig2_phaser_comparison.pdf"))
 
 
 # ============================================================ Figure 3 =====
-F3 = [  # key, label, colour, line style, marker, v5.0q source, v4.2.1 tool name
+# Evidence combinations of LongPhase 2 (GNN correction included). Colours validated with
+# the dataviz palette checker against each other and WhatsHap blue (all pairs, light
+# mode); the all-four line is neutral black by design. Shared with Supplementary
+# Figs. 14 and 15 through CFG.
+STRAT = [  # co-phase sheet configuration ("SNV" = SNV_Detail), label, colour, marker, marker size
+    ("SNV", "SNVs", "#B2182B", "o", 3.0),
+    ("Mod", "SNVs + 5mC", "#1B9E77", "^", 3.4),
+    ("Indel", "SNVs + indels", "#C66A00", "s", 3.2),
+    ("Indel+Mod+SV", "All four classes", "#1A1A1A", "D", 2.8),
+]
+
+
+def fig3():
+    """SNV switch error rate and block N50 of LongPhase 2 as evidence classes are added,
+    and the resulting accuracy-contiguity paths beside WhatsHap's."""
+    fig, axs = new_fig(60, 1, 3, width_ratios=[1, 1, 1.15])
+    ax_sw, ax_n50, ax_tr = axs
+    for cfg, name, col, mk, msz in STRAT:
+        for ax, key, sc in ((ax_sw, "sw_pct", 1), (ax_n50, "n50", 1e-6)):
+            xs, m, s_ = coph_series(cfg, "longphase_v2.1", key)
+            line(ax, xs, m, s_, col, marker=mk, mfc="none", ms=msz, scale=sc)
+    _log_rate_axis(ax_sw, ticks=(0.02, 0.05, 0.1), lim=(0.018, 0.12))
+    ax_sw.set_ylabel("SNV switch error rate (%)"); cov_axis(ax_sw); letter(ax_sw, "a")
+    ax_n50.set_ylim(0, 4.6); ax_n50.set_yticks([0, 1, 2, 3, 4])
+    ax_n50.set_ylabel("Block N50 (Mb)"); cov_axis(ax_n50); letter(ax_n50, "b")
+    # c: one path per configuration over 10, 20, ..., 60x, with WhatsHap for reference
+    paths = [(name, col, mk, msz, "-", "none",
+              (lambda cfg: lambda c: (D["snv"]["ONT"]["longphase_v2.1"][c] if cfg == "SNV"
+                                      else D["coph"][cfg]["longphase_v2.1"][c]))(cfg))
+             for cfg, name, col, mk, msz in STRAT]
+    paths += [("WhatsHap, SNVs", C["wh"], "D", 2.8, "-", "none", lambda c: D["snv"]["ONT"]["whatshap_v28"][c]),
+              ("WhatsHap, SNVs + indels", C["wh"], "D", 2.8, "--", C["wh"], lambda c: D["coph"]["Indel"]["whatshap_v28"][c])]
+    for name, col, mk, msz, ls, mfc, get in paths:
+        xs = [ms(get(c), "sw_pct")[0] for c in BAR_COVS]
+        ys = [ms(get(c), "n50")[0] / 1e6 for c in BAR_COVS]
+        ax_tr.plot(xs, ys, color=col, ls=ls, marker=mk, ms=msz, mfc=mfc, mew=0.8)
+    for c, dy, va in ((10, -4, "top"), (60, 4, "bottom")):
+        get = paths[-1][-1]
+        ax_tr.annotate(f"{c}×", (ms(get(c), "sw_pct")[0], ms(get(c), "n50")[0] / 1e6), xytext=(0, dy),
+                       textcoords="offset points", ha="center", va=va, fontsize=5.5, color="#555555")
+    ax_tr.set_xscale("log"); ax_tr.minorticks_off()
+    ax_tr.set_xticks([0.02, 0.05, 0.1, 0.2]); ax_tr.set_xticklabels(["0.02", "0.05", "0.1", "0.2"])
+    ax_tr.set_xlim(0.018, 0.32); ax_tr.set_ylim(0, 4.6); ax_tr.set_yticks([0, 1, 2, 3, 4])
+    ax_tr.set_xlabel("SNV switch error rate (%)"); ax_tr.set_ylabel("Block N50 (Mb)")
+    letter(ax_tr, "c")
+    h = [Line2D([], [], color=col, ls=ls, marker=mk, ms=msz + 0.4, mfc=mfc, mew=0.8, label=name)
+         for name, col, mk, msz, ls, mfc, _ in paths]
+    fig.legend(handles=h, loc="outside upper center", ncol=6, handlelength=2.4, columnspacing=1.2)
+    save(fig, os.path.join(OUT, "fig3_evidence_classes.pdf"))
+
+
+# ============================================================ Figure 4 =====
+F3 = [  # key, label, colour, line style, marker, v5.0q source, v4.2.1 tool name (Supplementary Table 9)
     ("lp_gnn", "LongPhase 2, SNVs", C["lp_gnn"], "-", "o", ("snv", "longphase_v2.1"), "longphase_gnn"),
     ("lp_ind", "LongPhase 2, +indels", C["lp_gnn"], "--", "s", ("coph", "Indel", "longphase_v2.1"), "longphase_coh_indel_gnn"),
     ("lp_isv", "LongPhase 2, +indels+SVs", C["lp_gnn"], ":", "^", ("coph", "Indel+SV", "longphase_v2.1"), "longphase_coh_indel_sv_gnn"),
@@ -283,98 +417,101 @@ def f3_runs(src, cov):
     return D["coph"][src[1]][src[2]][cov]
 
 
-def fig3():
-    """The same SNV-only VCFs under GIAB v4.2.1 and v5.0q."""
-    fig, axs = new_fig(100, 2, 2)
-    series = [x for x in F3 if x[0] in ("wh", "hc", "lp_gnn")]
-    series.sort(key=lambda x: ["wh", "hc", "lp_gnn"].index(x[0]))
-    panels = [("v421", "sw", "Switch errors", "a"), ("v50q", "sw", "Switch errors", "b"),
-              ("v421", "ham", "Hamming distance (%)", "c"), ("v50q", "ham", "Hamming distance (%)", "d")]
-    for ax, (bench, key, lab, L) in zip(axs.flat, panels):
-        single_band(ax)
-        for k, name, col, ls, mk, src, v421name in series:
-            xs, m_, s_ = [], [], []
-            for c in PLOT_COVS:
-                runs = D["v421"][v421name][c] if bench == "v421" else f3_runs(src, c)
-                a_, b_ = ms(runs, key)
-                xs.append(c); m_.append(a_); s_.append(b_)
-            tline(ax, k, xs, m_, s_, label=name)
-        ax.set_ylabel(lab); cov_axis(ax); letter(ax, L)
-        ax.set_title("GIAB v4.2.1" if bench == "v421" else "T2T-HG002-derived v5.0q", fontsize=6.5)
-    for a_, b_ in ((axs[0, 0], axs[0, 1]), (axs[1, 0], axs[1, 1])):
-        top = max(a_.get_ylim()[1], b_.get_ylim()[1])
-        a_.set_ylim(0, top); b_.set_ylim(0, top)
-    h = [thandle(t) for t in ("lp_gnn", "wh", "hc")]
-    fig.legend(handles=h, loc="outside upper center", ncol=4, handlelength=2.6, columnspacing=1.2)
-    save(fig, os.path.join(OUT, "fig3_two_benchmarks.pdf"))
-
-
-# ============================================================ Figure 4 =====
-F4 = [  # label, colour, style, marker, getter(cov) -> runs
-    ("LongPhase 2, SNVs", C["lp_gnn"], "-", "o", lambda c: D["snv"]["ONT"]["longphase_v2.1"][c]),
-    ("LongPhase 2, +indels", C["lp_gnn"], "--", "s", lambda c: D["coph"]["Indel"]["longphase_v2.1"][c]),
-    ("LongPhase 2, all four classes", C["lp_gnn"], ":", "^", lambda c: D["coph"]["Indel+Mod+SV"]["longphase_v2.1"][c]),
-    ("WhatsHap, SNVs", C["wh"], "-", "D", lambda c: D["snv"]["ONT"]["whatshap_v28"][c]),
-    ("WhatsHap, +indels", C["wh"], "--", "D", lambda c: D["coph"]["Indel"]["whatshap_v28"][c]),
-    ("HapCUT2, SNVs", C["hc"], "--", "s", lambda c: D["snv"]["ONT"]["hapcut2_v134"][c]),
+REGIONS = [  # (region, stratum) in item4_strata.tsv, label, y; truth v5.0q. Benchmark regions
+    # first; the outside-both row, where the truth phase is least certain, is set apart as
+    # exploratory (Discussion).
+    (("v5bed", "any"), "v5.0q benchmark regions", 0),
+    (("v5bed", "not_difficult"), "v5.0q regions, not difficult", 1),
+    (("v5bed", "segdup"), "v5.0q regions, segmental duplications", 2),
+    (("neither", "any"), "Outside both benchmarks' regions\n(exploratory)", 3.4),
 ]
 
 
 def fig4():
-    """Co-phasing compared with WhatsHap (and HapCUT2 for reference)."""
-    fig, axs = new_fig(100, 2, 2)
-    specs = [("sw_pct", "SNV switch error rate (%)", 1, "a"), ("n50", "Block N50 (Mb)", 1e-6, "b"),
-             ("pindel_pct", "Phased indels (%)", 1, "c")]
-    for ax, (key, lab, sc, L) in zip(axs.flat, specs):
-        single_band(ax)
-        for name, col, ls, mk, get in F4:
-            if key == "pindel_pct" and "indel" not in name and "four" not in name:
-                continue
+    """The same SNV-only VCFs under GIAB v4.2.1 and v5.0q: switch errors by coverage; at 60x
+    the switch errors that all three tools make at the same SNV pair; and v5.0q switch error
+    rates by benchmark region and GIAB v3.6 stratum at 10x and 60x (issue #1 item 4)."""
+    fig = plt.figure(figsize=(FIGW, 100 * MM), layout="constrained")
+    fig.get_layout_engine().set(w_pad=2 * MM, h_pad=1.2 * MM, wspace=0.05, hspace=0.0)
+    top, bottom = fig.subfigures(2, 1, height_ratios=[1.45, 1], hspace=0.03)
+    axs = top.subplots(1, 3, width_ratios=[1, 1, 1.1])
+    series = [x for x in F3 if x[0] in ("wh", "hc", "lp_gnn")]
+    series.sort(key=lambda x: ["wh", "hc", "lp_gnn"].index(x[0]))
+    for ax, bench, L in ((axs[0], "v421", "a"), (axs[1], "v50q", "b")):
+        for k, name, col, ls, mk, src, v421name in series:
             xs, m_, s_ = [], [], []
             for c in PLOT_COVS:
-                a_, b_ = ms(get(c), key)
-                xs.append(c); m_.append(a_); s_.append(b_)
-            line(ax, xs, m_, s_, col, ls=ls, marker=mk, scale=sc, label=name, mfc="none",
-                 ms=4.0 if mk == "s" else 3.0)
-        if key == "sw_pct":
-            ax.set_yscale("log"); ax.minorticks_off()
-            ax.set_yticks([0.02, 0.05, 0.1, 0.2, 0.3]); ax.set_yticklabels(["0.02", "0.05", "0.1", "0.2", "0.3"])
-        ax.set_ylabel(lab); cov_axis(ax); letter(ax, L)
-    ax = axs.flat[3]
-    for name, col, ls, mk, get in F4:
-        x, sx = ms(get(20), "sw_pct"); y, sy = ms(get(20), "n50")
-        ax.errorbar([x], [y / 1e6], xerr=[sx], yerr=[sy / 1e6], fmt=mk, color=col, ms=3.8,
-                    mfc="none", mew=0.9, elinewidth=0.6, capsize=0)
-    ax.set_xlabel("SNV switch error rate (%), 20×"); ax.set_ylabel("Block N50 (Mb), 20×")
-    letter(ax, "d")
-    h = [Line2D([], [], color=col, ls=ls, marker=mk, ms=3.4, mfc="none", mew=0.8, label=name)
-         for name, col, ls, mk, _ in F4]
-    fig.legend(handles=h, loc="outside upper center", ncol=4, handlelength=2.4, columnspacing=1.2)
-    save(fig, os.path.join(OUT, "fig4_cophasing.pdf"))
+                runs = D["v421"][v421name][c] if bench == "v421" else f3_runs(src, c)
+                a_, b_ = ms(runs, "sw")
+                xs.append(c); m_.append(a_ / 1000); s_.append(b_ / 1000)
+            tline(ax, k, xs, m_, s_)
+        ax.set_ylim(0, 5.3); ax.set_ylabel("Switch errors (thousands)"); cov_axis(ax); letter(ax, L)
+        ax.set_title("GIAB v4.2.1" if bench == "v421" else "T2T-HG002-derived v5.0q", fontsize=6.5)
+    ax = axs[2]   # item4_overlap.tsv (issue #1), replicate 1, 60x
+    ov = {r["truth"]: r for r in _tsv("item4_overlap.tsv") if r["run"] == "60x_1"}
+    rows = [("v4", "LP2", "lp_gnn"), ("v4", "WH", "wh"), ("v4", "HC2", "hc"),
+            ("v5", "LP2", "lp_gnn"), ("v5", "WH", "wh"), ("v5", "HC2", "hc")]
+    ys = [0, 1, 2, 3.6, 4.6, 5.6]
+    for y, (truth, col, t) in zip(ys, rows):
+        tot, shared = int(ov[truth][col]), int(ov[truth]["all3"])
+        ax.barh(y, shared / 1000, 0.72, color="#BDBDBD", zorder=3)
+        ax.barh(y, (tot - shared) / 1000, 0.72, left=shared / 1000, color=C[t], zorder=3)
+        ax.text(tot / 1000 + 0.05, y, f"{100 * shared / tot:.0f}%", va="center", ha="left", fontsize=5.5)
+    ax.set_yticks(ys); ax.set_yticklabels(["LongPhase 2", "WhatsHap", "HapCUT2"] * 2)
+    ax.invert_yaxis(); ax.tick_params(axis="y", length=0)
+    for y0, lab in ((-0.75, "GIAB v4.2.1"), (2.85, "T2T-HG002-derived v5.0q")):
+        ax.text(0, y0, lab, fontsize=6, va="center", ha="left")
+    ax.set_xlim(0, 2.75); ax.set_xlabel("Switch errors at 60× (thousands)")
+    letter(ax, "c")
+    S = _group(_tsv("item4_strata.tsv"),
+               lambda r: (r["tool"], int(r["coverage"]), r["truth"], r["region"], r["stratum"]))
+    tools = (("lp_gnn", "longphase_gnn"), ("wh", "whatshap_v28_onlySNVs"), ("hc", "hapcut2_v134"))
+    axs2 = bottom.subplots(1, 2, sharey=True)
+    for ax, cov, L, xl in ((axs2[0], 10, "d", (0.02, 8)), (axs2[1], 60, "e", (0.0008, 5))):
+        for key, _lab, y in REGIONS:
+            vals = []
+            for t, name in tools:
+                runs = S[(name, cov, "v5") + key]
+                vals.append(sum(float(r["snv_sw_rate%"]) for r in runs) / len(runs))
+            ax.plot([min(vals), max(vals)], [y, y], color="#D9D9D9", lw=1.6, zorder=1, solid_capstyle="round")
+            for (t, _n), v in zip(tools, vals):
+                st = STY[t]
+                ax.plot([v], [y], ls="", marker=st["marker"], ms=st["ms"] + 0.6, mfc="none", mec=C[t],
+                        mew=0.9, zorder=3)
+        ax.set_xscale("log"); ax.minorticks_off()
+        ticks = [t for t in (0.001, 0.01, 0.1, 1) if xl[0] <= t <= xl[1]]
+        ax.set_xticks(ticks); ax.set_xticklabels([f"{t:g}" for t in ticks])
+        ax.set_xlim(*xl)
+        ax.set_xlabel("Switch error rate against v5.0q (%)")
+        ax.set_title(f"{cov}×", fontsize=6.5)
+        ax.grid(axis="x", color="#EEEEEE", lw=0.5, zorder=0)
+        ax.axhline(2.7, color="#BDBDBD", lw=0.5, ls="--", zorder=0)
+        letter(ax, L)
+    axs2[0].set_yticks([y for _, _, y in REGIONS]); axs2[0].set_yticklabels([lab for _, lab, _ in REGIONS])
+    axs2[0].invert_yaxis(); axs2[0].tick_params(axis="y", length=0)
+    axs2[1].tick_params(axis="y", length=0)
+    h = [thandle(t, {"wh": "WhatsHap"}.get(t)) for t in ("lp_gnn", "wh", "hc")]
+    h.append(Patch(color="#BDBDBD", label="switch error shared by all three tools (c)"))
+    top.legend(handles=h, loc="outside upper center", ncol=4, handlelength=2.6, columnspacing=1.4)
+    save(fig, os.path.join(OUT, "fig4_two_benchmarks.pdf"))
 
 
 # ============================================================ Figure 5 =====
 def fig5():
-    """PacBio HiFi: LongPhase 2 vs WhatsHap, panels in Fig. 2 order (one replicate per coverage)."""
+    """PacBio HiFi: LongPhase 2 vs WhatsHap, columns as in Fig. 2 (one replicate per coverage)."""
     tools = ["wh", "lp_gnn"]
-    fig, axs = new_fig(56, 1, 5)
+    fig, axs = new_fig(52, 1, 4)
     specs = [("sw_pct", "Switch error rate (%)", (0, 0.15), 1),
              ("ham", "Hamming distance (%)", (0, 2), 1),
              ("n50", "Block N50 (kb)", (0, 600), 1e-3),
              ("psnv_pct", "Phased SNVs (%)", (80, 90), 1)]
-    for ax, (key, lab, ylim, sc), L in zip([axs[0], axs[2], axs[3], axs[4]], specs, "acde"):
+    for ax, (key, lab, ylim, sc), L in zip(axs, specs, "abcd"):
         for t in tools:
             xs, m, s_ = snv_series(t, key, plat="HiFi", covs=HIFI_COVS)
             tline(ax, t, xs, m, s_, scale=sc, label=NAME[t])
         ax.set_ylim(*ylim); ax.set_ylabel(lab); cov_axis(ax, HIFI_COVS); letter(ax, L)
-    ax = axs[1]
-    xs, q, _ = snv_series("lp_gnn", "sw_pct", plat="HiFi", covs=HIFI_COVS)
-    _, r, _ = snv_series("wh", "sw_pct", plat="HiFi", covs=HIFI_COVS)
-    ax.plot(xs, [a / b for a, b in zip(r, q)], color=C["wh"], marker="D", ms=2.8, mfc="none", mew=0.8)
-    ax.set_ylim(0, 4); ax.set_ylabel("Switch-error-rate ratio\n(WhatsHap / LongPhase 2)")
-    cov_axis(ax, HIFI_COVS); letter(ax, "b")
-    h = [thandle(t) for t in ("lp_gnn", "wh")]
-    fig.legend(handles=h, loc="outside upper center", ncol=2, handlelength=2.2)
+    h = [thandle(t, {"wh": "WhatsHap"}.get(t)) for t in ("lp_gnn", "wh")]
+    fig.legend(handles=h, loc="outside upper center", ncol=2, handlelength=2.6)
     save(fig, os.path.join(OUT, "fig5_hifi.pdf"))
 
 
@@ -559,7 +696,7 @@ def sfig12():
     for ax, key, lab, L in ((axs[1, 0], "sw_pct", "SNV switch error rate (%)", "c"),
                             (axs[1, 1], "ham", "Hamming distance (%)", "d")):
         single_band(ax)
-        for cfg, col in (("SNV", "#4D4D4D"), ("Indel+Mod+SV", "#542788")):
+        for cfg, col in (("SNV", CFGC["SNV"]), ("Indel+Mod+SV", CFGC["Indel+Mod+SV"])):
             for tool, ls, mfc in (("longphase_v2.0.1", "--", "white"), ("longphase_v2.1", "-", None)):
                 xs, m, s_ = coph_series(cfg, tool, key)
                 line(ax, xs, m, s_, col, ls=ls, mfc=mfc)
@@ -572,8 +709,8 @@ def sfig12():
     h += [Line2D([], [], color="k", marker="o", mfc="white", ls="", ms=3.6, label="without GNN"),
           Line2D([], [], color="k", marker="o", ls="", ms=3.6, label="with GNN")]
     axs[0, 1].legend(handles=h, loc="upper left", bbox_to_anchor=(1.03, 1.0))
-    h2 = [Line2D([], [], color="#4D4D4D", label="SNV only"),
-          Line2D([], [], color="#542788", label="all four classes"),
+    h2 = [Line2D([], [], color=CFGC["SNV"], label="SNV only"),
+          Line2D([], [], color=CFGC["Indel+Mod+SV"], label="all four classes"),
           Line2D([], [], color="k", ls="--", marker="o", mfc="white", ms=2.6, label="without GNN"),
           Line2D([], [], color="k", marker="o", ms=2.6, label="with GNN")]
     axs[1, 1].legend(handles=h2, loc="upper left", bbox_to_anchor=(1.03, 1.0))
@@ -604,19 +741,6 @@ def sfig13():
 
 
 # ============================================== Supplementary Fig. 14 =====
-# MethPhaser values: MethPhaserCompare.jsx (JHL, 2026-10-03). They are identical,
-# to every printed digit, to the uncorrected SNV-only LongPhase 2 run that was
-# MethPhaser's input (xlsx SNV_Detail, longphase_v2.0.1, replicate 1).
-METH = {10: (2277, 78.11491, 6.92789, 0.9395), 20: (1311, 91.08722, 3.98836, 1.6993),
-        30: (1004, 91.60825, 2.40328, 1.9689), 40: (878, 91.63726, 2.37294, 2.2887),
-        50: (883, 91.5461, 1.8627, 2.5705), 60: (743, 91.43292, 1.75198, 2.9108)}
-
-
-def rep1(cfg, tool, cov, key):
-    runs = D["coph"][cfg][tool][cov]
-    return [r for r in runs if r["rep"] == 1][0][key]
-
-
 def sfig14():
     """MethPhaser vs joint SNV+5mC co-phasing (replicate 1)."""
     fig, axs = new_fig(56, 1, 4)
