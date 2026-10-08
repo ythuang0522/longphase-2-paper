@@ -223,8 +223,10 @@ cross-tool comparisons stated as SNV-only LongPhase 2 (WhatsHap/HapCUT2 *can* ph
 indels); HapCUT2 pruning added to the command-line todo; the generalization
 limitations moved from Methods ("Hold-out design") to the Discussion; asides cut and
 procedural tense made past. Still open from that review, needing decisions or new
-analysis (the v5.0q-without-BED item was a text error: per the authors, both truth
-sets were scored within their benchmark BEDs; Methods corrected 2026-09-24): the
+analysis (the v5.0q-without-BED item: on 2026-09-24 the authors said both truth sets
+were scored within their benchmark BEDs and Methods was changed accordingly; **this was
+wrong** — JHL's reproduction of all 1,024 runs on 2026-10-08 (issue #1) showed that every
+table was scored without a BED, and Methods now says so): the
 deployment threshold needed a separate selection rationale (resolved by the author on
 2026-10-06: an end-to-end phasing cost trade-off, distinct from checkpoint criterion S); test
 accuracy 0.941 is below the all-correct baseline 0.970; no statement that test
