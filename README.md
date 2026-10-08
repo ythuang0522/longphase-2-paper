@@ -747,3 +747,15 @@ Fig. 13e,f must be regenerated (`make results-figs`) and the PDFs rebuilt.**
 - New Supplementary Table 15 (`heldout_table()`), v5.0q and v4.2.1, all coverages.
 - Not done, by author decision (2026-10-09): the per-run held-out values stay in `notes/heldout/`
   and are not added to Supplementary Data 1; no per-chromosome GNN reduction.
+
+**Threshold sweep and HiFi check, 2026-10-09.**
+- Author: there is one released GNN (e6), and the full 0.05–0.95 sweep was done on it. The
+  "later models were swept over 0.30–0.40" sentence and its `[check]` comment are deleted from
+  Supplementary Method 4.
+- Issue #4 (HiFi) checked: every value in JHL's comment reproduces from `supplementary.xlsx`
+  (switch errors, 2.2–2.6-fold rate ratio, Hamming lower at 10–40× only, N50 within 3.1%, 0.4–0.5
+  points more phased SNVs for WhatsHap, GNN removes 19–25%, N50 ratio 4.3). Two stale sentences
+  that 9fb0cc4 left were fixed: the old HiFi description and its "being regenerated" `\todo` in
+  Methods (duplicating the new HiFi data sentence), and "HiFi call-set handling remains to be
+  confirmed" in the Discussion. JHL's view that more HiFi replicates are unnecessary is unchanged
+  in Methods ("could be drawn … but were not").
