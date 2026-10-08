@@ -656,9 +656,13 @@ def sfig11():
         xs, a, _ = snv_series("lp", "sw", plat=plat, covs=covs)
         _, b, _ = snv_series("lp_gnn", "sw", plat=plat, covs=covs)
         ax.plot(xs, [100 * (1 - y / x) for x, y in zip(a, b)], color="black", ls=ls, marker="o",
-                ms=2.6, mfc=mfc, label="nanopore" if plat == "ONT" else "PacBio HiFi")
-    ax.set_ylim(0, 40); ax.set_ylabel("Switch errors removed\nby GNN correction (%)")
-    cov_axis(ax); letter(ax, "e"); ax.legend(loc="lower right", fontsize=5.5)
+                ms=2.6, mfc=mfc, label="nanopore, genome-wide" if plat == "ONT" else "PacBio HiFi, genome-wide")
+    Hh = _heldout("heldout_v50q.txt")   # issue #2: chromosomes held out from GNN training
+    ax.plot(PLOT_COVS, [100 * (1 - ms(Hh["longphase_gnn"][c], "sw")[0] / ms(Hh["longphase"][c], "sw")[0])
+                        for c in PLOT_COVS], color="#7F7F7F", ls=":", marker="s", ms=2.6, mfc="white",
+            label="nanopore, chr17, chr21, chr22")
+    ax.set_ylim(0, 52); ax.set_yticks([0, 10, 20, 30, 40]); ax.set_ylabel("Switch errors removed\nby GNN correction (%)")
+    cov_axis(ax); letter(ax, "e"); ax.legend(loc="upper right", fontsize=5.5, borderaxespad=0.2)
     ax = axs.flat[5]
     for t, ls, mfc in (("lp", "--", "white"), ("lp_gnn", "-", None)):
         xs, m, s_ = snv_series(t, "sw", plat="HiFi", covs=HIFI_COVS)
