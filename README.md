@@ -353,7 +353,7 @@ most important cheap analysis, because the Discussion names the train/test overl
 1. ~~**Variant caller**~~ — resolved the same day (author): PEPPER-Margin-DeepVariant, see below.
 2. **MethPhaser output equals its input** to every digit at all six coverages (= uncorrected
    SNV-only LongPhase 2, replicate 1). Probably the input VCF was scored or MethPhaser did not run.
-3. **HiFi call sets are coverage-independent** (2,367,609–2,367,619 het SNVs at 10–50×): one call
+3. ~~**HiFi call sets are coverage-independent**~~ — resolved 2026-10-09 (issue #4, see below). Was: (2,367,609–2,367,619 het SNVs at 10–50×): one call
    set reused, so the 87% phased fraction at 10× is not comparable with ONT; HiFi data source,
    caller and commands missing from Methods.
 4. **Unphased-SNV total resolved (author, 2026-10-06): 56,076 at 60×.** The old composition
@@ -662,3 +662,17 @@ was not added: the timing todo in Results still has no source table.
 Same day, Fig. 2e: the single 10× scatter (the one coverage at which Margin has a lower switch
 error rate than LongPhase 2) is replaced by one switch-rate/N50 path per tool over 10–20×, the
 coverages at which Margin was run. Results text unchanged (it already gives 10× and 12–20×).
+
+**HiFi rescored with per-coverage calls, 2026-10-09 (issue #4, `notes/hifi/README.md`).**
+PEPPER-Margin-DeepVariant r0.8 `--hifi` was run on each HiFi coverage's own alignment (10–40×
+down-sampled from the 48× GIAB Revio BAM with seed 1; 48× used as 50×). SNV-only phasing with
+release v2.1 (GNN and `--disableGNN`) and WhatsHap 2.8 `--only-snvs`, scored with `compare`
+v2.1 against v5.0q without a BED. `supplementary.xlsx` HiFi rows of `Variant_Calling` and
+`SNV_Detail` replaced (no other cell changed); Supplementary Tables 7 and 11 regenerated
+(`tables()` only). LongPhase 2 now has 2.2–2.6-fold fewer switch errors than WhatsHap (was
+2.5–3.5): abstract, Results HiFi paragraph (title, rates, Hamming no longer lower at 50×,
+N50 ratio 4.3; GNN removes 19–25% of HiFi switch errors, was 19–28%), Fig. 5 legend, Methods (model presets, HiFi data, replicates) and
+Supplementary Table 5 updated; HiFi `\todo`s removed. `Homo. SNV` counts PASS 1/1 plus
+refCall 0/0 records (checked against the nanopore and old HiFi rows); Table 7 caption says so.
+**Not done here (no matplotlib fonts/LaTeX on the lab server): Fig. 5 and Supplementary
+Fig. 13e,f must be regenerated (`make results-figs`) and the PDFs rebuilt.**

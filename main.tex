@@ -52,12 +52,12 @@ Jyun-Hong Lin$^{1}$, Yang-Ming Yeh$^{2}$, Yu-Chun Chen$^{1}$, Yao-Ting Huang$^{1
 \maketitle
 
 \begin{abstract}
-Long-read phasers use only part of the evidence in each read and seldom report which phase assignments are unreliable. Here we present \toolname, which phases SNVs, indels, structural variants and 5-methylcytosine in one graph, weights observations by base quality and sequence context, and scores every variant's phasing uncertainty. A graph neural network withholds phase from likely misphased variants rather than flipping them. Scored against a benchmark from the telomere-to-telomere HG002 assembly, \toolname makes 2.8- to 4.8-fold fewer switch errors than WhatsHap and HapCUT2 on nanopore data while running six- to sevenfold faster at 60$\times$, and 2.5- to 3.5-fold fewer than WhatsHap on PacBio HiFi data without retraining. Co-phasing all four classes lengthens haplotype blocks by 43\%. Against the earlier, mapping-based benchmark, the tools differ only 1.2- to 1.3-fold at high coverage, and most of their switch errors coincide. \toolname replaces \longphase unchanged in Clair3, ClairS and EPI2ME.
+Long-read phasers use only part of the evidence in each read and seldom report which phase assignments are unreliable. Here we present \toolname, which phases SNVs, indels, structural variants and 5-methylcytosine in one graph, weights observations by base quality and sequence context, and scores every variant's phasing uncertainty. A graph neural network withholds phase from likely misphased variants rather than flipping them. Scored against a benchmark from the telomere-to-telomere HG002 assembly, \toolname makes 2.8- to 4.8-fold fewer switch errors than WhatsHap and HapCUT2 on nanopore data while running six- to sevenfold faster at 60$\times$, and 2.2- to 2.6-fold fewer than WhatsHap on PacBio HiFi data without retraining. Co-phasing all four classes lengthens haplotype blocks by 43\%. Against the earlier, mapping-based benchmark, the tools differ only 1.2- to 1.3-fold at high coverage, and most of their switch errors coincide. \toolname replaces \longphase unchanged in Clair3, ClairS and EPI2ME.
 \end{abstract}
 %  [provenance] Abstract rewritten 2026-10-08 (author request: Nature Methods register,
 %  150 words). Sources: 2.8--4.8-fold = 2.8--3.7x WhatsHap, 3.3--4.8x HapCUT2, 10--60x
-%  (Results, Supp. Table 8); HiFi 2.5--3.5x (Supp. Table 11, values pending the
-%  regenerated HiFi calls); 43% = four-class corrected N50 4.10 vs SNV-only 2.86 Mb at 60x
+%  (Results, Supp. Table 8); HiFi 2.2--2.6x (Supp. Table 11, per-coverage calls,
+%  issue #4); 43% = four-class corrected N50 4.10 vs SNV-only 2.86 Mb at 60x
 %  (Supp. Table 10); 1.2--1.3-fold at 30--60x and 93% coincident errors (Supp. Tables 9, 13).
 %  Speed claim restored 2026-10-08 (author request). 6--7x at 60x = HapCUT2 95 and WhatsHap
 %  112 min vs LongPhase 2 with GNN 16 min, read from JHL's original Fig. 2e chart (initial
@@ -120,7 +120,7 @@ Long-read phasers use only part of the evidence in each read and seldom report w
   \centering
   \includegraphics[width=\textwidth]{fig5_hifi.pdf}
   \caption{\textbf{Phasing of PacBio HiFi data compared with WhatsHap.}
-  HG002 PacBio HiFi (Revio) reads down-sampled to 10--50$\times$, one replicate per coverage\todo{state whether one call set was used for every coverage}; SNV-only phasing scored against v5.0q; \toolname uses the network trained on nanopore data. Panels as in Fig.~\ref{fig:snv}a--d,f.
+  HG002 PacBio HiFi (Revio) reads down-sampled to 10--50$\times$, one replicate per coverage with variants called at each coverage; SNV-only phasing scored against v5.0q; \toolname uses the network trained on nanopore data. Panels as in Fig.~\ref{fig:snv}a--d,f.
   \textbf{a}, Switch error rate.
   \textbf{b}, Switch error rate of \whatshap divided by that of \toolname.
   \textbf{c}, Block-wise Hamming distance.

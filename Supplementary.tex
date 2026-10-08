@@ -389,7 +389,7 @@ Item & Version & Notes \\
 HG002 nanopore R10.4.1 reads & ONT \code{giab\_lsk114\_}\allowbreak\code{2022.12} & FLO-PRO114M, SQK-LSK114, 4~kHz; Dorado \code{sup@v4.0.0} with \code{5mCG\_5hmCG@v2} \\
 Reference & GRCh38 & \code{GCA\_000001405.15\_GRCh38\_}\allowbreak\code{no\_alt\_analysis\_set}; no-alt analysis set, no decoys \\
 minimap2 & 2.24-r1122 & \code{-y -ax map-ont} (alignment by Oxford Nanopore; reads with mean quality $\ge 10$) \\
-PEPPER-Margin-DeepVariant\cite{shafin2021margin} & r0.8 & SNV and indel calls (unphased genotypes); \todo{model preset} \\
+PEPPER-Margin-DeepVariant\cite{shafin2021margin} & r0.8 & SNV and indel calls (unphased genotypes); \code{call\_variant} with \code{--ont\_r10\_q20} (nanopore) or \code{--hifi} (HiFi), one call set per coverage and replicate \\
 Sniffles2 & 2.8.0 & \code{--output-rnames} \\
 GIAB v4.2.1 HG002 & v4.2.1 & GRCh38 small-variant benchmark with phase transferred from a hifiasm assembly; \code{HG002\_GRCh38\_1\_22\_}\allowbreak\code{v4.2.1\_benchmark\_}\allowbreak\code{hifiasm\_v11\_}\allowbreak\code{phasetransfer.vcf.gz}, biallelic phased heterozygous records \\
 GIAB v5.0q HG002 benchmark\cite{hansen2026q100,olson2026giabv5} & v5.0q & GRCh38 small-variant benchmark derived from the T2T-HG002 v1.1 assembly; \code{HG002\_GRCh38\_v5.0q\_}\allowbreak\code{smvar.vcf.gz}, chr1--chr22 records \\
@@ -398,9 +398,9 @@ HapCUT2 & 1.3.4 & \code{extractHAIRS --ont 1}, then \code{HAPCUT2} with default 
 Margin & 2.3.1 & SNV-only comparison, 10--20$\times$; phasing parameters \code{allParams.phase\_vcf.ont.json}; input restricted to SNVs \\
 Ralphi & v0.0.1 (commit \code{d7d17b1}) & SNV-only comparison, 10--20$\times$; model \code{ralphi.v1.long.pt}, ONT configuration with \code{max\_coverage 15}, \code{mapq 20}, read selection and bad-read filtering \\
 MethPhaser & 0.0.4 & run on the uncorrected SNV-only \toolname output (same SNV phasing as the joint SNV+5mC run), replicate~1 \todo{command line} \\
-HG002 PacBio HiFi reads & Revio, PacBio release 2023-10-31 & ccs 7.0.0, lima 2.7.1, primrose 1.4.0; aligned with pbmm2 1.10.0 (48$\times$); down-sampled with samtools 1.23.1 (seed 1) to 10--40$\times$, 48$\times$ used as 50$\times$; PEPPER-Margin-DeepVariant r0.8 \todo{calls being regenerated per coverage} \\
+HG002 PacBio HiFi reads & Revio, PacBio release 2023-10-31 & ccs 7.0.0, lima 2.7.1, primrose 1.4.0; aligned with pbmm2 1.10.0 (48$\times$); down-sampled with samtools 1.23.1 (seed 1) to 10--40$\times$, 48$\times$ used as 50$\times$; PEPPER-Margin-DeepVariant r0.8 \code{--hifi}, called separately at every coverage \\
 \longphase~1.0 & v1.0 & \code{--ont}; commit \code{fe8c1fdff11ba2a082d3}\allowbreak\code{63a7ffcb5c923cacc316} \\
-\toolname & v2.1, commit \code{46ba470} & Nanopore mode; GNN correction with defaults \\
+\toolname & v2.1, commit \code{46ba470} & Nanopore mode (\code{--pb} for HiFi); GNN correction with defaults \\
 \bottomrule
 \end{tabular}
 \end{table}
