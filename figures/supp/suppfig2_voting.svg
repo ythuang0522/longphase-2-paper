@@ -226,7 +226,7 @@
 <text x="53.0" y="525.0" class="s" text-anchor="end">1</text>
 <text x="135.0" y="686.0" class="s" text-anchor="middle">p<tspan font-size="72%" baseline-shift="sub">1</tspan> = h<tspan font-size="72%" baseline-shift="sub">1</tspan> / (h<tspan font-size="72%" baseline-shift="sub">1</tspan> + h<tspan font-size="72%" baseline-shift="sub">2</tspan>)</text>
 <text x="44.0" y="591.0" class="s" text-anchor="middle" transform="rotate(-90 44 591.0)">PE</text>
-<text x="135.0" y="514.0" class="s" text-anchor="middle" fill="#B8860B">GNN window (Suppl. Fig. 4)</text>
+<text x="135.0" y="514.0" class="s" text-anchor="middle" fill="#B8860B">GNN window (Supplementary Fig. 4)</text>
 <circle cx="205.3" cy="624.5" r="3.2" fill="#16233D" stroke="#fff" stroke-width="1"/>
 <circle cx="173.5" cy="548.0" r="3.2" fill="#B8860B" stroke="#fff" stroke-width="1"/>
 <circle cx="146.0" cy="524.0" r="3.2" fill="#B8860B" stroke="#fff" stroke-width="1"/>

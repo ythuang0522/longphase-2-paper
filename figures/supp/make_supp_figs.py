@@ -541,7 +541,7 @@ def fig_s2():
         S.text(px0 - 5, ey(v) + 3, f"{v}", cls="s", anchor="end")
     S.text((px0 + px1) / 2, py0 + 26, "p" + sub("1") + " = h" + sub("1") + " / (h" + sub("1") + " + h" + sub("2") + ")", cls="s", anchor="middle")
     S.text(px0 - 14, (py0 + py1) / 2, "PE", cls="s", anchor="middle", rot=-90)
-    S.text(ex(0.5), py1 - 8, "GNN window (Suppl. Fig. 4)", cls="s", anchor="middle", fill=AMBER)
+    S.text(ex(0.5), py1 - 8, "GNN window (Supplementary Fig. 4)", cls="s", anchor="middle", fill=AMBER)
     for a_, b_ in ((22.1, 1), (3, 1), (4, 3), (5, 5)):
         p = a_ / (a_ + b_)
         H = -(p * math.log2(p) + (1 - p) * math.log2(1 - p))
@@ -689,7 +689,7 @@ def fig_s4():
     S.line(93, 122, 93, 132, stroke=GREY, w=1, arrow="arr")
     S.text(93, 143, "variant calling", cls="s", anchor="middle")
     S.rect(36, 150, 114, 21, fill=H1L, stroke=H1, sw=0.9, r=4)
-    S.text(93, 164, "LongPhase", cls="tb", anchor="middle", fill=H1)
+    S.text(93, 164, "LongPhase 2", cls="tb", anchor="middle", fill=H1)
     S.line(93, 173, 93, 185, stroke=GREY, w=1, arrow="arr")
 
     xs = [30, 61, 92, 123, 154]

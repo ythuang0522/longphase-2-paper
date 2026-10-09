@@ -99,6 +99,7 @@ CFG = [
     ("Indel+Mod+SV", "all four", "#1A1A1A"),
 ]
 CFGC = {k: c for k, _, c in CFG}
+CFGM = {"SNV": "o", "SV": "v", "Mod": "^", "Indel": "s", "Indel+SV": "<", "Mod+Indel": ">", "Indel+Mod+SV": "D"}
 
 
 FIGW = 183 * MM          # Nature double-column width; figures are saved at exactly this width
@@ -212,7 +213,25 @@ def align_ylabels(fig, columns):
             ax.yaxis.set_label_coords(min(left), 0.5)
 
 
+def _tidy_ticks(fig):
+    """Automatic linear tick locators use steps of 1, 2 or 5 only, so that tick labels need
+    as few decimals as possible (0, 0.05, 0.10 rather than 0.000, 0.025, 0.050)."""
+    from matplotlib.ticker import AutoLocator, MaxNLocator
+    for ax in fig.findobj(matplotlib.axes.Axes):
+        for axis, scale in ((ax.xaxis, ax.get_xscale()), (ax.yaxis, ax.get_yscale())):
+            if scale == "linear" and type(axis.get_major_locator()) is AutoLocator:
+                axis.set_major_locator(MaxNLocator(nbins=6, steps=[1, 2, 5, 10]))
+
+
+def log_ticks(ax, ticks, axis="y"):
+    """Plain decimal labels on a log axis (no 10^x notation, no minor labels)."""
+    a = ax.yaxis if axis == "y" else ax.xaxis
+    ax.minorticks_off()
+    a.set_ticks(list(ticks)); a.set_ticklabels([f"{t:g}" for t in ticks])
+
+
 def save(fig, path):
+    _tidy_ticks(fig)
     fig.canvas.draw()
     r = fig.canvas.get_renderer()
     fig.set_layout_engine("none")
@@ -661,8 +680,10 @@ def sfig10():
         if ysc:
             ax.set_yscale(ysc)
         ax.set_ylabel(lab); cov_axis(ax, covs); letter(ax, L)
-    h = [thandle(t) for t in tools]
-    fig.legend(handles=h, loc="outside upper center", ncol=6, handlelength=2.6)
+    log_ticks(axs[0], (0.05, 0.1, 0.2))
+    log_ticks(axs[1], (0.5, 1, 2, 5))
+    h = [thandle(t, {"wh": "WhatsHap"}.get(t)) for t in ("lp_gnn", "wh", "hc", "margin", "ralphi")]
+    fig.legend(handles=h, loc="outside upper center", ncol=5, handlelength=2.6, columnspacing=1.6)
     save(fig, os.path.join(SUPP, "suppfig10_more_tools.pdf"))
 
 
@@ -739,6 +760,7 @@ def sfig12():
             ax.set_yticks([0.02, 0.05, 0.1, 0.15]); ax.set_yticklabels(["0.02", "0.05", "0.1", "0.15"])
             ax.minorticks_off()
         ax.set_ylabel(lab); cov_axis(ax); letter(ax, L)
+    axs[1, 1].set_ylim(bottom=0)
     h = [Line2D([], [], color=col, marker="o", ls="", ms=3.6, label=name) for _, name, col in CFG]
     h += [Line2D([], [], color="k", marker="o", mfc="white", ls="", ms=3.6, label="without GNN"),
           Line2D([], [], color="k", marker="o", ls="", ms=3.6, label="with GNN")]
@@ -762,15 +784,17 @@ def sfig13():
             ax = axs[row, col]; single_band(ax)
             for cfg, name, c in CFG:
                 xs, m, s_ = coph_series(cfg, tool, key)
-                line(ax, xs, m, s_, c, scale=sc, label=name)
-            ax.set_ylabel(f"{tag.capitalize()}\n{lab}" if col == 0 else lab); cov_axis(ax)
+                line(ax, xs, m, s_, c, scale=sc, label=name, marker=CFGM[cfg], mfc="none", ms=2.6)
+            ax.set_ylabel(f"{tag[0].upper() + tag[1:]}\n{lab}" if col == 0 else lab); cov_axis(ax)
             letter(ax, "abcdefgh"[row * 4 + col])
     for col in range(4):
         lo = min(axs[0, col].get_ylim()[0], axs[1, col].get_ylim()[0])
         hi = max(axs[0, col].get_ylim()[1], axs[1, col].get_ylim()[1])
+        if col == 1:
+            lo = 0   # Hamming distance from zero
         axs[0, col].set_ylim(lo, hi); axs[1, col].set_ylim(lo, hi)
-    h = [Line2D([], [], color=c, marker="o", ms=2.6, label=name) for _, name, c in CFG]
-    fig.legend(handles=h, loc="outside upper center", ncol=7)
+    h = [Line2D([], [], color=c, marker=CFGM[k], mfc="none", mew=0.8, ms=3.0, label=name) for k, name, c in CFG]
+    fig.legend(handles=h, loc="outside upper center", ncol=7, columnspacing=1.4)
     save(fig, os.path.join(SUPP, "suppfig15_cophasing_all.pdf"))
 
 
@@ -782,15 +806,16 @@ def sfig14():
              ("ham", 2, "Hamming distance (%)", 1), ("n50", 3, "Block N50 (Mb)", 1e-6)]
     covs = BAR_COVS
     for ax, (key, j, lab, sc), L in zip(axs, specs, "abcd"):
-        ax.plot(covs, [METH[c][j] for c in covs], color=C["meth"], marker="o", ms=2.6,
-                label="MethPhaser on LongPhase 2 SNV phasing without GNN")
-        ax.plot(covs, [rep1("Mod", "longphase_v2.0.1", c, key) * sc for c in covs], color=C["lp_gnn"],
-                ls="--", marker="o", mfc="white", ms=2.6, label="LongPhase 2, SNV+5mC, without GNN")
         ax.plot(covs, [rep1("Mod", "longphase_v2.1", c, key) * sc for c in covs], color=C["lp_gnn"],
-                marker="o", ms=2.6, label="LongPhase 2, SNV+5mC")
+                marker="o", ms=3.0, mfc="none", mew=0.8, label="LongPhase 2, SNVs + 5mC")
+        ax.plot(covs, [rep1("Mod", "longphase_v2.0.1", c, key) * sc for c in covs], color=C["lp_gnn"],
+                ls="--", marker="o", ms=3.0, mfc="none", mew=0.8, label="LongPhase 2, SNVs + 5mC, without GNN")
+        ax.plot(covs, [METH[c][j] for c in covs], color=C["meth"], marker="^", ms=3.4, mfc="none", mew=0.8,
+                label="MethPhaser on LongPhase 2 SNV phasing without GNN")
         ax.set_ylabel(lab); cov_axis(ax); letter(ax, L)
-    axs[1].set_ylim(75, 95)
-    fig.legend(*axs[0].get_legend_handles_labels(), loc="outside upper center", ncol=3)
+    axs[1].set_ylim(76, 94)
+    fig.legend(*axs[0].get_legend_handles_labels(), loc="outside upper center", ncol=3, handlelength=2.6,
+               columnspacing=1.6)
     save(fig, os.path.join(SUPP, "suppfig11_methphaser.pdf"))
 
 
@@ -812,7 +837,7 @@ def sfig15():
     ax.set_xticks(list(xs)); ax.set_xticklabels([str(c) for c in COVS])
     ax.set_xlabel("Coverage (×)"); ax.set_ylabel("SNVs unphased by GNN (%)")
     ax.set_ylim(0, 108); letter(ax, "a")
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.28), fontsize=5.5)
+    ax.legend(loc="lower left", bbox_to_anchor=(0, 1.02), fontsize=5.5, ncol=1, borderaxespad=0)
     ax = axs[1]
     cls = T["cls"]; n = T["rm_n"]
     rm = [100 * cls["variant"] / n, 100 * cls["hom_wt"] / n, 100 * cls["unassessed"] / n]
@@ -831,8 +856,8 @@ def sfig15():
             color="white", ha="center", va="center", fontsize=5.5)
     ax.text(100 - 100 * cls["unassessed"] / n / 2, 0, f"{100 * cls['unassessed'] / n:.1f}%",
             ha="center", va="center", fontsize=5.5)
-    ax.legend(handles=[Patch(color=c, label=l) for c, l in zip(colsb, labb)], loc="upper center",
-              bbox_to_anchor=(0.4, -0.28), fontsize=5.5)
+    ax.legend(handles=[Patch(color=c, label=l) for c, l in zip(colsb, labb)], loc="lower left",
+              bbox_to_anchor=(0, 1.02), fontsize=5.5, ncol=1, borderaxespad=0)
     letter(ax, "b")
     ax = axs[2]
     order = [f"chr{i}" for i in range(1, 23)] + ["chrX", "chrY"]
@@ -846,7 +871,7 @@ def sfig15():
     ax.tick_params(axis="y", length=1.5, pad=1)
     ax.invert_yaxis(); ax.set_xlim(0, 100)
     ax.set_xlabel("Not aligned 1:1 (%)"); ax.set_ylabel("Chromosome")
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.28), fontsize=5.5)
+    ax.legend(loc="lower left", bbox_to_anchor=(0, 1.02), fontsize=5.5, ncol=1, borderaxespad=0)
     letter(ax, "c")
     save(fig, os.path.join(SUPP, "suppfig16_gnn_removed.pdf"))
 
@@ -863,7 +888,8 @@ def sfig17():
         ax.set_title(f"{cov}×", fontsize=6.5); ax.set_xlabel("Read depth (×)")
         ax.set_ylabel("Fraction of sites"); ax.set_xlim(0, 130)
         ax.axvspan(123, 130, color="#EEEEEE", lw=0, zorder=0)
-        ax.text(126.5, ax.get_ylim()[1] * 0.97, "≥ cap\n(censored)", ha="center", va="top", fontsize=5)
+        ax.text(127.8, ax.get_ylim()[1] * 0.5, "≥ cap (censored)", ha="center", va="center", fontsize=5,
+                color="#555555", rotation=90)
         letter(ax, L)
     h = [Line2D([], [], color=c, label=l) for c, l in ((C["lp_gnn"], "LongPhase 2 only"),
                                                      ("#969696", "Both tools"), (C["wh"], "WhatsHap only"))]
