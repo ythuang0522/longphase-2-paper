@@ -1,4 +1,4 @@
-# Heterozygous SNVs left unphased by LongPhase 2 and WhatsHap (Fig. unphased, Supp. Fig. 12)
+# Heterozygous SNVs left unphased by LongPhase 2 and WhatsHap (Fig. 3c–f)
 
 Source data for the paragraph of Results that compares the SNVs each tool leaves
 unphased (`results.tex`, "At 60×, LongPhase 2 left 210,683 heterozygous SNV calls
@@ -83,3 +83,74 @@ python3 summarize_sets.py OUT > unphased_sets.tsv
 `longphase` is release v2.1 (`compare --sw-bed`); `T2T_DIPCALL_DIR` holds the
 T2T-HG002 v1.1 dipcall BED and VCF (used only for the assembly classification in
 `run_unphase_venn.sh`, not for these numbers).
+
+## Issue #6: benchmark composition, the other tool's accuracy, depth histograms, intervals
+
+`issue6.py` (2026-10-09), same runs and sets as above. Truth: v5.0q chr1–22
+(`HG002_GRCh38_v5.0q_smvar.chr1_22.vcf`, the file of the manuscript tables), no BED.
+
+### Universe (item 1)
+
+Heterozygous SNV calls: single-base REF and ALT, GT 0/1 (`0|1` and `1|0` count), as in
+`run_coverage.sh`. No FILTER condition is applied; all such calls are PASS. The two VCFs
+contain exactly the same calls (same POS and ALT): 2,334,730 at 10×, 2,579,823 at 60×.
+`1/2` calls and calls with two ALT alleles are outside the universe (at 60×: 3,012 `1/2`
+and 4,457 `0/1` with two ALTs). chrX and chrY calls are in it (column `chrXY`).
+
+### Composition (item 2, `issue6_composition.tsv`)
+
+| Class | Definition |
+|---|---|
+| `het_match` (a) | the truth has the call's POS, REF and ALT with GT 0/1, the match `compare` uses |
+| `het_other_allele` (b) | another heterozygous truth record at that POS: other alleles, or a `1/2` record that includes the call's ALT |
+| `hom` (c) | a homozygous truth record at that POS |
+| `absent` (d) | no truth record at that POS |
+| `chrXY` | on chrX or chrY, outside the chr1–22 truth |
+
+`issue6_reconcile.tsv`: the two sources of the Fig. 3c numbers now agree. `het_match` of
+`lp_only` minus `het_match` of `wh_only` equals WhatsHap `Phased_SNV` minus LongPhase 2
+`Phased_SNV` (22,201, 18,443, 23,757 at 10×, 30×, 60×); calls with two ALTs contribute
+nothing to that difference. The rest of the Venn difference (88,696, 61,843, 44,613) is
+in classes (b)–(d) and chrX/Y.
+
+### The other tool at these sites (item 3)
+
+For the `het_match` calls of each tool-only set, the other tool's output is scored as
+`compare` does (`CompareProcess.cpp`: common variants by POS/REF/first ALT, blocks by truth
+PS × query PS over variants phased in both, block-wise Hamming = min(m, n − m), switch
+pairs on consecutive variants of a block). `issue6_checks.tsv`: this reproduces
+`compare`'s Phased_SNV, SNV switch errors and Hamming % for both tools at all three
+coverages exactly.
+
+- `other_assessed`: in a block of the other tool with ≥ 2 assessed variants
+- `other_hamming_err`: phase disagrees with the truth relative to the block's majority
+  orientation (the orientation that gives min(m, n − m); ties count as the same orientation)
+- `other_switch_endpoint`: first or second SNV of one of the other tool's switch-error pairs
+
+| | WhatsHap at `lp_only` (a) sites: Hamming error / switch endpoint | WhatsHap genome-wide Hamming | LongPhase 2 at `wh_only` (a) sites: Hamming error / switch endpoint | LongPhase 2 genome-wide Hamming |
+|---|---|---|---|---|
+| 10× | 5,427 / 3,516 of 23,690 (22.9% / 14.8%) | 7.71% | 215 / 139 of 1,549 (13.9% / 9.0%) | 5.28% |
+| 30× | 3,187 / 2,302 of 19,996 (15.9% / 11.5%) | 2.56% | 261 / 170 of 1,565 (16.7% / 10.9%) | 1.82% |
+| 60× | 2,463 / 1,607 of 24,719 (10.0% / 6.5%) | 2.75% | 150 / 113 of 991 (15.1% / 11.4%) | 1.53% |
+
+### Depth histograms (item 4, `issue6_depth_hist.tsv`)
+
+FORMAT/DP of the LongPhase 2 VCF, 2× bins, last bin DP ≥ 124, per coverage and set
+(`lp_only`, `lp_only_phase`, `lp_only_gnn`, `wh_only`, `both`). The `lp_only`, `wh_only`
+and `both` rows are identical to the histograms of `figure_data_*.js` / `UnphaseVenn3.jsx`.
+
+### Switch-error intervals (item 6, `issue6_intervals.tsv`)
+
+- A switch-error pair is two consecutive SNVs phased in the same block of the truth and
+  of the tool (blocks as above) whose switch encodings differ. `compare --sw-bed` writes
+  it as start = POS₁ − 1, end = POS₂ − 1.
+- `run_coverage.sh` counts a site as inside when start < POS ≤ end, so an interval runs
+  from the first SNV of the pair to the base before the second SNV: the first SNV is
+  included, the second is not.
+- Expected share: the same count over all heterozygous SNV calls the tool phased (not
+  only the calls assessed against the truth).
+- The Fig. 3e intervals were made against the full v5.0q file (with chrX/Y), not the
+  chr1–22 file.
+- Including the second SNV changes the enrichment by at most 0.7 (largest for
+  `lp_only_gnn`: 4.47 → 5.15 at 10×); `lp_only` 4.26 / 8.11 / 9.62 becomes
+  4.45 / 8.19 / 9.65 and `wh_only` 1.95 / 4.21 / 9.49 becomes 1.95 / 4.25 / 9.44.

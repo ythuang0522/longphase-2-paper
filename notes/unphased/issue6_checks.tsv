@@ -1,0 +1,19 @@
+coverage	tool	check	this_script	compare
+10x	WhatsHap	Phased_SNV	1889679	1889679
+10x	WhatsHap	SNV_SW	4258	4258
+10x	WhatsHap	Hamming_%	7.71187	7.71187
+10x	LongPhase 2	Phased_SNV	1867478	1867478
+10x	LongPhase 2	SNV_SW	1510	1510
+10x	LongPhase 2	Hamming_%	5.27872	5.27872
+30x	WhatsHap	Phased_SNV	2213304	2213304
+30x	WhatsHap	SNV_SW	2524	2524
+30x	WhatsHap	Hamming_%	2.55556	2.55556
+30x	LongPhase 2	Phased_SNV	2194861	2194861
+30x	LongPhase 2	SNV_SW	680	680
+30x	LongPhase 2	Hamming_%	1.82263	1.82263
+60x	WhatsHap	Phased_SNV	2215068	2215068
+60x	WhatsHap	SNV_SW	1785	1785
+60x	WhatsHap	Hamming_%	2.74955	2.74955
+60x	LongPhase 2	Phased_SNV	2191311	2191311
+60x	LongPhase 2	SNV_SW	496	496
+60x	LongPhase 2	Hamming_%	1.53436	1.53436

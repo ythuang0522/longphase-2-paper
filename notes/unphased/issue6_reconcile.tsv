@@ -1,0 +1,4 @@
+coverage	venn_lp_only_minus_wh_only	het_match_lp_only_minus_wh_only	phased_snv_wh_minus_lp	phased_snv_wh	phased_snv_lp	multiallelic_first_alt_wh_minus_lp
+10x	110897	22201	22201	1889679	1867478	0
+30x	80286	18443	18443	2213304	2194861	0
+60x	68370	23757	23757	2215068	2191311	0
