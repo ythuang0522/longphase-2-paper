@@ -154,3 +154,24 @@ and `both` rows are identical to the histograms of `figure_data_*.js` / `Unphase
 - Including the second SNV changes the enrichment by at most 0.7 (largest for
   `lp_only_gnn`: 4.47 → 5.15 at 10×); `lp_only` 4.26 / 8.11 / 9.62 becomes
   4.45 / 8.19 / 9.65 and `wh_only` 1.95 / 4.21 / 9.49 becomes 1.95 / 4.25 / 9.44.
+
+### Site-level table (issue #6 Part B)
+
+`issue6_sites.py` writes one row per site of the four sets (`lp_graph`, `lp_gnn`, `both`,
+`wh_only`) at 10×, 30× and 60×: 822,192 rows, 4.7 MB gzipped. The table stays on the lab
+server: `data/unphased/issue6_sites.tsv.gz` (md5 `6c26ddbd21e42eec610d8c5b564f4531`).
+
+| Column | Content |
+|---|---|
+| `coverage`, `set` | 10/30/60; `lp_graph` (unphased already in `longphase/longphase_{c}x_1`), `lp_gnn` (phased there, unphased after GNN correction), `both`, `wh_only` |
+| `chrom`, `pos`, `ref`, `alt` | the call |
+| `depth` | FORMAT/DP of the call |
+| `truth` | `het_match`, `het_other_allele`, `hom`, `absent` as in `issue6_composition.tsv`; `chrXY` for chrX/chrY, which the chr1–22 truth does not cover |
+| `in_v5_bed` | inside `HG002_GRCh38_v5.0q_smvar.benchmark.bed` |
+| `in_segdup` | inside GIAB v3.6 `GRCh38_segdups.bed.gz` |
+| `in_dipcall_1to1` | inside `GRCh38_HG2-T2TQ100-V1.1_dipcall-z2k.dip.bed` |
+| `in_other_sw_interval` | inside a switch-error interval of the other tool, the Fig. 3e intervals (`compare --sw-bed` against the full v5.0q file, start < POS ≤ end); NA for `both` |
+| `wh_wrong`, `wh_sw_endpoint` | `lp_*` rows with `truth = het_match`: WhatsHap Hamming error and switch-error endpoint as in `issue6_composition.tsv`; NA otherwise |
+
+BED intervals are 0-based half-open: a site is inside when start < POS ≤ end. Every per-set
+count of the table equals `issue6_composition.tsv` and `issue6_intervals.tsv`.
