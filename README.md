@@ -764,3 +764,10 @@ Fig. 13e,f must be regenerated (`make results-figs`) and the PDFs rebuilt.**
   from network training only, not from the 2023–2024 constant tuning) instead of asking for it; the
   Margin sentence adds 10–12× on the held-out chromosomes. Supplementary Fig. 13e gains a held-out
   line (nanopore, chr17/21/22), legend moved above the data. No main-figure change.
+
+**Figure style pass, Figs. 2–6, 2026-10-09 (author request: top-tier journal standard).**
+Tighter tick/label paddings (2 pt ticks, 2.5 pt labels); Fig. 2 y-labels aligned per column across
+rows (`align_ylabels()`); Fig. 4 legend entry "(c)" replaced by an in-panel label, bold group
+headers, no y spine in the bar panel; Fig. 5 and Fig. 6c tick labels without excess decimals; Fig. 6
+one colour key ("Both tools"), no inner legend in b (dashed line = no enrichment, in the legend),
+plain x label in c with the capped-depth bin labelled in place. Arial/Arial-Bold embedded in all.

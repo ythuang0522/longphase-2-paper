@@ -55,6 +55,11 @@ plt.rcParams.update({
     "pdf.fonttype": 42,
     "legend.frameon": False,
     "savefig.dpi": 300,
+    "xtick.major.pad": 2,
+    "ytick.major.pad": 2,
+    "axes.labelpad": 2.5,
+    "axes.titlepad": 3,
+    "legend.handletextpad": 0.5,
 })
 
 # Tool colours (colour-blind safe; LongPhase 2 in reds as in the drafts).
@@ -192,6 +197,21 @@ def cov_axis(ax, covs=(10, 20, 30, 40, 50, 60)):
     ax.set_xlabel("Coverage (×)")
 
 
+def align_ylabels(fig, columns):
+    """Place the y-labels of each column of panels at one x position, just left of the
+    widest tick labels in that column, so that labels line up across rows."""
+    fig.canvas.draw()
+    r = fig.canvas.get_renderer()
+    pad = plt.rcParams["axes.labelpad"] * fig.dpi / 72
+    for col in columns:
+        left = []
+        for ax in col:
+            bbs = [t.get_window_extent(r) for t in ax.get_yticklabels() if t.get_text()]
+            left.append((min(b.x0 for b in bbs) - pad - ax.bbox.x0) / ax.bbox.width)
+        for ax in col:
+            ax.yaxis.set_label_coords(min(left), 0.5)
+
+
 def save(fig, path):
     fig.canvas.draw()
     r = fig.canvas.get_renderer()
@@ -306,8 +326,10 @@ def fig2():
     indel = {"lp_gnn": _indel_runs("longphase_coh_indel_gnn"), "wh": _indel_runs("whatshap_v28")}
     letters = iter("abcdefghijkl")
     keys = []
+    grid = []
     for r, (sf, (title, covs, tools, pkey, plab, plim)) in enumerate(zip(sfs, rows)):
         axs = sf.subplots(1, 4)
+        grid.append(axs)
         for t, _name, get in reversed(tools):   # LongPhase 2 drawn last, on top
             f = _series(get, covs)
             tline(axs[0], t, *f("sw_pct"))
@@ -344,6 +366,7 @@ def fig2():
             k += [Line2D([], [], color="#555555", ls="-", label="SNV pairs"),
                   Line2D([], [], color="#555555", ls=":", marker="o", ms=2.6, label="pairs with an indel")]
         keys.append(k)
+    align_ylabels(fig, [[row[i] for row in grid] for i in range(4)])
     _row_keys(fig, sfs, keys)
     save(fig, os.path.join(OUT, "fig2_phaser_comparison.pdf"))
 
@@ -457,10 +480,14 @@ def fig4():
         ax.barh(y, shared / 1000, 0.72, color="#BDBDBD", zorder=3)
         ax.barh(y, (tot - shared) / 1000, 0.72, left=shared / 1000, color=C[t], zorder=3)
         ax.text(tot / 1000 + 0.05, y, f"{100 * shared / tot:.0f}%", va="center", ha="left", fontsize=5.5)
+        if y == 0:
+            ax.text(shared / 2000, y, "shared by all three tools", va="center", ha="center", fontsize=5.5,
+                    color="#252525")
     ax.set_yticks(ys); ax.set_yticklabels(["LongPhase 2", "WhatsHap", "HapCUT2"] * 2)
     ax.invert_yaxis(); ax.tick_params(axis="y", length=0)
-    for y0, lab in ((-0.75, "GIAB v4.2.1"), (2.85, "T2T-HG002-derived v5.0q")):
-        ax.text(0, y0, lab, fontsize=6, va="center", ha="left")
+    for y0, lab in ((-0.8, "GIAB v4.2.1"), (2.8, "T2T-HG002-derived v5.0q")):
+        ax.text(0.03, y0, lab, fontsize=6, va="center", ha="left", fontweight="bold")
+    ax.spines["left"].set_visible(False)
     ax.set_xlim(0, 2.75); ax.set_xlabel("Switch errors at 60× (thousands)")
     letter(ax, "c")
     S = _group(_tsv("item4_strata.tsv"),
@@ -491,8 +518,7 @@ def fig4():
     axs2[0].invert_yaxis(); axs2[0].tick_params(axis="y", length=0)
     axs2[1].tick_params(axis="y", length=0)
     h = [thandle(t, {"wh": "WhatsHap"}.get(t)) for t in ("lp_gnn", "wh", "hc")]
-    h.append(Patch(color="#BDBDBD", label="switch error shared by all three tools (c)"))
-    top.legend(handles=h, loc="outside upper center", ncol=4, handlelength=2.6, columnspacing=1.4)
+    top.legend(handles=h, loc="outside upper center", ncol=3, handlelength=2.6, columnspacing=1.6)
     save(fig, os.path.join(OUT, "fig4_two_benchmarks.pdf"))
 
 
@@ -510,6 +536,8 @@ def fig5():
             xs, m, s_ = snv_series(t, key, plat="HiFi", covs=HIFI_COVS)
             tline(ax, t, xs, m, s_, scale=sc, label=NAME[t])
         ax.set_ylim(*ylim); ax.set_ylabel(lab); cov_axis(ax, HIFI_COVS); letter(ax, L)
+    axs[0].set_yticks([0, 0.05, 0.10, 0.15]); axs[0].set_yticklabels(["0", "0.05", "0.10", "0.15"])
+    axs[1].set_yticks([0, 0.5, 1.0, 1.5, 2.0]); axs[1].set_yticklabels(["0", "0.5", "1.0", "1.5", "2.0"])
     h = [thandle(t, {"wh": "WhatsHap"}.get(t)) for t in ("lp_gnn", "wh")]
     fig.legend(handles=h, loc="outside upper center", ncol=2, handlelength=2.6)
     save(fig, os.path.join(OUT, "fig5_hifi.pdf"))
@@ -577,7 +605,7 @@ def fig6():
     """SNVs left unphased by LongPhase 2 and by WhatsHap."""
     fig, axs = new_fig(58, 1, 3, width_ratios=[1.35, 0.8, 1])
     ax = axs[0]
-    segs = [("lp", "LongPhase 2 only", C["lp_gnn"]), ("both", "both", "#969696"),
+    segs = [("lp", "LongPhase 2 only", C["lp_gnn"]), ("both", "Both tools", "#969696"),
             ("wh", "WhatsHap only", C["wh"])]
     for y, c in enumerate([10, 30, 60]):
         left = 0
@@ -588,7 +616,7 @@ def fig6():
             ax.text(left + v / 2, y, f"{v:.0f}", ha="center", va="center", fontsize=5.5, color="white")
             left += v
     ax.set_yticks([0, 1, 2]); ax.set_yticklabels(["10×", "30×", "60×"]); ax.invert_yaxis()
-    ax.set_xlabel("Heterozygous SNV calls left unphased (thousands)")
+    ax.set_xlabel("Heterozygous SNVs left unphased (thousands)")
     fig.legend(handles=[Patch(color=col, label=lab) for _, lab, col in segs], loc="outside upper center", ncol=3)
     letter(ax, "a")
     ax = axs[1]
@@ -598,18 +626,20 @@ def fig6():
                                         lambda c: VENN[c]["cross"][2][0] / VENN[c]["cross"][2][1])]):
         ax.bar([j + (i - 0.5) * w for j in range(3)], [f(c) for c in (10, 30, 60)], w * 0.92,
                color=col, label=lab, zorder=3)
-    ax.axhline(1, color="#999999", lw=0.5)
-    ax.set_xticks(range(3)); ax.set_xticklabels(["10×", "30×", "60×"]); ax.set_ylim(0, 16)
-    ax.set_ylabel("Enrichment (fold)")
-    ax.legend(loc="upper left", fontsize=5, handlelength=1.2)
+    ax.axhline(1, color="#7F7F7F", lw=0.5, ls="--", zorder=4)
+    ax.set_xticks(range(3)); ax.set_xticklabels(["10×", "30×", "60×"]); ax.set_ylim(0, 11)
+    ax.set_ylabel("Enrichment in switch-error intervals\nof the other tool (fold)")
     letter(ax, "b")
     ax = axs[2]
     H = venn_hist()
-    for k, col, lab in (("both", "#969696", "both"), ("wh", C["wh"], "WhatsHap only"),
+    for k, col, lab in (("both", "#969696", "Both tools"), ("wh", C["wh"], "WhatsHap only"),
                         ("lp", C["lp_gnn"], "LongPhase 2 only")):
         ax.plot([2 * i for i in range(len(H[60][k]))], H[60][k], color=col, lw=0.8, label=lab)
     ax.axvspan(123, 130, color="#EEEEEE", lw=0, zorder=0)
-    ax.set_xlim(0, 130); ax.set_xlabel("Read depth at 60× (×); grey, ≥ depth cap"); ax.set_ylabel("Fraction of sites")
+    ax.text(127.8, 0.105, "≥ cap", ha="center", va="center", fontsize=5.5, color="#555555", rotation=90)
+    ax.set_xlim(0, 130); ax.set_ylim(0, 0.165)
+    ax.set_yticks([0, 0.05, 0.10, 0.15]); ax.set_yticklabels(["0", "0.05", "0.10", "0.15"])
+    ax.set_xlabel("Read depth at 60× (×)"); ax.set_ylabel("Fraction of sites")
     letter(ax, "c")
     save(fig, os.path.join(OUT, "fig6_unphased_analysis.pdf"))
 
@@ -827,7 +857,7 @@ def sfig17():
     H = venn_hist()
     fig, axs = new_fig(50, 1, 3)
     for ax, cov, L in zip(axs, (10, 30, 60), "abc"):
-        for k, col, lab in (("both", "#969696", "both"), ("wh", C["wh"], "WhatsHap only"),
+        for k, col, lab in (("both", "#969696", "Both tools"), ("wh", C["wh"], "WhatsHap only"),
                             ("lp", C["lp_gnn"], "LongPhase 2 only")):
             ax.plot([2 * i for i in range(len(H[cov][k]))], H[cov][k], color=col, lw=0.8, label=lab)
         ax.set_title(f"{cov}×", fontsize=6.5); ax.set_xlabel("Read depth (×)")
@@ -836,7 +866,7 @@ def sfig17():
         ax.text(126.5, ax.get_ylim()[1] * 0.97, "≥ cap\n(censored)", ha="center", va="top", fontsize=5)
         letter(ax, L)
     h = [Line2D([], [], color=c, label=l) for c, l in ((C["lp_gnn"], "LongPhase 2 only"),
-                                                     ("#969696", "both"), (C["wh"], "WhatsHap only"))]
+                                                     ("#969696", "Both tools"), (C["wh"], "WhatsHap only"))]
     fig.legend(handles=h, loc="outside upper center", ncol=3)
     save(fig, os.path.join(SUPP, "suppfig12_giveup_depth.pdf"))
 
