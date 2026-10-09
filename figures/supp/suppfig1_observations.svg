@@ -55,7 +55,7 @@
 <circle cx="350.0" cy="112.0" r="8" fill="#fff" stroke="#1687C9" stroke-width="1.8"/>
 <text x="350.0" y="115.0" class="n" text-anchor="middle" fill="#1687C9">C</text>
 <text x="350.0" y="134.0" class="s" text-anchor="middle">Q 9</text>
-<text x="16.0" y="158.0" class="sb" text-anchor="start" fill="#16233D">observation quality entering the edge weight</text>
+<text x="16.0" y="158.0" class="sb" text-anchor="start" fill="#16233D">weight of each observation in the graph</text>
 <rect x="16.0" y="166.0" width="360.0" height="16.0" rx="0" fill="#E4EAF0" stroke="none" stroke-width="0.8" opacity="1"/>
 <text x="22.0" y="177.0" class="sb" text-anchor="start" fill="#16233D">class</text>
 <text x="64.0" y="177.0" class="sb" text-anchor="start" fill="#16233D">source</text>
@@ -70,8 +70,8 @@
 <text x="194.0" y="209.0" class="t" text-anchor="start">1; 0.1 if in a tandem repeat</text>
 <rect x="16.0" y="214.0" width="360.0" height="16.0" rx="0" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
 <text x="22.0" y="225.0" class="tb" text-anchor="start">SV</text>
-<text x="64.0" y="225.0" class="t" text-anchor="start">caller read list</text>
-<text x="194.0" y="225.0" class="t" text-anchor="start">1 for ALT, 0.1 for REF</text>
+<text x="64.0" y="225.0" class="t" text-anchor="start">CIGAR or caller read list</text>
+<text x="194.0" y="225.0" class="t" text-anchor="start">1 (ALT Q60, REF Q30)</text>
 <rect x="16.0" y="230.0" width="360.0" height="16.0" rx="0" fill="#F7F9FB" stroke="none" stroke-width="0.8" opacity="1"/>
 <text x="22.0" y="241.0" class="tb" text-anchor="start">5mC</text>
 <text x="64.0" y="241.0" class="t" text-anchor="start">modcall read lists</text>

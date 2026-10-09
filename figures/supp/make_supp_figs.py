@@ -230,11 +230,11 @@ def fig_s1():
             S.text(x, yr + 3, a, cls="n", anchor="middle", fill="#fff")
         S.text(x, yr + 22, src, cls="s", anchor="middle")
 
-    S.text(XL, 158, "observation quality entering the edge weight", cls="sb", fill=INK)
+    S.text(XL, 158, "weight of each observation in the graph", cls="sb", fill=INK)
     S.table(XL, 166, [42, 130, 188],
             [("SNV", "aligned base, Phred Q", "1 if both bases ≥ Q12, else 0.1"),
              ("indel", "CIGAR I/D at the site", "1; 0.1 if in a tandem repeat"),
-             ("SV", "caller read list", "1 for ALT, 0.1 for REF"),
+             ("SV", "CIGAR or caller read list", "1 (ALT Q60, REF Q30)"),
              ("5mC", "modcall read lists", "1, strand matched")],
             header=("class", "source", "weight"))
 
@@ -838,7 +838,7 @@ def fig_s4():
     S.text(fx, 249.4, "+", cls="tb", anchor="middle", fill=INK)
     S.line(fx, 253, fx, 288, stroke=GREY, w=1, arrow="arr")
     S.rect(CX + 20, 290, 112, 20, fill=AMBERL, stroke=AMBER, sw=0.9, r=3)
-    S.text(fx, 303, "P(misphased)", cls="tb", anchor="middle", fill=INK)
+    S.text(fx, 303, "phase-error score", cls="tb", anchor="middle", fill=INK)
     S.text(CX, 328, "classifier head; the two allele", cls="s")
     S.text(CX, 340, "nodes of a variant are averaged", cls="s")
 
@@ -855,7 +855,7 @@ def fig_s4():
                      stroke="none", sw=0)
     S.text(DX + 84, 100, "+", cls="pl", anchor="middle", fill=GREY)
 
-    S.text(DX, 122, "predicted error probability", cls="sb", fill=INK)
+    S.text(DX, 122, "phase-error score", cls="sb", fill=INK)
     base, hmax = 162, 30
     S.rect(ox0 + 20 * odx - 4, base - hmax, 8, hmax, fill=AMBER, r=2, op=0.16)
     prng = random.Random(21)
@@ -978,7 +978,7 @@ def fig_s5():
     S.node(cx0 + (cx1 - cx0) * 0.5, cy0, "", AMBER, r=4)
     S.text(cx0 + (cx1 - cx0) * 0.5, cy0 - 14, "predictions kept", cls="sb", anchor="middle", fill=AMBER)
     S.text(cx1 + 8, cy0 + 3, "r", cls="m", fill=INK)
-    S.text(466, 392, "r = |pos − pos" + sub("c") + "| / max offset;  kept if r ≤ min(1, 10 / round(20 · r" + sub("max") + ")) = 0.5",
+    S.text(466, 392, "r = |pos − pos" + sub("c") + "| / max offset;  kept if r ≤ 0.5",
            cls="s")
 
     # -- d ---------------------------------------------------------------
@@ -1007,7 +1007,7 @@ def fig_s5():
         S.node(x, yb, "a", H2, r=9)
     S.rect(xs[flagged] - 16, yt - 18, 32, (yb - yt) + 36, fill="none",
            stroke=AMBER, sw=1.4, r=3)
-    S.text(xs[flagged], yb + 36, "P(error) = 0.62 ≥ 0.30", cls="sb",
+    S.text(xs[flagged], yb + 36, "score = 0.62 ≥ 0.30", cls="sb",
            anchor="middle", fill=AMBER)
     S.text(XL, yb + 36, "PS 1001, GT 0|1 / 1|0", cls="s")
 
@@ -1094,19 +1094,19 @@ def fig_s6():
         "concat [ h" + sub("i") + " | Σw" + sub("ij") + " | max w" + sub("ij") + " ]",
         "130 features", fill="#fff", stroke=INK)
     box(586, 344, 178, 32, "Linear 130 → 128 → 2", "GELU, softmax")
-    box(586, 392, 178, 30, "P(misphased)", "mean of the two allele nodes",
+    box(586, 392, 178, 30, "phase-error score", "mean of the two allele nodes",
         fill=AMBERL, stroke=AMBER, tc=INK)
     S.line(lx + 200, ly + lh, lx + 200, 342, stroke=GREY, arrow="arr")
     S.line(556, 360, 584, 360, stroke=GREY, arrow="arr")
     S.line(675, 376, 675, 390, stroke=GREY, arrow="arr")
     S.path("M166,104 L184,104 L184,328 L366,328 L366,342", stroke=GREY, w=0.9,
            dash="2.5,2", arrow="arr")
-    S.text(192, 324, "raw edge weights", cls="s")
+    S.text(192, 324, "σ(w) of incoming edges", cls="s")
 
     S.table(16, 344, [136, 194],
-            [("parameters", "687,358, compiled into the binary"),
-             ("attention cost", "dense O(N²), N ≤ 82 (cap 256)"),
-             ("numerics", "exact GELU, LayerNorm ε = 10" + sup("−5")),
+            [("stored values", "687,358"),
+             ("attention cost", "dense O(N²), N ≤ 82 allele nodes"),
+             ("numerics", "erf-based GELU, LayerNorm ε = 10" + sup("−5")),
              ("isolated nodes", "attend uniformly to all nodes")],
             rowh=16)
 

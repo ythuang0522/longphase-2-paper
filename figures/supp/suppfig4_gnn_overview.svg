@@ -360,7 +360,7 @@
 <text x="490.0" y="249.4" class="tb" text-anchor="middle" fill="#16233D">+</text>
 <line x1="490.0" y1="253.0" x2="490.0" y2="288.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
 <rect x="434.0" y="290.0" width="112.0" height="20.0" rx="3" fill="#FBF0D5" stroke="#B8860B" stroke-width="0.9" opacity="1"/>
-<text x="490.0" y="303.0" class="tb" text-anchor="middle" fill="#16233D">P(misphased)</text>
+<text x="490.0" y="303.0" class="tb" text-anchor="middle" fill="#16233D">phase-error score</text>
 <text x="414.0" y="328.0" class="s" text-anchor="start">classifier head; the two allele</text>
 <text x="414.0" y="340.0" class="s" text-anchor="start">nodes of a variant are averaged</text>
 <text x="586.0" y="24.0" class="pl" text-anchor="start">d</text>
@@ -450,7 +450,7 @@
 <circle cx="754.5" cy="75.0" r="1.6" fill="#DC2B23" stroke="none" stroke-width="0"/>
 <circle cx="758.0" cy="75.0" r="1.6" fill="#DC2B23" stroke="none" stroke-width="0"/>
 <text x="670.0" y="100.0" class="pl" text-anchor="middle" fill="#6E7C8C">+</text>
-<text x="586.0" y="122.0" class="sb" text-anchor="start" fill="#16233D">predicted error probability</text>
+<text x="586.0" y="122.0" class="sb" text-anchor="start" fill="#16233D">phase-error score</text>
 <rect x="684.0" y="132.0" width="8.0" height="30.0" rx="2" fill="#B8860B" stroke="none" stroke-width="0.8" opacity="0.16"/>
 <rect x="616.7" y="160.3" width="2.6" height="1.7" rx="0.4" fill="#6E7C8C" stroke="none" stroke-width="0.8" opacity="1"/>
 <rect x="620.2" y="156.8" width="2.6" height="5.2" rx="0.4" fill="#6E7C8C" stroke="none" stroke-width="0.8" opacity="1"/>

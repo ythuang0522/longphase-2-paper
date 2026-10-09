@@ -90,7 +90,7 @@ Ralphi & 10$\times$ & 78.52 (0.08) & 3,784 (104) & 0.201 (0.006) & 7.48 (0.27) &
 
 {\scriptsize\setlength{\tabcolsep}{3.5pt}
 \begin{longtable}{@{}llrrrrr@{}}
-\caption{\textbf{The same phased VCFs scored against GIAB v4.2.1 and the T2T-HG002-derived v5.0q benchmark.} Switch errors and Hamming distance on SNVs; all \toolname runs with GNN correction, phasing SNVs alone or with indels (+indel) or indels and SVs (+indel+SV). Values at 10--20$\times$ are means (s.d.) over ten replicates. Phased indels as a percentage of benchmark heterozygous indels (v5.0q).}\label{tab:twobench}\\
+\caption{\textbf{The same phased VCFs scored against GIAB v4.2.1 and the T2T-HG002-derived v5.0q benchmark.} Switch errors on SNVs; Hamming distance over SNVs and, where they are phased, indels. All \toolname runs with GNN correction, phasing SNVs alone or with indels (+indel) or indels and SVs (+indel+SV). Values at 10--20$\times$ are means (s.d.) over ten replicates. Phased indels as a percentage of benchmark heterozygous indels (v5.0q).}\label{tab:twobench}\\
 \toprule Configuration & Cov. & \shortstack[r]{Switch errors\\v4.2.1} & \shortstack[r]{Switch errors\\v5.0q} & \shortstack[r]{Hamming\\v4.2.1 (\%)} & \shortstack[r]{Hamming\\v5.0q (\%)} & \shortstack[r]{Phased\\indels (\%)} \\ \midrule\endfirsthead
 \toprule Configuration & Cov. & \shortstack[r]{Switch errors\\v4.2.1} & \shortstack[r]{Switch errors\\v5.0q} & \shortstack[r]{Hamming\\v4.2.1 (\%)} & \shortstack[r]{Hamming\\v5.0q (\%)} & \shortstack[r]{Phased\\indels (\%)} \\ \midrule\endhead
 LongPhase 2, SNVs & 10$\times$ & 1,820 (26) & 1,518 (29) & 5.30 (0.24) & 5.33 (0.25) & -- \\
@@ -139,7 +139,7 @@ HapCUT2 & 10$\times$ & 3,050 (33) & 5,018 (108) & 7.59 (0.38) & 7.77 (0.39) & --
 
 {\scriptsize\setlength{\tabcolsep}{3.5pt}
 \begin{longtable}{@{}lllrrrrr@{}}
-\caption{\textbf{Co-phasing configurations of \toolname, without and with GNN correction.} SNV metrics against v5.0q; phased indels as a percentage of benchmark heterozygous indels. Means (s.d.) over ten replicates at 10 and 20$\times$; one replicate at 30 and 60$\times$. Every coverage is in Supplementary Data~1.}\label{tab:cophase}\\
+\caption{\textbf{Co-phasing configurations of \toolname, without and with GNN correction.} Scored against v5.0q: switch errors on SNVs, Hamming distance over SNVs and, where they are phased, indels; phased indels as a percentage of benchmark heterozygous indels. Means (s.d.) over ten replicates at 10 and 20$\times$; one replicate at 30 and 60$\times$. Every coverage is in Supplementary Data~1.}\label{tab:cophase}\\
 \toprule Classes & GNN & Cov. & \shortstack[r]{Phased\\indel (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead
 \toprule Classes & GNN & Cov. & \shortstack[r]{Phased\\indel (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead
 SNV & no & 10$\times$ & -- & 2,259 (39) & 0.121 (0.002) & 7.04 (0.29) & 0.92 (0.01) \\
@@ -232,12 +232,12 @@ WhatsHap (SNVs only) & 10$\times$ & 87.43 & 2,655 & 0.128 & 1.03 & 15,804 & 340 
 \bottomrule\end{tabular}\end{table}
 
 \begin{table}[h]
-\caption{\textbf{SNVs unphased by GNN correction, classified by the T2T-HG002 v1.1 assembly.} Nanopore 60$\times$, replicate~1, SNV-only phasing. ``Aligned'' means inside the dipcall BED in which both assembled haplotypes align 1:1 to GRCh38 (\code{GRCh38\_HG2-T2TQ100-V1.1\_dipcall-z2k.dip.bed}); variant status from the matching dipcall VCF. The background is a random sample of 50,000 SNVs that stayed phased. Top, overall classes; bottom, share outside the 1:1 alignment per chromosome. v5.0q is derived from the same assembly, so this analysis extends coverage rather than providing an independent truth set.}
+\caption{\textbf{SNVs unphased by GNN correction, classified by the T2T-HG002 v1.1 assembly.} Nanopore 60$\times$, replicate~1, SNV-only phasing. ``Aligned'' means inside the dipcall BED in which both assembled haplotypes align 1:1 to GRCh38 (\code{GRCh38\_HG2-T2TQ100-V1.1\_dipcall-z2k.dip.bed}); presence of an assembly variant record at the same coordinate from the matching dipcall VCF. The background is a random sample of 50,000 SNVs phased before GNN correction, including sites that GNN correction later unphased. Top, overall classes; bottom, share outside the 1:1 alignment per chromosome. v5.0q is derived from the same assembly, so this analysis extends coverage rather than providing an independent truth set.}
 \label{tab:t2t}\small
 \begin{tabular}{@{}lrr@{}}\toprule Class & SNVs & Share (\%) \\ \midrule
 not aligned 1:1 (unassessed) & 49,475 & 88.23 \\
-aligned, assembly carries no variant & 3,421 & 6.10 \\
-aligned, assembly confirms a variant & 3,180 & 5.67 \\
+aligned, no assembly variant record at the same coordinate & 3,421 & 6.10 \\
+aligned, assembly variant record at the same coordinate & 3,180 & 5.67 \\
 total & 56,076 & 100.00 \\ \midrule
 aligned 1:1, unphased by GNN correction & 6,601 / 56,076 & 11.77 \\
 aligned 1:1, phased before GNN correction (sample) & 46,318 / 50,000 & 92.64 \\
