@@ -1023,6 +1023,29 @@ def heldout_table(w):
     w(r"\bottomrule\end{longtable}}")
 
 
+# ------------------------------------------- issue #3 table (Table 16) ---
+def runtime_table(w):
+    """Runtime and peak memory of SNV-only phasing (notes/runtime/runtime.tsv)."""
+    import csv
+    rows = list(csv.DictReader(open(os.path.join(ROOT, "notes", "runtime", "runtime.tsv")), delimiter="\t"))
+    w(r"\begin{table}[h]")
+    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data, replicate~1 at 10$\times$ and the 60$\times$ data set, on the workstation described in Methods. Wall-clock time, CPU time (user plus system) and peak resident memory (GiB) from \code{/usr/bin/time}. \toolname includes GNN correction; in the 24-thread runs, phasing and GNN correction were run as separate commands and their times summed (Methods). \hapcut includes fragment extraction.}\label{tab:runtime}")
+    w(r"\small\begin{tabular}{@{}llrrrrrr@{}}\toprule")
+    w(r" & & \multicolumn{3}{c}{10$\times$} & \multicolumn{3}{c}{60$\times$} \\ \cmidrule(lr){3-5}\cmidrule(l){6-8}")
+    w(r"Tool & Threads & Wall (min) & CPU (min) & Memory & Wall (min) & CPU (min) & Memory \\ \midrule")
+    from decimal import Decimal, ROUND_HALF_UP
+    r1 = lambda x: str(Decimal(repr(x)).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP))
+    names = {"LongPhase 2": r"\toolname", "WhatsHap 2.8": r"\whatshap", "HapCUT2 1.3.4": r"\hapcut"}
+    order = [("LongPhase 2", "1"), ("LongPhase 2", "24"), ("WhatsHap 2.8", "1"), ("HapCUT2 1.3.4", "1")]
+    for tool, th in order:
+        cells = []
+        for cov in ("10", "60"):
+            r = [x for x in rows if x["tool"] == tool and x["threads"] == th and x["coverage"] == cov][0]
+            cells += [r1(int(r["wall_s"]) / 60), r1(int(r["cpu_s"]) / 60), r1(int(r["max_rss_kb"]) / 1024 ** 2)]
+        w(f"{names[tool]} & {th} & " + " & ".join(cells) + r" \\")
+    w(r"\bottomrule\end{tabular}\end{table}")
+
+
 def f(x, d=2):
     return f"{x:,.{d}f}"
 
@@ -1149,6 +1172,7 @@ def tables():
     w(r"\bottomrule\end{tabular}\end{table}" + "\n")
     strata_tables(w, L)
     heldout_table(w)
+    runtime_table(w)
     path = os.path.join(ROOT, "figures-source", "supp_tables.tex")
     open(path, "w").write("\n".join(L) + "\n")
     print("wrote", os.path.relpath(path, ROOT))

@@ -381,3 +381,13 @@ v4.2.1 & 10$\times$ & 134 (8) & 0.149 & 0.178 & 0.215 & 0.225 & 0.080 & 0.195 & 
  & 60$\times$ & 117 & 0.109 & 0.110 & 0.118 & 0.126 & -- & -- & 0.8 & 24.0 \\
 
 \bottomrule\end{longtable}}
+\begin{table}[h]
+\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data, replicate~1 at 10$\times$ and the 60$\times$ data set, on the workstation described in Methods. Wall-clock time, CPU time (user plus system) and peak resident memory (GiB) from \code{/usr/bin/time}. \toolname includes GNN correction; in the 24-thread runs, phasing and GNN correction were run as separate commands and their times summed (Methods). \hapcut includes fragment extraction.}\label{tab:runtime}
+\small\begin{tabular}{@{}llrrrrrr@{}}\toprule
+ & & \multicolumn{3}{c}{10$\times$} & \multicolumn{3}{c}{60$\times$} \\ \cmidrule(lr){3-5}\cmidrule(l){6-8}
+Tool & Threads & Wall (min) & CPU (min) & Memory & Wall (min) & CPU (min) & Memory \\ \midrule
+\toolname & 1 & 8.1 & 8.3 & 6.2 & 18.0 & 18.8 & 7.4 \\
+\toolname & 24 & 4.6 & 13.6 & 36.0 & 16.3 & 34.5 & 63.0 \\
+\whatshap & 1 & 25.2 & 25.1 & 1.5 & 113.8 & 113.6 & 4.0 \\
+\hapcut & 1 & 24.1 & 24.1 & 6.6 & 96.4 & 95.9 & 19.4 \\
+\bottomrule\end{tabular}\end{table}
