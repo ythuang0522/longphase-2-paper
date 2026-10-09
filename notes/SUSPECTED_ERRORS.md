@@ -16,7 +16,6 @@ also a red `\todo{}` in the manuscript. Paths into `longphase/` refer to
 | 5 | **GCphase looks misconfigured.** Hamming distance 32–40%, close to random phasing; switch error rate 21–26x LongPhase 2. | `supplementary.xlsx` `SNV_Detail`, `gcphase` columns. | Re-run with the authors' recommended nanopore parameters. |
 | 6 | **Runtimes have no source.** 3/15 min (LongPhase 2), 26/95 (HapCUT2), 26/115 (WhatsHap) were read off an old pptx figure; the repo README times `phase` at 39–180 s. | `sections/results.tex` runtime sentence. | Supply wall-clock and peak memory per tool and coverage, with hardware and threads. JH commit `f7bd878` (2026-10-06) adds v2.1 timings to the longphase README; check whether they settle this. |
 | 7 | **SV and 5mC phased fractions have no source** (>99% of 5mC, 68–70% of SVs). | Old pptx Fig. 4c,d; `supplementary.xlsx` has only called totals. | Add phased SV/5mC counts per run. |
-| 8 | **Values in Supplementary Fig. 17** (old Fig. 6b,c: depth/informativeness, entropy 0 in 22–43% of removed hets) are plot-read. | `figures/supp/suppfig17_unphased_depth_entropy.png`. | Recompute from the source table. |
 | 9 | **WhatsHap-only median depth (18x) and zero-entropy share (57.6%)** exist only in a commit message. | JHL commit `0025929`. | Add the per-set summary to Supplementary Data 1. |
 
 ## Code-level issues
@@ -28,6 +27,7 @@ also a red `\todo{}` in the manuscript. Paths into `longphase/` refer to
 
 ## Resolved or superseded
 
+- Plot-read values of the old Supplementary Fig. 17 (former item 8): figure deleted on 2026-10-09 (author), with the two Results sentences that quoted its values (PE = 0 share; clustering and low-GQ shares of benchmark-absent calls). The Discussion claim about candidates an entropy threshold would miss is now worded as a possibility.
 - Training/evaluation overlap (former item 13): held-out chr17/21/22 rescored by JHL (issue #2, `notes/heldout/`, 2026-10-09); Results, Supplementary Table 15 and Supplementary Method 4 report them. GNN correction removes 14–23% of switch errors there against 31–33% genome-wide; the advantage over WhatsHap/HapCUT2 is unchanged.
 - Total SNVs unphased at 60x: **56,076**, confirmed by the author on 2026-10-06; the old 60,267 total is superseded.
 

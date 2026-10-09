@@ -876,7 +876,7 @@ def sfig15():
     save(fig, os.path.join(SUPP, "suppfig16_gnn_removed.pdf"))
 
 
-# ============================================== Supplementary Fig. 17 =====
+# ============================================== Supplementary Fig. 12 =====
 def sfig17():
     """Read depth of the sets each tool leaves unphased, 10/30/60x, LongPhase 2-only split by stage."""
     H = venn_hist()
