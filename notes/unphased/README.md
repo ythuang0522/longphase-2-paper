@@ -175,3 +175,23 @@ server: `data/unphased/issue6_sites.tsv.gz` (md5 `6c26ddbd21e42eec610d8c5b564f45
 
 BED intervals are 0-based half-open: a site is inside when start < POS ≤ end. Every per-set
 count of the table equals `issue6_composition.tsv` and `issue6_intervals.tsv`.
+
+## Issue #7: phased heterozygous SNV calls on chr1–22 per run (Fig. 3b denominator)
+
+`count_phased.sh` counts, in each output VCF, the calls with single-base REF and ALT (one
+ALT allele), GT `0|1` or `1|0`, on chr1–22. This is the call definition of issue #6.
+Result: `phased_calls_chr1_22.tsv` (`tool`, `coverage`, `replicate`,
+`phased_het_snv_calls_chr1_22`).
+
+- LongPhase 2: `longphase_gnn/longphase_gnn_{cov}x_{rep}.vcf`
+- WhatsHap: `whatshap_v2.8/only/whatshap_v28_onlySNVs_{cov}x_{rep}.vcf`
+- 10–20×: replicates 1–10; 30, 40, 50, 60×: replicate 1 (128 runs)
+
+Check against issue #6 (`background` + the other tool's unphased-only set, minus chrX/Y,
+in `issue6_composition.tsv`): all six values are equal.
+
+| Cov. | LongPhase 2 | WhatsHap |
+|---|---|---|
+| 10× | 2,082,426 | 2,189,936 |
+| 30× | 2,389,756 | 2,466,839 |
+| 60× | 2,354,981 | 2,420,295 |
