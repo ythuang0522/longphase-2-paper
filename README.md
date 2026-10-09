@@ -829,3 +829,54 @@ Results: one-thread times (8.1/18.0 min vs 24.1/96.4 HapCUT2, 25.2/113.8 WhatsHa
 24-thread times with their memory cost (63.0 GiB at 60× vs 7.4 GiB on one thread); the runtime
 `\todo` removed. Methods: runtime measured once on 10x_1 and 60×, LongPhase 2 timed with 1 and 24
 threads. New Supplementary Table 16 (`runtime_table()`); memory in GiB, rounded half-up.
+
+**Results rewritten to follow the figures across coverage, 2026-10-09 (author request).** The
+author objected that the Results quoted 10× and 60× values while every figure plots 10–60×. Each
+paragraph now follows its figure panel by panel and states the coverage dependence (where the
+tools converge, diverge or cross over; e.g. the SNV advantage widens from 2.8× at 10× to a stable
+3.4–3.7× at 20–60×; the indel-pair advantage grows from 8× to 31× because WhatsHap's rate does not
+fall with coverage; v4.2.1 errors of LongPhase 2 stay at 1,635–1,820 at every coverage while
+v5.0q errors fall 3.1-fold). Every range was recomputed over all plotted coverages (header
+comment "COVERAGE RULE"). Corrections found while doing so:
+- WhatsHap's N50 advantage over LongPhase 2 with indels was "14–28%" (10/20/…/60× only); it is
+  14–34% over the plotted coverages (28–34% at 10–18×).
+- "GNN correction reduced the additional error associated with indels by 41–67%" held for the
+  four-class configuration only; over the indel-containing configurations it is 41–71%.
+- Segmental-duplication ratios at 10× were count ratios (5.2, 5.7); Fig. 4d plots rates, so the
+  text now gives rate ratios (5.0/5.5 at 10×, 4.3/6.5 at 60×).
+- "75% of WhatsHap's and 62% of HapCUT2's switch errors at 60× lie outside both benchmarks" omitted
+  that 70% of LongPhase 2's do too; all three are now given, with the 10× shares (29/46/43%).
+- Margin: "lower rates at 12–20×" became "equal at 12×, 1.2–1.5-fold higher at 14–20×".
+- The caveat "Absence from this VCF does not by itself establish that a call is erroneous" had
+  been merged into a `%` comment line and was invisible in the PDF; restored to the text.
+- Fig. 6c: the uncommitted median depths are no longer quoted; the text gives depth shares from the
+  2× histograms of `UnphaseVenn3.jsx` (the figure source), and the `\todo` now asks for those
+  summaries in Supplementary Data 1.
+Results prose is ~500 words longer than before (texcount 3,203 incl. `\todo` text, was 2,671).
+
+**Required-validation `\todo` closed without new experiments, 2026-10-09 (author: "no new
+experiments").** The Results `\todo` on matched retention and paired uncertainty is gone.
+- Paired uncertainty answered from Supplementary Data 1: Supplementary Table 8 has a new column,
+  switch error rate ÷ that of LongPhase 2 in the same down-sampling replicate (mean (s.d.) at
+  10–20×; `rate_ratio()` in `make_results_figs.py`, column spacing 2.4 pt to fit). Results: per
+  replicate, LongPhase 2 is 2.8–4.1× below WhatsHap and 3.2–5.1× below HapCUT2 at 10–20×; GNN
+  correction removes 30–36% of switch errors per replicate. The Methods `\todo` "Report paired
+  replicate-wise correction effects" is resolved by one sentence in Statistics and reproducibility.
+- Matched retention (network vs entropy threshold, support threshold, random, HapCUT2 confidence)
+  demoted to an `[optional experiment]` comment next to the GNN paragraph. The Discussion already
+  states it as an open limitation; no claim depends on it.
+
+**Hamming re-score and T2T rebuild `\todo`s demoted to limitations, 2026-10-09 (author: no new
+experiments).**
+- Hamming: no Hamming value of an indel-containing configuration is quoted in the Results; Methods
+  now says the metric includes indels and is not comparable between configurations with and
+  without indels, which are compared by SNV switch error rate. The re-score clause is removed from
+  the Methods `\todo` (region-filter commands and metric table remain).
+- T2T assembly analysis (Results and Supplementary Fig. 16 `\todo`s): not rebuilt. Autosome-only
+  shares derived from the existing per-chromosome counts (9.6% vs 92.9%, odds ratio 124; two new
+  rows in Supplementary Table 12, generated). Results and Methods now state the limits: chrX/chrY
+  included in the headline counts, start-coordinate matching without allele comparison,
+  background containing later-unphased sites (biases towards no difference; expected-value
+  estimate in a `[limitation]` comment), raw dipcall BED, same assembly as v5.0q.
+- Results `\todo`s left: two Supplementary Data 1 deposits (Fig. 6c depth summaries; SV and 5mC
+  phased counts), no new analysis needed.

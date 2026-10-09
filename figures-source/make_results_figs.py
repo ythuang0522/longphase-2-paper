@@ -20,6 +20,7 @@ Outputs:
 """
 import os
 import re
+import statistics as st
 
 import matplotlib
 matplotlib.use("Agg")
@@ -1060,6 +1061,18 @@ def cell(runs, key, d, sc=1.0):
     return f"{a:,.{d}f}"
 
 
+def rate_ratio(t, c):
+    """Switch error rate of tool t over that of LongPhase 2 (GNN correction) in the same
+    down-sampling replicate; mean (s.d.) over the paired replicates at 10--20x."""
+    if t == "lp_gnn":
+        return "--"
+    lp = {r["rep"]: r["sw_pct"] for r in D["snv"]["ONT"][XLSX_TOOL["lp_gnn"]][c]}
+    xs = [r["sw_pct"] / lp[r["rep"]] for r in D["snv"]["ONT"][XLSX_TOOL[t]][c] if r["rep"] in lp]
+    if len(xs) > 1:
+        return f"{st.mean(xs):.2f} ({st.stdev(xs):.2f})"
+    return f"{xs[0]:.2f}"
+
+
 def tables():
     L = []
     w = L.append
@@ -1083,18 +1096,18 @@ def tables():
             w(r"\midrule")
     w(r"\bottomrule\end{tabular}\end{table}" + "\n")
     # ---- Table 8: SNV-only, all tools, nanopore
-    w(r"{\scriptsize\setlength{\tabcolsep}{3.5pt}")
-    w(r"\begin{longtable}{@{}llrrrrrr@{}}")
-    w(r"\caption{\textbf{SNV-only phasing of HG002 nanopore R10.4.1 data by six configurations.} Scored against the v5.0q VCF (chr1--22, no benchmark BED applied). Values at 10--20$\times$ are means (s.d.) over ten down-sampling replicates; 30--60$\times$, one replicate. Phased SNVs are given as a percentage of the 2,398,880 heterozygous SNVs of the benchmark. Margin and Ralphi were run at 10--20$\times$ only; GCphase was not included (Methods). Ralphi's phase blocks sum to 4.3--5.8~Gb, more than the length of the autosomes, so its block N50 is not comparable with that of the other tools.}\label{tab:snvall}\\")
-    w(r"\toprule Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead")
-    w(r"\toprule Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead")
+    w(r"{\scriptsize\setlength{\tabcolsep}{2.4pt}")
+    w(r"\begin{longtable}{@{}llrrrrrrr@{}}")
+    w(r"\caption{\textbf{SNV-only phasing of HG002 nanopore R10.4.1 data by six configurations.} Scored against the v5.0q VCF (chr1--22, no benchmark BED applied). Values at 10--20$\times$ are means (s.d.) over ten down-sampling replicates; 30--60$\times$, one replicate. Phased SNVs are given as a percentage of the 2,398,880 heterozygous SNVs of the benchmark. Rate ratio, switch error rate divided by that of \toolname in the same down-sampling replicate. Margin and Ralphi were run at 10--20$\times$ only; GCphase was not included (Methods). Ralphi's phase blocks sum to 4.3--5.8~Gb, more than the length of the autosomes, so its block N50 is not comparable with that of the other tools.}\label{tab:snvall}\\")
+    w(r"\toprule Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate ratio to\\\toolname} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead")
+    w(r"\toprule Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate ratio to\\\toolname} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead")
     for t in ["lp_gnn", "lp", "wh", "hc", "margin", "ralphi"]:
         for c in COVS:
             runs = D["snv"]["ONT"][XLSX_TOOL[t]].get(c)
             if not runs:
                 continue
             w(f"{NAME[t] if c == COVS[0] else ''} & {c}$\\times$ & {cell(runs, 'psnv_pct', 2)} & {cell(runs, 'sw', 0)} & "
-              f"{cell(runs, 'sw_pct', 3)} & {cell(runs, 'ham', 2)} & {cell(runs, 'nblock', 0)} & {cell(runs, 'n50', 2, 1e-6)} \\\\")
+              f"{cell(runs, 'sw_pct', 3)} & {rate_ratio(t, c)} & {cell(runs, 'ham', 2)} & {cell(runs, 'nblock', 0)} & {cell(runs, 'n50', 2, 1e-6)} \\\\")
         w(r"\midrule")
     L[-1] = r"\bottomrule"
     w(r"\end{longtable}}" + "\n")
@@ -1151,7 +1164,7 @@ def tables():
     T = t2t()
     cls = T["cls"]; n = T["rm_n"]
     w(r"\begin{table}[h]")
-    w(r"\caption{\textbf{SNVs unphased by GNN correction, classified by the T2T-HG002 v1.1 assembly.} Nanopore 60$\times$, replicate~1, SNV-only phasing. ``Aligned'' means inside the dipcall BED in which both assembled haplotypes align 1:1 to GRCh38 (\code{GRCh38\_HG2-T2TQ100-V1.1\_dipcall-z2k.dip.bed}); presence of an assembly variant record at the same coordinate from the matching dipcall VCF. The background is a random sample of 50,000 SNVs phased before GNN correction, including sites that GNN correction later unphased. Top, overall classes; bottom, share outside the 1:1 alignment per chromosome. v5.0q is derived from the same assembly, so this analysis extends coverage rather than providing an independent truth set.}")
+    w(r"\caption{\textbf{SNVs unphased by GNN correction, classified by the T2T-HG002 v1.1 assembly.} Nanopore 60$\times$, replicate~1, SNV-only phasing. ``Aligned'' means inside the dipcall BED in which both assembled haplotypes align 1:1 to GRCh38 (\code{GRCh38\_HG2-T2TQ100-V1.1\_dipcall-z2k.dip.bed}); presence of an assembly variant record at the same start coordinate in the matching dipcall VCF (alleles not compared). All chromosomes, including chrX and chrY, unless stated. The background is a random sample of 50,000 SNVs phased before GNN correction, including sites that GNN correction later unphased. Top, overall classes; bottom, share outside the 1:1 alignment per chromosome. v5.0q is derived from the same assembly, so this analysis extends coverage rather than providing an independent truth set.}")
     w(r"\label{tab:t2t}\small")
     w(r"\begin{tabular}{@{}lrr@{}}\toprule Class & SNVs & Share (\%) \\ \midrule")
     for k, lab in (("unassessed", "not aligned 1:1 (unassessed)"), ("hom_wt", "aligned, no assembly variant record at the same coordinate"),
@@ -1160,6 +1173,11 @@ def tables():
     w(f"total & {n:,} & 100.00 \\\\ \\midrule")
     w(f"aligned 1:1, unphased by GNN correction & {T['rm_in']:,} / {n:,} & {100 * T['rm_in'] / n:.2f} \\\\")
     w(f"aligned 1:1, phased before GNN correction (sample) & {T['bg_in']:,} / {T['bg_n']:,} & {100 * T['bg_in'] / T['bg_n']:.2f} \\\\")
+    auto = [d for d in T["chroms"] if re.fullmatch(r"chr\d+", d["chrom"])]
+    a_rn = sum(d["rm_n"] for d in auto); a_ri = a_rn - sum(d["rm_out"] for d in auto)
+    a_bn = sum(d["bg_n"] for d in auto); a_bi = a_bn - sum(d["bg_out"] for d in auto)
+    w(f"\\quad autosomes only, unphased by GNN correction & {a_ri:,} / {a_rn:,} & {100 * a_ri / a_rn:.2f} \\\\")
+    w(f"\\quad autosomes only, phased before GNN correction (sample) & {a_bi:,} / {a_bn:,} & {100 * a_bi / a_bn:.2f} \\\\")
     b = T["bench"]
     w(f"inside the v5.0q benchmark BED & {b[0]:,} & -- \\\\")
     w(f"\\quad of which benchmark variant & {b[2]:,} & {100 * b[2] / b[0]:.2f} \\\\")

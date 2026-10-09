@@ -23,68 +23,68 @@ HiFi & 40$\times$ & 2,438,078 & 2,508,667 & 425,166 & -- & -- & -- \\
 HiFi & 50$\times$ & 2,410,815 & 2,566,571 & 420,096 & -- & -- & -- \\
 \bottomrule\end{tabular}\end{table}
 
-{\scriptsize\setlength{\tabcolsep}{3.5pt}
-\begin{longtable}{@{}llrrrrrr@{}}
-\caption{\textbf{SNV-only phasing of HG002 nanopore R10.4.1 data by six configurations.} Scored against the v5.0q VCF (chr1--22, no benchmark BED applied). Values at 10--20$\times$ are means (s.d.) over ten down-sampling replicates; 30--60$\times$, one replicate. Phased SNVs are given as a percentage of the 2,398,880 heterozygous SNVs of the benchmark. Margin and Ralphi were run at 10--20$\times$ only; GCphase was not included (Methods). Ralphi's phase blocks sum to 4.3--5.8~Gb, more than the length of the autosomes, so its block N50 is not comparable with that of the other tools.}\label{tab:snvall}\\
-\toprule Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead
-\toprule Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead
-LongPhase 2 & 10$\times$ & 77.83 (0.07) & 1,518 (29) & 0.082 (0.002) & 5.33 (0.25) & 7,143 (30) & 0.84 (0.01) \\
- & 12$\times$ & 84.48 (0.06) & 1,335 (54) & 0.066 (0.003) & 5.41 (0.38) & 5,917 (52) & 1.10 (0.02) \\
- & 14$\times$ & 87.87 (0.05) & 1,137 (39) & 0.054 (0.002) & 4.88 (0.58) & 5,284 (55) & 1.29 (0.03) \\
- & 16$\times$ & 89.58 (0.03) & 1,011 (27) & 0.047 (0.001) & 4.20 (0.26) & 4,875 (44) & 1.44 (0.03) \\
- & 18$\times$ & 90.50 (0.04) & 918 (18) & 0.042 (0.001) & 3.64 (0.26) & 4,608 (58) & 1.53 (0.03) \\
- & 20$\times$ & 90.94 (0.02) & 823 (43) & 0.038 (0.002) & 3.21 (0.34) & 4,406 (46) & 1.61 (0.02) \\
- & 30$\times$ & 91.50 & 680 & 0.031 & 1.82 & 3,793 & 1.92 \\
- & 40$\times$ & 91.54 & 602 & 0.027 & 1.71 & 3,411 & 2.18 \\
- & 50$\times$ & 91.46 & 588 & 0.027 & 1.48 & 3,198 & 2.51 \\
- & 60$\times$ & 91.35 & 496 & 0.023 & 1.53 & 3,018 & 2.86 \\
+{\scriptsize\setlength{\tabcolsep}{2.4pt}
+\begin{longtable}{@{}llrrrrrrr@{}}
+\caption{\textbf{SNV-only phasing of HG002 nanopore R10.4.1 data by six configurations.} Scored against the v5.0q VCF (chr1--22, no benchmark BED applied). Values at 10--20$\times$ are means (s.d.) over ten down-sampling replicates; 30--60$\times$, one replicate. Phased SNVs are given as a percentage of the 2,398,880 heterozygous SNVs of the benchmark. Rate ratio, switch error rate divided by that of \toolname in the same down-sampling replicate. Margin and Ralphi were run at 10--20$\times$ only; GCphase was not included (Methods). Ralphi's phase blocks sum to 4.3--5.8~Gb, more than the length of the autosomes, so its block N50 is not comparable with that of the other tools.}\label{tab:snvall}\\
+\toprule Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate ratio to\\\toolname} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead
+\toprule Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate ratio to\\\toolname} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead
+LongPhase 2 & 10$\times$ & 77.83 (0.07) & 1,518 (29) & 0.082 (0.002) & -- & 5.33 (0.25) & 7,143 (30) & 0.84 (0.01) \\
+ & 12$\times$ & 84.48 (0.06) & 1,335 (54) & 0.066 (0.003) & -- & 5.41 (0.38) & 5,917 (52) & 1.10 (0.02) \\
+ & 14$\times$ & 87.87 (0.05) & 1,137 (39) & 0.054 (0.002) & -- & 4.88 (0.58) & 5,284 (55) & 1.29 (0.03) \\
+ & 16$\times$ & 89.58 (0.03) & 1,011 (27) & 0.047 (0.001) & -- & 4.20 (0.26) & 4,875 (44) & 1.44 (0.03) \\
+ & 18$\times$ & 90.50 (0.04) & 918 (18) & 0.042 (0.001) & -- & 3.64 (0.26) & 4,608 (58) & 1.53 (0.03) \\
+ & 20$\times$ & 90.94 (0.02) & 823 (43) & 0.038 (0.002) & -- & 3.21 (0.34) & 4,406 (46) & 1.61 (0.02) \\
+ & 30$\times$ & 91.50 & 680 & 0.031 & -- & 1.82 & 3,793 & 1.92 \\
+ & 40$\times$ & 91.54 & 602 & 0.027 & -- & 1.71 & 3,411 & 2.18 \\
+ & 50$\times$ & 91.46 & 588 & 0.027 & -- & 1.48 & 3,198 & 2.51 \\
+ & 60$\times$ & 91.35 & 496 & 0.023 & -- & 1.53 & 3,018 & 2.86 \\
 \midrule
-LongPhase 2 without GNN & 10$\times$ & 78.10 (0.07) & 2,259 (39) & 0.121 (0.002) & 7.04 (0.29) & 6,056 (46) & 0.92 (0.01) \\
- & 12$\times$ & 84.71 (0.06) & 1,995 (60) & 0.098 (0.003) & 7.21 (0.42) & 4,878 (39) & 1.21 (0.02) \\
- & 14$\times$ & 88.07 (0.05) & 1,706 (50) & 0.081 (0.002) & 6.43 (0.55) & 4,314 (52) & 1.40 (0.02) \\
- & 16$\times$ & 89.75 (0.03) & 1,514 (40) & 0.070 (0.002) & 5.51 (0.21) & 3,964 (43) & 1.54 (0.03) \\
- & 18$\times$ & 90.65 (0.03) & 1,374 (36) & 0.063 (0.002) & 4.75 (0.22) & 3,740 (34) & 1.62 (0.03) \\
- & 20$\times$ & 91.08 (0.02) & 1,235 (45) & 0.057 (0.002) & 4.12 (0.38) & 3,564 (35) & 1.70 (0.02) \\
- & 30$\times$ & 91.61 & 1,004 & 0.046 & 2.40 & 3,007 & 1.97 \\
- & 40$\times$ & 91.64 & 878 & 0.040 & 2.37 & 2,624 & 2.29 \\
- & 50$\times$ & 91.55 & 883 & 0.040 & 1.86 & 2,389 & 2.57 \\
- & 60$\times$ & 91.43 & 743 & 0.034 & 1.75 & 2,225 & 2.91 \\
+LongPhase 2 without GNN & 10$\times$ & 78.10 (0.07) & 2,259 (39) & 0.121 (0.002) & 1.48 (0.02) & 7.04 (0.29) & 6,056 (46) & 0.92 (0.01) \\
+ & 12$\times$ & 84.71 (0.06) & 1,995 (60) & 0.098 (0.003) & 1.49 (0.04) & 7.21 (0.42) & 4,878 (39) & 1.21 (0.02) \\
+ & 14$\times$ & 88.07 (0.05) & 1,706 (50) & 0.081 (0.002) & 1.50 (0.04) & 6.43 (0.55) & 4,314 (52) & 1.40 (0.02) \\
+ & 16$\times$ & 89.75 (0.03) & 1,514 (40) & 0.070 (0.002) & 1.50 (0.03) & 5.51 (0.21) & 3,964 (43) & 1.54 (0.03) \\
+ & 18$\times$ & 90.65 (0.03) & 1,374 (36) & 0.063 (0.002) & 1.50 (0.04) & 4.75 (0.22) & 3,740 (34) & 1.62 (0.03) \\
+ & 20$\times$ & 91.08 (0.02) & 1,235 (45) & 0.057 (0.002) & 1.50 (0.04) & 4.12 (0.38) & 3,564 (35) & 1.70 (0.02) \\
+ & 30$\times$ & 91.61 & 1,004 & 0.046 & 1.47 & 2.40 & 3,007 & 1.97 \\
+ & 40$\times$ & 91.64 & 878 & 0.040 & 1.46 & 2.37 & 2,624 & 2.29 \\
+ & 50$\times$ & 91.55 & 883 & 0.040 & 1.50 & 1.86 & 2,389 & 2.57 \\
+ & 60$\times$ & 91.43 & 743 & 0.034 & 1.50 & 1.75 & 2,225 & 2.91 \\
 \midrule
-WhatsHap (SNVs only) & 10$\times$ & 78.74 (0.07) & 4,383 (65) & 0.233 (0.003) & 7.60 (0.39) & 5,960 (49) & 0.95 (0.01) \\
- & 12$\times$ & 85.35 (0.05) & 4,229 (126) & 0.207 (0.006) & 7.99 (0.40) & 4,897 (45) & 1.24 (0.03) \\
- & 14$\times$ & 88.71 (0.05) & 3,848 (127) & 0.181 (0.006) & 7.01 (0.42) & 4,435 (47) & 1.41 (0.02) \\
- & 16$\times$ & 90.37 (0.04) & 3,561 (134) & 0.165 (0.006) & 6.37 (0.33) & 4,169 (52) & 1.53 (0.02) \\
- & 18$\times$ & 91.27 (0.03) & 3,291 (134) & 0.151 (0.006) & 5.23 (0.39) & 4,009 (34) & 1.60 (0.04) \\
- & 20$\times$ & 91.68 (0.02) & 3,067 (147) & 0.140 (0.007) & 4.40 (0.35) & 3,904 (38) & 1.65 (0.02) \\
- & 30$\times$ & 92.26 & 2,524 & 0.114 & 2.56 & 3,499 & 1.88 \\
- & 40$\times$ & 92.36 & 2,139 & 0.097 & 3.05 & 3,208 & 2.15 \\
- & 50$\times$ & 92.37 & 2,010 & 0.091 & 2.40 & 3,034 & 2.47 \\
- & 60$\times$ & 92.34 & 1,785 & 0.081 & 2.75 & 2,912 & 2.72 \\
+WhatsHap (SNVs only) & 10$\times$ & 78.74 (0.07) & 4,383 (65) & 0.233 (0.003) & 2.85 (0.06) & 7.60 (0.39) & 5,960 (49) & 0.95 (0.01) \\
+ & 12$\times$ & 85.35 (0.05) & 4,229 (126) & 0.207 (0.006) & 3.14 (0.20) & 7.99 (0.40) & 4,897 (45) & 1.24 (0.03) \\
+ & 14$\times$ & 88.71 (0.05) & 3,848 (127) & 0.181 (0.006) & 3.35 (0.10) & 7.01 (0.42) & 4,435 (47) & 1.41 (0.02) \\
+ & 16$\times$ & 90.37 (0.04) & 3,561 (134) & 0.165 (0.006) & 3.49 (0.10) & 6.37 (0.33) & 4,169 (52) & 1.53 (0.02) \\
+ & 18$\times$ & 91.27 (0.03) & 3,291 (134) & 0.151 (0.006) & 3.56 (0.15) & 5.23 (0.39) & 4,009 (34) & 1.60 (0.04) \\
+ & 20$\times$ & 91.68 (0.02) & 3,067 (147) & 0.140 (0.007) & 3.71 (0.31) & 4.40 (0.35) & 3,904 (38) & 1.65 (0.02) \\
+ & 30$\times$ & 92.26 & 2,524 & 0.114 & 3.68 & 2.56 & 3,499 & 1.88 \\
+ & 40$\times$ & 92.36 & 2,139 & 0.097 & 3.52 & 3.05 & 3,208 & 2.15 \\
+ & 50$\times$ & 92.37 & 2,010 & 0.091 & 3.38 & 2.40 & 3,034 & 2.47 \\
+ & 60$\times$ & 92.34 & 1,785 & 0.081 & 3.56 & 2.75 & 2,912 & 2.72 \\
 \midrule
-HapCUT2 & 10$\times$ & 78.78 (0.09) & 5,018 (108) & 0.266 (0.006) & 7.77 (0.39) & 5,878 (55) & 0.95 (0.01) \\
- & 12$\times$ & 85.41 (0.05) & 4,948 (150) & 0.242 (0.007) & 8.06 (0.32) & 4,837 (41) & 1.25 (0.02) \\
- & 14$\times$ & 88.76 (0.07) & 4,652 (104) & 0.219 (0.005) & 7.10 (0.52) & 4,382 (48) & 1.44 (0.03) \\
- & 16$\times$ & 90.44 (0.04) & 4,344 (96) & 0.201 (0.004) & 6.13 (0.41) & 4,122 (50) & 1.54 (0.02) \\
- & 18$\times$ & 91.32 (0.05) & 4,068 (121) & 0.186 (0.006) & 5.32 (0.29) & 3,969 (39) & 1.61 (0.04) \\
- & 20$\times$ & 91.70 (0.03) & 3,825 (140) & 0.174 (0.006) & 4.27 (0.35) & 3,872 (42) & 1.66 (0.02) \\
- & 30$\times$ & 92.27 & 3,280 & 0.148 & 2.61 & 3,482 & 1.89 \\
- & 40$\times$ & 92.37 & 2,916 & 0.132 & 2.90 & 3,203 & 2.16 \\
- & 50$\times$ & 92.38 & 2,568 & 0.116 & 2.20 & 3,034 & 2.46 \\
- & 60$\times$ & 92.34 & 2,309 & 0.104 & 2.11 & 2,911 & 2.72 \\
+HapCUT2 & 10$\times$ & 78.78 (0.09) & 5,018 (108) & 0.266 (0.006) & 3.27 (0.07) & 7.77 (0.39) & 5,878 (55) & 0.95 (0.01) \\
+ & 12$\times$ & 85.41 (0.05) & 4,948 (150) & 0.242 (0.007) & 3.67 (0.23) & 8.06 (0.32) & 4,837 (41) & 1.25 (0.02) \\
+ & 14$\times$ & 88.76 (0.07) & 4,652 (104) & 0.219 (0.005) & 4.05 (0.12) & 7.10 (0.52) & 4,382 (48) & 1.44 (0.03) \\
+ & 16$\times$ & 90.44 (0.04) & 4,344 (96) & 0.201 (0.004) & 4.26 (0.15) & 6.13 (0.41) & 4,122 (50) & 1.54 (0.02) \\
+ & 18$\times$ & 91.32 (0.05) & 4,068 (121) & 0.186 (0.006) & 4.39 (0.12) & 5.32 (0.29) & 3,969 (39) & 1.61 (0.04) \\
+ & 20$\times$ & 91.70 (0.03) & 3,825 (140) & 0.174 (0.006) & 4.62 (0.34) & 4.27 (0.35) & 3,872 (42) & 1.66 (0.02) \\
+ & 30$\times$ & 92.27 & 3,280 & 0.148 & 4.78 & 2.61 & 3,482 & 1.89 \\
+ & 40$\times$ & 92.37 & 2,916 & 0.132 & 4.80 & 2.90 & 3,203 & 2.16 \\
+ & 50$\times$ & 92.38 & 2,568 & 0.116 & 4.32 & 2.20 & 3,034 & 2.46 \\
+ & 60$\times$ & 92.34 & 2,309 & 0.104 & 4.60 & 2.11 & 2,911 & 2.72 \\
 \midrule
-Margin & 10$\times$ & 78.53 (0.07) & 1,286 (31) & 0.069 (0.002) & 0.47 (0.04) & 18,177 (100) & 0.26 (0.00) \\
- & 12$\times$ & 85.13 (0.06) & 1,347 (32) & 0.066 (0.002) & 0.62 (0.10) & 13,654 (88) & 0.40 (0.01) \\
- & 14$\times$ & 88.47 (0.05) & 1,331 (46) & 0.063 (0.002) & 0.72 (0.05) & 11,181 (69) & 0.52 (0.01) \\
- & 16$\times$ & 90.14 (0.03) & 1,302 (49) & 0.061 (0.002) & 0.79 (0.11) & 9,738 (58) & 0.62 (0.01) \\
- & 18$\times$ & 91.04 (0.03) & 1,281 (41) & 0.059 (0.002) & 0.87 (0.10) & 8,818 (49) & 0.71 (0.00) \\
- & 20$\times$ & 91.47 (0.02) & 1,254 (60) & 0.057 (0.003) & 0.93 (0.11) & 8,129 (46) & 0.78 (0.01) \\
+Margin & 10$\times$ & 78.53 (0.07) & 1,286 (31) & 0.069 (0.002) & 0.85 (0.03) & 0.47 (0.04) & 18,177 (100) & 0.26 (0.00) \\
+ & 12$\times$ & 85.13 (0.06) & 1,347 (32) & 0.066 (0.002) & 1.01 (0.05) & 0.62 (0.10) & 13,654 (88) & 0.40 (0.01) \\
+ & 14$\times$ & 88.47 (0.05) & 1,331 (46) & 0.063 (0.002) & 1.17 (0.04) & 0.72 (0.05) & 11,181 (69) & 0.52 (0.01) \\
+ & 16$\times$ & 90.14 (0.03) & 1,302 (49) & 0.061 (0.002) & 1.29 (0.05) & 0.79 (0.11) & 9,738 (58) & 0.62 (0.01) \\
+ & 18$\times$ & 91.04 (0.03) & 1,281 (41) & 0.059 (0.002) & 1.39 (0.05) & 0.87 (0.10) & 8,818 (49) & 0.71 (0.00) \\
+ & 20$\times$ & 91.47 (0.02) & 1,254 (60) & 0.057 (0.003) & 1.52 (0.12) & 0.93 (0.11) & 8,129 (46) & 0.78 (0.01) \\
 \midrule
-Ralphi & 10$\times$ & 78.52 (0.08) & 3,784 (104) & 0.201 (0.006) & 7.48 (0.27) & 5,692 (49) & 5.31 (7.10) \\
- & 12$\times$ & 85.14 (0.06) & 3,694 (164) & 0.181 (0.008) & 8.32 (0.53) & 4,536 (34) & 7.97 (8.42) \\
- & 14$\times$ & 88.50 (0.06) & 3,452 (102) & 0.163 (0.005) & 7.71 (0.63) & 4,000 (58) & 25.31 (16.84) \\
- & 16$\times$ & 90.17 (0.04) & 3,176 (104) & 0.147 (0.005) & 7.60 (0.52) & 3,681 (36) & 30.67 (12.45) \\
- & 18$\times$ & 91.07 (0.03) & 2,979 (163) & 0.137 (0.007) & 7.14 (0.51) & 3,463 (30) & 39.14 (14.83) \\
- & 20$\times$ & 91.50 (0.02) & 2,874 (96) & 0.131 (0.004) & 6.56 (0.53) & 3,314 (37) & 47.11 (6.72) \\
+Ralphi & 10$\times$ & 78.52 (0.08) & 3,784 (104) & 0.201 (0.006) & 2.47 (0.07) & 7.48 (0.27) & 5,692 (49) & 5.31 (7.10) \\
+ & 12$\times$ & 85.14 (0.06) & 3,694 (164) & 0.181 (0.008) & 2.75 (0.19) & 8.32 (0.53) & 4,536 (34) & 7.97 (8.42) \\
+ & 14$\times$ & 88.50 (0.06) & 3,452 (102) & 0.163 (0.005) & 3.02 (0.11) & 7.71 (0.63) & 4,000 (58) & 25.31 (16.84) \\
+ & 16$\times$ & 90.17 (0.04) & 3,176 (104) & 0.147 (0.005) & 3.12 (0.12) & 7.60 (0.52) & 3,681 (36) & 30.67 (12.45) \\
+ & 18$\times$ & 91.07 (0.03) & 2,979 (163) & 0.137 (0.007) & 3.23 (0.19) & 7.14 (0.51) & 3,463 (30) & 39.14 (14.83) \\
+ & 20$\times$ & 91.50 (0.02) & 2,874 (96) & 0.131 (0.004) & 3.48 (0.25) & 6.56 (0.53) & 3,314 (37) & 47.11 (6.72) \\
 \bottomrule
 \end{longtable}}
 
@@ -232,7 +232,7 @@ WhatsHap (SNVs only) & 10$\times$ & 87.43 & 2,655 & 0.128 & 1.03 & 15,804 & 340 
 \bottomrule\end{tabular}\end{table}
 
 \begin{table}[h]
-\caption{\textbf{SNVs unphased by GNN correction, classified by the T2T-HG002 v1.1 assembly.} Nanopore 60$\times$, replicate~1, SNV-only phasing. ``Aligned'' means inside the dipcall BED in which both assembled haplotypes align 1:1 to GRCh38 (\code{GRCh38\_HG2-T2TQ100-V1.1\_dipcall-z2k.dip.bed}); presence of an assembly variant record at the same coordinate from the matching dipcall VCF. The background is a random sample of 50,000 SNVs phased before GNN correction, including sites that GNN correction later unphased. Top, overall classes; bottom, share outside the 1:1 alignment per chromosome. v5.0q is derived from the same assembly, so this analysis extends coverage rather than providing an independent truth set.}
+\caption{\textbf{SNVs unphased by GNN correction, classified by the T2T-HG002 v1.1 assembly.} Nanopore 60$\times$, replicate~1, SNV-only phasing. ``Aligned'' means inside the dipcall BED in which both assembled haplotypes align 1:1 to GRCh38 (\code{GRCh38\_HG2-T2TQ100-V1.1\_dipcall-z2k.dip.bed}); presence of an assembly variant record at the same start coordinate in the matching dipcall VCF (alleles not compared). All chromosomes, including chrX and chrY, unless stated. The background is a random sample of 50,000 SNVs phased before GNN correction, including sites that GNN correction later unphased. Top, overall classes; bottom, share outside the 1:1 alignment per chromosome. v5.0q is derived from the same assembly, so this analysis extends coverage rather than providing an independent truth set.}
 \label{tab:t2t}\small
 \begin{tabular}{@{}lrr@{}}\toprule Class & SNVs & Share (\%) \\ \midrule
 not aligned 1:1 (unassessed) & 49,475 & 88.23 \\
@@ -241,6 +241,8 @@ aligned, assembly variant record at the same coordinate & 3,180 & 5.67 \\
 total & 56,076 & 100.00 \\ \midrule
 aligned 1:1, unphased by GNN correction & 6,601 / 56,076 & 11.77 \\
 aligned 1:1, phased before GNN correction (sample) & 46,318 / 50,000 & 92.64 \\
+\quad autosomes only, unphased by GNN correction & 4,955 / 51,595 & 9.60 \\
+\quad autosomes only, phased before GNN correction (sample) & 46,116 / 49,622 & 92.93 \\
 inside the v5.0q benchmark BED & 549 & -- \\
 \quad of which benchmark variant & 413 & 75.23 \\
 \bottomrule\end{tabular}\par\medskip
