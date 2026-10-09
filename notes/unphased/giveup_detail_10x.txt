@@ -1,0 +1,14 @@
+# Give-up mechanisms, HG002 60x replicate 1
+# generated: 2026-10-09 02:59 UTC
+
+                       read depth Q1/med/Q3       PE          PE Q1/med/Q3   PE=0 / mid / >=.8 (%)
+wh_only         37676      9    15    25   100.0%       0      0  0.144    55.9  42.2   1.9
+lp_gnn          22592     10    13    23   100.0%       0  0.258  0.667    28.1  52.7  19.2
+lp_phase       125981     10    13    23     0.0%       -      -      -     0.0   0.0   0.0
+background     100000      9    11    13   100.0%       0      0      0    88.5  11.1   0.3
+
+PE column: share of sites that carry an INFO/PE field. LongPhase emits
+PE only for sites it phased, so lp_phase sites have none by construction.
+
+report : out/10x/giveup_detail_results.txt
+points : out/10x/giveup_detail_points.js

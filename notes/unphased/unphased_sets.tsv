@@ -1,0 +1,19 @@
+coverage	set	n	dp_q1	dp_median	dp_q3	dp_at_cap_pct	pe_sites	pe_zero_pct	pe_ge_0.8_pct	other_tool	in_other_sw_pct	other_tool_background_pct	enrichment
+10x	lp_only_phase	125981	10	13	23	0.5	0	NA	NA	WhatsHap	9.82	2.33	4.2
+10x	lp_only_gnn	22592	10	13	23	1.3	22592	28.1	19.2	WhatsHap	10.41	2.33	4.5
+10x	lp_only	148573	10	13	23	0.6	22592	28.1	19.2	WhatsHap	9.91	2.33	4.3
+10x	wh_only	37676	9	15	25	0.5	37676	55.9	1.9	LongPhase 2	3.38	1.73	1.9
+10x	both	90210	8	13	22	0.3	33164	13.4	18.3		NA	NA	NA
+10x	background	2058271	9	11	13	0.0	2058271	88.6	0.3		NA	NA	NA
+30x	lp_only_phase	111718	28	42	63	3.7	0	NA	NA	WhatsHap	13.44	1.52	8.8
+30x	lp_only_gnn	20720	17	33	61	7.3	20720	18.1	16.0	WhatsHap	6.41	1.52	4.2
+30x	lp_only	132438	26	41	63	4.3	20720	18.1	16.0	WhatsHap	12.34	1.52	8.1
+30x	wh_only	52152	11	16	29	0.8	52152	56.5	1.3	LongPhase 2	3.97	0.94	4.2
+30x	both	96839	11	17	29	1.0	36382	14.7	15.6		NA	NA	NA
+30x	background	2354571	27	31	35	0.2	2354571	96.7	0.1		NA	NA	NA
+60x	lp_only_phase	99813	43	66	100	15.8	0	NA	NA	WhatsHap	11.70	1.12	10.5
+60x	lp_only_gnn	22178	23	47	87	15.0	22178	16.7	16.8	WhatsHap	6.52	1.12	5.8
+60x	lp_only	121991	37	64	98	15.6	22178	16.7	16.8	WhatsHap	10.76	1.12	9.6
+60x	wh_only	53621	12	18	32	1.5	53621	57.6	1.4	LongPhase 2	10.10	1.06	9.5
+60x	both	88692	12	21	37	2.1	33898	15.2	16.5		NA	NA	NA
+60x	background	2315519	56	62	68	0.6	2315519	97.6	0.1		NA	NA	NA
