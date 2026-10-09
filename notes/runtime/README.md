@@ -2,15 +2,16 @@
 
 SNV-only phasing of HG002 ONT R10.4.1, replicate 1 at 10× and the 60× run, on the
 workstation of Methods (inputs and outputs on the hard-disk drive `/disk/research`).
-`runtime.tsv`: wall-clock time, CPU time (user + sys) and peak resident memory;
+`runtime.tsv`: wall-clock time, CPU time (user + sys) and peak resident memory (KiB, as
+`/usr/bin/time` reports it; GiB in the table below);
 `build_runtime.py` rebuilds it on the lab server.
 
 | Tool | Threads | 10× wall | 10× CPU | 10× peak RSS | 60× wall | 60× CPU | 60× peak RSS |
 |---|---|---|---|---|---|---|---|
-| LongPhase 2 | 24 | 4.6 min | 13.6 min | 37.7 GB | 16.3 min | 34.5 min | 66.1 GB |
-| LongPhase 2 | 1 | 8.1 min | 8.3 min | 6.5 GB | 18.0 min | 18.8 min | 7.7 GB |
-| WhatsHap 2.8 `--only-snvs` | 1 | 25.2 min | 25.1 min | 1.6 GB | 113.8 min | 113.6 min | 4.1 GB |
-| HapCUT2 1.3.4 | 1 | 24.1 min | 24.1 min | 6.9 GB | 96.4 min | 95.9 min | 20.4 GB |
+| LongPhase 2 | 24 | 4.6 min | 13.6 min | 36.0 GiB | 16.3 min | 34.5 min | 63.0 GiB |
+| LongPhase 2 | 1 | 8.1 min | 8.3 min | 6.2 GiB | 18.0 min | 18.8 min | 7.4 GiB |
+| WhatsHap 2.8 `--only-snvs` | 1 | 25.2 min | 25.1 min | 1.5 GiB | 113.8 min | 113.6 min | 4.0 GiB |
+| HapCUT2 1.3.4 | 1 | 24.1 min | 24.1 min | 6.6 GiB | 96.4 min | 95.9 min | 19.4 GiB |
 
 ## Sources
 
