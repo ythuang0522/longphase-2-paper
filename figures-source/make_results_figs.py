@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the Results figures (Figs. 2-6), Supplementary Figs. 10-14 (except
+"""Generate the Results figures (Figs. 2-5), Supplementary Figs. 10-14 (except
 13, which is the retained raster) and Supplementary Tables 7-12 for the
 LongPhase 2 manuscript.
 
@@ -14,7 +14,7 @@ Run from the repository root with any Python that has matplotlib and openpyxl:
  ~/miniforge3/envs/gemini/bin/python3.)
 
 Outputs:
-    figures/fig{2..6}_*.pdf
+    figures/fig{2..5}_*.pdf
     figures/supp/suppfig{10,11,12,14}_*.pdf
     figures-source/supp_tables.tex   (\\input by Supplementary.tex)
 """
@@ -89,7 +89,7 @@ BAR_COVS = [10, 20, 30, 40, 50, 60]
 HIFI_COVS = [10, 20, 30, 40, 50]
 
 # Co-phasing configurations: xlsx sheet label -> display name, colour.
-# SNV, +5mC, +indel and all four share their colours with main Fig. 3 (STRAT).
+# SNV, +5mC, +indel and all four as in Supplementary Figs. 14 and 15.
 CFG = [
     ("SNV", "SNV", "#B2182B"),
     ("SV", "+SV", "#80CDC1"),
@@ -319,37 +319,54 @@ def _indel_runs(config):
     return lambda c: g.get(c)
 
 
+# LongPhase 2 co-phasing SNVs and indels with SVs and 5mC added: the evidence WhatsHap cannot use.
+# Dashed red in Fig. 2f only (author decision, 2026-10-09: "all four classes" in black, and in the
+# SNV-only row, was hard for a reviewer to read).
+PLUS = ("Indel+Mod+SV", "LongPhase 2, + SVs and 5mC")
+
+
+def _path(ax, get, covs, color, ls, marker, msz, mfc="none", z=3):
+    """Accuracy-contiguity path: mean SNV switch error rate against mean block N50, one
+    point per coverage, joined from the lowest to the highest coverage."""
+    xs = [ms(get(c), "sw_pct")[0] for c in covs]
+    ys = [ms(get(c), "n50")[0] / 1e6 for c in covs]
+    ax.plot(xs, ys, color=color, ls=ls, marker=marker, ms=msz, mfc=mfc, mew=0.8, lw=0.9, zorder=z)
+    return xs, ys
+
+
 def fig2():
     """LongPhase 2 against other phasers for each evidence type (nanopore, v5.0q).
     Rows: SNV phasing (WhatsHap, HapCUT2), SNV and indel co-phasing (WhatsHap), SNV and
-    5mC co-phasing (MethPhaser). Columns: switch error rate, Hamming distance, block N50,
-    phased fraction; in the indel row the accuracy panels also score the indels themselves
-    (Supplementary Table 14)."""
+    5mC co-phasing (MethPhaser). Columns: switch error rate, Hamming distance, and the
+    switch error rate against block N50 across coverage. Each row compares the tools on the
+    same input; panel f adds, dashed, LongPhase 2 with SVs and 5mC also co-phased. In the indel
+    row the accuracy panels also score the indels themselves (Supplementary Table 14).
+    The phased fractions are in Fig. 3 (author decision, 2026-10-09: accuracy and
+    contiguity together, completeness with the analysis of what each tool leaves unphased)."""
     fig = plt.figure(figsize=(FIGW, 150 * MM), layout="constrained")
     fig.get_layout_engine().set(w_pad=2 * MM, h_pad=1.2 * MM, wspace=0.05, hspace=0.0)
     sfs = fig.subfigures(3, 1, hspace=0.035)
     snv = lambda tool: (lambda c: D["snv"]["ONT"][XLSX_TOOL[tool]].get(c))
     ind = lambda tool: (lambda c: D["coph"]["Indel"][tool].get(c))
+    plus = lambda c: D["coph"][PLUS[0]]["longphase_v2.1"].get(c)
     mod1 = lambda c: [r for r in D["coph"]["Mod"]["longphase_v2.1"][c] if r["rep"] == 1]
     meth = lambda c: [{k: meth_value(c, k) for k in ("sw_pct", "ham", "n50", "psnv_pct")}]
-    rows = [  # title, coverages, tools (key, name, getter), phased-fraction key, label, limits
+    rows = [  # title, coverages, tools (key, name, getter), add the + SVs and 5mC path
         ("SNV phasing", PLOT_COVS,
-         [("lp_gnn", "LongPhase 2", snv("lp_gnn")), ("wh", "WhatsHap", snv("wh")), ("hc", "HapCUT2", snv("hc"))],
-         "psnv_pct", "Phased SNVs (%)", (76, 94)),
+         [("lp_gnn", "LongPhase 2", snv("lp_gnn")), ("wh", "WhatsHap", snv("wh")), ("hc", "HapCUT2", snv("hc"))], False),
         ("SNV and indel co-phasing", PLOT_COVS,
-         [("lp_gnn", "LongPhase 2", ind("longphase_v2.1")), ("wh", "WhatsHap", ind("whatshap_v28"))],
-         "pindel_pct", "Phased indels (%)", (28, 52)),
+         [("lp_gnn", "LongPhase 2", ind("longphase_v2.1")), ("wh", "WhatsHap", ind("whatshap_v28"))], True),
         ("SNV and 5mC co-phasing", BAR_COVS,
-         [("lp_gnn", "LongPhase 2", mod1), ("meth", "MethPhaser", meth)],
-         "psnv_pct", "Phased SNVs (%)", (76, 94)),
+         [("lp_gnn", "LongPhase 2", mod1), ("meth", "MethPhaser", meth)], False),
     ]
     indel = {"lp_gnn": _indel_runs("longphase_coh_indel_gnn"), "wh": _indel_runs("whatshap_v28")}
-    letters = iter("abcdefghijkl")
+    letters = iter("abcdefghi")
     keys = []
     grid = []
-    for r, (sf, (title, covs, tools, pkey, plab, plim)) in enumerate(zip(sfs, rows)):
-        axs = sf.subplots(1, 4)
+    for r, (sf, (title, covs, tools, add_plus)) in enumerate(zip(sfs, rows)):
+        axs = sf.subplots(1, 3)
         grid.append(axs)
+        ax_tr = axs[2]
         for t, _name, get in reversed(tools):   # LongPhase 2 drawn last, on top
             f = _series(get, covs)
             tline(axs[0], t, *f("sw_pct"))
@@ -360,87 +377,196 @@ def fig2():
                 tline(axs[1], t, *g("indel_ham"))
             else:
                 tline(axs[1], t, *f("ham"))
-            tline(axs[2], t, *f("n50"), scale=1e-6)
-            tline(axs[3], t, *f(pkey))
+            st_ = STY[t]
+            ex, ey = _path(ax_tr, get, covs, C[t], st_["ls"], st_["marker"], st_["ms"])
+            if t in ("wh", "meth"):   # coverage of the first and last point, on the comparator
+                for i, dy, va in ((0, -4, "top"), (-1, 4, "bottom")):
+                    ax_tr.annotate(f"{covs[i]}×", (ex[i], ey[i]), xytext=(0, dy), textcoords="offset points",
+                                   ha="center", va=va, fontsize=5.5, color="#555555")
+        if add_plus:
+            _path(ax_tr, plus, covs, C["lp_gnn"], (0, (4, 1.6)), STY["lp_gnn"]["marker"], STY["lp_gnn"]["ms"], z=2)
         if r == 1:
             _log_rate_axis(axs[0], ticks=(0.02, 0.05, 0.1, 0.2, 0.5, 1), lim=(0.018, 1.4))
-            axs[0].set_ylabel("Switch error rate (%)")
             axs[1].set_ylabel("Indel Hamming distance (%)")
         else:
             _log_rate_axis(axs[0])
-            axs[0].set_ylabel("Switch error rate (%)")
             axs[1].set_ylabel("Hamming distance (%)")
+        axs[0].set_ylabel("Switch error rate (%)")
         axs[1].set_ylim(bottom=0)
-        axs[2].set_ylim(0, 4.6); axs[2].set_yticks([0, 1, 2, 3, 4]); axs[2].set_ylabel("Block N50 (Mb)")
-        axs[3].set_ylim(*plim); axs[3].set_ylabel(plab)
-        if pkey == "psnv_pct":
-            axs[3].set_yticks([76, 80, 84, 88, 92])
-        for ax in axs:
+        ax_tr.set_xscale("log"); ax_tr.minorticks_off()
+        ax_tr.set_xticks([0.02, 0.05, 0.1, 0.2]); ax_tr.set_xticklabels(["0.02", "0.05", "0.1", "0.2"])
+        ax_tr.set_xlim(0.018, 0.32); ax_tr.set_ylim(0, 4.6); ax_tr.set_yticks([0, 1, 2, 3, 4])
+        ax_tr.set_ylabel("Block N50 (Mb)")
+        for ax in axs[:2]:
             cov_axis(ax)
             if r < 2:
                 ax.set_xlabel("")
+        if r == 2:
+            ax_tr.set_xlabel("SNV switch error rate (%)")
+        for ax in axs:
             letter(ax, next(letters))
         _row_header(sf, title)
         k = [thandle(t, name) for t, name, _ in tools]
+        if add_plus:
+            k.insert(1, Line2D([], [], color=C["lp_gnn"], ls=(0, (4, 1.6)), marker=STY["lp_gnn"]["marker"],
+                               ms=STY["lp_gnn"]["ms"] + 0.4, mfc="none", mew=0.8, label=PLUS[1]))
         if r == 1:
             k += [Line2D([], [], color="#555555", ls="-", label="SNV pairs"),
                   Line2D([], [], color="#555555", ls=":", marker="o", ms=2.6, label="pairs with an indel")]
         keys.append(k)
-    align_ylabels(fig, [[row[i] for row in grid] for i in range(4)])
+    align_ylabels(fig, [[row[i] for row in grid] for i in range(3)])
     _row_keys(fig, sfs, keys)
     save(fig, os.path.join(OUT, "fig2_phaser_comparison.pdf"))
 
 
 # ============================================================ Figure 3 =====
-# Evidence combinations of LongPhase 2 (GNN correction included). Colours validated with
-# the dataviz palette checker against each other and WhatsHap blue (all pairs, light
-# mode); the all-four line is neutral black by design. Shared with Supplementary
-# Figs. 14 and 15 through CFG.
-STRAT = [  # co-phase sheet configuration ("SNV" = SNV_Detail), label, colour, marker, marker size
-    ("SNV", "SNVs", "#B2182B", "o", 3.0),
-    ("Mod", "SNVs + 5mC", "#1B9E77", "^", 3.4),
-    ("Indel", "SNVs + indels", "#C66A00", "s", 3.2),
-    ("Indel+Mod+SV", "All four classes", "#1A1A1A", "D", 2.8),
-]
+# What each tool phases and leaves unphased (former Fig. 6 merged with the phased
+# fractions of former Fig. 2d,h; author decision, 2026-10-09).
+# Source: notes/unphased/ (JHL, issue #6, 2026-10-09; issue6.py and scripts/run_coverage.sh,
+# which reproduce UnphaseVenn3.jsx). HG002 ONT, SNV-only, replicate 1, LongPhase 2 with GNN
+# against WhatsHap --only-snvs. Universe: heterozygous SNV calls with single-base REF and ALT
+# and GT 0/1, identical in both VCFs (chrX/Y included). Truth: v5.0q chr1-22, no BED.
+UNPH = os.path.join(ROOT, "notes", "unphased")
+VENN_COVS = (10, 30, 60)
+
+
+def _unph(name):
+    import csv
+    return list(csv.DictReader(open(os.path.join(UNPH, name)), delimiter="\t"))
+
+
+# (coverage, set) -> row; sets lp_only, lp_only_phase, lp_only_gnn, wh_only, both, background
+# (= phased by both tools)
+COMP = {(int(r["coverage"][:-1]), r["set"]): r for r in _unph("issue6_composition.tsv")}
+INTV = {(int(r["coverage"][:-1]), r["set"]): r for r in _unph("issue6_intervals.tsv")}
+CLASSES = ("het_match", "het_other_allele", "hom", "absent", "chrXY")
+
+
+def comp(c, s, k="n"):
+    return int(COMP[(c, s)][k])
+
+
+def venn_hist():
+    """Depth histograms per set, 2x bins, last bin DP >= 124 (issue6_depth_hist.tsv)."""
+    out = {}
+    for r in _unph("issue6_depth_hist.tsv"):
+        k = {"lp_only": "lp", "wh_only": "wh", "both": "both"}.get(r["set"])
+        if k:
+            out.setdefault(int(r["coverage"][:-1]), {}).setdefault(k, []).append(
+                (float(r["bin_start"]), float(r["fraction"])))
+    return {c: {k: [f for _, f in sorted(v)] for k, v in d.items()} for c, d in out.items()}
+
+
+def net_phased(c):
+    """Net difference in phased calls, WhatsHap minus LongPhase 2 (= calls left unphased by
+    LongPhase 2 only minus those left unphased by WhatsHap only), per benchmark class. The
+    het_match difference equals the difference in Phased_SNV of longphase compare, checked here
+    (issue6_reconcile.tsv)."""
+    d = {k: comp(c, "lp_only", k) - comp(c, "wh_only", k) for k in ("n",) + CLASSES}
+    rep1_ = lambda t: [r for r in D["snv"]["ONT"][XLSX_TOOL[t]][c] if r["rep"] == 1][0]["psnv"]
+    assert d["het_match"] == rep1_("wh") - rep1_("lp_gnn")
+    assert d["n"] == sum(d[k] for k in CLASSES)
+    return d
+
+
+def other_tool_errors(c, s):
+    """The other tool's phase at the benchmark heterozygous SNVs (het_match) of a tool-only set:
+    (assessed, wrongly phased = block-wise Hamming error, % wrong, that tool's genome-wide
+    Hamming distance %)."""
+    n, e = comp(c, s, "other_assessed"), comp(c, s, "other_hamming_err")
+    other = "whatshap_v28" if s.startswith("lp") else "longphase_v2.1"
+    gw = [r for r in D["snv"]["ONT"][other][c] if r["rep"] == 1][0]["ham"]
+    return n, e, 100 * e / n, gw
+
+
+ONLY = {"lp_gnn": "wh_only", "wh": "lp_only"}   # calls phased by this tool only = unphased by the other only
+
+
+def phased_calls(c, t):
+    """Calls phased by tool t (chr1-22): (all, benchmark het. SNVs). Phased by LongPhase 2 = phased by
+    both + left unphased by WhatsHap only, and vice versa; chrX/Y excluded because the truth covers
+    chr1-22. The het. count equals compare's Phased_SNV (checked)."""
+    n = comp(c, "background") - comp(c, "background", "chrXY") + comp(c, ONLY[t]) - comp(c, ONLY[t], "chrXY")
+    het = comp(c, "background", "het_match") + comp(c, ONLY[t], "het_match")
+    assert het == [r for r in D["snv"]["ONT"][XLSX_TOOL[t]][c] if r["rep"] == 1][0]["psnv"]
+    return n, het
+
+
+def tint(col, f):
+    """Mix a hex colour with white; f = share of white."""
+    r, g, b = (int(col[i:i + 2], 16) for i in (1, 3, 5))
+    return "#%02X%02X%02X" % tuple(round(v + (255 - v) * f) for v in (r, g, b))
+
+
+# Issue #7 (JHL, notes/unphased/phased_calls_chr1_22.tsv, count_phased.sh): phased heterozygous
+# SNV calls on chr1-22 (single-base, one ALT, GT 0|1 or 1|0) of every SNV-only run of LongPhase 2
+# and WhatsHap. Precision = compare's Phased_SNV / this count; equals phased_calls() at 10/30/60x
+# replicate 1 (checked).
+PHASED_CALLS = {({"LongPhase 2": "lp_gnn", "WhatsHap": "wh"}[r["tool"]], int(r["coverage"]), int(r["replicate"])):
+                int(r["phased_het_snv_calls_chr1_22"]) for r in _unph("phased_calls_chr1_22.tsv")}
+
+
+def precision_runs(t):
+    """Getter cov -> replicate dicts with 'prec' (%) and 'f1' (%, harmonic mean of precision and the
+    phased fraction psnv_pct), for _series() and cell()."""
+    def get(c):
+        out = []
+        for r in D["snv"]["ONT"][XLSX_TOOL[t]].get(c, []):
+            n = PHASED_CALLS[(t, c, r["rep"])]
+            if r["rep"] == 1 and c in VENN_COVS:
+                assert n == phased_calls(c, t)[0]
+            p_, r_ = r["psnv"] / n, r["psnv_pct"] / 100
+            out.append({"prec": 100 * p_, "f1": 200 * p_ * r_ / (p_ + r_)})
+        return out
+    return get
+
+
+def phased_class(c, t, k):
+    """Calls phased by tool t on chr1-22 in v5.0q class k (issue6_composition.tsv): phased by both
+    (background) + phased by t only. k = hom: v5.0q homozygous at the call's position, i.e. a
+    heterozygous genotype error that the tool wrote onto a haplotype."""
+    return comp(c, "background", k) + comp(c, ONLY[t], k)
 
 
 def fig3():
-    """SNV switch error rate and block N50 of LongPhase 2 as evidence classes are added,
-    and the resulting accuracy-contiguity paths beside WhatsHap's."""
-    fig, axs = new_fig(60, 1, 3, width_ratios=[1, 1, 1.15])
-    ax_sw, ax_n50, ax_tr = axs
-    for cfg, name, col, mk, msz in STRAT:
-        for ax, key, sc in ((ax_sw, "sw_pct", 1), (ax_n50, "n50", 1e-6)):
-            xs, m, s_ = coph_series(cfg, "longphase_v2.1", key)
-            line(ax, xs, m, s_, col, marker=mk, mfc="none", ms=msz, scale=sc)
-    _log_rate_axis(ax_sw, ticks=(0.02, 0.05, 0.1), lim=(0.018, 0.12))
-    ax_sw.set_ylabel("SNV switch error rate (%)"); cov_axis(ax_sw); letter(ax_sw, "a")
-    ax_n50.set_ylim(0, 4.6); ax_n50.set_yticks([0, 1, 2, 3, 4])
-    ax_n50.set_ylabel("Block N50 (Mb)"); cov_axis(ax_n50); letter(ax_n50, "b")
-    # c: one path per configuration over 10, 20, ..., 60x, with WhatsHap for reference
-    paths = [(name, col, mk, msz, "-", "none",
-              (lambda cfg: lambda c: (D["snv"]["ONT"]["longphase_v2.1"][c] if cfg == "SNV"
-                                      else D["coph"][cfg]["longphase_v2.1"][c]))(cfg))
-             for cfg, name, col, mk, msz in STRAT]
-    paths += [("WhatsHap, SNVs", C["wh"], "D", 2.8, "-", "none", lambda c: D["snv"]["ONT"]["whatshap_v28"][c]),
-              ("WhatsHap, SNVs + indels", C["wh"], "D", 2.8, "--", C["wh"], lambda c: D["coph"]["Indel"]["whatshap_v28"][c])]
-    for name, col, mk, msz, ls, mfc, get in paths:
-        xs = [ms(get(c), "sw_pct")[0] for c in BAR_COVS]
-        ys = [ms(get(c), "n50")[0] / 1e6 for c in BAR_COVS]
-        ax_tr.plot(xs, ys, color=col, ls=ls, marker=mk, ms=msz, mfc=mfc, mew=0.8)
-    for c, dy, va in ((10, -4, "top"), (60, 4, "bottom")):
-        get = paths[-1][-1]
-        ax_tr.annotate(f"{c}×", (ms(get(c), "sw_pct")[0], ms(get(c), "n50")[0] / 1e6), xytext=(0, dy),
-                       textcoords="offset points", ha="center", va=va, fontsize=5.5, color="#555555")
-    ax_tr.set_xscale("log"); ax_tr.minorticks_off()
-    ax_tr.set_xticks([0.02, 0.05, 0.1, 0.2]); ax_tr.set_xticklabels(["0.02", "0.05", "0.1", "0.2"])
-    ax_tr.set_xlim(0.018, 0.32); ax_tr.set_ylim(0, 4.6); ax_tr.set_yticks([0, 1, 2, 3, 4])
-    ax_tr.set_xlabel("SNV switch error rate (%)"); ax_tr.set_ylabel("Block N50 (Mb)")
-    letter(ax_tr, "c")
-    h = [Line2D([], [], color=col, ls=ls, marker=mk, ms=msz + 0.4, mfc=mfc, mew=0.8, label=name)
-         for name, col, mk, msz, ls, mfc, _ in paths]
-    fig.legend(handles=h, loc="outside upper center", ncol=6, handlelength=2.4, columnspacing=1.2)
-    save(fig, os.path.join(OUT, "fig3_evidence_classes.pdf"))
+    """One message (author, 2026-10-09): LongPhase 2 phases about 1% fewer benchmark SNVs than
+    WhatsHap, but more of the calls it phases are benchmark SNVs, and fewer of them are genotype
+    errors. a completeness, b precision (both tools, one key; F1 in the text and Supplementary
+    Table 8), c phased calls at positions where v5.0q is homozygous (the genotype errors of the
+    GIAB v5.0q framing that each tool writes onto a haplotype; author, 2026-10-09). The calls
+    left unphased by one tool only, their read depth and interval co-location are in the text,
+    Supplementary Table 17 and Supplementary Fig. 12; the regions added by v5.0q are in Fig. 4d,e.
+    Indel completeness is in Supplementary Table 9."""
+    fig = plt.figure(figsize=(FIGW, 70 * MM), layout="constrained")
+    fig.get_layout_engine().set(w_pad=2 * MM, h_pad=1.5 * MM, wspace=0.08)
+    ax_a, ax_b, ax_c = fig.subplots(1, 3)
+    TOOLS = (("wh", "WhatsHap"), ("lp_gnn", "LongPhase 2"))   # LongPhase 2 drawn last, on top
+    snv = lambda tool: (lambda c: D["snv"]["ONT"][XLSX_TOOL[tool]].get(c))
+    for t, _ in TOOLS:
+        tline(ax_a, t, *_series(snv(t), PLOT_COVS)("psnv_pct"))
+        tline(ax_b, t, *_series(precision_runs(t), PLOT_COVS)("prec"))
+    ax_a.set_ylim(76, 94); ax_a.set_yticks([76, 80, 84, 88, 92])
+    ax_a.set_ylabel("Benchmark het. SNVs phased (%)")
+    ax_a.set_title("Completeness", loc="center", fontsize=6.5)
+    ax_b.set_ylim(84, 95); ax_b.set_yticks([85, 88, 91, 94])
+    ax_b.set_ylabel("Phased calls that are\nbenchmark het. SNVs (%)")
+    ax_b.set_title("Precision", loc="center", fontsize=6.5)
+    for ax in (ax_a, ax_b):
+        cov_axis(ax)
+    # c: grouped bars, both tools, replicate 1 at 10/30/60x
+    ax = ax_c
+    for i, (t, _) in enumerate(reversed(TOOLS)):
+        ax.bar([j + (i - 0.5) * 0.36 for j in range(3)], [phased_class(c, t, "hom") / 1000 for c in VENN_COVS],
+               0.33, color=C[t], zorder=3)
+    ax.set_xticks(range(3)); ax.set_xticklabels([f"{c}×" for c in VENN_COVS])
+    ax.set_xlim(-0.6, 2.6); ax.set_ylim(0, 30); ax.set_yticks([0, 10, 20, 30])
+    ax.set_xlabel("Coverage"); ax.set_ylabel("Phased calls (thousands)")
+    ax.set_title("Genotype errors phased\n(heterozygous calls at v5.0q homozygous sites)", loc="center", fontsize=6.5)
+    for ax, L in zip((ax_a, ax_b, ax_c), "abc"):
+        letter(ax, L)
+    fig.legend(handles=[thandle(t, n) for t, n in reversed(TOOLS)], loc="outside upper left", ncol=2,
+               handlelength=2.6, columnspacing=1.6)
+    save(fig, os.path.join(OUT, "fig3_phased_unphased.pdf"))
 
 
 # ============================================================ Figure 4 =====
@@ -460,13 +586,16 @@ def f3_runs(src, cov):
     return D["coph"][src[1]][src[2]][cov]
 
 
-REGIONS = [  # (region, stratum) in item4_strata.tsv, label, y; truth v5.0q. Benchmark regions
-    # first; the outside-both row, where the truth phase is least certain, is set apart as
-    # exploratory (Discussion).
-    (("v5bed", "any"), "v5.0q benchmark regions", 0),
-    (("v5bed", "not_difficult"), "v5.0q regions, not difficult", 1),
-    (("v5bed", "segdup"), "v5.0q regions, segmental duplications", 2),
-    (("neither", "any"), "Outside both benchmarks' regions\n(exploratory)", 3.4),
+REGIONS = [  # (region, stratum) in item4_strata.tsv, label, y, indent; truth v5.0q. The v5.0q
+    # benchmark regions first, then (indented) subsets of them: two GIAB v3.6 strata and the parts
+    # that v4.2.1 also covers or that v5.0q adds; the outside-both row, where the truth phase is
+    # least certain, is set apart below a dashed line and called exploratory in the legend.
+    (("v5bed", "any"), "v5.0q benchmark regions", 0, 0),
+    (("v5bed", "not_difficult"), "Outside difficult regions", 1, 1),
+    (("v5bed", "segdup"), "Segmental duplications", 2, 1),
+    (("shared", "any"), "Shared with v4.2.1", 3, 1),
+    (("v5only", "any"), "Added in v5.0q", 4, 1),
+    (("neither", "any"), "Outside both benchmarks", 5.4, 0),
 ]
 
 
@@ -515,7 +644,7 @@ def fig4():
     tools = (("lp_gnn", "longphase_gnn"), ("wh", "whatshap_v28_onlySNVs"), ("hc", "hapcut2_v134"))
     axs2 = bottom.subplots(1, 2, sharey=True)
     for ax, cov, L, xl in ((axs2[0], 10, "d", (0.02, 8)), (axs2[1], 60, "e", (0.0008, 5))):
-        for key, _lab, y in REGIONS:
+        for key, _lab, y, _ind in REGIONS:
             vals = []
             for t, name in tools:
                 runs = S[(name, cov, "v5") + key]
@@ -532,10 +661,17 @@ def fig4():
         ax.set_xlabel("Switch error rate against v5.0q (%)")
         ax.set_title(f"{cov}×", fontsize=6.5)
         ax.grid(axis="x", color="#EEEEEE", lw=0.5, zorder=0)
-        ax.axhline(2.7, color="#BDBDBD", lw=0.5, ls="--", zorder=0)
+        ax.axhline(4.7, color="#BDBDBD", lw=0.5, ls="--", zorder=0)
         letter(ax, L)
-    axs2[0].set_yticks([y for _, _, y in REGIONS]); axs2[0].set_yticklabels([lab for _, lab, _ in REGIONS])
+    axs2[0].set_yticks([y for _, _, y, _ in REGIONS])
+    axs2[0].set_yticklabels(["\u2002" * 2 * ind + lab for _, lab, _, ind in REGIONS])
     axs2[0].invert_yaxis(); axs2[0].tick_params(axis="y", length=0)
+    fig.canvas.draw()   # left-align the row labels (subsets indented): pad = widest label
+    r = fig.canvas.get_renderer()
+    w = max(t.get_window_extent(r).width for t in axs2[0].get_yticklabels()) * 72 / fig.dpi
+    for t in axs2[0].get_yticklabels():
+        t.set_ha("left")
+    axs2[0].tick_params(axis="y", pad=w + 3)
     axs2[1].tick_params(axis="y", length=0)
     h = [thandle(t, {"wh": "WhatsHap"}.get(t)) for t in ("lp_gnn", "wh", "hc")]
     top.legend(handles=h, loc="outside upper center", ncol=3, handlelength=2.6, columnspacing=1.6)
@@ -563,7 +699,7 @@ def fig5():
     save(fig, os.path.join(OUT, "fig5_hifi.pdf"))
 
 
-# ============================================================ Figure 6 =====
+# ============================== Supplementary Fig. 16 and Table 12 data =====
 # Source: gnn_prepare/unphased_e6/unphased_grid.tsv (analyze_unphased.py,
 # 2026-10-07; final GNN model). SNV-only, seed 1; SNVs phased by LongPhase 2
 # and unphased after correction, matched to the v5.0q benchmark VCF by position
@@ -574,17 +710,6 @@ COMPOSITION = {  # cov: (absent, hom-alt, het)
     30: (52290, 1916, 2896), 40: (52775, 1845, 2425), 50: (51769, 1818, 2320),
     60: (52167, 1694, 2215),
 }
-# Source: UnphaseVenn3.jsx (JHL, 2026-09-27). Heterozygous SNVs present in both
-# output VCFs, replicate 1; LongPhase 2 = with correction.
-VENN = {
-    10: dict(phase=125981, gnn=22592, both=90210, wh=37676,
-             cross=[(9.82, 2.33), (10.41, 2.33), (3.38, 1.73)]),
-    30: dict(phase=111718, gnn=20720, both=96839, wh=52152,
-             cross=[(13.44, 1.52), (6.41, 1.52), (3.97, 0.94)]),
-    60: dict(phase=99813, gnn=22178, both=88692, wh=53621,
-             cross=[(11.70, 1.12), (6.52, 1.12), (10.10, 1.06)]),
-}
-
 
 def t2t():
     txt = open(os.path.join(ROOT, "unphase_validation_results.txt")).read()
@@ -600,68 +725,6 @@ def t2t():
     return dict(cls=cls, bg_in=int(bg.group(1)), bg_n=int(bg.group(2)), rm_in=int(rm.group(1)),
                 rm_n=int(rm.group(2)), chroms=chroms,
                 bench=(int(bench.group(1)), int(bench.group(2)), int(bench.group(3))))
-
-
-def venn_hist():
-    src = open(os.path.join(ROOT, "UnphaseVenn3.jsx")).read()
-    out = {}
-    for cov in ("10x", "30x", "60x"):
-        block = src.split(f'"{cov}": {{')[1].split("},\n  },")[0]
-        h = {}
-        for k in ("lp", "wh", "both"):
-            arr = re.search(rf"\b{k}: \[([^\]]+)\]", block).group(1)
-            h[k] = [float(x) for x in arr.replace("\n", "").split(",") if x.strip()]
-        out[int(cov[:-1])] = h
-    return out
-
-
-def lp_only_enrichment(c):
-    """Enrichment of all LongPhase 2-only sites (phase + GNN stage) in WhatsHap's intervals."""
-    v = VENN[c]; (pp, bg), (pg, _), _ = v["cross"]
-    return (v["phase"] * pp + v["gnn"] * pg) / (v["phase"] + v["gnn"]) / bg
-
-
-def fig6():
-    """SNVs left unphased by LongPhase 2 and by WhatsHap."""
-    fig, axs = new_fig(58, 1, 3, width_ratios=[1.35, 0.8, 1])
-    ax = axs[0]
-    segs = [("lp", "LongPhase 2 only", C["lp_gnn"]), ("both", "Both tools", "#969696"),
-            ("wh", "WhatsHap only", C["wh"])]
-    for y, c in enumerate([10, 30, 60]):
-        left = 0
-        vals = {"lp": VENN[c]["phase"] + VENN[c]["gnn"], "both": VENN[c]["both"], "wh": VENN[c]["wh"]}
-        for k, lab, col in segs:
-            v = vals[k] / 1000
-            ax.barh(y, v, 0.62, left=left, color=col, label=lab if y == 0 else None, zorder=3)
-            ax.text(left + v / 2, y, f"{v:.0f}", ha="center", va="center", fontsize=5.5, color="white")
-            left += v
-    ax.set_yticks([0, 1, 2]); ax.set_yticklabels(["10×", "30×", "60×"]); ax.invert_yaxis()
-    ax.set_xlabel("Heterozygous SNVs left unphased (thousands)")
-    fig.legend(handles=[Patch(color=col, label=lab) for _, lab, col in segs], loc="outside upper center", ncol=3)
-    letter(ax, "a")
-    ax = axs[1]
-    w = 0.36
-    for i, (lab, col, f) in enumerate([("LongPhase 2 only, in\nWhatsHap switch-error intervals", C["lp_gnn"], lp_only_enrichment),
-                                       ("WhatsHap only, in\nLongPhase 2 switch-error intervals", C["wh"],
-                                        lambda c: VENN[c]["cross"][2][0] / VENN[c]["cross"][2][1])]):
-        ax.bar([j + (i - 0.5) * w for j in range(3)], [f(c) for c in (10, 30, 60)], w * 0.92,
-               color=col, label=lab, zorder=3)
-    ax.axhline(1, color="#7F7F7F", lw=0.5, ls="--", zorder=4)
-    ax.set_xticks(range(3)); ax.set_xticklabels(["10×", "30×", "60×"]); ax.set_ylim(0, 11)
-    ax.set_ylabel("Enrichment in switch-error intervals\nof the other tool (fold)")
-    letter(ax, "b")
-    ax = axs[2]
-    H = venn_hist()
-    for k, col, lab in (("both", "#969696", "Both tools"), ("wh", C["wh"], "WhatsHap only"),
-                        ("lp", C["lp_gnn"], "LongPhase 2 only")):
-        ax.plot([2 * i for i in range(len(H[60][k]))], H[60][k], color=col, lw=0.8, label=lab)
-    ax.axvspan(123, 130, color="#EEEEEE", lw=0, zorder=0)
-    ax.text(127.8, 0.105, "≥ cap", ha="center", va="center", fontsize=5.5, color="#555555", rotation=90)
-    ax.set_xlim(0, 130); ax.set_ylim(0, 0.165)
-    ax.set_yticks([0, 0.05, 0.10, 0.15]); ax.set_yticklabels(["0", "0.05", "0.10", "0.15"])
-    ax.set_xlabel("Read depth at 60× (×)"); ax.set_ylabel("Fraction of sites")
-    letter(ax, "c")
-    save(fig, os.path.join(OUT, "fig6_unphased_analysis.pdf"))
 
 
 # ============================================== Supplementary Fig. 10 =====
@@ -879,12 +942,13 @@ def sfig15():
 
 # ============================================== Supplementary Fig. 12 =====
 def sfig17():
-    """Read depth of the sets each tool leaves unphased, 10/30/60x, LongPhase 2-only split by stage."""
+    """Read depth of the calls left unphased by one tool only and by both, 10/30/60x; sets named
+    and coloured by the tool that left them unphased, as in Supplementary Table 17."""
     H = venn_hist()
     fig, axs = new_fig(50, 1, 3)
     for ax, cov, L in zip(axs, (10, 30, 60), "abc"):
-        for k, col, lab in (("both", "#969696", "Both tools"), ("wh", C["wh"], "WhatsHap only"),
-                            ("lp", C["lp_gnn"], "LongPhase 2 only")):
+        for k, col, lab in (("both", "#969696", "Left unphased by both"), ("wh", C["wh"], "Left unphased by WhatsHap only"),
+                            ("lp", C["lp_gnn"], "Left unphased by LongPhase 2 only")):
             ax.plot([2 * i for i in range(len(H[cov][k]))], H[cov][k], color=col, lw=0.8, label=lab)
         ax.set_title(f"{cov}×", fontsize=6.5); ax.set_xlabel("Read depth (×)")
         ax.set_ylabel("Fraction of sites"); ax.set_xlim(0, 130)
@@ -892,8 +956,9 @@ def sfig17():
         ax.text(127.8, ax.get_ylim()[1] * 0.5, "≥ cap (censored)", ha="center", va="center", fontsize=5,
                 color="#555555", rotation=90)
         letter(ax, L)
-    h = [Line2D([], [], color=c, label=l) for c, l in ((C["lp_gnn"], "LongPhase 2 only"),
-                                                     ("#969696", "Both tools"), (C["wh"], "WhatsHap only"))]
+    h = [Line2D([], [], color=c, label=l) for c, l in ((C["lp_gnn"], "Left unphased by LongPhase 2 only"),
+                                                     (C["wh"], "Left unphased by WhatsHap only"),
+                                                     ("#969696", "Left unphased by both"))]
     fig.legend(handles=h, loc="outside upper center", ncol=3)
     save(fig, os.path.join(SUPP, "suppfig12_giveup_depth.pdf"))
 
@@ -1096,17 +1161,21 @@ def tables():
             w(r"\midrule")
     w(r"\bottomrule\end{tabular}\end{table}" + "\n")
     # ---- Table 8: SNV-only, all tools, nanopore
-    w(r"{\scriptsize\setlength{\tabcolsep}{2.4pt}")
-    w(r"\begin{longtable}{@{}llrrrrrrr@{}}")
-    w(r"\caption{\textbf{SNV-only phasing of HG002 nanopore R10.4.1 data by six configurations.} Scored against the v5.0q VCF (chr1--22, no benchmark BED applied). Values at 10--20$\times$ are means (s.d.) over ten down-sampling replicates; 30--60$\times$, one replicate. Phased SNVs are given as a percentage of the 2,398,880 heterozygous SNVs of the benchmark. Rate ratio, switch error rate divided by that of \toolname in the same down-sampling replicate. Margin and Ralphi were run at 10--20$\times$ only; GCphase was not included (Methods). Ralphi's phase blocks sum to 4.3--5.8~Gb, more than the length of the autosomes, so its block N50 is not comparable with that of the other tools.}\label{tab:snvall}\\")
-    w(r"\toprule Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate ratio to\\\toolname} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead")
-    w(r"\toprule Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate ratio to\\\toolname} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead")
+    w(r"{\scriptsize\setlength{\tabcolsep}{3pt}")
+    w(r"\begin{longtable}{@{}lrrrrrrrrr@{}}")
+    w(r"\caption{\textbf{SNV-only phasing of HG002 nanopore R10.4.1 data by six configurations.} Scored against the v5.0q VCF (chr1--22, no benchmark BED applied). Values at 10--20$\times$ are means (s.d.) over ten down-sampling replicates; 30--60$\times$, one replicate. Phased SNVs are given as a percentage of the 2,398,880 heterozygous SNVs of the benchmark. Precision, phased SNV calls that match a benchmark heterozygous SNV as a percentage of all phased heterozygous SNV calls on chr1--22 (\toolname and \whatshap only); F1, harmonic mean of precision and phased SNVs. Rate ratio, switch error rate divided by that of \toolname in the same down-sampling replicate. Margin and Ralphi were run at 10--20$\times$ only; GCphase was not included (Methods). Ralphi's phase blocks sum to 4.3--5.8~Gb, more than the length of the autosomes, so its block N50 is not comparable with that of the other tools.}\label{tab:snvall}\\")
+    w(r"\toprule Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Precision\\(\%)} & F1 (\%) & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate\\ratio} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead")
+    w(r"\toprule Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Precision\\(\%)} & F1 (\%) & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate\\ratio} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead")
     for t in ["lp_gnn", "lp", "wh", "hc", "margin", "ralphi"]:
         for c in COVS:
             runs = D["snv"]["ONT"][XLSX_TOOL[t]].get(c)
             if not runs:
                 continue
-            w(f"{NAME[t] if c == COVS[0] else ''} & {c}$\\times$ & {cell(runs, 'psnv_pct', 2)} & {cell(runs, 'sw', 0)} & "
+            prec = cell(precision_runs(t)(c), "prec", 2) if t in ("lp_gnn", "wh") else "--"
+            f1 = cell(precision_runs(t)(c), "f1", 2) if t in ("lp_gnn", "wh") else "--"
+            if c == COVS[0]:   # tool name on its own row, so that the long names do not widen the table
+                w(r"\multicolumn{10}{@{}l}{\textit{" + NAME[t] + r"}} \\*")
+            w(f"{c}$\\times$ & {cell(runs, 'psnv_pct', 2)} & {prec} & {f1} & {cell(runs, 'sw', 0)} & "
               f"{cell(runs, 'sw_pct', 3)} & {rate_ratio(t, c)} & {cell(runs, 'ham', 2)} & {cell(runs, 'nblock', 0)} & {cell(runs, 'n50', 2, 1e-6)} \\\\")
         w(r"\midrule")
     L[-1] = r"\bottomrule"
@@ -1191,12 +1260,50 @@ def tables():
     strata_tables(w, L)
     heldout_table(w)
     runtime_table(w)
+    # ---- Table 17: SNV calls left unphased, their benchmark status, the other tool's phase at the
+    # benchmark het. SNVs among them, and co-location with switch-error intervals (Fig. 3c net values; issue #6)
+    w(r"\begin{table}[h]")
+    w(r"\caption{\textbf{Heterozygous SNV calls phased by \toolname only, by \whatshap only, by both or by neither.} HG002 nanopore R10.4.1 data, SNV-only phasing, replicate~1; heterozygous SNV calls with single-base alleles and genotype 0/1, identical in both output VCFs, chrX and chrY included. Calls phased by \whatshap only are split by the \toolname stage that left them unphased: the phasing graph (unphased before GNN correction) or GNN correction. Benchmark status against the v5.0q VCF (chr1--22, no BED): het., heterozygous with the same position, reference and alternative allele (the match used by \code{compare}); other allele, another heterozygous record at the position; hom., homozygous; absent, no record; chrX/Y, outside the chr1--22 truth. \textbf{Top}, composition. \textbf{Middle}, the benchmark heterozygous SNVs among the calls phased by one tool only, scored for that tool: assessed, in a block with at least two assessed variants; wrong, phase opposite to the block's majority orientation relative to the truth (block-wise Hamming error); all phased, the tool's block-wise Hamming distance over all its phased SNVs. Switch-error intervals of the scored tool run from the first SNV of one of its switch-error pairs to the base before the second; inside, the share of the calls phased by that tool only that lie in them; expected, the share of all heterozygous SNV calls phased by that tool. \textbf{Bottom}, additional calls phased by \whatshap: calls phased by \whatshap only minus calls phased by \toolname only.}")
+    w(r"\label{tab:unphased}\scriptsize\setlength{\tabcolsep}{3.5pt}")
+    w(r"\begin{tabular}{@{}llrrrrrr@{}}\toprule")
+    w(r"Cov. & Phased by & Calls & Het. & Other allele & Hom. & Absent & chrX/Y \\ \midrule")
+    snames = (("wh_only", r"\toolname only"), ("lp_only", r"\whatshap only"),
+              ("lp_only_phase", r"\quad unphased by the \toolname graph"),
+              ("lp_only_gnn", r"\quad unphased by GNN correction"),
+              ("background", "both tools"), ("both", "neither tool"))
+    for c in VENN_COVS:
+        cl = f"{c}$\\times$"
+        for i, (s_, lab) in enumerate(snames):
+            w(f"{cl if i == 0 else ''} & {lab} & {comp(c, s_):,} & "
+              + " & ".join(f"{comp(c, s_, k):,}" for k in CLASSES) + r" \\")
+        if c != VENN_COVS[-1]:
+            w(r"\midrule")
+    w(r"\bottomrule\end{tabular}\par\medskip")
+    w(r"\begin{tabular}{@{}lllrrrrrrr@{}}\toprule")
+    w(r" & & & \multicolumn{4}{c}{Benchmark het.\ SNVs among them} & \multicolumn{3}{c}{The scored tool's switch-error intervals} \\ \cmidrule(lr){4-7}\cmidrule(l){8-10}")
+    w(r"Cov. & Phased by & Scored tool & Assessed & Wrong & Wrong (\%) & All phased (\%) & Inside (\%) & Expected (\%) & Fold \\ \midrule")
+    for c in VENN_COVS:
+        cl = f"{c}$\\times$"
+        for i, (s_, lab, other) in enumerate((("wh_only", r"\toolname only", r"\toolname"),
+                                             ("lp_only", r"\whatshap only", r"\whatshap"))):
+            n_, e_, pct, gw = other_tool_errors(c, s_)
+            iv = INTV[(c, s_)]
+            w(f"{cl if i == 0 else ''} & {lab} & {other} & {n_:,} & {e_:,} & {pct:.1f} & {gw:.2f} & "
+              f"{float(iv['in_other_sw_pct']):.2f} & {float(iv['other_background_pct']):.2f} & {float(iv['enrichment']):.2f} \\\\")
+    w(r"\bottomrule\end{tabular}\par\medskip")
+    w(r"\begin{tabular}{@{}lrrrrrr@{}}\toprule")
+    w(r"Cov. & \shortstack[r]{Additional calls\\phased by \whatshap} & Het. (\%) & Other allele & Hom. & Absent & chrX/Y \\ \midrule")
+    for c in VENN_COVS:
+        d = net_phased(c)
+        w(f"{c}$\\times$ & {d['n']:,} & {d['het_match']:,} ({100 * d['het_match'] / d['n']:.0f}) & "
+          + " & ".join(f"{d[k]:,}" for k in ("het_other_allele", "hom", "absent", "chrXY")) + r" \\")
+    w(r"\bottomrule\end{tabular}\end{table}" + "\n")
     path = os.path.join(ROOT, "figures-source", "supp_tables.tex")
     open(path, "w").write("\n".join(L) + "\n")
     print("wrote", os.path.relpath(path, ROOT))
 
 
 if __name__ == "__main__":
-    fig2(); fig3(); fig4(); fig5(); fig6()
+    fig2(); fig3(); fig4(); fig5()
     sfig10(); sfig11(); sfig12(); sfig13(); sfig14(); sfig15(); sfig17()
     tables()

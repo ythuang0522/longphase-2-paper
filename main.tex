@@ -83,23 +83,23 @@ Long-read phasers rarely combine sequence variants with the methylation signal o
 \begin{figure}[p]
   \centering
   \includegraphics[width=\textwidth]{fig2_phaser_comparison.pdf}
-  \caption{\textbf{\toolname compared with other phasers for each type of phasing evidence.}
-  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$; identical variant calls for every tool, scored against the T2T-HG002-derived v5.0q benchmark. Values at 10--20$\times$ are means of ten down-sampling replicates with the s.d.\ as a light band; values at 30--60$\times$ come from one down-sampling (Methods). Columns show the switch error rate (log scale), block-wise Hamming distance, phase-block N50 and the fraction of benchmark heterozygous variants phased.
-  \textbf{a}--\textbf{d}, SNV phasing compared with \whatshap and \hapcut.
-  \textbf{e}--\textbf{h}, SNV and indel co-phasing compared with \whatshap. In \textbf{e}, solid lines score consecutive SNV pairs and dotted lines consecutive pairs that include an indel; \textbf{f} and \textbf{h} refer to indels (Supplementary Table~14).
-  \textbf{i}--\textbf{l}, SNV and 5mC co-phasing compared with MethPhaser, replicate~1; MethPhaser was given the SNV-only output of \toolname without GNN correction (Methods).}
+  \caption{\textbf{Accuracy and contiguity of \toolname compared with other phasers for each type of phasing evidence.}
+  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$; identical variant calls for every tool, scored against the T2T-HG002-derived v5.0q benchmark. Values at 10--20$\times$ are means of ten down-sampling replicates with the s.d.\ as a light band; values at 30--60$\times$ come from one down-sampling (Methods). Columns show the switch error rate (log scale), block-wise Hamming distance, and SNV switch error rate against phase-block N50, one point per coverage from the lowest (bottom right) to the highest (top left). Phased fractions are shown in Fig.~\ref{fig:unphased}.
+  \textbf{a}--\textbf{c}, SNV phasing compared with \whatshap and \hapcut.
+  \textbf{d}--\textbf{f}, SNV and indel co-phasing compared with \whatshap; in \textbf{f}, the dashed line adds SVs and 5mC, which \whatshap cannot use, to the co-phasing of \toolname. In \textbf{d}, solid lines score consecutive SNV pairs and dotted lines consecutive pairs that include an indel; \textbf{e} refers to indels (Supplementary Table~14).
+  \textbf{g}--\textbf{i}, SNV and 5mC co-phasing compared with MethPhaser, replicate~1; MethPhaser was given the SNV-only output of \toolname without GNN correction (Methods).}
   \label{fig:phasers}
 \end{figure}
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=\textwidth]{fig3_evidence_classes.pdf}
-  \caption{\textbf{Phasing accuracy and contiguity as evidence classes are added.}
-  HG002 nanopore R10.4.1 data; \toolname phasing SNVs alone, with 5mC, with indels, or with indels, SVs and 5mC (all four classes); SNV accuracy against v5.0q; replicates as in Fig.~\ref{fig:phasers}. Every configuration is shown in Supplementary Fig.~15.
-  \textbf{a}, SNV switch error rate (log scale).
-  \textbf{b}, Phase-block N50.
-  \textbf{c}, SNV switch error rate against block N50 at 10, 20, \ldots, 60$\times$, one path per configuration from 10$\times$ (bottom) to 60$\times$ (top), with \whatshap phasing SNVs alone or with indels.}
-  \label{fig:evidence}
+  \includegraphics[width=\textwidth]{fig3_phased_unphased.pdf}
+  \caption{\textbf{Heterozygous SNV calls phased by \toolname and \whatshap.}
+  HG002 nanopore R10.4.1 data, SNV-only phasing; both tools received the same heterozygous calls. \textbf{a},\textbf{b}, replicates as in Fig.~\ref{fig:phasers}.
+  \textbf{a}, Fraction of the heterozygous SNVs of the v5.0q benchmark phased.
+  \textbf{b}, Share of the phased calls on chr1--22 that match a benchmark heterozygous SNV in position and alleles.
+  \textbf{c}, Phased heterozygous calls on chr1--22 at positions where v5.0q has a homozygous genotype (genotype errors), replicate~1 (Supplementary Table~17).}
+  \label{fig:unphased}
 \end{figure}
 
 \begin{figure}[p]
@@ -109,7 +109,7 @@ Long-read phasers rarely combine sequence variants with the methylation signal o
   SNV-only phasing of HG002 nanopore R10.4.1 data; replicates as in Fig.~\ref{fig:phasers}; both truth VCFs used in full.
   \textbf{a},\textbf{b}, Genome-wide switch errors under v4.2.1 (\textbf{a}) and v5.0q (\textbf{b}).
   \textbf{c}, Switch errors at 60$\times$; grey, switch errors made by all three tools at the same SNV pair, with their share of each tool's total.
-  \textbf{d},\textbf{e}, Switch error rate against v5.0q at 10$\times$ (\textbf{d}) and 60$\times$ (\textbf{e}) inside the v5.0q benchmark regions, in two GIAB v3.6 strata within them, and, below the dashed line, outside the benchmark regions of both truth sets, where the truth phase is least certain (exploratory); a variant pair is assigned to a region when both of its variants lie in it (Supplementary Table~13).}
+  \textbf{d},\textbf{e}, Switch error rate against v5.0q at 10$\times$ (\textbf{d}) and 60$\times$ (\textbf{e}) inside the v5.0q benchmark regions and in subsets of them: outside difficult regions and in segmental duplications (GIAB v3.6 strata), and in the parts that v4.2.1 also covers or that v5.0q adds. Below the dashed line, outside the benchmark regions of both truth sets, where the truth phase is least certain (exploratory). A variant pair is assigned to a region when both of its variants lie in it (Supplementary Table~13).}
   \label{fig:benchmarks}
 \end{figure}
 
@@ -117,7 +117,7 @@ Long-read phasers rarely combine sequence variants with the methylation signal o
   \centering
   \includegraphics[width=\textwidth]{fig5_hifi.pdf}
   \caption{\textbf{Phasing of PacBio HiFi data compared with WhatsHap.}
-  HG002 PacBio HiFi (Revio) reads down-sampled to 10--50$\times$, one replicate per coverage with variants called at each coverage; SNV-only phasing scored against v5.0q; \toolname uses the network trained on nanopore data. Panels as in Fig.~\ref{fig:phasers}a--d.
+  HG002 PacBio HiFi (Revio) reads down-sampled to 10--50$\times$, one replicate per coverage with variants called at each coverage; SNV-only phasing scored against v5.0q; \toolname uses the network trained on nanopore data.
   \textbf{a}, Switch error rate.
   \textbf{b}, Block-wise Hamming distance.
   \textbf{c}, Phase-block N50.
@@ -125,16 +125,6 @@ Long-read phasers rarely combine sequence variants with the methylation signal o
   \label{fig:hifi}
 \end{figure}
 
-\begin{figure}[p]
-  \centering
-  \includegraphics[width=\textwidth]{fig6_unphased_analysis.pdf}
-  \caption{\textbf{SNVs left unphased by \toolname and by WhatsHap.}
-  HG002 nanopore R10.4.1 data, SNV-only phasing, replicate 1; heterozygous SNV calls present in both output VCFs.
-  \textbf{a}, Calls left unphased by \toolname only, by both tools or by \whatshap only.
-  \textbf{b}, Enrichment of each tool-specific set in genomic intervals containing switch disagreements between the other tool and the truth set, relative to that tool's genome-wide rate (dashed line, no enrichment); a measure of regional co-location, not of site-level correctness.
-  \textbf{c}, Read-depth distribution of the three sets at 60$\times$ (2$\times$ bins); the grey bin collects sites at or above the depth cap of the variant caller.}
-  \label{fig:unphased}
-\end{figure}
 
 
 \section*{Discussion}

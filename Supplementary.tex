@@ -222,7 +222,7 @@ Metrics were computed with \code{longphase compare} (Supplementary Fig.~8), a C+
 
 \paragraph{Hamming distance.} For each block the query strings $(q_0,q_1)$ are compared with the truth strings $(t_0,t_1)$ in both orientations, and the smaller of $\mathrm{H}(t_0,q_0)+\mathrm{H}(t_1,q_1)$ and $\mathrm{H}(t_0,q_1)+\mathrm{H}(t_1,q_0)$ is halved to give the number of misassigned variants in that block. Block values are summed and expressed as a percentage of compared variants.
 
-\paragraph{Block N50.} Block spans in bp are sorted in decreasing order and the N50 is the span at which the cumulative sum first reaches half the total, which is the span-weighted median. It is computed twice: once per chromosome, and once over the block spans of all chromosomes pooled. The values plotted in Figs.~2c,g,k, 3b,c and 5c are the pooled, genome-wide N50 of the query, which does not depend on the truth set.
+\paragraph{Block N50.} Block spans in bp are sorted in decreasing order and the N50 is the span at which the cumulative sum first reaches half the total, which is the span-weighted median. It is computed twice: once per chromosome, and once over the block spans of all chromosomes pooled. The values plotted in Figs.~2c,f,i and 5c are the pooled, genome-wide N50 of the query, which does not depend on the truth set.
 
 
 \clearpage
@@ -438,7 +438,7 @@ Duet\cite{zhou2022duet} & BMC Bioinformatics 2022 & comparison method for SV pha
 \clearpage
 \input{figures-source/supp_tables}
 
-\paragraph{Supplementary Data 1.} \code{supplementary.xlsx}: per-run metrics behind Figs.~2--6, Supplementary Figs.~10--16 and Supplementary Tables~7--11, 13 and~14, with one row per coverage and down-sampling replicate. Sheet \code{Variant\_Calling}, input call sets; \code{SNV\_Detail}, SNV-only phasing by every tool on nanopore and HiFi data; \code{co-phase\_Detail}, the six co-phasing configurations of \toolname without (\code{longphase\_v2.0.1}) and with (\code{longphase\_v2.1}) GNN correction, and \whatshap with indels; \code{SNV\_switch\_by\_region}, SNV switch errors and assessed pairs of SNV-only runs per truth set, benchmark region and GIAB v3.6 stratum; \code{SNV\_switch\_coincidence}, switch errors at identical SNV pairs across tools (replicate~1); \code{Indel\_accuracy}, indel and SNV switch errors, assessed pairs and Hamming distance of the co-phasing runs, without and within the v5.0q benchmark regions. Blank cells are runs that were not performed.
+\paragraph{Supplementary Data 1.} \code{supplementary.xlsx}: per-run metrics behind Figs.~2--5, Supplementary Figs.~10--16 and Supplementary Tables~7--11, 13, 14 and~17, with one row per coverage and down-sampling replicate. Sheet \code{Variant\_Calling}, input call sets; \code{SNV\_Detail}, SNV-only phasing by every tool on nanopore and HiFi data; \code{co-phase\_Detail}, the six co-phasing configurations of \toolname without (\code{longphase\_v2.0.1}) and with (\code{longphase\_v2.1}) GNN correction, and \whatshap with indels; \code{SNV\_switch\_by\_region}, SNV switch errors and assessed pairs of SNV-only runs per truth set, benchmark region and GIAB v3.6 stratum; \code{SNV\_switch\_coincidence}, switch errors at identical SNV pairs across tools (replicate~1); \code{Indel\_accuracy}, indel and SNV switch errors, assessed pairs and Hamming distance of the co-phasing runs, without and within the v5.0q benchmark regions. \code{Unphased\_composition}, \code{Unphased\_intervals} and \code{Unphased\_depth}, the heterozygous SNV calls left unphased by \toolname only (\code{lp\_only}, phased by \whatshap only), by \whatshap only (\code{wh\_only}, phased by \toolname only) or by both (replicate~1 at 10, 30 and 60$\times$): benchmark status and the phase errors of the tool that phased them, co-location with that tool's switch-error intervals, and read-depth histograms in 2$\times$ bins (Fig.~3c, Supplementary Fig.~12 and Supplementary Table~17); \code{Phased\_calls}, the phased heterozygous SNV calls on chr1--22 of every SNV-only run of \toolname and \whatshap, the denominator of the precision in Fig.~3b and Supplementary Table~8. Blank cells are runs that were not performed.
 
 \clearpage
 \section*{Supplementary Figures}
@@ -561,7 +561,7 @@ Details are shown in Supplementary Figs.~5 and~6.}
 
 \begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig12_giveup_depth.pdf}
-\caption{\textbf{Read depth at heterozygous SNV calls left unphased by \toolname, by \whatshap or by both.} HG002 nanopore R10.4.1 data, replicate 1, at 10$\times$ (\textbf{a}), 30$\times$ (\textbf{b}) and 60$\times$ (\textbf{c}); 2$\times$ bins. The grey bin collects every site at or above the depth cap of the variant caller (about 125$\times$), whose true depth is censored. Sets as in Fig.~6a.}
+\caption{\textbf{Read depth at heterozygous SNV calls left unphased by \toolname only, by \whatshap only or by both.} HG002 nanopore R10.4.1 data, replicate 1, at 10$\times$ (\textbf{a}), 30$\times$ (\textbf{b}) and 60$\times$ (\textbf{c}); 2$\times$ bins. The grey bin collects every site at or above the depth cap of the variant caller (about 125$\times$), whose true depth is censored. Sets as in Supplementary Table~17.}
 \label{fig:supp_giveup}
 \end{figure}
 

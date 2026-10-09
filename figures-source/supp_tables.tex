@@ -23,68 +23,74 @@ HiFi & 40$\times$ & 2,438,078 & 2,508,667 & 425,166 & -- & -- & -- \\
 HiFi & 50$\times$ & 2,410,815 & 2,566,571 & 420,096 & -- & -- & -- \\
 \bottomrule\end{tabular}\end{table}
 
-{\scriptsize\setlength{\tabcolsep}{2.4pt}
-\begin{longtable}{@{}llrrrrrrr@{}}
-\caption{\textbf{SNV-only phasing of HG002 nanopore R10.4.1 data by six configurations.} Scored against the v5.0q VCF (chr1--22, no benchmark BED applied). Values at 10--20$\times$ are means (s.d.) over ten down-sampling replicates; 30--60$\times$, one replicate. Phased SNVs are given as a percentage of the 2,398,880 heterozygous SNVs of the benchmark. Rate ratio, switch error rate divided by that of \toolname in the same down-sampling replicate. Margin and Ralphi were run at 10--20$\times$ only; GCphase was not included (Methods). Ralphi's phase blocks sum to 4.3--5.8~Gb, more than the length of the autosomes, so its block N50 is not comparable with that of the other tools.}\label{tab:snvall}\\
-\toprule Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate ratio to\\\toolname} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead
-\toprule Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate ratio to\\\toolname} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead
-LongPhase 2 & 10$\times$ & 77.83 (0.07) & 1,518 (29) & 0.082 (0.002) & -- & 5.33 (0.25) & 7,143 (30) & 0.84 (0.01) \\
- & 12$\times$ & 84.48 (0.06) & 1,335 (54) & 0.066 (0.003) & -- & 5.41 (0.38) & 5,917 (52) & 1.10 (0.02) \\
- & 14$\times$ & 87.87 (0.05) & 1,137 (39) & 0.054 (0.002) & -- & 4.88 (0.58) & 5,284 (55) & 1.29 (0.03) \\
- & 16$\times$ & 89.58 (0.03) & 1,011 (27) & 0.047 (0.001) & -- & 4.20 (0.26) & 4,875 (44) & 1.44 (0.03) \\
- & 18$\times$ & 90.50 (0.04) & 918 (18) & 0.042 (0.001) & -- & 3.64 (0.26) & 4,608 (58) & 1.53 (0.03) \\
- & 20$\times$ & 90.94 (0.02) & 823 (43) & 0.038 (0.002) & -- & 3.21 (0.34) & 4,406 (46) & 1.61 (0.02) \\
- & 30$\times$ & 91.50 & 680 & 0.031 & -- & 1.82 & 3,793 & 1.92 \\
- & 40$\times$ & 91.54 & 602 & 0.027 & -- & 1.71 & 3,411 & 2.18 \\
- & 50$\times$ & 91.46 & 588 & 0.027 & -- & 1.48 & 3,198 & 2.51 \\
- & 60$\times$ & 91.35 & 496 & 0.023 & -- & 1.53 & 3,018 & 2.86 \\
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}lrrrrrrrrr@{}}
+\caption{\textbf{SNV-only phasing of HG002 nanopore R10.4.1 data by six configurations.} Scored against the v5.0q VCF (chr1--22, no benchmark BED applied). Values at 10--20$\times$ are means (s.d.) over ten down-sampling replicates; 30--60$\times$, one replicate. Phased SNVs are given as a percentage of the 2,398,880 heterozygous SNVs of the benchmark. Precision, phased SNV calls that match a benchmark heterozygous SNV as a percentage of all phased heterozygous SNV calls on chr1--22 (\toolname and \whatshap only); F1, harmonic mean of precision and phased SNVs. Rate ratio, switch error rate divided by that of \toolname in the same down-sampling replicate. Margin and Ralphi were run at 10--20$\times$ only; GCphase was not included (Methods). Ralphi's phase blocks sum to 4.3--5.8~Gb, more than the length of the autosomes, so its block N50 is not comparable with that of the other tools.}\label{tab:snvall}\\
+\toprule Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Precision\\(\%)} & F1 (\%) & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate\\ratio} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead
+\toprule Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Precision\\(\%)} & F1 (\%) & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate\\ratio} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead
+\multicolumn{10}{@{}l}{\textit{LongPhase 2}} \\*
+10$\times$ & 77.83 (0.07) & 89.39 (0.17) & 83.21 (0.09) & 1,518 (29) & 0.082 (0.002) & -- & 5.33 (0.25) & 7,143 (30) & 0.84 (0.01) \\
+12$\times$ & 84.48 (0.06) & 90.07 (0.12) & 87.19 (0.07) & 1,335 (54) & 0.066 (0.003) & -- & 5.41 (0.38) & 5,917 (52) & 1.10 (0.02) \\
+14$\times$ & 87.87 (0.05) & 90.49 (0.10) & 89.16 (0.05) & 1,137 (39) & 0.054 (0.002) & -- & 4.88 (0.58) & 5,284 (55) & 1.29 (0.03) \\
+16$\times$ & 89.58 (0.03) & 90.75 (0.16) & 90.16 (0.08) & 1,011 (27) & 0.047 (0.001) & -- & 4.20 (0.26) & 4,875 (44) & 1.44 (0.03) \\
+18$\times$ & 90.50 (0.04) & 91.10 (0.11) & 90.80 (0.05) & 918 (18) & 0.042 (0.001) & -- & 3.64 (0.26) & 4,608 (58) & 1.53 (0.03) \\
+20$\times$ & 90.94 (0.02) & 91.31 (0.17) & 91.13 (0.08) & 823 (43) & 0.038 (0.002) & -- & 3.21 (0.34) & 4,406 (46) & 1.61 (0.02) \\
+30$\times$ & 91.50 & 91.84 & 91.67 & 680 & 0.031 & -- & 1.82 & 3,793 & 1.92 \\
+40$\times$ & 91.54 & 92.38 & 91.96 & 602 & 0.027 & -- & 1.71 & 3,411 & 2.18 \\
+50$\times$ & 91.46 & 92.59 & 92.02 & 588 & 0.027 & -- & 1.48 & 3,198 & 2.51 \\
+60$\times$ & 91.35 & 93.05 & 92.19 & 496 & 0.023 & -- & 1.53 & 3,018 & 2.86 \\
 \midrule
-LongPhase 2 without GNN & 10$\times$ & 78.10 (0.07) & 2,259 (39) & 0.121 (0.002) & 1.48 (0.02) & 7.04 (0.29) & 6,056 (46) & 0.92 (0.01) \\
- & 12$\times$ & 84.71 (0.06) & 1,995 (60) & 0.098 (0.003) & 1.49 (0.04) & 7.21 (0.42) & 4,878 (39) & 1.21 (0.02) \\
- & 14$\times$ & 88.07 (0.05) & 1,706 (50) & 0.081 (0.002) & 1.50 (0.04) & 6.43 (0.55) & 4,314 (52) & 1.40 (0.02) \\
- & 16$\times$ & 89.75 (0.03) & 1,514 (40) & 0.070 (0.002) & 1.50 (0.03) & 5.51 (0.21) & 3,964 (43) & 1.54 (0.03) \\
- & 18$\times$ & 90.65 (0.03) & 1,374 (36) & 0.063 (0.002) & 1.50 (0.04) & 4.75 (0.22) & 3,740 (34) & 1.62 (0.03) \\
- & 20$\times$ & 91.08 (0.02) & 1,235 (45) & 0.057 (0.002) & 1.50 (0.04) & 4.12 (0.38) & 3,564 (35) & 1.70 (0.02) \\
- & 30$\times$ & 91.61 & 1,004 & 0.046 & 1.47 & 2.40 & 3,007 & 1.97 \\
- & 40$\times$ & 91.64 & 878 & 0.040 & 1.46 & 2.37 & 2,624 & 2.29 \\
- & 50$\times$ & 91.55 & 883 & 0.040 & 1.50 & 1.86 & 2,389 & 2.57 \\
- & 60$\times$ & 91.43 & 743 & 0.034 & 1.50 & 1.75 & 2,225 & 2.91 \\
+\multicolumn{10}{@{}l}{\textit{LongPhase 2 without GNN}} \\*
+10$\times$ & 78.10 (0.07) & -- & -- & 2,259 (39) & 0.121 (0.002) & 1.48 (0.02) & 7.04 (0.29) & 6,056 (46) & 0.92 (0.01) \\
+12$\times$ & 84.71 (0.06) & -- & -- & 1,995 (60) & 0.098 (0.003) & 1.49 (0.04) & 7.21 (0.42) & 4,878 (39) & 1.21 (0.02) \\
+14$\times$ & 88.07 (0.05) & -- & -- & 1,706 (50) & 0.081 (0.002) & 1.50 (0.04) & 6.43 (0.55) & 4,314 (52) & 1.40 (0.02) \\
+16$\times$ & 89.75 (0.03) & -- & -- & 1,514 (40) & 0.070 (0.002) & 1.50 (0.03) & 5.51 (0.21) & 3,964 (43) & 1.54 (0.03) \\
+18$\times$ & 90.65 (0.03) & -- & -- & 1,374 (36) & 0.063 (0.002) & 1.50 (0.04) & 4.75 (0.22) & 3,740 (34) & 1.62 (0.03) \\
+20$\times$ & 91.08 (0.02) & -- & -- & 1,235 (45) & 0.057 (0.002) & 1.50 (0.04) & 4.12 (0.38) & 3,564 (35) & 1.70 (0.02) \\
+30$\times$ & 91.61 & -- & -- & 1,004 & 0.046 & 1.47 & 2.40 & 3,007 & 1.97 \\
+40$\times$ & 91.64 & -- & -- & 878 & 0.040 & 1.46 & 2.37 & 2,624 & 2.29 \\
+50$\times$ & 91.55 & -- & -- & 883 & 0.040 & 1.50 & 1.86 & 2,389 & 2.57 \\
+60$\times$ & 91.43 & -- & -- & 743 & 0.034 & 1.50 & 1.75 & 2,225 & 2.91 \\
 \midrule
-WhatsHap (SNVs only) & 10$\times$ & 78.74 (0.07) & 4,383 (65) & 0.233 (0.003) & 2.85 (0.06) & 7.60 (0.39) & 5,960 (49) & 0.95 (0.01) \\
- & 12$\times$ & 85.35 (0.05) & 4,229 (126) & 0.207 (0.006) & 3.14 (0.20) & 7.99 (0.40) & 4,897 (45) & 1.24 (0.03) \\
- & 14$\times$ & 88.71 (0.05) & 3,848 (127) & 0.181 (0.006) & 3.35 (0.10) & 7.01 (0.42) & 4,435 (47) & 1.41 (0.02) \\
- & 16$\times$ & 90.37 (0.04) & 3,561 (134) & 0.165 (0.006) & 3.49 (0.10) & 6.37 (0.33) & 4,169 (52) & 1.53 (0.02) \\
- & 18$\times$ & 91.27 (0.03) & 3,291 (134) & 0.151 (0.006) & 3.56 (0.15) & 5.23 (0.39) & 4,009 (34) & 1.60 (0.04) \\
- & 20$\times$ & 91.68 (0.02) & 3,067 (147) & 0.140 (0.007) & 3.71 (0.31) & 4.40 (0.35) & 3,904 (38) & 1.65 (0.02) \\
- & 30$\times$ & 92.26 & 2,524 & 0.114 & 3.68 & 2.56 & 3,499 & 1.88 \\
- & 40$\times$ & 92.36 & 2,139 & 0.097 & 3.52 & 3.05 & 3,208 & 2.15 \\
- & 50$\times$ & 92.37 & 2,010 & 0.091 & 3.38 & 2.40 & 3,034 & 2.47 \\
- & 60$\times$ & 92.34 & 1,785 & 0.081 & 3.56 & 2.75 & 2,912 & 2.72 \\
+\multicolumn{10}{@{}l}{\textit{WhatsHap (SNVs only)}} \\*
+10$\times$ & 78.74 (0.07) & 86.22 (0.12) & 82.31 (0.07) & 4,383 (65) & 0.233 (0.003) & 2.85 (0.06) & 7.60 (0.39) & 5,960 (49) & 0.95 (0.01) \\
+12$\times$ & 85.35 (0.05) & 87.09 (0.12) & 86.21 (0.08) & 4,229 (126) & 0.207 (0.006) & 3.14 (0.20) & 7.99 (0.40) & 4,897 (45) & 1.24 (0.03) \\
+14$\times$ & 88.71 (0.05) & 87.79 (0.10) & 88.24 (0.06) & 3,848 (127) & 0.181 (0.006) & 3.35 (0.10) & 7.01 (0.42) & 4,435 (47) & 1.41 (0.02) \\
+16$\times$ & 90.37 (0.04) & 88.30 (0.12) & 89.32 (0.06) & 3,561 (134) & 0.165 (0.006) & 3.49 (0.10) & 6.37 (0.33) & 4,169 (52) & 1.53 (0.02) \\
+18$\times$ & 91.27 (0.03) & 88.65 (0.08) & 89.94 (0.04) & 3,291 (134) & 0.151 (0.006) & 3.56 (0.15) & 5.23 (0.39) & 4,009 (34) & 1.60 (0.04) \\
+20$\times$ & 91.68 (0.02) & 89.10 (0.09) & 90.38 (0.04) & 3,067 (147) & 0.140 (0.007) & 3.71 (0.31) & 4.40 (0.35) & 3,904 (38) & 1.65 (0.02) \\
+30$\times$ & 92.26 & 89.72 & 90.98 & 2,524 & 0.114 & 3.68 & 2.56 & 3,499 & 1.88 \\
+40$\times$ & 92.36 & 90.45 & 91.39 & 2,139 & 0.097 & 3.52 & 3.05 & 3,208 & 2.15 \\
+50$\times$ & 92.37 & 91.04 & 91.70 & 2,010 & 0.091 & 3.38 & 2.40 & 3,034 & 2.47 \\
+60$\times$ & 92.34 & 91.52 & 91.93 & 1,785 & 0.081 & 3.56 & 2.75 & 2,912 & 2.72 \\
 \midrule
-HapCUT2 & 10$\times$ & 78.78 (0.09) & 5,018 (108) & 0.266 (0.006) & 3.27 (0.07) & 7.77 (0.39) & 5,878 (55) & 0.95 (0.01) \\
- & 12$\times$ & 85.41 (0.05) & 4,948 (150) & 0.242 (0.007) & 3.67 (0.23) & 8.06 (0.32) & 4,837 (41) & 1.25 (0.02) \\
- & 14$\times$ & 88.76 (0.07) & 4,652 (104) & 0.219 (0.005) & 4.05 (0.12) & 7.10 (0.52) & 4,382 (48) & 1.44 (0.03) \\
- & 16$\times$ & 90.44 (0.04) & 4,344 (96) & 0.201 (0.004) & 4.26 (0.15) & 6.13 (0.41) & 4,122 (50) & 1.54 (0.02) \\
- & 18$\times$ & 91.32 (0.05) & 4,068 (121) & 0.186 (0.006) & 4.39 (0.12) & 5.32 (0.29) & 3,969 (39) & 1.61 (0.04) \\
- & 20$\times$ & 91.70 (0.03) & 3,825 (140) & 0.174 (0.006) & 4.62 (0.34) & 4.27 (0.35) & 3,872 (42) & 1.66 (0.02) \\
- & 30$\times$ & 92.27 & 3,280 & 0.148 & 4.78 & 2.61 & 3,482 & 1.89 \\
- & 40$\times$ & 92.37 & 2,916 & 0.132 & 4.80 & 2.90 & 3,203 & 2.16 \\
- & 50$\times$ & 92.38 & 2,568 & 0.116 & 4.32 & 2.20 & 3,034 & 2.46 \\
- & 60$\times$ & 92.34 & 2,309 & 0.104 & 4.60 & 2.11 & 2,911 & 2.72 \\
+\multicolumn{10}{@{}l}{\textit{HapCUT2}} \\*
+10$\times$ & 78.78 (0.09) & -- & -- & 5,018 (108) & 0.266 (0.006) & 3.27 (0.07) & 7.77 (0.39) & 5,878 (55) & 0.95 (0.01) \\
+12$\times$ & 85.41 (0.05) & -- & -- & 4,948 (150) & 0.242 (0.007) & 3.67 (0.23) & 8.06 (0.32) & 4,837 (41) & 1.25 (0.02) \\
+14$\times$ & 88.76 (0.07) & -- & -- & 4,652 (104) & 0.219 (0.005) & 4.05 (0.12) & 7.10 (0.52) & 4,382 (48) & 1.44 (0.03) \\
+16$\times$ & 90.44 (0.04) & -- & -- & 4,344 (96) & 0.201 (0.004) & 4.26 (0.15) & 6.13 (0.41) & 4,122 (50) & 1.54 (0.02) \\
+18$\times$ & 91.32 (0.05) & -- & -- & 4,068 (121) & 0.186 (0.006) & 4.39 (0.12) & 5.32 (0.29) & 3,969 (39) & 1.61 (0.04) \\
+20$\times$ & 91.70 (0.03) & -- & -- & 3,825 (140) & 0.174 (0.006) & 4.62 (0.34) & 4.27 (0.35) & 3,872 (42) & 1.66 (0.02) \\
+30$\times$ & 92.27 & -- & -- & 3,280 & 0.148 & 4.78 & 2.61 & 3,482 & 1.89 \\
+40$\times$ & 92.37 & -- & -- & 2,916 & 0.132 & 4.80 & 2.90 & 3,203 & 2.16 \\
+50$\times$ & 92.38 & -- & -- & 2,568 & 0.116 & 4.32 & 2.20 & 3,034 & 2.46 \\
+60$\times$ & 92.34 & -- & -- & 2,309 & 0.104 & 4.60 & 2.11 & 2,911 & 2.72 \\
 \midrule
-Margin & 10$\times$ & 78.53 (0.07) & 1,286 (31) & 0.069 (0.002) & 0.85 (0.03) & 0.47 (0.04) & 18,177 (100) & 0.26 (0.00) \\
- & 12$\times$ & 85.13 (0.06) & 1,347 (32) & 0.066 (0.002) & 1.01 (0.05) & 0.62 (0.10) & 13,654 (88) & 0.40 (0.01) \\
- & 14$\times$ & 88.47 (0.05) & 1,331 (46) & 0.063 (0.002) & 1.17 (0.04) & 0.72 (0.05) & 11,181 (69) & 0.52 (0.01) \\
- & 16$\times$ & 90.14 (0.03) & 1,302 (49) & 0.061 (0.002) & 1.29 (0.05) & 0.79 (0.11) & 9,738 (58) & 0.62 (0.01) \\
- & 18$\times$ & 91.04 (0.03) & 1,281 (41) & 0.059 (0.002) & 1.39 (0.05) & 0.87 (0.10) & 8,818 (49) & 0.71 (0.00) \\
- & 20$\times$ & 91.47 (0.02) & 1,254 (60) & 0.057 (0.003) & 1.52 (0.12) & 0.93 (0.11) & 8,129 (46) & 0.78 (0.01) \\
+\multicolumn{10}{@{}l}{\textit{Margin}} \\*
+10$\times$ & 78.53 (0.07) & -- & -- & 1,286 (31) & 0.069 (0.002) & 0.85 (0.03) & 0.47 (0.04) & 18,177 (100) & 0.26 (0.00) \\
+12$\times$ & 85.13 (0.06) & -- & -- & 1,347 (32) & 0.066 (0.002) & 1.01 (0.05) & 0.62 (0.10) & 13,654 (88) & 0.40 (0.01) \\
+14$\times$ & 88.47 (0.05) & -- & -- & 1,331 (46) & 0.063 (0.002) & 1.17 (0.04) & 0.72 (0.05) & 11,181 (69) & 0.52 (0.01) \\
+16$\times$ & 90.14 (0.03) & -- & -- & 1,302 (49) & 0.061 (0.002) & 1.29 (0.05) & 0.79 (0.11) & 9,738 (58) & 0.62 (0.01) \\
+18$\times$ & 91.04 (0.03) & -- & -- & 1,281 (41) & 0.059 (0.002) & 1.39 (0.05) & 0.87 (0.10) & 8,818 (49) & 0.71 (0.00) \\
+20$\times$ & 91.47 (0.02) & -- & -- & 1,254 (60) & 0.057 (0.003) & 1.52 (0.12) & 0.93 (0.11) & 8,129 (46) & 0.78 (0.01) \\
 \midrule
-Ralphi & 10$\times$ & 78.52 (0.08) & 3,784 (104) & 0.201 (0.006) & 2.47 (0.07) & 7.48 (0.27) & 5,692 (49) & 5.31 (7.10) \\
- & 12$\times$ & 85.14 (0.06) & 3,694 (164) & 0.181 (0.008) & 2.75 (0.19) & 8.32 (0.53) & 4,536 (34) & 7.97 (8.42) \\
- & 14$\times$ & 88.50 (0.06) & 3,452 (102) & 0.163 (0.005) & 3.02 (0.11) & 7.71 (0.63) & 4,000 (58) & 25.31 (16.84) \\
- & 16$\times$ & 90.17 (0.04) & 3,176 (104) & 0.147 (0.005) & 3.12 (0.12) & 7.60 (0.52) & 3,681 (36) & 30.67 (12.45) \\
- & 18$\times$ & 91.07 (0.03) & 2,979 (163) & 0.137 (0.007) & 3.23 (0.19) & 7.14 (0.51) & 3,463 (30) & 39.14 (14.83) \\
- & 20$\times$ & 91.50 (0.02) & 2,874 (96) & 0.131 (0.004) & 3.48 (0.25) & 6.56 (0.53) & 3,314 (37) & 47.11 (6.72) \\
+\multicolumn{10}{@{}l}{\textit{Ralphi}} \\*
+10$\times$ & 78.52 (0.08) & -- & -- & 3,784 (104) & 0.201 (0.006) & 2.47 (0.07) & 7.48 (0.27) & 5,692 (49) & 5.31 (7.10) \\
+12$\times$ & 85.14 (0.06) & -- & -- & 3,694 (164) & 0.181 (0.008) & 2.75 (0.19) & 8.32 (0.53) & 4,536 (34) & 7.97 (8.42) \\
+14$\times$ & 88.50 (0.06) & -- & -- & 3,452 (102) & 0.163 (0.005) & 3.02 (0.11) & 7.71 (0.63) & 4,000 (58) & 25.31 (16.84) \\
+16$\times$ & 90.17 (0.04) & -- & -- & 3,176 (104) & 0.147 (0.005) & 3.12 (0.12) & 7.60 (0.52) & 3,681 (36) & 30.67 (12.45) \\
+18$\times$ & 91.07 (0.03) & -- & -- & 2,979 (163) & 0.137 (0.007) & 3.23 (0.19) & 7.14 (0.51) & 3,463 (30) & 39.14 (14.83) \\
+20$\times$ & 91.50 (0.02) & -- & -- & 2,874 (96) & 0.131 (0.004) & 3.48 (0.25) & 6.56 (0.53) & 3,314 (37) & 47.11 (6.72) \\
 \bottomrule
 \end{longtable}}
 
@@ -393,3 +399,46 @@ Tool & Threads & Wall (min) & CPU (min) & Memory & Wall (min) & CPU (min) & Memo
 \whatshap & 1 & 25.2 & 25.1 & 1.5 & 113.8 & 113.6 & 4.0 \\
 \hapcut & 1 & 24.1 & 24.1 & 6.6 & 96.4 & 95.9 & 19.4 \\
 \bottomrule\end{tabular}\end{table}
+\begin{table}[h]
+\caption{\textbf{Heterozygous SNV calls phased by \toolname only, by \whatshap only, by both or by neither.} HG002 nanopore R10.4.1 data, SNV-only phasing, replicate~1; heterozygous SNV calls with single-base alleles and genotype 0/1, identical in both output VCFs, chrX and chrY included. Calls phased by \whatshap only are split by the \toolname stage that left them unphased: the phasing graph (unphased before GNN correction) or GNN correction. Benchmark status against the v5.0q VCF (chr1--22, no BED): het., heterozygous with the same position, reference and alternative allele (the match used by \code{compare}); other allele, another heterozygous record at the position; hom., homozygous; absent, no record; chrX/Y, outside the chr1--22 truth. \textbf{Top}, composition. \textbf{Middle}, the benchmark heterozygous SNVs among the calls phased by one tool only, scored for that tool: assessed, in a block with at least two assessed variants; wrong, phase opposite to the block's majority orientation relative to the truth (block-wise Hamming error); all phased, the tool's block-wise Hamming distance over all its phased SNVs. Switch-error intervals of the scored tool run from the first SNV of one of its switch-error pairs to the base before the second; inside, the share of the calls phased by that tool only that lie in them; expected, the share of all heterozygous SNV calls phased by that tool. \textbf{Bottom}, additional calls phased by \whatshap: calls phased by \whatshap only minus calls phased by \toolname only.}
+\label{tab:unphased}\scriptsize\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{@{}llrrrrrr@{}}\toprule
+Cov. & Phased by & Calls & Het. & Other allele & Hom. & Absent & chrX/Y \\ \midrule
+10$\times$ & \toolname only & 37,676 & 1,575 & 69 & 1,223 & 33,854 & 955 \\
+ & \whatshap only & 148,573 & 23,776 & 1,110 & 13,914 & 105,431 & 4,342 \\
+ & \quad unphased by the \toolname graph & 125,981 & 17,933 & 924 & 12,070 & 91,429 & 3,625 \\
+ & \quad unphased by GNN correction & 22,592 & 5,843 & 186 & 1,844 & 14,002 & 717 \\
+ & both tools & 2,058,271 & 1,865,903 & 2,404 & 13,221 & 164,177 & 12,566 \\
+ & neither tool & 90,210 & 2,449 & 213 & 3,793 & 80,486 & 3,269 \\
+\midrule
+30$\times$ & \toolname only & 52,152 & 1,579 & 133 & 1,324 & 47,058 & 2,058 \\
+ & \whatshap only & 132,438 & 20,022 & 932 & 5,202 & 101,021 & 5,261 \\
+ & \quad unphased by the \toolname graph & 111,718 & 17,819 & 779 & 4,128 & 84,701 & 4,291 \\
+ & \quad unphased by GNN correction & 20,720 & 2,203 & 153 & 1,074 & 16,320 & 970 \\
+ & both tools & 2,354,571 & 2,193,282 & 2,523 & 8,504 & 135,353 & 14,909 \\
+ & neither tool & 96,839 & 2,037 & 186 & 2,469 & 86,682 & 5,465 \\
+\midrule
+60$\times$ & \toolname only & 53,621 & 1,002 & 123 & 1,318 & 47,978 & 3,200 \\
+ & \whatshap only & 121,991 & 24,759 & 816 & 4,636 & 85,524 & 6,256 \\
+ & \quad unphased by the \toolname graph & 99,813 & 23,094 & 684 & 3,652 & 67,392 & 4,991 \\
+ & \quad unphased by GNN correction & 22,178 & 1,665 & 132 & 984 & 18,132 & 1,265 \\
+ & both tools & 2,315,519 & 2,190,309 & 2,252 & 7,179 & 104,820 & 10,959 \\
+ & neither tool & 88,692 & 1,570 & 157 & 1,867 & 77,570 & 7,528 \\
+\bottomrule\end{tabular}\par\medskip
+\begin{tabular}{@{}lllrrrrrrr@{}}\toprule
+ & & & \multicolumn{4}{c}{Benchmark het.\ SNVs among them} & \multicolumn{3}{c}{The scored tool's switch-error intervals} \\ \cmidrule(lr){4-7}\cmidrule(l){8-10}
+Cov. & Phased by & Scored tool & Assessed & Wrong & Wrong (\%) & All phased (\%) & Inside (\%) & Expected (\%) & Fold \\ \midrule
+10$\times$ & \toolname only & \toolname & 1,549 & 215 & 13.9 & 5.28 & 3.38 & 1.73 & 1.95 \\
+ & \whatshap only & \whatshap & 23,690 & 5,427 & 22.9 & 7.71 & 9.91 & 2.33 & 4.26 \\
+30$\times$ & \toolname only & \toolname & 1,565 & 261 & 16.7 & 1.82 & 3.97 & 0.94 & 4.21 \\
+ & \whatshap only & \whatshap & 19,996 & 3,187 & 15.9 & 2.56 & 12.34 & 1.52 & 8.11 \\
+60$\times$ & \toolname only & \toolname & 991 & 150 & 15.1 & 1.53 & 10.10 & 1.06 & 9.49 \\
+ & \whatshap only & \whatshap & 24,719 & 2,463 & 10.0 & 2.75 & 10.76 & 1.12 & 9.62 \\
+\bottomrule\end{tabular}\par\medskip
+\begin{tabular}{@{}lrrrrrr@{}}\toprule
+Cov. & \shortstack[r]{Additional calls\\phased by \whatshap} & Het. (\%) & Other allele & Hom. & Absent & chrX/Y \\ \midrule
+10$\times$ & 110,897 & 22,201 (20) & 1,041 & 12,691 & 71,577 & 3,387 \\
+30$\times$ & 80,286 & 18,443 (23) & 799 & 3,878 & 53,963 & 3,203 \\
+60$\times$ & 68,370 & 23,757 (35) & 693 & 3,318 & 37,546 & 3,056 \\
+\bottomrule\end{tabular}\end{table}
+
