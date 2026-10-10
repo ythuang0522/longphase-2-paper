@@ -36,7 +36,7 @@ refused publish without the user's explicit go-ahead.
 - Cross-references between the two documents are literal numbers ("Supplementary Fig.~6", "Supplementary Table~3"), not `\ref`. Renumbering a supplementary figure or table requires a grep sweep of `sections/*.tex` and `Supplementary.tex`.
 - `\todo{…}` renders red and is reserved for items that block submission. Everything non-blocking lives in `%  [tag]` source comments placed next to the paragraph they concern (`grep -n '^%  \[' sections/*.tex Supplementary.tex`); the tag vocabulary is listed in README. Do not promote comments to `\todo` or vice versa without reason.
 - Figure legends follow Nature Methods practice: a bold title plus one short sentence (two at most) per panel, well under ~150 words for a schematic figure. Say what each panel shows, not how it was drawn or implemented; architecture, feature lists and edge cases belong in Methods or the Supplementary figure the legend points to. Fig. 1 was cut from ~480 to ~100 words on the author's instruction (2026-09-24).
-- Section headings use `\subsection*`/`\paragraph` (unnumbered, Nature style); Results subsection titles are declarative sentences.
+- Results uses six unnumbered `\subsection*` headings, all declarative sentences, with no run-in `\paragraph` headings (author-approved consolidation, 2026-10-10). Preserve the comparison-then-internal-modules order through the final section's opening transition.
 - Bibliography: superscript natbib with `naturemag.bst`. Several `.bib` entries were hand-repaired from raw Crossref HTML; check new entries for `<scp>`/`<i>` in titles.
 
 ## Where the evidence lives
