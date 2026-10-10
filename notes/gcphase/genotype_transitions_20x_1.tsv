@@ -1,0 +1,14 @@
+input_GT	input_FILTER	output	records
+0/1	PASS	phased	2619383
+1/1	PASS	1/1	2028965
+0/0	refCall	0/0	1123520
+0/0	refCall	phased	800489
+0/1	PASS	0/1	371928
+1/2	PASS	1/2	36825
+./.	refCall	phased	332
+./.	refCall	./.	138
+1/1	PASS	absent	8
+0/0	refCall	absent	6
+0/2	PASS	0/2	1
+2/2	PASS	2/2	1
+# output records not in input: 0

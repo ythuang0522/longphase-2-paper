@@ -1,0 +1,12 @@
+--- a/phasingSNP.py	2026-04-30 01:18:45.497046300 +0800
++++ b/phasingSNP.py	2026-10-10 18:23:23.684864400 +0800
+@@ -349,6 +349,9 @@
+                 block_temp.append(node[:-2] + ',' + partition[node[:-2]])
+             block_all_temp.append(block_temp)
+ 
++        with open(output_directory + '/block-FM/premerge-' + chromosome + '.txt', 'w') as dbg:  # debug: blocks before joining
++            for block in block_all_temp:
++                dbg.write('\t'.join(block) + '\n')
+         block_all_new = []
+         block_flag = {}
+         for i in range(len(block_all_temp) - 1):
