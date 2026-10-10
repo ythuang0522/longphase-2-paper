@@ -30,8 +30,10 @@ for c in (10, 12, 14, 16, 18, 20, 30, 40, 50, 60):  # replicate 1 at every cover
     t1 = f'{T}/longphase_v2.1_gnn-t1_{c}.time'  # timed separately; skip coverages not yet timed
     if os.path.exists(t1):
         rows.append(('LongPhase 2', 'phase + GNN', 1, c, *gnu_v(t1)))
-    rows += [('WhatsHap 2.8', '--only-snvs', 1, c, *gnu(f'{R}/whatshap_v2.8/only/whatshap_v28_onlySNVs_{c}x_1.log')),
-             ('HapCUT2 1.3.4', 'extractHAIRS + HAPCUT2', 1, c, *gnu(f'{R}/hapcut2_v1.3.4/hapcut2_v134_{c}x_1.log'))]
+    rows.append(('WhatsHap 2.8', '--only-snvs', 1, c, *gnu(f'{R}/whatshap_v2.8/only/whatshap_v28_onlySNVs_{c}x_1.log')))
+    h = f'{R}/hapcut2_v1.3.4/hapcut2_v134_{c}x_1.log'
+    if 'Command terminated by signal' not in open(h).read():  # 30x, 40x: log overwritten by an interrupted rerun
+        rows.append(('HapCUT2 1.3.4', 'extractHAIRS + HAPCUT2', 1, c, *gnu(h)))
 with open('runtime.tsv', 'w') as f:
     f.write('tool\tconfiguration\tthreads\tcoverage\twall_s\tcpu_s\tmax_rss_kb\n')
     for r in rows:

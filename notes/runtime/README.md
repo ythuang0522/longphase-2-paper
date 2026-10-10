@@ -23,7 +23,9 @@ workstation of Methods (inputs and outputs on the hard-disk drive `/disk/researc
     the larger of the two.
   - WhatsHap: `/disk/research/whatshap_v2.8/only/whatshap_v28_onlySNVs_{c}x_1.log`
   - HapCUT2: `/disk/research/hapcut2_v1.3.4/hapcut2_v134_{c}x_1.log` (one timing covering
-    `extractHAIRS` and `HAPCUT2`)
+    `extractHAIRS` and `HAPCUT2`). No time at 30× and 40×: these two logs were overwritten on
+    2026-07-18 by a rerun that was stopped after 3–5 s (`Command terminated by signal 2`), and no
+    other copy of the original logs was found; `build_runtime.py` skips them.
 - **1 thread (LongPhase 2):** timed on 2026-10-09 with `/usr/bin/time -v`, same machine and
   disk, with every other job on the server stopped.
 
