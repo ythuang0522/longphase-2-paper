@@ -4,15 +4,16 @@ import {
 } from "recharts";
 
 // HG002 ONT R10.4.1, replicate 1, scored against GIAB v5.0q.
+// MethPhaser: 0.0.4 output VCFs (notes/methphaser/, issue #5); LongPhase 2.1: SNV + 5mC co-phasing.
 // Block N50 is in Mb; Phased SNV is the percentage of assessable
 // heterozygous SNVs in the benchmark.
 const data = [
-  { cov: 10, methphaser_sw: 2277, methphaser_psnv: 78.11491, methphaser_ham: 6.92789, methphaser_n50: 0.9395, lpgnn_sw: 1554, lpgnn_psnv: 77.89168, lpgnn_ham: 5.30991, lpgnn_n50: 0.8787 },
-  { cov: 20, methphaser_sw: 1311, methphaser_psnv: 91.08722, methphaser_ham: 3.98836, methphaser_n50: 1.6993, lpgnn_sw: 910, lpgnn_psnv: 90.97687, lpgnn_ham: 3.39801, lpgnn_n50: 1.7425 },
-  { cov: 30, methphaser_sw: 1004, methphaser_psnv: 91.60825, methphaser_ham: 2.40328, methphaser_n50: 1.9689, lpgnn_sw: 692, lpgnn_psnv: 91.50633, lpgnn_ham: 2.00896, lpgnn_n50: 2.073 },
-  { cov: 40, methphaser_sw: 878, methphaser_psnv: 91.63726, methphaser_ham: 2.37294, methphaser_n50: 2.2887, lpgnn_sw: 611, lpgnn_psnv: 91.55014, lpgnn_ham: 2.19873, lpgnn_n50: 2.4705 },
-  { cov: 50, methphaser_sw: 883, methphaser_psnv: 91.5461, methphaser_ham: 1.8627, methphaser_n50: 2.5705, lpgnn_sw: 610, lpgnn_psnv: 91.46514, lpgnn_ham: 1.8341, lpgnn_n50: 2.8654 },
-  { cov: 60, methphaser_sw: 743, methphaser_psnv: 91.43292, methphaser_ham: 1.75198, methphaser_n50: 2.9108, lpgnn_sw: 497, lpgnn_psnv: 91.36455, lpgnn_ham: 1.5984, lpgnn_n50: 3.0871 },
+  { cov: 10, methphaser_sw: 2317, methphaser_psnv: 78.11491, methphaser_ham: 7.1819, methphaser_n50: 1.0532, lpgnn_sw: 1554, lpgnn_psnv: 77.89168, lpgnn_ham: 5.30991, lpgnn_n50: 0.8787 },
+  { cov: 20, methphaser_sw: 1508, methphaser_psnv: 91.08722, methphaser_ham: 7.09123, methphaser_n50: 2.51, lpgnn_sw: 910, lpgnn_psnv: 90.97687, lpgnn_ham: 3.39801, lpgnn_n50: 1.7425 },
+  { cov: 30, methphaser_sw: 1142, methphaser_psnv: 91.60825, methphaser_ham: 5.89125, methphaser_n50: 3.777, lpgnn_sw: 692, lpgnn_psnv: 91.50633, lpgnn_ham: 2.00896, lpgnn_n50: 2.073 },
+  { cov: 40, methphaser_sw: 944, methphaser_psnv: 91.63726, methphaser_ham: 4.50548, methphaser_n50: 4.4809, lpgnn_sw: 611, lpgnn_psnv: 91.55014, lpgnn_ham: 2.19873, lpgnn_n50: 2.4705 },
+  { cov: 50, methphaser_sw: 938, methphaser_psnv: 91.5461, methphaser_ham: 5.15731, methphaser_n50: 5.5744, lpgnn_sw: 610, lpgnn_psnv: 91.46514, lpgnn_ham: 1.8341, lpgnn_n50: 2.8654 },
+  { cov: 60, methphaser_sw: 777, methphaser_psnv: 91.43292, methphaser_ham: 3.95951, methphaser_n50: 6.1089, lpgnn_sw: 497, lpgnn_psnv: 91.36455, lpgnn_ham: 1.5984, lpgnn_n50: 3.0871 },
 ];
 
 const SERIES = [
