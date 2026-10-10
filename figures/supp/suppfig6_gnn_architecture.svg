@@ -71,7 +71,7 @@
 <text x="675.0" y="358.5" class="tb" text-anchor="middle" fill="#16233D">Linear 130 → 128 → 2</text>
 <text x="675.0" y="371.0" class="s" text-anchor="middle">GELU, softmax</text>
 <rect x="586.0" y="392.0" width="178.0" height="30.0" rx="3" fill="#FBF0D5" stroke="#B8860B" stroke-width="0.9" opacity="1"/>
-<text x="675.0" y="405.5" class="tb" text-anchor="middle" fill="#16233D">phase-error score</text>
+<text x="675.0" y="405.5" class="tb" text-anchor="middle" fill="#16233D">onset score</text>
 <text x="675.0" y="418.0" class="s" text-anchor="middle">mean of the two allele nodes</text>
 <line x1="566.0" y1="310.0" x2="566.0" y2="342.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
 <line x1="556.0" y1="360.0" x2="584.0" y2="360.0" stroke="#6E7C8C" stroke-width="1" stroke-linecap="round" marker-end="url(#arr)"/>
@@ -87,8 +87,5 @@
 <rect x="16.0" y="376.0" width="330.0" height="16.0" rx="0" fill="#ffffff" stroke="none" stroke-width="0.8" opacity="1"/>
 <text x="22.0" y="387.0" class="tb" text-anchor="start">numerics</text>
 <text x="158.0" y="387.0" class="t" text-anchor="start">erf-based GELU, LayerNorm ε = 10<tspan font-size="72%" baseline-shift="super">−5</tspan></text>
-<rect x="16.0" y="392.0" width="330.0" height="16.0" rx="0" fill="#F7F9FB" stroke="none" stroke-width="0.8" opacity="1"/>
-<text x="22.0" y="403.0" class="tb" text-anchor="start">isolated nodes</text>
-<text x="158.0" y="403.0" class="t" text-anchor="start">attend uniformly to all nodes</text>
-<rect x="16.0" y="344.0" width="330.0" height="64.0" rx="0" fill="none" stroke="#C7D1DB" stroke-width="0.8" opacity="1"/>
+<rect x="16.0" y="344.0" width="330.0" height="48.0" rx="0" fill="none" stroke="#C7D1DB" stroke-width="0.8" opacity="1"/>
 </svg>

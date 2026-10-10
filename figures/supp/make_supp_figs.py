@@ -838,7 +838,7 @@ def fig_s4():
     S.text(fx, 249.4, "+", cls="tb", anchor="middle", fill=INK)
     S.line(fx, 253, fx, 288, stroke=GREY, w=1, arrow="arr")
     S.rect(CX + 20, 290, 112, 20, fill=AMBERL, stroke=AMBER, sw=0.9, r=3)
-    S.text(fx, 303, "phase-error score", cls="tb", anchor="middle", fill=INK)
+    S.text(fx, 303, "onset score", cls="tb", anchor="middle", fill=INK)
     S.text(CX, 328, "classifier head; the two allele", cls="s")
     S.text(CX, 340, "nodes of a variant are averaged", cls="s")
 
@@ -855,7 +855,7 @@ def fig_s4():
                      stroke="none", sw=0)
     S.text(DX + 84, 100, "+", cls="pl", anchor="middle", fill=GREY)
 
-    S.text(DX, 122, "phase-error score", cls="sb", fill=INK)
+    S.text(DX, 122, "onset score", cls="sb", fill=INK)
     base, hmax = 162, 30
     S.rect(ox0 + 20 * odx - 4, base - hmax, 8, hmax, fill=AMBER, r=2, op=0.16)
     prng = random.Random(21)
@@ -978,7 +978,7 @@ def fig_s5():
     S.node(cx0 + (cx1 - cx0) * 0.5, cy0, "", AMBER, r=4)
     S.text(cx0 + (cx1 - cx0) * 0.5, cy0 - 14, "predictions kept", cls="sb", anchor="middle", fill=AMBER)
     S.text(cx1 + 8, cy0 + 3, "r", cls="m", fill=INK)
-    S.text(466, 392, "r = |pos − pos" + sub("c") + "| / max offset;  kept if r ≤ 0.5",
+    S.text(466, 392, "r = (pos − pos" + sub("c") + ") / max |offset|; |r| ≤ 0.5",
            cls="s")
 
     # -- d ---------------------------------------------------------------
@@ -1094,7 +1094,7 @@ def fig_s6():
         "concat [ h" + sub("i") + " | Σw" + sub("ij") + " | max w" + sub("ij") + " ]",
         "130 features", fill="#fff", stroke=INK)
     box(586, 344, 178, 32, "Linear 130 → 128 → 2", "GELU, softmax")
-    box(586, 392, 178, 30, "phase-error score", "mean of the two allele nodes",
+    box(586, 392, 178, 30, "onset score", "mean of the two allele nodes",
         fill=AMBERL, stroke=AMBER, tc=INK)
     S.line(lx + 200, ly + lh, lx + 200, 342, stroke=GREY, arrow="arr")
     S.line(556, 360, 584, 360, stroke=GREY, arrow="arr")
@@ -1106,8 +1106,7 @@ def fig_s6():
     S.table(16, 344, [136, 194],
             [("stored values", "687,358"),
              ("attention cost", "dense O(N²), N ≤ 82 allele nodes"),
-             ("numerics", "erf-based GELU, LayerNorm ε = 10" + sup("−5")),
-             ("isolated nodes", "attend uniformly to all nodes")],
+             ("numerics", "erf-based GELU, LayerNorm ε = 10" + sup("−5"))],
             rowh=16)
 
     S.save("suppfig6_gnn_architecture.svg")

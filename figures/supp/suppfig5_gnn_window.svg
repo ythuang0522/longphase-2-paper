@@ -185,7 +185,7 @@
 <circle cx="590.0" cy="356.0" r="4" fill="#B8860B" stroke="#B8860B" stroke-width="0"/>
 <text x="590.0" y="342.0" class="sb" text-anchor="middle" fill="#B8860B">predictions kept</text>
 <text x="708.0" y="359.0" class="m" text-anchor="start" fill="#16233D">r</text>
-<text x="466.0" y="392.0" class="s" text-anchor="start">r = |pos − pos<tspan font-size="72%" baseline-shift="sub">c</tspan>| / max offset;  kept if r ≤ 0.5</text>
+<text x="466.0" y="392.0" class="s" text-anchor="start">r = (pos − pos<tspan font-size="72%" baseline-shift="sub">c</tspan>) / max |offset|; |r| ≤ 0.5</text>
 <line x1="16.0" y1="410.0" x2="764.0" y2="410.0" stroke="#C7D1DB" stroke-width="0.8" stroke-linecap="butt"/>
 <text x="16.0" y="434.0" class="pl" text-anchor="start">d</text>
 <text x="30.0" y="434.0" class="h" text-anchor="start">Exported phasing graph (DOT)</text>
