@@ -35,12 +35,13 @@ def _case(s):
 
 
 def load():
-    """Return dict with keys 'snv', 'coph', 'calls', 'v421'.
+    """Return dict with keys 'snv', 'coph', 'calls', 'v421', 'meth'.
 
     snv[platform][tool][cov] -> list of dicts (one per replicate)
     coph[config][tool][cov]  -> list of dicts (ONT only)
     calls[platform][cov]     -> list of dicts
     v421[tool][cov]          -> list of dicts
+    meth[cov]                -> dict (MethPhaser sheet, replicate 1)
     """
     wb = openpyxl.load_workbook(XLSX, data_only=True)
     snv = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
@@ -78,7 +79,11 @@ def load():
         tool, cov = m.group(1), int(m.group(2))
         v = [float(x) for x in f[1:]]
         v421[tool][cov].append(dict(zip(COPH_COLS, v)))
-    return {"snv": snv, "coph": coph, "calls": calls, "v421": v421}
+    meth = {}   # MethPhaser 0.0.4 on the SNV-only LongPhase 2 output without GNN, replicate 1
+    for r in _rows(wb["MethPhaser"]):
+        cov, rep = _case(r[2])
+        meth[cov] = dict(zip(SNV_COLS, r[3:11]), rep=rep, pairs=r[11])
+    return {"snv": snv, "coph": coph, "calls": calls, "v421": v421, "meth": meth}
 
 
 def ms(runs, key):

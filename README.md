@@ -1160,3 +1160,64 @@ checked against v2.1 (`../longphase`) and `GNN source/train_gnn_29.py`:
   no-incoming-edge branch in `GNNModel.h:291` is never reached).
 - Supplementary Figs. 4–6 regenerated: "onset score" labels, signed r in Fig. 5, "isolated nodes"
   row removed from Fig. 6 (SVGs identical to YMYEH's).
+
+**Todo triage, 2026-10-10 (author).** Removed as not blocking: the Methods `\todo`s on the per-run
+threshold sweep and trade-off panel (Supplementary Method 4 gives the criterion and the result), on
+region-filter commands and a metric table (scoring used no benchmark BED; Methods and Supplementary
+Method 6 define eligibility, numerators, denominators and blocks), and on the v5.0q chr1–22 command
+and source data (author: a Nature paper does not print the awk command; the chr1–22 restriction is
+stated in Methods and Supplementary Table 5; the awk provenance comment stays).
+- Supplementary Fig. 9 (calibration placeholder) removed with its `\todo` in Supplementary Method 3;
+  no sentence cited it. Supplementary Figs. 10–15 are now 9–14: literal references renumbered in
+  `sections/results.tex`, `Supplementary.tex` (Supplementary Data 1), source comments,
+  `make_results_figs.py` section headers and CLAUDE.md. The PDF file names (`suppfig10_*`–`suppfig15_*`)
+  keep their old numbers. Earlier entries in this log use the old numbers.
+- Still open: the MethPhaser N50 sentence (waits for JHL, issue #5), SV and 5mC counts to
+  Supplementary Data 1 (`q10_sv_mod.tsv`), `analyze_unphased.py` and the training/analysis scripts
+  in the public repository.
+- Supplementary Method 2: the scanner-constant `\todo` replaced by a "Choice of constants" paragraph
+  (author: inspection of HG002 clipping profiles at CNV segments with many false SNV calls, no sweep;
+  A from the read length; absolute counts at every coverage; sensitivity not assessed).
+- Supplementary Method 2, "State": the ramp state no longer cites breakage–fusion–bridge cycles (a
+  tumour-genome mechanism; the scanner was designed on HG002, author 2026-10-10).
+- Supplementary Table 5, MethPhaser row: command line added from `notes/methphaser/README.md`
+  (haplotag v2.0.2, primary records, `meth_phaser_parallel` `-vc`/`-g`, post-processing, the local
+  `str()` fix and the VCF repair by `fix_methphaser_vcf.py`).
+
+**MethPhaser rescored after the PS-lookup fix, 2026-10-10 (issue #5, JHL `5fb01f5`).** The overlapping
+MethPhaser blocks came from `PS=-1` written by the first local patch; the current patch finds the block
+from the record position. Phased SNVs unchanged; no overlap left.
+- Results: Hamming distance "2.0–2.9-fold" → 2.1–3.0-fold at 20–60×; the N50 `\todo` replaced by one
+  sentence: MethPhaser blocks 1.1-fold longer at 10× and 1.3–1.8-fold at 20–60× (0.96–5.49 versus
+  0.88–3.09 Mb). Switch error rate (1.5–1.7-fold), joins (+2–15% switch errors; Hamming ×1.04 and
+  1.8–2.8), GNN share (63–95%) and phased fractions (within 0.2 points) re-read and unchanged.
+  `[provenance]` comment rewritten with the new values.
+- Fig. 2g–i and Supplementary Fig. 10 now plot MethPhaser's own output: `results_data.load()` reads the
+  `MethPhaser` sheet (`D["meth"]`); the `METH` constants (= the input run) are gone. The nanopore N50
+  axis of Fig. 2c,f,i is 0–5.9 Mb (was 0–4.6) so that MethPhaser at 50–60× stays in the panel. No
+  other figure changed (pixel comparison).
+- Supplementary Table 5, MethPhaser row: the local fix is now described as the PS-lookup fallback.
+- `make_results_figs.py` section headers corrected to the current Supplementary figure numbers.
+
+**Runtime across coverage, 2026-10-10 (issue #8, JHL `baf32b1`).** `notes/runtime/runtime.tsv` now has
+replicate 1 at all ten coverages from the GNU `time` output of the paper runs. Missing: HapCUT2 at 30× and
+40× (logs overwritten on 2026-07-18 by a rerun stopped after 3–5 s); LongPhase 2 on one thread exists at
+10× and 60× only (optional step 2 not done).
+- New Supplementary Fig. 10 (`sfig_runtime()`, `suppfig_runtime.pdf`): wall-clock time, CPU time and peak
+  memory across coverage; HapCUT2 line broken at 30–40×, LongPhase 2 one thread as points. It is cited
+  between Supplementary Figs. 9 and 11, so the former 10–14 are now 11–15 (literal references in Results,
+  Supplementary Data 1, source comments, `make_results_figs.py` headers and CLAUDE.md). The Supplementary
+  Data 1 paragraph cited read depth as "Supplementary Fig. 12" after the Fig. 9 removal (should have been
+  11); after this shift it is correct again.
+- Supplementary Table 16: one row per coverage, four groups (LongPhase 2 24 threads, LongPhase 2 one
+  thread, WhatsHap, HapCUT2) × wall, CPU, memory; "--" where no value exists.
+- Results: wall time 4.6–17.6 min (24 threads) vs 25.2–113.8 (WhatsHap) and 24.1–96.4 (HapCUT2); CPU time
+  1.8-fold less than WhatsHap at 10× and 2.6–4.5-fold at 12–60×, 1.8–2.8-fold less than HapCUT2; CPU
+  growth 2.5- vs 4.5- and 4.0-fold; one thread unchanged (8.1 and 18.0 min); memory 36.0–63.0 GiB with 24
+  threads. Abstract ("five- to sixfold faster on one thread at 60×") unchanged and still correct.
+- Methods: timing per coverage from the paper runs, one-thread runs with no other jobs, HapCUT2 30–40×
+  not available, and why CPU time is reported next to wall time (no thread option; a per-chromosome split
+  shortens wall time only).
+- Note: the 24-thread LongPhase 2 wall time is irregular (10.2 min at 20× after 6.6 at 18×; 16.3 at 60×
+  below 17.6 at 50×) while its CPU time rises smoothly; the text therefore carries the trend with CPU time.
+- Supplementary Data 1 paragraph now lists the `MethPhaser` sheet (issue #5).

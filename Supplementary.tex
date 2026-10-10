@@ -71,7 +71,7 @@ The copy-number-aware filter (Methods; Supplementary Fig.~1e,f) requires the bou
 
 \paragraph{Input.} For every reference position at which at least one alignment carries a clipping operation longer than 5~bp, two counts are recorded: $u$, the number of alignments clipped at their front (left) end, and $d$, the number clipped at their back (right) end. An interval still open at the end of the chromosome was evaluated at a position 30~kb beyond the last observed clip.
 
-\paragraph{State.} The scanner is in one of three states: \emph{idle}, \emph{step} (a copy-number transition, entered on a strong front-clip cluster) and \emph{ramp} (the progressively nested breakpoints left by breakage--fusion--bridge cycles, entered on a weak front-clip excess). In the two active states it carries a running excess $c$ of front- over back-clips, a candidate start, a candidate end and three adaptive thresholds derived from the front-clip count $n$ that opened or re-anchored the interval:
+\paragraph{State.} The scanner is in one of three states: \emph{idle}, \emph{step} (a copy-number transition, entered on a strong front-clip cluster) and \emph{ramp} (progressively nested breakpoints, entered on a weak front-clip excess). In the two active states it carries a running excess $c$ of front- over back-clips, a candidate start, a candidate end and three adaptive thresholds derived from the front-clip count $n$ that opened or re-anchored the interval:
 \[
 r = n, \qquad
 p = \begin{cases} \lfloor n/2 \rfloor, & n \ge 10\\ 5, & n < 10\end{cases},
@@ -123,7 +123,11 @@ A stronger front-clip cluster re-anchored a \emph{step} interval: the candidate 
 
 \paragraph{Rationale for the mismatch-load statistic.} Comparable alternate-allele loads in the two read groups give $\mathrm{MR}$ near 0.5. Larger loads in the reads that carry the alternate allele increase $\mathrm{MR}$ and may indicate reads misaligned from paralogous sequence.
 
-\todo{State how the five scanner constants were chosen (a sweep, on which data, or by inspection); none is currently justified.}
+\paragraph{Choice of constants.} The constants of the scanner ($\Pi$, $A$, $E$, $\Lambda$ and $\Sigma$, those of the adaptive thresholds and the 5-bp minimum clip length) were set by inspection of clipping profiles in copy-number-variable segments of HG002, the individual evaluated here, in which many false heterozygous SNVs had been called; they were not tuned by a parameter sweep. The look-ahead window $A$ approximates the read length (read N50 of 29~kb; Methods). The thresholds are absolute alignment counts applied unchanged at every coverage, and the sensitivity of the results to them was not assessed.
+%  [provenance] 2026-10-10, author: set by inspection of HG002 clipping profiles at CNV segments
+%  with many false SNV calls (not designed on cancer data); A chosen from the read length. All
+%  scanner numbers entered as literals in longphase 8cb03ac (HBZ, 2025-01-14; PR #99), named in
+%  86ede58 (2026-06-24), values unchanged since; v2.1 PhasingGraph.h:19-23, PhasingGraph.cpp:1113-1221.
 
 % ------------------------------------------------------------------
 %  [optional figure] Report, at each coverage, how many intervals the scanner
@@ -135,7 +139,7 @@ A stronger front-clip cluster re-anchored a \emph{step} interval: the candidate 
 
 \subsection*{Supplementary Method 3. Tuning of the voting and read-filtering parameters}
 
-The constants in this section were set empirically. Writing the ambiguity of a pair as $s = \min(P,Q)/\max(P,Q)$, which ranges from 0 for unanimous support to 1 for an even split, the voting rule has three levels: a pair votes at weight $w = 20$ when it is near-certain, that is, when $s \le \alpha = 0.1$ with total support $\ge 1$ or, irrespective of $s$, when one pairing has accumulated less than 1 unit of support while the other has at least 1. The pair votes at unit weight otherwise, and does not vote at all when $s > \beta = 0.7$. Each of $\alpha$, $\beta$, $w$, the base-quality threshold $\theta = 12$ and the single-read guard parameters ($N = 3$ votes, ambiguity cut $\mu = 0.2$) was fixed by a sweep on HG002 at 10--60$\times$ before the experiments reported here, and none was re-tuned afterwards. The sweeps were run during the development of \longphase in 2023--2024 on whole-genome phasing of earlier HG002 nanopore alignments, before the alignments evaluated here were generated and before the chromosome split used for GNN training was defined. The parameters were therefore tuned on data from the same individual as the evaluation, and chr17, chr21 and chr22 are held out from GNN training but not from this tuning. \todo{Supplementary Fig.~9 must either be produced or removed before submission.}
+The constants in this section were set empirically. Writing the ambiguity of a pair as $s = \min(P,Q)/\max(P,Q)$, which ranges from 0 for unanimous support to 1 for an even split, the voting rule has three levels: a pair votes at weight $w = 20$ when it is near-certain, that is, when $s \le \alpha = 0.1$ with total support $\ge 1$ or, irrespective of $s$, when one pairing has accumulated less than 1 unit of support while the other has at least 1. The pair votes at unit weight otherwise, and does not vote at all when $s > \beta = 0.7$. Each of $\alpha$, $\beta$, $w$, the base-quality threshold $\theta = 12$ and the single-read guard parameters ($N = 3$ votes, ambiguity cut $\mu = 0.2$) was fixed by a sweep on HG002 at 10--60$\times$ before the experiments reported here, and none was re-tuned afterwards. The sweeps were run during the development of \longphase in 2023--2024 on whole-genome phasing of earlier HG002 nanopore alignments, before the alignments evaluated here were generated and before the chromosome split used for GNN training was defined. The parameters were therefore tuned on data from the same individual as the evaluation, and chr17, chr21 and chr22 are held out from GNN training but not from this tuning.
 
 \subsection*{Supplementary Method 4. Graph neural network: features, architecture, labels, training and export}
 
@@ -382,7 +386,7 @@ WhatsHap & 2.8 & \code{phase --ignore-read-groups --reference}; \code{--only-snv
 HapCUT2 & 1.3.4 & \code{extractHAIRS --ont 1}, then \code{HAPCUT2} with default parameters (default pruning); input restricted to heterozygous SNVs \\
 Margin & 2.3.1 & SNV-only comparison, 10--20$\times$; phasing parameters \code{allParams.phase\_vcf.ont.json}; input restricted to SNVs \\
 Ralphi & v0.0.1 (commit \code{d7d17b1}) & SNV-only comparison, 10--20$\times$; model \code{ralphi.v1.long.pt}, ONT configuration with \code{max\_coverage 15}, \code{mapq 20}, read selection and bad-read filtering \\
-MethPhaser & 0.0.4 & run on the uncorrected SNV-only \toolname output (same SNV phasing as the joint SNV+5mC run), replicate~1 \todo{command line} \\
+MethPhaser & 0.0.4 & run on the uncorrected SNV-only \toolname output (same SNV phasing as the joint SNV+5mC run), replicate~1, with its alignments haplotagged by \code{longphase haplotag} (v2.0.2) and restricted to primary records; \code{meth\_phaser\_parallel} with that VCF (\code{-vc}) and a GTF of its phase blocks (\code{-g}), then \code{meth\_phaser\_post\_processing}, otherwise default parameters; one local fix (when the block of a record cannot be found from its PS, which in \toolname output can precede the first phased variant of the block, it is found from the record position; 0.0.4 otherwise stops with an error), and output records split at missing line breaks and sorted \\
 HG002 PacBio HiFi reads & Revio, PacBio release 2023-10-31 & ccs 7.0.0, lima 2.7.1, primrose 1.4.0; aligned with pbmm2 1.10.0 (48$\times$); down-sampled with samtools 1.23.1 (seed 1) to 10--40$\times$, 48$\times$ used as 50$\times$; PEPPER-Margin-DeepVariant r0.8 \code{--hifi}, called separately at every coverage \\
 \longphase~1.0 & v1.0 & \code{--ont}; commit \code{fe8c1fdff11ba2a082d3}\allowbreak\code{63a7ffcb5c923cacc316} \\
 \toolname & v2.1, commit \code{46ba470} & Nanopore mode (\code{--pb} for HiFi); GNN correction with defaults \\
@@ -440,7 +444,7 @@ Duet\cite{zhou2022duet} & BMC Bioinformatics 2022 & comparison method for SV pha
 \clearpage
 \input{figures-source/supp_tables}
 
-\paragraph{Supplementary Data 1.} \code{supplementary.xlsx}: per-run metrics behind Figs.~2--4, Supplementary Figs.~10--15 and Supplementary Tables~7--11, 13, 14 and~17, with one row per coverage and down-sampling replicate. Sheet \code{Variant\_Calling}, input call sets; \code{SNV\_Detail}, SNV-only phasing by every tool on nanopore and HiFi data; \code{co-phase\_Detail}, the six co-phasing configurations of \toolname without (\code{longphase\_v2.0.1}) and with (\code{longphase\_v2.1}) GNN correction, and \whatshap with indels; \code{SNV\_switch\_by\_region}, SNV switch errors and assessed pairs of SNV-only runs per truth set, benchmark region and GIAB v3.6 stratum; \code{SNV\_switch\_coincidence}, switch errors at identical SNV pairs across tools (replicate~1); \code{Indel\_accuracy}, indel and SNV switch errors, assessed pairs and Hamming distance of the co-phasing runs, without and within the v5.0q benchmark regions. \code{Unphased\_composition}, \code{Unphased\_intervals} and \code{Unphased\_depth}, the heterozygous SNV calls left unphased by \toolname only (\code{lp\_only}, phased by \whatshap only), by \whatshap only (\code{wh\_only}, phased by \toolname only) or by both (replicate~1 at 10, 30 and 60$\times$): benchmark status and the phase errors of the tool that phased them, co-location with that tool's switch-error intervals, and read-depth histograms in 2$\times$ bins (Fig.~4d, Supplementary Fig.~12 and Supplementary Table~17); \code{Phased\_calls}, the phased heterozygous SNV calls on chr1--22 of every SNV-only run of \toolname and \whatshap, the denominator of the precision in Fig.~4c and Supplementary Table~8. Blank cells are runs that were not performed.
+\paragraph{Supplementary Data 1.} \code{supplementary.xlsx}: per-run metrics behind Figs.~2--4, Supplementary Figs.~9 and 11--15 and Supplementary Tables~7--11, 13, 14 and~17, with one row per coverage and down-sampling replicate. Sheet \code{Variant\_Calling}, input call sets; \code{SNV\_Detail}, SNV-only phasing by every tool on nanopore and HiFi data; \code{co-phase\_Detail}, the six co-phasing configurations of \toolname without (\code{longphase\_v2.0.1}) and with (\code{longphase\_v2.1}) GNN correction, and \whatshap with indels; \code{SNV\_switch\_by\_region}, SNV switch errors and assessed pairs of SNV-only runs per truth set, benchmark region and GIAB v3.6 stratum; \code{SNV\_switch\_coincidence}, switch errors at identical SNV pairs across tools (replicate~1); \code{Indel\_accuracy}, indel and SNV switch errors, assessed pairs and Hamming distance of the co-phasing runs, without and within the v5.0q benchmark regions. \code{Unphased\_composition}, \code{Unphased\_intervals} and \code{Unphased\_depth}, the heterozygous SNV calls left unphased by \toolname only (\code{lp\_only}, phased by \whatshap only), by \whatshap only (\code{wh\_only}, phased by \toolname only) or by both (replicate~1 at 10, 30 and 60$\times$): benchmark status and the phase errors of the tool that phased them, co-location with that tool's switch-error intervals, and read-depth histograms in 2$\times$ bins (Fig.~4d, Supplementary Fig.~12 and Supplementary Table~17); \code{Phased\_calls}, the phased heterozygous SNV calls on chr1--22 of every SNV-only run of \toolname and \whatshap, the denominator of the precision in Fig.~4c and Supplementary Table~8; \code{MethPhaser}, MethPhaser run on the SNV-only output of \toolname without GNN correction, scored as in \code{SNV\_Detail} (Fig.~2g--i and Supplementary Fig.~11). Blank cells are runs that were not performed.
 
 \clearpage
 \section*{Supplementary Figures}
@@ -535,23 +539,17 @@ Details are shown in Supplementary Figs.~5 and~6.}
 \end{figure}
 
 \begin{figure}[h]
-\centering
-\fbox{\begin{minipage}{0.97\textwidth}\vspace{3em}\centering\small\itshape Placeholder: panels to be regenerated with the submitted version.\vspace{3em}\end{minipage}}
-\caption{\textbf{Tuning of the voting and read-filtering parameters.} Sweeps on HG002 at 10--60$\times$; the value adopted in \toolname is marked.
-\textbf{a}, Distribution of the pair ambiguity $s$ over all assessed pairs and over pairs in a switch error.
-\textbf{b}, Switch errors and block N50 as a function of the no-vote threshold $\beta$.
-\textbf{c}, Switch errors as a function of the up-weight $w$ applied when $s \le \alpha$.
-\textbf{d}, Base-quality distribution over all bases and over erroneous bases, and switch errors as a function of the base-quality threshold $\theta$.
-\textbf{e}, Switch errors over the single-read-guard parameters $N$ and $\mu$, and with and without the guard.
-\todo{Placeholder: produce or remove. The five panels exist in the group's thesis material (Po-Hui Tzeng, 2026, Figs.~3.7, 3.10--3.12, 3.14, 3.17, 3.18, 3.21) and would be regenerated with the submitted version on the PEPPER-Margin-DeepVariant calls and coverages used here, in one consistent style; state two caveats: in \textbf{b} the switch-error curve has no interior optimum and $\beta$ rests on the N50 trade-off, and in \textbf{e} the guard slightly \emph{increased} switch errors at 10$\times$. If the figure is removed, delete the sentences citing it in Methods and Supplementary Method 3.}}
-\label{fig:supp_calibration}
-\end{figure}
-
-\begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig10_more_tools.pdf}
 \caption{\textbf{SNV-only phasing compared with Margin and Ralphi.} HG002 nanopore R10.4.1 data at 10--20$\times$, means of ten replicates with s.d., scored against v5.0q; \toolname with GNN correction.
 \textbf{a}, Switch error rate. \textbf{b}, Hamming distance. \textbf{c}, Block N50; Ralphi is omitted because its blocks sum to more than the autosome length. \textbf{d}, Number of phase blocks. Values in Supplementary Table~8.}
 \label{fig:supp_tools}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig_runtime.pdf}
+\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data, replicate~1, on the workstation described in Methods; values in Supplementary Table~16. \toolname includes GNN correction and was run with 24 threads at every coverage and on one thread at 10 and 60$\times$; \whatshap and \hapcut run on one thread. \hapcut times are not available at 30 and 40$\times$.
+\textbf{a}, Wall-clock time. \textbf{b}, CPU time (user plus system). \textbf{c}, Peak resident memory.}
+\label{fig:supp_runtime}
 \end{figure}
 
 \begin{figure}[h]

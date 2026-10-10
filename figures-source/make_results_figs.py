@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Generate the Results figures (Figs. 2-4), Supplementary Figs. 10-14 (except
-13, which is the retained raster) and Supplementary Tables 7-12 for the
+"""Generate the Results figures (Figs. 2-4), Supplementary Figs. 9-15 and
+Supplementary Tables 7-17 for the
 LongPhase 2 manuscript.
 
 Every number is read from the files listed in results_data.py, from
@@ -248,12 +248,10 @@ def save(fig, path):
 
 
 # ============================================================ Figure 2 =====
-# MethPhaser values: MethPhaserCompare.jsx (JHL, 2026-10-03). They are identical,
-# to every printed digit, to the uncorrected SNV-only LongPhase 2 run that was
-# MethPhaser's input (xlsx SNV_Detail, longphase_v2.0.1, replicate 1).
-METH = {10: (2277, 78.11491, 6.92789, 0.9395), 20: (1311, 91.08722, 3.98836, 1.6993),
-        30: (1004, 91.60825, 2.40328, 1.9689), 40: (878, 91.63726, 2.37294, 2.2887),
-        50: (883, 91.5461, 1.8627, 2.5705), 60: (743, 91.43292, 1.75198, 2.9108)}
+# MethPhaser values: sheet MethPhaser of Supplementary Data 1 (issue #5, JHL 5fb01f5): the
+# output of MethPhaser 0.0.4 with the PS-lookup patch, on the uncorrected SNV-only LongPhase 2
+# run (xlsx SNV_Detail, longphase_v2.0.1, replicate 1). The earlier values here
+# (MethPhaserCompare.jsx, 2026-10-03) were those of the input run.
 
 
 def rep1(cfg, tool, cov, key):
@@ -262,13 +260,10 @@ def rep1(cfg, tool, cov, key):
 
 
 def meth_value(cov, key):
-    """MethPhaser metric at one coverage. The draft gives counts, phased fraction, Hamming
-    distance and N50 but not the switch error rate; because the output equals its input
-    (checked here), the rate is taken from that input run."""
+    """MethPhaser metric at one coverage (replicate 1). MethPhaser phases the SNVs of its input."""
     run = [r for r in D["snv"]["ONT"]["longphase_v2.0.1"][cov] if r["rep"] == 1][0]
-    sw, psnv, ham, n50 = METH[cov]
-    assert run["sw"] == sw and abs(run["ham"] - ham) < 1e-3 and abs(run["n50"] / 1e6 - n50) < 1e-3
-    return run[key]
+    assert D["meth"][cov]["psnv"] == run["psnv"]
+    return D["meth"][cov][key]
 
 
 def _series(get, covs):
@@ -405,7 +400,7 @@ def fig2():
         if covs is HIFI_COVS:   # HiFi blocks are 4-7 times shorter; own N50 scale
             ax_tr.set_ylim(0, 0.7); ax_tr.set_yticks([0, 0.2, 0.4, 0.6])
         else:
-            ax_tr.set_ylim(0, 4.6); ax_tr.set_yticks([0, 1, 2, 3, 4])
+            ax_tr.set_ylim(0, 5.9); ax_tr.set_yticks([0, 1, 2, 3, 4, 5])   # MethPhaser reaches 5.5 Mb at 60x
         ax_tr.set_ylabel("Block N50 (Mb)")
         for ax, top in zip(axs[:2], grid[0][:2]):
             cov_axis(ax, HIFI_COVS if covs is HIFI_COVS else (10, 20, 30, 40, 50, 60))
@@ -780,7 +775,7 @@ def t2t():
                 bench=(int(bench.group(1)), int(bench.group(2)), int(bench.group(3))))
 
 
-# ============================================== Supplementary Fig. 10 =====
+# ============================================== Supplementary Fig. 9 =====
 def sfig10():
     """Margin and Ralphi at 10-20x (GCphase not included; see Methods)."""
     tools = ["hc", "wh", "ralphi", "margin", "lp_gnn"]
@@ -804,7 +799,40 @@ def sfig10():
     save(fig, os.path.join(SUPP, "suppfig10_more_tools.pdf"))
 
 
-# ============================================== Supplementary Fig. 11 =====
+def _runtime():
+    """notes/runtime/runtime.tsv (issue #8): (tool, threads, coverage) -> (wall min, CPU min,
+    peak RSS GiB). Replicate 1, GNU time of the paper runs; LongPhase 2 on one thread timed at
+    10x and 60x only; no HapCUT2 rows at 30x and 40x (logs overwritten)."""
+    import csv
+    rows = csv.DictReader(open(os.path.join(ROOT, "notes", "runtime", "runtime.tsv")), delimiter="\t")
+    return {(r["tool"], r["threads"], int(r["coverage"])):
+            (int(r["wall_s"]) / 60, int(r["cpu_s"]) / 60, int(r["max_rss_kb"]) / 1024 ** 2) for r in rows}
+
+
+# ============================================== Supplementary Fig. 10 =====
+def sfig_runtime():
+    """Runtime and peak memory of SNV-only phasing across coverage (issue #8). The HapCUT2 line
+    is broken at 30-40x, where no timing exists; LongPhase 2 on one thread has points only."""
+    rt = _runtime()
+    fig, axs = new_fig(52, 1, 3)
+    tools = (("hc", ("HapCUT2 1.3.4", "1")), ("wh", ("WhatsHap 2.8", "1")), ("lp_gnn", ("LongPhase 2", "24")))
+    for ax, lab, j, L in zip(axs, ("Wall-clock time (min)", "CPU time (min)", "Peak memory (GiB)"), range(3), "abc"):
+        for t, key in tools:
+            st_ = STY[t]
+            ax.plot(COVS, [rt[key + (c,)][j] if key + (c,) in rt else float("nan") for c in COVS], color=C[t],
+                    ls=st_["ls"], marker=st_["marker"], ms=st_["ms"], mfc=st_["mfc"], mew=0.8)
+        xs = [c for c in COVS if ("LongPhase 2", "1", c) in rt]
+        ax.plot(xs, [rt[("LongPhase 2", "1", c)][j] for c in xs], ls="none", color=C["lp_gnn"], marker="o",
+                ms=3.0, mew=0.8)
+        ax.set_ylim(bottom=0); ax.set_ylabel(lab); cov_axis(ax); letter(ax, L)
+    h = [thandle("lp_gnn", "LongPhase 2, 24 threads"),
+         Line2D([], [], color=C["lp_gnn"], ls="none", marker="o", ms=3.4, label="LongPhase 2, 1 thread"),
+         thandle("wh", "WhatsHap"), thandle("hc", "HapCUT2")]
+    fig.legend(handles=h, loc="outside upper center", ncol=4, handlelength=2.6, columnspacing=1.6)
+    save(fig, os.path.join(SUPP, "suppfig_runtime.pdf"))
+
+
+# ============================================== Supplementary Fig. 13 =====
 def sfig11():
     """Effect of GNN correction on SNV-only phasing (nanopore and HiFi)."""
     fig, axs = new_fig(100, 2, 3)
@@ -843,7 +871,7 @@ def sfig11():
     save(fig, os.path.join(SUPP, "suppfig13_gnn_effect.pdf"))
 
 
-# ============================================== Supplementary Fig. 12 =====
+# ============================================== Supplementary Fig. 14 =====
 def sfig12():
     """Co-phasing configurations with and without GNN correction (former main Fig. 4)."""
     fig, axs = new_fig(118, 2, 2)
@@ -890,7 +918,7 @@ def sfig12():
     save(fig, os.path.join(SUPP, "suppfig14_cophase_gnn.pdf"))
 
 
-# ============================================== Supplementary Fig. 13 =====
+# ============================================== Supplementary Fig. 15 =====
 def sfig13():
     """All co-phasing configurations across coverage, without and with GNN correction."""
     fig, axs = new_fig(96, 2, 4)
@@ -915,19 +943,19 @@ def sfig13():
     save(fig, os.path.join(SUPP, "suppfig15_cophasing_all.pdf"))
 
 
-# ============================================== Supplementary Fig. 14 =====
+# ============================================== Supplementary Fig. 11 =====
 def sfig14():
     """MethPhaser vs joint SNV+5mC co-phasing (replicate 1)."""
     fig, axs = new_fig(56, 1, 4)
-    specs = [("sw", 0, "Switch errors", 1), ("psnv_pct", 1, "Phased SNVs (%)", 1),
-             ("ham", 2, "Hamming distance (%)", 1), ("n50", 3, "Block N50 (Mb)", 1e-6)]
+    specs = [("sw", "Switch errors", 1), ("psnv_pct", "Phased SNVs (%)", 1),
+             ("ham", "Hamming distance (%)", 1), ("n50", "Block N50 (Mb)", 1e-6)]
     covs = BAR_COVS
-    for ax, (key, j, lab, sc), L in zip(axs, specs, "abcd"):
+    for ax, (key, lab, sc), L in zip(axs, specs, "abcd"):
         ax.plot(covs, [rep1("Mod", "longphase_v2.1", c, key) * sc for c in covs], color=C["lp_gnn"],
                 marker="o", ms=3.0, mfc="none", mew=0.8, label="LongPhase 2, SNVs + 5mC")
         ax.plot(covs, [rep1("Mod", "longphase_v2.0.1", c, key) * sc for c in covs], color=C["lp_gnn"],
                 ls="--", marker="o", ms=3.0, mfc="none", mew=0.8, label="LongPhase 2, SNVs + 5mC, without GNN")
-        ax.plot(covs, [METH[c][j] for c in covs], color=C["meth"], marker="^", ms=3.4, mfc="none", mew=0.8,
+        ax.plot(covs, [meth_value(c, key) * sc for c in covs], color=C["meth"], marker="^", ms=3.4, mfc="none", mew=0.8,
                 label="MethPhaser on LongPhase 2 SNV phasing without GNN")
         ax.set_ylabel(lab); cov_axis(ax); letter(ax, L)
     axs[1].set_ylim(76, 94)
@@ -1087,26 +1115,25 @@ def heldout_table(w):
 
 # ------------------------------------------- issue #3 table (Table 16) ---
 def runtime_table(w):
-    """Runtime and peak memory of SNV-only phasing (notes/runtime/runtime.tsv)."""
-    import csv
-    rows = list(csv.DictReader(open(os.path.join(ROOT, "notes", "runtime", "runtime.tsv")), delimiter="\t"))
-    w(r"\begin{table}[h]")
-    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data, replicate~1 at 10$\times$ and the 60$\times$ data set, on the workstation described in Methods. Wall-clock time, CPU time (user plus system) and peak resident memory (GiB) from \code{/usr/bin/time}. \toolname includes GNN correction; in the 24-thread runs, phasing and GNN correction were run as separate commands and their times summed (Methods). \hapcut includes fragment extraction.}\label{tab:runtime}")
-    w(r"\small\begin{tabular}{@{}llrrrrrr@{}}\toprule")
-    w(r" & & \multicolumn{3}{c}{10$\times$} & \multicolumn{3}{c}{60$\times$} \\ \cmidrule(lr){3-5}\cmidrule(l){6-8}")
-    w(r"Tool & Threads & Wall (min) & CPU (min) & Memory & Wall (min) & CPU (min) & Memory \\ \midrule")
+    """Runtime and peak memory of SNV-only phasing at every coverage (notes/runtime/runtime.tsv)."""
     from decimal import Decimal, ROUND_HALF_UP
     r1 = lambda x: str(Decimal(repr(x)).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP))
-    names = {"LongPhase 2": r"\toolname", "WhatsHap 2.8": r"\whatshap", "HapCUT2 1.3.4": r"\hapcut"}
-    order = [("LongPhase 2", "1"), ("LongPhase 2", "24"), ("WhatsHap 2.8", "1"), ("HapCUT2 1.3.4", "1")]
-    for tool, th in order:
+    rt = _runtime()
+    w(r"\begin{table}[h]")
+    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data, replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~10). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB, from \code{/usr/bin/time}. \toolname includes GNN correction; in the 24-thread runs, phasing and GNN correction were run as separate commands and their times summed (Methods). \toolname was timed on one thread at 10 and 60$\times$ only, and \hapcut times are not available at 30 and 40$\times$ (Methods); --, no value. \hapcut includes fragment extraction.}\label{tab:runtime}")
+    w(r"\small\setlength{\tabcolsep}{4pt}\begin{tabular}{@{}rrrrrrrrrrrrr@{}}\toprule")
+    groups = [(("LongPhase 2", "24"), r"\toolname, 24 threads"), (("LongPhase 2", "1"), r"\toolname, 1 thread"),
+              (("WhatsHap 2.8", "1"), r"\whatshap"), (("HapCUT2 1.3.4", "1"), r"\hapcut")]
+    w(" & " + " & ".join(rf"\multicolumn{{3}}{{c}}{{{n}}}" for _, n in groups) + r" \\ "
+      + "".join(rf"\cmidrule({'lr' if i < 3 else 'l'}){{{2 + 3 * i}-{4 + 3 * i}}}" for i in range(4)))
+    w("Coverage & " + " & ".join(["Wall & CPU & Memory"] * 4) + r" \\ \midrule")
+    for c in COVS:
         cells = []
-        for cov in ("10", "60"):
-            r = [x for x in rows if x["tool"] == tool and x["threads"] == th and x["coverage"] == cov][0]
-            cells += [r1(int(r["wall_s"]) / 60), r1(int(r["cpu_s"]) / 60), r1(int(r["max_rss_kb"]) / 1024 ** 2)]
-        w(f"{names[tool]} & {th} & " + " & ".join(cells) + r" \\")
+        for key, _ in groups:
+            v = rt.get(key + (c,))
+            cells += [r1(x) for x in v] if v else ["--"] * 3
+        w(rf"{c}$\times$ & " + " & ".join(cells) + r" \\")
     w(r"\bottomrule\end{tabular}\end{table}")
-
 
 def f(x, d=2):
     return f"{x:,.{d}f}"
@@ -1301,5 +1328,5 @@ def tables():
 
 if __name__ == "__main__":
     fig2(); fig3(); fig4()
-    sfig10(); sfig11(); sfig12(); sfig13(); sfig14(); sfig17()
+    sfig10(); sfig_runtime(); sfig11(); sfig12(); sfig13(); sfig14(); sfig17()
     tables()

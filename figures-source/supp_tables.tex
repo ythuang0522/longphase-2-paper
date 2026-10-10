@@ -390,14 +390,20 @@ v4.2.1 & 10$\times$ & 134 (8) & 0.149 & 0.178 & 0.215 & 0.225 & 0.080 & 0.195 & 
 
 \bottomrule\end{longtable}}
 \begin{table}[h]
-\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data, replicate~1 at 10$\times$ and the 60$\times$ data set, on the workstation described in Methods. Wall-clock time, CPU time (user plus system) and peak resident memory (GiB) from \code{/usr/bin/time}. \toolname includes GNN correction; in the 24-thread runs, phasing and GNN correction were run as separate commands and their times summed (Methods). \hapcut includes fragment extraction.}\label{tab:runtime}
-\small\begin{tabular}{@{}llrrrrrr@{}}\toprule
- & & \multicolumn{3}{c}{10$\times$} & \multicolumn{3}{c}{60$\times$} \\ \cmidrule(lr){3-5}\cmidrule(l){6-8}
-Tool & Threads & Wall (min) & CPU (min) & Memory & Wall (min) & CPU (min) & Memory \\ \midrule
-\toolname & 1 & 8.1 & 8.3 & 6.2 & 18.0 & 18.8 & 7.4 \\
-\toolname & 24 & 4.6 & 13.6 & 36.0 & 16.3 & 34.5 & 63.0 \\
-\whatshap & 1 & 25.2 & 25.1 & 1.5 & 113.8 & 113.6 & 4.0 \\
-\hapcut & 1 & 24.1 & 24.1 & 6.6 & 96.4 & 95.9 & 19.4 \\
+\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data, replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~10). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB, from \code{/usr/bin/time}. \toolname includes GNN correction; in the 24-thread runs, phasing and GNN correction were run as separate commands and their times summed (Methods). \toolname was timed on one thread at 10 and 60$\times$ only, and \hapcut times are not available at 30 and 40$\times$ (Methods); --, no value. \hapcut includes fragment extraction.}\label{tab:runtime}
+\small\setlength{\tabcolsep}{4pt}\begin{tabular}{@{}rrrrrrrrrrrrr@{}}\toprule
+ & \multicolumn{3}{c}{\toolname, 24 threads} & \multicolumn{3}{c}{\toolname, 1 thread} & \multicolumn{3}{c}{\whatshap} & \multicolumn{3}{c}{\hapcut} \\ \cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}\cmidrule(l){11-13}
+Coverage & Wall & CPU & Memory & Wall & CPU & Memory & Wall & CPU & Memory & Wall & CPU & Memory \\ \midrule
+10$\times$ & 4.6 & 13.6 & 36.0 & 8.1 & 8.3 & 6.2 & 25.2 & 25.1 & 1.5 & 24.1 & 24.1 & 6.6 \\
+12$\times$ & 5.0 & 14.5 & 39.1 & -- & -- & -- & 37.6 & 37.6 & 1.6 & 28.1 & 28.0 & 6.4 \\
+14$\times$ & 5.4 & 15.0 & 41.1 & -- & -- & -- & 49.0 & 49.0 & 1.8 & 35.3 & 35.2 & 8.3 \\
+16$\times$ & 6.1 & 15.8 & 42.1 & -- & -- & -- & 58.9 & 58.8 & 1.9 & 39.4 & 39.3 & 8.9 \\
+18$\times$ & 6.6 & 16.5 & 44.9 & -- & -- & -- & 74.1 & 73.9 & 2.1 & 42.1 & 41.9 & 9.6 \\
+20$\times$ & 10.2 & 17.5 & 45.6 & -- & -- & -- & 74.6 & 73.1 & 2.2 & 44.5 & 42.6 & 8.6 \\
+30$\times$ & 11.4 & 21.3 & 50.7 & -- & -- & -- & 90.7 & 90.4 & 2.6 & -- & -- & -- \\
+40$\times$ & 14.4 & 25.9 & 54.4 & -- & -- & -- & 100.4 & 100.1 & 3.0 & -- & -- & -- \\
+50$\times$ & 17.6 & 30.6 & 58.5 & -- & -- & -- & 107.6 & 107.1 & 3.5 & 85.7 & 84.5 & 16.7 \\
+60$\times$ & 16.3 & 34.5 & 63.0 & 18.0 & 18.8 & 7.4 & 113.8 & 113.6 & 4.0 & 96.4 & 95.9 & 19.4 \\
 \bottomrule\end{tabular}\end{table}
 \begin{table}[h]
 \caption{\textbf{Heterozygous SNV calls phased by \toolname only, by \whatshap only, by both or by neither.} HG002 nanopore R10.4.1 data, SNV-only phasing, replicate~1; heterozygous SNV calls with single-base alleles and genotype 0/1, identical in both output VCFs, chrX and chrY included. Calls phased by \whatshap only are split by the \toolname stage that left them unphased: the phasing graph (unphased before GNN correction) or GNN correction. Benchmark status against the v5.0q VCF (chr1--22, no BED): het., heterozygous with the same position, reference and alternative allele (the match used by \code{compare}); other allele, another heterozygous record at the position; hom., homozygous; absent, no record; chrX/Y, outside the chr1--22 truth. \textbf{Top}, composition. \textbf{Middle}, the benchmark heterozygous SNVs among the calls phased by one tool only, scored for that tool: assessed, in a block with at least two assessed variants; wrong, phase opposite to the block's majority orientation relative to the truth (block-wise Hamming error); all phased, the tool's block-wise Hamming distance over all its phased SNVs. Switch-error intervals of the scored tool run from the first SNV of one of its switch-error pairs to the base before the second; inside, the share of the calls phased by that tool only that lie in them; expected, the share of all heterozygous SNV calls phased by that tool. \textbf{Bottom}, additional calls phased by \whatshap: calls phased by \whatshap only minus calls phased by \toolname only.}
