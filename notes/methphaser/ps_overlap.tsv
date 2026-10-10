@@ -1,0 +1,25 @@
+coverage	vcf	PS_values	PS_overlapping_another	overlap_bp	records	check
+10x	input	6042	0	0	2136548	
+10x	unrepaired	5895	457	189848020	2136548	
+10x	repaired	5895	457	189848020	2136548	same records as unrepaired: True
+10x	PS_lookup_fixed	5885	0	0	2136548	differs from repaired in 7141 records, all PS -1 there: True; same POS/GT: True; PS -1 left: 0
+20x	input	3573	0	0	2441771	
+20x	unrepaired	2636	281	256588018	2441771	
+20x	repaired	2636	281	256588018	2441771	same records as unrepaired: True
+20x	PS_lookup_fixed	2624	0	0	2441771	differs from repaired in 8426 records, all PS -1 there: True; same POS/GT: True; PS -1 left: 0
+30x	input	3010	0	0	2443782	
+30x	unrepaired	2007	205	258095729	2443782	
+30x	repaired	2007	205	258095729	2443782	same records as unrepaired: True
+30x	PS_lookup_fixed	1994	0	0	2443782	differs from repaired in 27291 records, all PS -1 there: True; same POS/GT: True; PS -1 left: 0
+40x	input	2624	0	0	2430641	
+40x	unrepaired	1655	169	270376475	2430641	
+40x	repaired	1655	169	270376475	2430641	same records as unrepaired: True
+40x	PS_lookup_fixed	1645	0	0	2430641	differs from repaired in 28803 records, all PS -1 there: True; same POS/GT: True; PS -1 left: 0
+50x	input	2389	0	0	2421783	
+50x	unrepaired	1465	180	313888141	2421783	
+50x	repaired	1465	180	313888141	2421783	same records as unrepaired: True
+50x	PS_lookup_fixed	1455	0	0	2421783	differs from repaired in 18791 records, all PS -1 there: True; same POS/GT: True; PS -1 left: 0
+60x	input	2226	0	0	2406576	
+60x	unrepaired	1337	138	271662451	2406576	
+60x	repaired	1337	138	271662451	2406576	same records as unrepaired: True
+60x	PS_lookup_fixed	1329	0	0	2406576	differs from repaired in 19177 records, all PS -1 there: True; same POS/GT: True; PS -1 left: 0

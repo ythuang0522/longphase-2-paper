@@ -8,12 +8,12 @@ import {
 // Block N50 is in Mb; Phased SNV is the percentage of assessable
 // heterozygous SNVs in the benchmark.
 const data = [
-  { cov: 10, methphaser_sw: 2317, methphaser_psnv: 78.11491, methphaser_ham: 7.1819, methphaser_n50: 1.0532, lpgnn_sw: 1554, lpgnn_psnv: 77.89168, lpgnn_ham: 5.30991, lpgnn_n50: 0.8787 },
-  { cov: 20, methphaser_sw: 1508, methphaser_psnv: 91.08722, methphaser_ham: 7.09123, methphaser_n50: 2.51, lpgnn_sw: 910, lpgnn_psnv: 90.97687, lpgnn_ham: 3.39801, lpgnn_n50: 1.7425 },
-  { cov: 30, methphaser_sw: 1142, methphaser_psnv: 91.60825, methphaser_ham: 5.89125, methphaser_n50: 3.777, lpgnn_sw: 692, lpgnn_psnv: 91.50633, lpgnn_ham: 2.00896, lpgnn_n50: 2.073 },
-  { cov: 40, methphaser_sw: 944, methphaser_psnv: 91.63726, methphaser_ham: 4.50548, methphaser_n50: 4.4809, lpgnn_sw: 611, lpgnn_psnv: 91.55014, lpgnn_ham: 2.19873, lpgnn_n50: 2.4705 },
-  { cov: 50, methphaser_sw: 938, methphaser_psnv: 91.5461, methphaser_ham: 5.15731, methphaser_n50: 5.5744, lpgnn_sw: 610, lpgnn_psnv: 91.46514, lpgnn_ham: 1.8341, lpgnn_n50: 2.8654 },
-  { cov: 60, methphaser_sw: 777, methphaser_psnv: 91.43292, methphaser_ham: 3.95951, methphaser_n50: 6.1089, lpgnn_sw: 497, lpgnn_psnv: 91.36455, lpgnn_ham: 1.5984, lpgnn_n50: 3.0871 },
+  { cov: 10, methphaser_sw: 2319, methphaser_psnv: 78.11491, methphaser_ham: 7.18543, methphaser_n50: 0.9637, lpgnn_sw: 1554, lpgnn_psnv: 77.89168, lpgnn_ham: 5.30991, lpgnn_n50: 0.8787 },
+  { cov: 20, methphaser_sw: 1508, methphaser_psnv: 91.08722, methphaser_ham: 7.16216, methphaser_n50: 2.2772, lpgnn_sw: 910, lpgnn_psnv: 90.97687, lpgnn_ham: 3.39801, lpgnn_n50: 1.7425 },
+  { cov: 30, methphaser_sw: 1143, methphaser_psnv: 91.60825, methphaser_ham: 5.96069, methphaser_n50: 3.3466, lpgnn_sw: 692, lpgnn_psnv: 91.50633, lpgnn_ham: 2.00896, lpgnn_n50: 2.073 },
+  { cov: 40, methphaser_sw: 946, methphaser_psnv: 91.63726, methphaser_ham: 4.54911, methphaser_n50: 4.0649, lpgnn_sw: 611, lpgnn_psnv: 91.55014, lpgnn_ham: 2.19873, lpgnn_n50: 2.4705 },
+  { cov: 50, methphaser_sw: 938, methphaser_psnv: 91.5461, methphaser_ham: 5.1263, methphaser_n50: 5.0305, lpgnn_sw: 610, lpgnn_psnv: 91.46514, lpgnn_ham: 1.8341, lpgnn_n50: 2.8654 },
+  { cov: 60, methphaser_sw: 774, methphaser_psnv: 91.43292, methphaser_ham: 3.95285, methphaser_n50: 5.4858, lpgnn_sw: 497, lpgnn_psnv: 91.36455, lpgnn_ham: 1.5984, lpgnn_n50: 3.0871 },
 ];
 
 const SERIES = [

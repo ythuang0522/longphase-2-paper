@@ -12,8 +12,8 @@
 # WhatsHap-input pipeline) into methphaser_<c>x_1.fixed.vcf.
 #
 # Runs inside the workEnv container (methphaser_env), with the 0.0.4 scripts of
-# /disk/software/methphaser (git tag 0.0.4; meth_phaser_post_processing has a
-# local str() patch) first on PATH.  Several instances may run at once on
+# /disk/software/methphaser (git tag 0.0.4; meth_phaser_post_processing has the
+# local patch scripts/meth_phaser_post_processing.patch) first on PATH.  Several instances may run at once on
 # different coverages.
 #
 #   T=16 run_mp.sh 30 50
