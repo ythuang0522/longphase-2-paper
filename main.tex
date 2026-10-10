@@ -82,29 +82,19 @@ Long-read phasers rarely combine sequence variants with the methylation signal o
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=\textwidth]{fig2_phaser_comparison.pdf}
-  \caption{\textbf{Accuracy and contiguity of \toolname compared with other phasers for each type of phasing evidence.}
-  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$; identical variant calls for every tool, scored against the T2T-HG002-derived v5.0q benchmark. Values at 10--20$\times$ are means of ten down-sampling replicates with the s.d.\ as a light band; values at 30--60$\times$ come from one down-sampling (Methods). Columns show the switch error rate (log scale), block-wise Hamming distance, and SNV switch error rate against phase-block N50, one point per coverage from the lowest (bottom right) to the highest (top left). Phased fractions are shown in Fig.~\ref{fig:unphased}.
+  \includegraphics[width=\textwidth,height=0.64\textheight,keepaspectratio]{fig2_phaser_comparison.pdf}% four rows; height-limited so that the legend fits on the page
+  \caption{\textbf{Accuracy and contiguity of \toolname compared with other phasers for each type of phasing evidence and on PacBio HiFi data.}
+  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$ (\textbf{a}--\textbf{i}) and PacBio HiFi reads down-sampled to 10--50$\times$ (\textbf{j}--\textbf{l}); identical variant calls for every tool, scored against the T2T-HG002-derived v5.0q benchmark. Nanopore values at 10--20$\times$ are means of ten down-sampling replicates with the s.d.\ as a light band; all other values come from one down-sampling (Methods). Columns show the switch error rate (log scale), block-wise Hamming distance, and SNV switch error rate against phase-block N50, one point per coverage from the lowest (bottom right) to the highest (top left). Phased fractions are shown in Fig.~\ref{fig:unphased}.
   \textbf{a}--\textbf{c}, SNV phasing compared with \whatshap and \hapcut.
   \textbf{d}--\textbf{f}, SNV and indel co-phasing compared with \whatshap; in \textbf{f}, the dashed line adds SVs and 5mC, which \whatshap cannot use, to the co-phasing of \toolname. In \textbf{d}, solid lines score consecutive SNV pairs and dotted lines consecutive pairs that include an indel; \textbf{e} refers to indels (Supplementary Table~14).
-  \textbf{g}--\textbf{i}, SNV and 5mC co-phasing compared with MethPhaser, replicate~1; MethPhaser was given the SNV-only output of \toolname without GNN correction (Methods).}
+  \textbf{g}--\textbf{i}, SNV and 5mC co-phasing compared with MethPhaser, replicate~1; MethPhaser was given the SNV-only output of \toolname without GNN correction (Methods).
+  \textbf{j}--\textbf{l}, SNV phasing of PacBio HiFi (Revio) data compared with \whatshap, with variants called at each coverage; \toolname uses the network trained on nanopore data. The N50 axis of \textbf{l} differs from those of \textbf{c}, \textbf{f} and \textbf{i}.}
   \label{fig:phasers}
 \end{figure}
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=\textwidth]{fig3_phased_unphased.pdf}
-  \caption{\textbf{Heterozygous SNV calls phased by \toolname and \whatshap.}
-  HG002 nanopore R10.4.1 data, SNV-only phasing; both tools received the same heterozygous calls. \textbf{a},\textbf{b}, replicates as in Fig.~\ref{fig:phasers}.
-  \textbf{a}, Fraction of the heterozygous SNVs of the v5.0q benchmark phased.
-  \textbf{b}, Share of the phased calls on chr1--22 that match a benchmark heterozygous SNV in position and alleles.
-  \textbf{c}, Phased heterozygous calls on chr1--22 at positions where v5.0q has a homozygous genotype (genotype errors), replicate~1 (Supplementary Table~17).}
-  \label{fig:unphased}
-\end{figure}
-
-\begin{figure}[p]
-  \centering
-  \includegraphics[width=\textwidth]{fig4_two_benchmarks.pdf}
+  \includegraphics[width=\textwidth]{fig3_two_benchmarks.pdf}
   \caption{\textbf{The same phased VCFs scored against GIAB v4.2.1 and the T2T-HG002-derived v5.0q benchmark.}
   SNV-only phasing of HG002 nanopore R10.4.1 data; replicates as in Fig.~\ref{fig:phasers}; both truth VCFs used in full.
   \textbf{a},\textbf{b}, Genome-wide switch errors under v4.2.1 (\textbf{a}) and v5.0q (\textbf{b}).
@@ -115,15 +105,18 @@ Long-read phasers rarely combine sequence variants with the methylation signal o
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=\textwidth]{fig5_hifi.pdf}
-  \caption{\textbf{Phasing of PacBio HiFi data compared with WhatsHap.}
-  HG002 PacBio HiFi (Revio) reads down-sampled to 10--50$\times$, one replicate per coverage with variants called at each coverage; SNV-only phasing scored against v5.0q; \toolname uses the network trained on nanopore data.
-  \textbf{a}, Switch error rate.
-  \textbf{b}, Block-wise Hamming distance.
-  \textbf{c}, Phase-block N50.
-  \textbf{d}, Fraction of benchmark heterozygous SNVs phased.}
-  \label{fig:hifi}
+  \includegraphics[width=\textwidth]{fig4_phased_unphased.pdf}
+  \caption{\textbf{Heterozygous SNV calls phased by \toolname and \whatshap, and SNVs unphased by GNN correction.}
+  SNV-only phasing of HG002 nanopore R10.4.1 data (\textbf{a}, \textbf{c}--\textbf{g}) and PacBio HiFi data (\textbf{b}). \textbf{a}--\textbf{c}, coverages and replicates as in Fig.~\ref{fig:phasers}; \textbf{d}--\textbf{g}, replicate~1.
+  \textbf{a},\textbf{b}, Fraction of the heterozygous SNVs of the v5.0q benchmark phased from nanopore (\textbf{a}) and HiFi (\textbf{b}) data; both tools received the same heterozygous calls.
+  \textbf{c}, Share of the phased calls on chr1--22 that match a benchmark heterozygous SNV in position and alleles.
+  \textbf{d}, Phased heterozygous calls on chr1--22 at positions where v5.0q has a homozygous genotype (genotype errors; Supplementary Table~17).
+  \textbf{e}, SNVs phased before and unphased after GNN correction, by their genotype in the v5.0q benchmark VCF, matched by position without a benchmark BED.
+  \textbf{f}, At 60$\times$, these SNVs and a random sample of SNVs phased before correction, inside or outside the regions where both haplotypes of the T2T-HG002 assembly align one-to-one to GRCh38 (exploratory).
+  \textbf{g}, The share outside these regions for each chromosome (Supplementary Table~12).}
+  \label{fig:unphased}
 \end{figure}
+
 
 
 

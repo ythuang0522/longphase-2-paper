@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the Results figures (Figs. 2-5), Supplementary Figs. 10-14 (except
+"""Generate the Results figures (Figs. 2-4), Supplementary Figs. 10-14 (except
 13, which is the retained raster) and Supplementary Tables 7-12 for the
 LongPhase 2 manuscript.
 
@@ -14,7 +14,7 @@ Run from the repository root with any Python that has matplotlib and openpyxl:
  ~/miniforge3/envs/gemini/bin/python3.)
 
 Outputs:
-    figures/fig{2..5}_*.pdf
+    figures/fig{2..4}_*.pdf
     figures/supp/suppfig{10,11,12,14}_*.pdf
     figures-source/supp_tables.tex   (\\input by Supplementary.tex)
 """
@@ -335,18 +335,21 @@ def _path(ax, get, covs, color, ls, marker, msz, mfc="none", z=3):
 
 
 def fig2():
-    """LongPhase 2 against other phasers for each evidence type (nanopore, v5.0q).
+    """LongPhase 2 against other phasers for each evidence type and on HiFi data (v5.0q).
     Rows: SNV phasing (WhatsHap, HapCUT2), SNV and indel co-phasing (WhatsHap), SNV and
-    5mC co-phasing (MethPhaser). Columns: switch error rate, Hamming distance, and the
+    5mC co-phasing (MethPhaser), all nanopore; SNV phasing of PacBio HiFi data (WhatsHap; former
+    Fig. 5a-c, author decision, 2026-10-09: one message per main figure, HiFi completeness in
+    Fig. 4b; one replicate per coverage). Columns: switch error rate, Hamming distance, and the
     switch error rate against block N50 across coverage. Each row compares the tools on the
     same input; panel f adds, dashed, LongPhase 2 with SVs and 5mC also co-phased. In the indel
     row the accuracy panels also score the indels themselves (Supplementary Table 14).
-    The phased fractions are in Fig. 3 (author decision, 2026-10-09: accuracy and
+    The phased fractions are in Fig. 4 (author decision, 2026-10-09: accuracy and
     contiguity together, completeness with the analysis of what each tool leaves unphased)."""
-    fig = plt.figure(figsize=(FIGW, 150 * MM), layout="constrained")
+    fig = plt.figure(figsize=(FIGW, 198 * MM), layout="constrained")
     fig.get_layout_engine().set(w_pad=2 * MM, h_pad=1.2 * MM, wspace=0.05, hspace=0.0)
-    sfs = fig.subfigures(3, 1, hspace=0.035)
+    sfs = fig.subfigures(4, 1, hspace=0.035)
     snv = lambda tool: (lambda c: D["snv"]["ONT"][XLSX_TOOL[tool]].get(c))
+    hifi = lambda tool: (lambda c: D["snv"]["HiFi"][XLSX_TOOL[tool]].get(c))
     ind = lambda tool: (lambda c: D["coph"]["Indel"][tool].get(c))
     plus = lambda c: D["coph"][PLUS[0]]["longphase_v2.1"].get(c)
     mod1 = lambda c: [r for r in D["coph"]["Mod"]["longphase_v2.1"][c] if r["rep"] == 1]
@@ -358,9 +361,12 @@ def fig2():
          [("lp_gnn", "LongPhase 2", ind("longphase_v2.1")), ("wh", "WhatsHap", ind("whatshap_v28"))], True),
         ("SNV and 5mC co-phasing", BAR_COVS,
          [("lp_gnn", "LongPhase 2", mod1), ("meth", "MethPhaser", meth)], False),
+        ("SNV phasing, PacBio HiFi", HIFI_COVS,
+         [("lp_gnn", "LongPhase 2", hifi("lp_gnn")), ("wh", "WhatsHap", hifi("wh"))], False),
     ]
+    last = len(rows) - 1
     indel = {"lp_gnn": _indel_runs("longphase_coh_indel_gnn"), "wh": _indel_runs("whatshap_v28")}
-    letters = iter("abcdefghi")
+    letters = iter("abcdefghijkl")
     keys = []
     grid = []
     for r, (sf, (title, covs, tools, add_plus)) in enumerate(zip(sfs, rows)):
@@ -395,13 +401,18 @@ def fig2():
         axs[1].set_ylim(bottom=0)
         ax_tr.set_xscale("log"); ax_tr.minorticks_off()
         ax_tr.set_xticks([0.02, 0.05, 0.1, 0.2]); ax_tr.set_xticklabels(["0.02", "0.05", "0.1", "0.2"])
-        ax_tr.set_xlim(0.018, 0.32); ax_tr.set_ylim(0, 4.6); ax_tr.set_yticks([0, 1, 2, 3, 4])
+        ax_tr.set_xlim(0.018, 0.32)
+        if covs is HIFI_COVS:   # HiFi blocks are 4-7 times shorter; own N50 scale
+            ax_tr.set_ylim(0, 0.7); ax_tr.set_yticks([0, 0.2, 0.4, 0.6])
+        else:
+            ax_tr.set_ylim(0, 4.6); ax_tr.set_yticks([0, 1, 2, 3, 4])
         ax_tr.set_ylabel("Block N50 (Mb)")
-        for ax in axs[:2]:
-            cov_axis(ax)
-            if r < 2:
+        for ax, top in zip(axs[:2], grid[0][:2]):
+            cov_axis(ax, HIFI_COVS if covs is HIFI_COVS else (10, 20, 30, 40, 50, 60))
+            ax.set_xlim(top.get_xlim())   # same coverage scale in every row
+            if r < last:
                 ax.set_xlabel("")
-        if r == 2:
+        if r == last:
             ax_tr.set_xlabel("SNV switch error rate (%)")
         for ax in axs:
             letter(ax, next(letters))
@@ -419,9 +430,10 @@ def fig2():
     save(fig, os.path.join(OUT, "fig2_phaser_comparison.pdf"))
 
 
-# ============================================================ Figure 3 =====
+# ============================================================ Figure 4 =====
 # What each tool phases and leaves unphased (former Fig. 6 merged with the phased
-# fractions of former Fig. 2d,h; author decision, 2026-10-09).
+# fractions of former Fig. 2d,h; author decision, 2026-10-09; Fig. 3 until the swap with the
+# two-benchmark figure, author decision, 2026-10-09).
 # Source: notes/unphased/ (JHL, issue #6, 2026-10-09; issue6.py and scripts/run_coverage.sh,
 # which reproduce UnphaseVenn3.jsx). HG002 ONT, SNV-only, replicate 1, LongPhase 2 with GNN
 # against WhatsHap --only-snvs. Universe: heterozygous SNV calls with single-base REF and ALT
@@ -528,48 +540,110 @@ def phased_class(c, t, k):
     return comp(c, "background", k) + comp(c, ONLY[t], k)
 
 
-def fig3():
-    """One message (author, 2026-10-09): LongPhase 2 phases about 1% fewer benchmark SNVs than
-    WhatsHap, but more of the calls it phases are benchmark SNVs, and fewer of them are genotype
-    errors. a completeness, b precision (both tools, one key; F1 in the text and Supplementary
-    Table 8), c phased calls at positions where v5.0q is homozygous (the genotype errors of the
-    GIAB v5.0q framing that each tool writes onto a haplotype; author, 2026-10-09). The calls
-    left unphased by one tool only, their read depth and interval co-location are in the text,
-    Supplementary Table 17 and Supplementary Fig. 12; the regions added by v5.0q are in Fig. 4d,e.
-    Indel completeness is in Supplementary Table 9."""
-    fig = plt.figure(figsize=(FIGW, 70 * MM), layout="constrained")
-    fig.get_layout_engine().set(w_pad=2 * MM, h_pad=1.5 * MM, wspace=0.08)
-    ax_a, ax_b, ax_c = fig.subplots(1, 3)
+def fig4():
+    """What LongPhase 2 leaves unphased (author decisions, 2026-10-09 and 2026-10-10). Row 1, calls
+    phased by LongPhase 2 and WhatsHap: one message -- LongPhase 2 phases about 1% fewer benchmark
+    SNVs, but more of the calls it phases are benchmark SNVs, and fewer of them are genotype
+    errors. a completeness (nanopore), b completeness (PacBio HiFi, former Fig. 5d), c precision
+    (F1 in the text and Supplementary Table 8), d phased calls at positions where v5.0q is
+    homozygous (genotype errors written onto a haplotype; GIAB v5.0q framing); c and d are
+    nanopore only, because no HiFi precision or genotype-error counts exist. Row 2, SNVs unphased
+    by GNN correction (former Supplementary Fig. 16, promoted 2026-10-10 so that a main figure
+    shows what the network withholds): e v5.0q status by coverage, f T2T-HG002 assembly status at
+    60x against a random sample of SNVs phased before correction, g the same by chromosome.
+    Row 2 is a different set from row 1: GNN correction leaves unphased only about one sixth of
+    the calls that LongPhase 2 alone leaves unphased. No numbers inside panels (author,
+    2026-10-09); they are in the text and Supplementary Table 12. The calls left unphased by one
+    tool only, their read depth and interval co-location are in the text, Supplementary Table 17
+    and Supplementary Fig. 12; the regions added by v5.0q are in Fig. 3d,e."""
+    fig = plt.figure(figsize=(FIGW, 136 * MM), layout="constrained")
+    fig.get_layout_engine().set(w_pad=2 * MM, h_pad=1.2 * MM, wspace=0.05, hspace=0.0)
+    sf1, sf2 = fig.subfigures(2, 1, height_ratios=[62, 74], hspace=0.035)
+    # ---- row 1: LongPhase 2 and WhatsHap
+    ax_a, ax_h, ax_b, ax_c = sf1.subplots(1, 4)
     TOOLS = (("wh", "WhatsHap"), ("lp_gnn", "LongPhase 2"))   # LongPhase 2 drawn last, on top
-    snv = lambda tool: (lambda c: D["snv"]["ONT"][XLSX_TOOL[tool]].get(c))
+    snv = lambda tool, plat="ONT": (lambda c: D["snv"][plat][XLSX_TOOL[tool]].get(c))
     for t, _ in TOOLS:
         tline(ax_a, t, *_series(snv(t), PLOT_COVS)("psnv_pct"))
+        tline(ax_h, t, *_series(snv(t, "HiFi"), HIFI_COVS)("psnv_pct"))
         tline(ax_b, t, *_series(precision_runs(t), PLOT_COVS)("prec"))
     ax_a.set_ylim(76, 94); ax_a.set_yticks([76, 80, 84, 88, 92])
     ax_a.set_ylabel("Benchmark het. SNVs phased (%)")
-    ax_a.set_title("Completeness", loc="center", fontsize=6.5)
+    ax_a.set_title("Completeness, nanopore", loc="center", fontsize=6.5)
+    ax_h.set_ylim(86, 93); ax_h.set_yticks([86, 88, 90, 92])
+    ax_h.set_ylabel("Benchmark het. SNVs phased (%)")
+    ax_h.set_title("Completeness, PacBio HiFi", loc="center", fontsize=6.5)
     ax_b.set_ylim(84, 95); ax_b.set_yticks([85, 88, 91, 94])
     ax_b.set_ylabel("Phased calls that are\nbenchmark het. SNVs (%)")
-    ax_b.set_title("Precision", loc="center", fontsize=6.5)
-    for ax in (ax_a, ax_b):
-        cov_axis(ax)
-    # c: grouped bars, both tools, replicate 1 at 10/30/60x
-    ax = ax_c
+    ax_b.set_title("Precision, nanopore", loc="center", fontsize=6.5)
+    cov_axis(ax_a); cov_axis(ax_b); cov_axis(ax_h, HIFI_COVS)
+    ax_h.set_xlim(ax_a.get_xlim())   # same coverage scale as a
+    ax = ax_c   # d: grouped bars, both tools, replicate 1 at 10/30/60x
     for i, (t, _) in enumerate(reversed(TOOLS)):
         ax.bar([j + (i - 0.5) * 0.36 for j in range(3)], [phased_class(c, t, "hom") / 1000 for c in VENN_COVS],
                0.33, color=C[t], zorder=3)
     ax.set_xticks(range(3)); ax.set_xticklabels([f"{c}×" for c in VENN_COVS])
     ax.set_xlim(-0.6, 2.6); ax.set_ylim(0, 30); ax.set_yticks([0, 10, 20, 30])
-    ax.set_xlabel("Coverage"); ax.set_ylabel("Phased calls (thousands)")
-    ax.set_title("Genotype errors phased\n(heterozygous calls at v5.0q homozygous sites)", loc="center", fontsize=6.5)
-    for ax, L in zip((ax_a, ax_b, ax_c), "abc"):
+    ax.set_xlabel("Coverage"); ax.set_ylabel("Phased het. calls at v5.0q\nhomozygous sites (thousands)")
+    ax.set_title("Genotype errors phased, nanopore", loc="center", fontsize=6.5)
+    # ---- row 2: SNVs unphased by GNN correction (LongPhase 2 only)
+    T = t2t()
+    ax_e, ax_f, ax_g = sf2.subplots(1, 3, width_ratios=[1.25, 1, 0.9])
+    GREYS = ("#D9D9D9", "#969696", "#4D4D4D")   # light = cannot be verified, dark = verified
+    KEYPAD = 12   # points: titles of e-g sit above the one-line keys of e and f
+    ax = ax_e
+    xs = range(len(COVS)); bottom = [0] * len(COVS)
+    for i, lab in enumerate(("absent", "homozygous", "heterozygous")):   # COMPOSITION order
+        v = [100 * COMPOSITION[c][i] / sum(COMPOSITION[c]) for c in COVS]
+        ax.bar(xs, v, 0.72, bottom=bottom, color=GREYS[i], label=lab, zorder=3)
+        bottom = [x + y for x, y in zip(bottom, v)]
+    ax.set_xticks(list(xs)); ax.set_xticklabels([str(c) for c in COVS])
+    ax.set_xlabel("Coverage (×)"); ax.set_ylabel("SNVs unphased by GNN (%)")
+    ax.set_ylim(0, 100); ax.set_yticks([0, 25, 50, 75, 100])
+    ax.set_title("Status in the v5.0q benchmark", loc="center", fontsize=6.5, pad=KEYPAD)
+    h, l = ax.get_legend_handles_labels()
+    ax.legend(h[::-1], l[::-1], loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=3, fontsize=5.5,
+              handlelength=1.0, columnspacing=1.0, borderaxespad=0.2)
+    ax = ax_f
+    n = T["rm_n"]; out_rm = 100 * T["cls"]["unassessed"] / n
+    out_bg = 100 * (1 - T["bg_in"] / T["bg_n"])
+    for y, out in ((1, out_bg), (0, out_rm)):
+        ax.barh(y, 100 - out, 0.55, color=GREYS[2], zorder=3)
+        ax.barh(y, out, 0.55, left=100 - out, color=GREYS[0], zorder=3)
+    ax.set_yticks([0, 1]); ax.set_yticklabels(["Unphased\nby GNN", "Phased\n(random\nsample)"])
+    ax.tick_params(axis="y", length=0)
+    ax.set_xlim(0, 100); ax.set_xticks([0, 25, 50, 75, 100]); ax.set_ylim(-0.6, 1.6)
+    ax.set_xlabel("SNVs at 60× (%)")
+    ax.set_title("T2T-HG002 assembly", loc="center", fontsize=6.5, pad=KEYPAD)
+    ax.legend(handles=[Patch(color=GREYS[2], label="aligned 1:1"), Patch(color=GREYS[0], label="not aligned 1:1")],
+              loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=2, fontsize=5.5, handlelength=1.0,
+              columnspacing=1.0, borderaxespad=0.2)
+    ax = ax_g
+    order = [f"chr{i}" for i in range(1, 23)] + ["chrX", "chrY"]
+    ch = sorted(T["chroms"], key=lambda d: order.index(d["chrom"]))
+    ys = range(len(ch))
+    for y, d in zip(ys, ch):
+        ax.plot([100 * d["bg_rate"], 100 * d["rm_rate"]], [y, y], color="#BDBDBD", lw=0.6, zorder=2)
+    ax.plot([100 * d["bg_rate"] for d in ch], ys, "o", color="#4D4D4D", ms=2.2, zorder=3)
+    ax.plot([100 * d["rm_rate"] for d in ch], ys, "o", color=C["lp_gnn"], ms=2.2, zorder=3)
+    ax.set_yticks(list(ys)); ax.set_yticklabels([d["chrom"].replace("chr", "") for d in ch], fontsize=5)
+    ax.tick_params(axis="y", length=1.5, pad=1)
+    ax.invert_yaxis(); ax.set_xlim(0, 100); ax.set_xticks([0, 25, 50, 75, 100])
+    ax.set_xlabel("Not aligned 1:1 (%)"); ax.set_ylabel("Chromosome")
+    ax.set_title("By chromosome, 60×", loc="center", fontsize=6.5, pad=KEYPAD)
+    for ax, L in zip((ax_a, ax_h, ax_b, ax_c, ax_e, ax_f, ax_g), "abcdefg"):
         letter(ax, L)
-    fig.legend(handles=[thandle(t, n) for t, n in reversed(TOOLS)], loc="outside upper left", ncol=2,
-               handlelength=2.6, columnspacing=1.6)
-    save(fig, os.path.join(OUT, "fig3_phased_unphased.pdf"))
+    for ax in (ax_e, ax_f, ax_g):   # letter() resets the title pad of every title of the axes
+        ax.set_title(ax.get_title(loc="center"), loc="center", fontsize=6.5, pad=KEYPAD)
+    _row_header(sf1, "Calls phased by LongPhase 2 and WhatsHap")
+    _row_header(sf2, "SNVs unphased by GNN correction")
+    dot = lambda col, lab: Line2D([], [], color=col, ls="none", marker="o", ms=2.6, label=lab)
+    _row_keys(fig, (sf1, sf2), ([thandle(t, n_) for t, n_ in reversed(TOOLS)],
+                                [dot("#4D4D4D", "phased (random sample)"), dot(C["lp_gnn"], "unphased by GNN")]))
+    save(fig, os.path.join(OUT, "fig4_phased_unphased.pdf"))
 
 
-# ============================================================ Figure 4 =====
+# ============================================================ Figure 3 =====
 F3 = [  # key, label, colour, line style, marker, v5.0q source, v4.2.1 tool name (Supplementary Table 9)
     ("lp_gnn", "LongPhase 2, SNVs", C["lp_gnn"], "-", "o", ("snv", "longphase_v2.1"), "longphase_gnn"),
     ("lp_ind", "LongPhase 2, +indels", C["lp_gnn"], "--", "s", ("coph", "Indel", "longphase_v2.1"), "longphase_coh_indel_gnn"),
@@ -599,7 +673,7 @@ REGIONS = [  # (region, stratum) in item4_strata.tsv, label, y, indent; truth v5
 ]
 
 
-def fig4():
+def fig3():
     """The same SNV-only VCFs under GIAB v4.2.1 and v5.0q: switch errors by coverage; at 60x
     the switch errors that all three tools make at the same SNV pair; and v5.0q switch error
     rates by benchmark region and GIAB v3.6 stratum at 10x and 60x (issue #1 item 4)."""
@@ -675,31 +749,10 @@ def fig4():
     axs2[1].tick_params(axis="y", length=0)
     h = [thandle(t, {"wh": "WhatsHap"}.get(t)) for t in ("lp_gnn", "wh", "hc")]
     top.legend(handles=h, loc="outside upper center", ncol=3, handlelength=2.6, columnspacing=1.6)
-    save(fig, os.path.join(OUT, "fig4_two_benchmarks.pdf"))
+    save(fig, os.path.join(OUT, "fig3_two_benchmarks.pdf"))
 
 
-# ============================================================ Figure 5 =====
-def fig5():
-    """PacBio HiFi: LongPhase 2 vs WhatsHap, columns as in Fig. 2 (one replicate per coverage)."""
-    tools = ["wh", "lp_gnn"]
-    fig, axs = new_fig(52, 1, 4)
-    specs = [("sw_pct", "Switch error rate (%)", (0, 0.15), 1),
-             ("ham", "Hamming distance (%)", (0, 2), 1),
-             ("n50", "Block N50 (kb)", (0, 600), 1e-3),
-             ("psnv_pct", "Phased SNVs (%)", (84, 94), 1)]
-    for ax, (key, lab, ylim, sc), L in zip(axs, specs, "abcd"):
-        for t in tools:
-            xs, m, s_ = snv_series(t, key, plat="HiFi", covs=HIFI_COVS)
-            tline(ax, t, xs, m, s_, scale=sc, label=NAME[t])
-        ax.set_ylim(*ylim); ax.set_ylabel(lab); cov_axis(ax, HIFI_COVS); letter(ax, L)
-    axs[0].set_yticks([0, 0.05, 0.10, 0.15]); axs[0].set_yticklabels(["0", "0.05", "0.10", "0.15"])
-    axs[1].set_yticks([0, 0.5, 1.0, 1.5, 2.0]); axs[1].set_yticklabels(["0", "0.5", "1.0", "1.5", "2.0"])
-    h = [thandle(t, {"wh": "WhatsHap"}.get(t)) for t in ("lp_gnn", "wh")]
-    fig.legend(handles=h, loc="outside upper center", ncol=2, handlelength=2.6)
-    save(fig, os.path.join(OUT, "fig5_hifi.pdf"))
-
-
-# ============================== Supplementary Fig. 16 and Table 12 data =====
+# ======================= Fig. 4e-g (former Supplementary Fig. 16) and Table 12 data =====
 # Source: gnn_prepare/unphased_e6/unphased_grid.tsv (analyze_unphased.py,
 # 2026-10-07; final GNN model). SNV-only, seed 1; SNVs phased by LongPhase 2
 # and unphased after correction, matched to the v5.0q benchmark VCF by position
@@ -881,63 +934,6 @@ def sfig14():
     fig.legend(*axs[0].get_legend_handles_labels(), loc="outside upper center", ncol=3, handlelength=2.6,
                columnspacing=1.6)
     save(fig, os.path.join(SUPP, "suppfig11_methphaser.pdf"))
-
-
-# ============================================== Supplementary Fig. 15 =====
-def sfig15():
-    """SNVs unphased by GNN correction: benchmark composition and T2T assembly status."""
-    T = t2t()
-    fig, axs = new_fig(66, 1, 3, width_ratios=[1.15, 1, 1.05])
-    ax = axs[0]
-    cols = ["#D9D9D9", "#969696", "#B2182B"]
-    labs = ["absent from benchmark", "homozygous in benchmark", "heterozygous in benchmark"]
-    xs = range(len(COVS)); bottom = [0] * len(COVS)
-    for i in range(3):
-        v = [100 * COMPOSITION[c][i] / sum(COMPOSITION[c]) for c in COVS]
-        ax.bar(xs, v, 0.75, bottom=bottom, color=cols[i], label=labs[i], zorder=3)
-        bottom = [a + b for a, b in zip(bottom, v)]
-    for x, c in zip(xs, COVS):
-        ax.text(x, 101, f"{sum(COMPOSITION[c]) / 1000:.0f}k", ha="center", va="bottom", fontsize=5)
-    ax.set_xticks(list(xs)); ax.set_xticklabels([str(c) for c in COVS])
-    ax.set_xlabel("Coverage (×)"); ax.set_ylabel("SNVs unphased by GNN (%)")
-    ax.set_ylim(0, 108); letter(ax, "a")
-    ax.legend(loc="lower left", bbox_to_anchor=(0, 1.02), fontsize=5.5, ncol=1, borderaxespad=0)
-    ax = axs[1]
-    cls = T["cls"]; n = T["rm_n"]
-    rm = [100 * cls["variant"] / n, 100 * cls["hom_wt"] / n, 100 * cls["unassessed"] / n]
-    bgv = [100 * T["bg_in"] / T["bg_n"], 0, 100 * (1 - T["bg_in"] / T["bg_n"])]
-    colsb = ["#B2182B", "#FDDBC7", "#BDBDBD"]
-    labb = ["aligned, assembly record", "aligned, no record", "not aligned 1:1"]
-    for j, (vals, y) in enumerate(((bgv, 1), (rm, 0))):
-        left = 0
-        for i, v in enumerate(vals):
-            ax.barh(y, v, 0.6, left=left, color=colsb[i] if not (j == 0 and i == 0) else "#4D4D4D", zorder=3)
-            left += v
-    ax.set_yticks([0, 1]); ax.set_yticklabels([f"unphased by\nGNN\n(n = {n:,})",
-                                               f"phased before\nGNN (sample,\nn = {T['bg_n']:,})"])
-    ax.set_xlim(0, 100); ax.set_xlabel("SNVs at 60× (%)")
-    ax.text(T["bg_in"] / T["bg_n"] * 50, 1, f"aligned\n{100 * T['bg_in'] / T['bg_n']:.1f}%",
-            color="white", ha="center", va="center", fontsize=5.5)
-    ax.text(100 - 100 * cls["unassessed"] / n / 2, 0, f"{100 * cls['unassessed'] / n:.1f}%",
-            ha="center", va="center", fontsize=5.5)
-    ax.legend(handles=[Patch(color=c, label=l) for c, l in zip(colsb, labb)], loc="lower left",
-              bbox_to_anchor=(0, 1.02), fontsize=5.5, ncol=1, borderaxespad=0)
-    letter(ax, "b")
-    ax = axs[2]
-    order = [f"chr{i}" for i in range(1, 23)] + ["chrX", "chrY"]
-    ch = sorted(T["chroms"], key=lambda d: order.index(d["chrom"]))
-    ys = range(len(ch))
-    for y, d in zip(ys, ch):
-        ax.plot([100 * d["bg_rate"], 100 * d["rm_rate"]], [y, y], color="#BDBDBD", lw=0.6, zorder=2)
-    ax.plot([100 * d["bg_rate"] for d in ch], ys, "o", color="#4D4D4D", ms=2.2, label="phased before GNN", zorder=3)
-    ax.plot([100 * d["rm_rate"] for d in ch], ys, "o", color="#B2182B", ms=2.2, label="unphased by GNN", zorder=3)
-    ax.set_yticks(list(ys)); ax.set_yticklabels([d["chrom"].replace("chr", "") for d in ch], fontsize=5)
-    ax.tick_params(axis="y", length=1.5, pad=1)
-    ax.invert_yaxis(); ax.set_xlim(0, 100)
-    ax.set_xlabel("Not aligned 1:1 (%)"); ax.set_ylabel("Chromosome")
-    ax.legend(loc="lower left", bbox_to_anchor=(0, 1.02), fontsize=5.5, ncol=1, borderaxespad=0)
-    letter(ax, "c")
-    save(fig, os.path.join(SUPP, "suppfig16_gnn_removed.pdf"))
 
 
 # ============================================== Supplementary Fig. 12 =====
@@ -1261,7 +1257,7 @@ def tables():
     heldout_table(w)
     runtime_table(w)
     # ---- Table 17: SNV calls left unphased, their benchmark status, the other tool's phase at the
-    # benchmark het. SNVs among them, and co-location with switch-error intervals (Fig. 3c net values; issue #6)
+    # benchmark het. SNVs among them, and co-location with switch-error intervals (Fig. 4c net values; issue #6)
     w(r"\begin{table}[h]")
     w(r"\caption{\textbf{Heterozygous SNV calls phased by \toolname only, by \whatshap only, by both or by neither.} HG002 nanopore R10.4.1 data, SNV-only phasing, replicate~1; heterozygous SNV calls with single-base alleles and genotype 0/1, identical in both output VCFs, chrX and chrY included. Calls phased by \whatshap only are split by the \toolname stage that left them unphased: the phasing graph (unphased before GNN correction) or GNN correction. Benchmark status against the v5.0q VCF (chr1--22, no BED): het., heterozygous with the same position, reference and alternative allele (the match used by \code{compare}); other allele, another heterozygous record at the position; hom., homozygous; absent, no record; chrX/Y, outside the chr1--22 truth. \textbf{Top}, composition. \textbf{Middle}, the benchmark heterozygous SNVs among the calls phased by one tool only, scored for that tool: assessed, in a block with at least two assessed variants; wrong, phase opposite to the block's majority orientation relative to the truth (block-wise Hamming error); all phased, the tool's block-wise Hamming distance over all its phased SNVs. Switch-error intervals of the scored tool run from the first SNV of one of its switch-error pairs to the base before the second; inside, the share of the calls phased by that tool only that lie in them; expected, the share of all heterozygous SNV calls phased by that tool. \textbf{Bottom}, additional calls phased by \whatshap: calls phased by \whatshap only minus calls phased by \toolname only.}")
     w(r"\label{tab:unphased}\scriptsize\setlength{\tabcolsep}{3.5pt}")
@@ -1304,6 +1300,6 @@ def tables():
 
 
 if __name__ == "__main__":
-    fig2(); fig3(); fig4(); fig5()
-    sfig10(); sfig11(); sfig12(); sfig13(); sfig14(); sfig15(); sfig17()
+    fig2(); fig3(); fig4()
+    sfig10(); sfig11(); sfig12(); sfig13(); sfig14(); sfig17()
     tables()
