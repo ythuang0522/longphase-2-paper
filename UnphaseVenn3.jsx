@@ -189,7 +189,7 @@ function Density({ cov }) {
 
 function Cross({ cov }) {
   const rowsData = DATA[cov].cross;
-  const W = 340, H = 150, L = 118, R = 38, T = 12, B = 32;
+  const W = 340, H = 150, L = 130, R = 38, T = 12, B = 32;   // L fits "LongPhase only — phase"
   const pw = W - L - R, rows = rowsData.length, band = (H - T - B) / rows;
   const maxX = Math.max(14, ...rowsData.map((d) => d.set * 1.15));
   const x = (v) => L + (v / maxX) * pw;

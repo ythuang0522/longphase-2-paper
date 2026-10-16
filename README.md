@@ -1381,5 +1381,5 @@ unchanged in substance).
   - [x] `HifiCompare3.pdf` (old: `.png`)
   - [x] `MethPhaserCompare.pdf` (old: `.png`)
   - [x] `UnphasedComposition.pdf` (old: `.png`)
-  - [x] `UnphaseVenn3.pdf` (old: `.png`; the clipped "LongPhase only — phase" label in panel C
-    is in the draft itself and in the old screenshot too)
+  - [x] `UnphaseVenn3.pdf` (old: `.png`; the "LongPhase only — phase" label of panel C, clipped
+    in the draft and the old screenshot, now fits: left margin of that panel 118 → 130)
