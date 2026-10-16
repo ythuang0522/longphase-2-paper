@@ -1,0 +1,254 @@
+{
+  "status": "PASS",
+  "remote": "a8f42371052ce92087991000e5e52447dd77a84c",
+  "checked_files": [
+    {
+      "path": "20260924_GIAB421.txt",
+      "sha256": "2f64b3d43b78bddbbadb3d965b172a8f8582c1176d87cbcff854f19a3b7aafc3"
+    },
+    {
+      "path": "20260924_cophase_v50q.txt",
+      "sha256": "2144545e15a2a76538a995f5b0c53059656b39122e4cce87d2b6989a0b972a48"
+    },
+    {
+      "path": "20260924_v50q.txt",
+      "sha256": "378abc9ec0afb2a6d1a22d23789dd0cc28e82aa23a09d003f736cbac7fb6c938"
+    },
+    {
+      "path": "CophaseGroupCompare.jsx",
+      "sha256": "6d170316d0fc21da8c12ab3e03032c1b954a07f00e3dd26c4d80fe623935065d"
+    },
+    {
+      "path": "HifiCompare.jsx",
+      "sha256": "8ddb18c6214dc573094fa53e75bd47f83fdb5cfae7438e8727dffbaace783e2e"
+    },
+    {
+      "path": "HifiCompare3.jsx",
+      "sha256": "4e4489b27b55299093740695aa54a3ae11301508c9a6093f02630d3c2aac4a1d"
+    },
+    {
+      "path": "MethPhaserCompare.jsx",
+      "sha256": "74180b4809cfe3d9c27944f8274b07268db8c1a7c34f5133199e338c184af61d"
+    },
+    {
+      "path": "PhasingBenchmarkBars.jsx",
+      "sha256": "cd98db1d63e0127dfa2e2bfe6ba957e11793682714b7be8003e648f04133dfa0"
+    },
+    {
+      "path": "PhasingBenchmarkBarsRow.jsx",
+      "sha256": "bfb78e905f585294a0cf26d7e9d8cd225ba79848849a908ff1b9f4504637130a"
+    },
+    {
+      "path": "PhasingBenchmarkCompare.jsx",
+      "sha256": "d1e47be813c8083b5dbd8238f562d6c7ecd74fd6a9bb479bba7365bf4ff57c24"
+    },
+    {
+      "path": "UnphaseVenn3.jsx",
+      "sha256": "3204f71f62b9be5f1c9158ecf206c63ea5dd99772c67541b487e82f9c4aba8c4"
+    },
+    {
+      "path": "UnphasedComposition.jsx",
+      "sha256": "2e1c2243d99266801167ace57cea99654e45effb22f7f951ebbb9b7471c7252d"
+    },
+    {
+      "path": "notes/benchmark_strata/item3_indel.tsv",
+      "sha256": "6397418499168aa1157339e8a2f30255552666ba46d25624ba1df10c2f37e2b2"
+    },
+    {
+      "path": "notes/benchmark_strata/item4_overlap.tsv",
+      "sha256": "6f2f443f569a7dd5accebd5a804ddf334860a4ccc0cd7e3c83c849469a6c3dd4"
+    },
+    {
+      "path": "notes/benchmark_strata/item4_strata.tsv",
+      "sha256": "fa19eaff01645afdf40240db11dbcbbcc80f47630385dea8a1a3696f8384aa28"
+    },
+    {
+      "path": "notes/benchmark_strata/step0_check.tsv",
+      "sha256": "86ceebd62e99e3b2b9dc0339b73b6553aebd95c1d57d8265af588e3d975be95b"
+    },
+    {
+      "path": "notes/benchmark_strata/summary.txt",
+      "sha256": "6150939e3c0b0cee073aac2417efc2606da0445677a61d62a7c841579ec0c695"
+    },
+    {
+      "path": "notes/gcphase/chr20_20x_1.tsv",
+      "sha256": "d1dba507c5c5d2de58e5b1f602d316015ba986481756ed21b76cdeb7bec6e3b5"
+    },
+    {
+      "path": "notes/gcphase/genotype_transitions_10x_1.tsv",
+      "sha256": "bbbf8575f094afbd7cccfd459627d84c174252df6899ecb39485579620e11cd7"
+    },
+    {
+      "path": "notes/gcphase/genotype_transitions_20x_1.tsv",
+      "sha256": "3ac7a2a898762c1cc48fa43b41e7337b60ac46fed521489217fd3e085734bd98"
+    },
+    {
+      "path": "notes/gnn_retrain/seeds.tsv",
+      "sha256": "5a4f89695ab796757a1714ff9605d3da5481751cf4138b45326751945464254e"
+    },
+    {
+      "path": "notes/heldout/heldout_GIAB421.txt",
+      "sha256": "c82ad197b8770613dc228d052202cdd7fec471511af01b4bd98dcc40e1957b1c"
+    },
+    {
+      "path": "notes/heldout/heldout_cophase_v50q.txt",
+      "sha256": "eb93174588770054fa816a0cc9b3e64381a06eb1595f5b13a2fd5253ea89ecb2"
+    },
+    {
+      "path": "notes/heldout/heldout_indel.tsv",
+      "sha256": "94915bd642424110a19ac61ba6b8a4bdd785354dafd8911c1c3064789fc96d47"
+    },
+    {
+      "path": "notes/heldout/heldout_indel_summary.txt",
+      "sha256": "1bf5781814105ceacfa4fbf0a095a2891746b57be5ea41e1b3248f48f4c992ed"
+    },
+    {
+      "path": "notes/heldout/heldout_summary.tsv",
+      "sha256": "1a2abeb89f44d148ffcdf1c6c16334d554dbd187c15bcb67fdc1a9fe3883c374"
+    },
+    {
+      "path": "notes/heldout/heldout_v50q.txt",
+      "sha256": "62478c00233d9afb9b16f417f0e8b36f03267489156aa2ffdb95d16dad6f90f8"
+    },
+    {
+      "path": "notes/methphaser/compare/sw_input_10x_1.tsv",
+      "sha256": "52960af90a4ff54c724fa6aedadbc46c7e0b4d3d1a0f956ce018a033e639e7c1"
+    },
+    {
+      "path": "notes/methphaser/compare/sw_input_20x_1.tsv",
+      "sha256": "8c9817bb647324067f103285c17149fa573995d3ce1f5d592f71d0a39030ea07"
+    },
+    {
+      "path": "notes/methphaser/compare/sw_input_30x_1.tsv",
+      "sha256": "1d05194ac820dfbba14aebed1435b41d8cbb5ec497e14f34c969619f3ae6add6"
+    },
+    {
+      "path": "notes/methphaser/compare/sw_input_40x_1.tsv",
+      "sha256": "79dd835d547a447be1be03e75755333a77a79ec96553785834f596f69abdf75a"
+    },
+    {
+      "path": "notes/methphaser/compare/sw_input_50x_1.tsv",
+      "sha256": "20df6d8c35a4af6ebc9f1615279202860c306206789eab0345806f792aebeecc"
+    },
+    {
+      "path": "notes/methphaser/compare/sw_input_60x_1.tsv",
+      "sha256": "2d12849748a8d13d1ee58b30bb2b1e6d8dcd89ca700511af20a3873e533c1d1e"
+    },
+    {
+      "path": "notes/methphaser/compare/sw_methphaser_10x_1.tsv",
+      "sha256": "54a7b30f5b9cb34d29b5db045c553c3bf44e214bca70df50929a20c7ad437b04"
+    },
+    {
+      "path": "notes/methphaser/compare/sw_methphaser_20x_1.tsv",
+      "sha256": "26e7cc13e63e4b8d435431eb0a7e2897d178ad60e283bcd00dc01f24797a7335"
+    },
+    {
+      "path": "notes/methphaser/compare/sw_methphaser_30x_1.tsv",
+      "sha256": "80d6a510f31da930165ac9615adc897d4d72760502e4c91a76f755b2e134ed88"
+    },
+    {
+      "path": "notes/methphaser/compare/sw_methphaser_40x_1.tsv",
+      "sha256": "933179cf6b0df67c865f8eec8e6087d0535e17e6bf80b328d72002bcd4149f81"
+    },
+    {
+      "path": "notes/methphaser/compare/sw_methphaser_50x_1.tsv",
+      "sha256": "113e5cef46fae965fe0d44bb7f639266f24ac03036743fa796ea528e10ce0a73"
+    },
+    {
+      "path": "notes/methphaser/compare/sw_methphaser_60x_1.tsv",
+      "sha256": "cdc0f5559a5e3677e8dc1020a42c74ca38041e1cc4df16718b8f205030059d40"
+    },
+    {
+      "path": "notes/methphaser/methphaser_vs_longphase.tsv",
+      "sha256": "1a01a1e5b012333547732f8348fd9f5962056a84ab60feab71e6e15518a20b7a"
+    },
+    {
+      "path": "notes/methphaser/ps_overlap.tsv",
+      "sha256": "d74881cae2c4598365c904b67dbd53c5da3d400af966ae97585e17147cde8715"
+    },
+    {
+      "path": "notes/methphaser/runs_chr11_30x.tsv",
+      "sha256": "2e5abf76d912b4b3a65be9630193bc868d42314613482bd2caced6a254d2e09d"
+    },
+    {
+      "path": "notes/methphaser/vcf_diff.tsv",
+      "sha256": "08ff83ca79a06ce076cca1bc9dfec46995481d319a56cba970f3504fa1d7d6d1"
+    },
+    {
+      "path": "notes/runtime/all_tools_runtime.tsv",
+      "sha256": "21408b25c6f1bad879fb421571cef9064bed59e79fd396b443f97b96776bc02d"
+    },
+    {
+      "path": "notes/runtime/runtime.tsv",
+      "sha256": "e9cadfd00478dd2bb76ecffbada014c64c8bb3ada1f9c9e1c3355df9eddd76ca"
+    },
+    {
+      "path": "notes/sv_mod/sv_mod.tsv",
+      "sha256": "db3912424ca676e9c370024ec6bbffa7ac04fd94da9184a0739519a9d69df425"
+    },
+    {
+      "path": "notes/unphased/figure_data_10x.js",
+      "sha256": "8fc8826e258165c799c3703f6aceb494bc760744acb944d7d4c07a6bc4373a7b"
+    },
+    {
+      "path": "notes/unphased/figure_data_30x.js",
+      "sha256": "e099c85bd3078494f8b5e1cb7d3920d9daa92a2fed7f20c36bac0b885c652538"
+    },
+    {
+      "path": "notes/unphased/figure_data_60x.js",
+      "sha256": "561b12a2fd8af60d955bebf5830d859e44ca2dd83c06d8125b9220d2086a64cb"
+    },
+    {
+      "path": "notes/unphased/giveup_detail_10x.txt",
+      "sha256": "fff25d34e323b2d9fd5e93ed0e6dce7acb9c343194958c3b9fca899b59ffe826"
+    },
+    {
+      "path": "notes/unphased/giveup_detail_30x.txt",
+      "sha256": "d44108aebb231d35714636544b509738546f063ac31ea5621e19fc8515268b88"
+    },
+    {
+      "path": "notes/unphased/giveup_detail_60x.txt",
+      "sha256": "1d63dcf5054f67eb5ededec7b5a6047d41d1ebdad77c17eada074f2ee1b68397"
+    },
+    {
+      "path": "notes/unphased/issue6_checks.tsv",
+      "sha256": "5b98d86fbae5944dfceda8ecff7a70a59862ba1de40180df52809e4cb193d104"
+    },
+    {
+      "path": "notes/unphased/issue6_composition.tsv",
+      "sha256": "b40bad343f037d50c3258d86b578ea2c75bf3b32ecc1e7b6d81f8d6570f653c5"
+    },
+    {
+      "path": "notes/unphased/issue6_depth_hist.tsv",
+      "sha256": "77f2a603b1a67e852120e8fbadc8b5a328b28c368f1baeb3eb0a8bfe5b61f641"
+    },
+    {
+      "path": "notes/unphased/issue6_intervals.tsv",
+      "sha256": "0e0d8c430e81ff94d1237652e8db5efd4335a70d3793a5c08e998090f589cce3"
+    },
+    {
+      "path": "notes/unphased/issue6_reconcile.tsv",
+      "sha256": "84c78adb194ff0f185b1a39b883d21aeafa0590797eac62d67d057d92bf37845"
+    },
+    {
+      "path": "notes/unphased/phased_calls_chr1_22.tsv",
+      "sha256": "1c340183c62fb71575fa7737b221a2cdf47b784ca277e8464fafa641676eb7aa"
+    },
+    {
+      "path": "notes/unphased/unphased_sets.tsv",
+      "sha256": "896741403dee55365715d1c1e5d336bd040af512fa677967e7031abb5e1a7b5b"
+    },
+    {
+      "path": "supplementary.xlsx",
+      "sha256": "3b2f37f2d349e828d13e49e9fc4c57227f0951b03c83df22f7abd7a983e9d89d"
+    },
+    {
+      "path": "unphase_validation_readme.txt",
+      "sha256": "030591e40c66c680e8a1b605745a1b2d2508a8ba97ce6ec06e9c08c54b42c116"
+    },
+    {
+      "path": "unphase_validation_results.txt",
+      "sha256": "eb6d0d99c21b82aa51c79abe89361064de79d3f9f058c23f64f07746f926fc45"
+    }
+  ]
+}

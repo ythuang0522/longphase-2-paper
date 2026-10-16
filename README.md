@@ -1310,6 +1310,122 @@ passes. The former Table 5 height warning is resolved. The existing Table 17 mid
 column-width warning (9.25 pt), main title/affiliation and underfull warnings remain.
 No figure artwork, numerical results, main manuscript source or internal notes changed.
 
+**Fig. 2 cleanup, 2026-10-12 (author review).** Data origin checked per row: a–c `SNV_Detail` SNV-only
+runs; d–f `co-phase_Detail` `Indel` (SNV + indel only; `item3_indel.tsv` `longphase_coh_indel_gnn` and
+`whatshap_v28` match it in phased SNVs and SNV switch rate); g–i `co-phase_Detail` `Mod` replicate 1 and
+the `MethPhaser` sheet; j–l HiFi `SNV_Detail`. Changes: (1) no s.d. bands in any Fig. 2 panel (they were
+visible in b and e only, not in a or d; `line(band=False)`); (2) the dashed `Indel+Mod+SV` path removed
+from f, so each row shows only the evidence of its title; (3) d now shows only the indel-pair switch
+error rate and e the indel Hamming distance, two lines each (the SNV-pair lines in d had no match in e).
+Legend and Results updated: the SNV-pair 3.0–3.7-fold claim cites Supplementary Data 1, the SV + 5mC
+block-length sentence cites Supplementary Fig. 15, Supplementary Table 10 and Supplementary Data 1.
+- Revised the same day (author): d and e again show SNVs (solid) and indels (dotted) in both panels —
+  d SNV pairs and pairs with an indel, e SNV and indel Hamming distance. The SNV Hamming distance of
+  the SNV + indel runs is calculated, not scored (`_indel_runs()`; SNVs in one-variant blocks not
+  removed, error < 0.3%). Open: rerun `aggregate.py` on the lab server to write the exact SNV
+  Hamming (`ham_all`, `ham_n` of `out/*.tsv`) into `item3_indel.tsv`. Results now say that indel
+  and SNV Hamming distances are close (LongPhase 2 within 0.1 points, WhatsHap 0.4–0.7 higher).
+
+**Fig. 2c evidence-type panel, 2026-10-13 (author decision, option A of three).** The accuracy–contiguity
+panels of the SNV and indel rows (former c and f) are one tall panel, c, spanning both rows: SNV switch
+error rate against block N50 for LongPhase 2 with SNVs, SNVs + indels, and SNVs + indels + SVs + 5mC
+(`co-phase_Detail` `Indel+Mod+SV`), and for WhatsHap with SNVs and SNVs + indels. Marker = tool, line style =
+evidence (solid SNVs, dashed + indels, dash-dot with filled markers for all four classes); no HapCUT2
+(author: it is in a and b). Message: each evidence class lengthens the blocks of LongPhase 2 at a small
+switch-error cost, and with all four classes it reaches the block N50 of WhatsHap with indels (4.10 vs
+4.19 Mb at 60×) at a 3.6-fold lower SNV switch error rate. Rejected: B (row 2 as an all-evidence row,
+indel Hamming to the Supplementary) and C (HiFi row out of Fig. 2). Panels are now a–k: d,e unchanged;
+5mC row g–i → f–h; HiFi row j–l → i–k. Results (Fig. 2c added to the evidence-class sentences at the
+SNV, indel and post-correction paragraphs), legend and Supplementary Data 1 description (Fig. 2f–h)
+updated. Supplementary Fig. 15 still shows all seven configurations with and without GNN correction.
+
+**Fig. 2 two-row layout, 2026-10-13 (author decision).** The four-row figure (11 panels, four row keys,
+a five-entry legend for c) carried too much. Now two rows, seven panels: row 1 a SNV switch error rate
+(former a), b SNV + indel switch error rate (former d), c evidence-type accuracy–contiguity (unchanged);
+row 2 d,e SNV + 5mC vs MethPhaser (former f,h), f,g HiFi (former i,k). One figure-level key at the top
+(tools; line styles of b and c by panel letter) replaces the row keys and the c legend; the dotted
+indel lines in b now have hollow markers, so filled markers mean four-class phasing only. The
+Hamming-distance column (former b, e, g, j) is new Supplementary Fig. 16 (`sfig16()`), added at the end
+so that no Supplementary figure is renumbered; it keeps the HiFi 50× value at which LongPhase 2 has the
+higher Hamming distance visible. Legend, Results panel letters and Hamming citations (Supplementary
+Fig. 16a–d; MethPhaser also Supplementary Fig. 11c), Supplementary Data 1 description (Fig. 2d,e;
+Supplementary Figs. 9 and 11–16) updated. Height 198 → 122 mm.
+- Superseded the same day by **proposal A** (author: a five-panel draft with the key in an empty slot
+  was rejected as ugly; six panels preferred). Fig. 2 is a 3 × 2 grid, one type of plot per row: row 1
+  switch error rate against coverage — a SNV (WhatsHap, HapCUT2), b SNV + indel, c PacBio HiFi; row 2
+  switch error rate against N50 — d by evidence type (former c), e SNV + 5mC vs MethPhaser, f HiFi
+  (own x-axis 0.025–0.2%). Title on the panel-letter line (`letter(..., title=)`, placed by `save()`),
+  tool key at the top, line-style keys inside b and d, lines 0.75 pt and markers at 0.8 size
+  (`_light()`). HapCUT2 is now solid in every figure (`STY`), so dashed means "+ indels" only.
+  Supplementary Fig. 16 (`suppfig16_fig2_coverage.pdf`) is a 5mC switch error rate against coverage
+  (former Fig. 2d) and b–e the Hamming distances. Results letters: evidence panel c → d, HiFi
+  i/f → c, HiFi N50 → f, 5mC switch error rate → Supplementary Fig. 16a, Hamming 16a–d → 16b–e.
+  Height 104 mm.
+- Same day: Fig. 2 d and e swapped (d SNV + 5mC vs MethPhaser, e evidence-type summary), so that each
+  evidence class is met before the panel that combines them and e sits below b (same WhatsHap runs).
+  The first Results section was condensed from ten paragraphs (about 1,050 words) to five (about 620),
+  cited in panel order a–f: SNV (a; held-out chromosomes, Margin/Ralphi and runtime as one sentence
+  each), indels (b), HiFi accuracy (c), 5mC vs MethPhaser (d), contiguity by evidence type and on HiFi
+  (e, f). Removed detail is listed in the `[provenance]` comment at the end of the section.
+
+**Opening SNV comparison, 2026-10-13 (author review).** Replaced selected coverage endpoints
+and coverage-specific fold differences with switch error rate ranges for LongPhase 2, WhatsHap
+and HapCUT2, plus fold-reduction ranges over all tested coverages. Removed the paired-replicate
+claim from this paragraph and retained Supplementary Table 8. Other Results sentences are unchanged.
+
+**Results metric explanation and flow, 2026-10-13 (author review).** Added a brief distinction
+between block-wise Hamming distance (fraction of misassigned variants) and switch error rate
+(errors in phase relationships between consecutive variants). Merged the newly covered-region
+comparison into the benchmark section and made the v5.0q-versus-v4.2.1 region definition explicit.
+Moved the chr17/21/22 comparator result to the GNN evaluation paragraph, which now identifies
+these chromosomes as excluded from GNN training. Retained the figure and table references.
+
+**Hamming explanation shortened, 2026-10-13 (author review).** Replaced the separate metric
+explanation with a comma-delimited phrase directly after block-wise Hamming distances:
+"reflecting the fraction of misassigned variants within blocks".
+
+**Hamming apposition, 2026-10-13 (author review).** Removed "reflecting" from the inline
+explanation, leaving "the fraction of misassigned variants within blocks" between commas.
+
+**Secondary phaser placement and scope, 2026-10-13 (author review).** Moved Ralphi/Margin
+results to an independent closing paragraph of the first comparison subsection and grouped
+the GCphase exclusion there. Checked local data, Git histories, worklogs and GitHub, including
+the newer remote workbook: all three have only 60 ONT runs at 10–20×. Original data commit
+`8ff180b` states that blank cells are runs not performed. No reason for the 20× limit was
+found. Methods now states the coverage scope and corrects GCphase input handling. See
+`notes/secondary_phaser_audit_2026-10-13.md` for evidence and the remote chr20 GCphase diagnostic.
+
+**Secondary comparisons hidden, 2026-10-13 (author decision).** Commented out the standalone
+Ralphi/Margin/GCphase Results paragraph and removed the Margin interpretation from rendered
+Discussion, retaining it in a source comment. No replacement Discussion paragraph was added.
+Supplementary data and methods remain available.
+
+**Runtime sentence condensed, 2026-10-13 (author review).** Replaced detailed timing, thread
+counts and memory ranges in the opening comparison paragraph with one sentence stating shorter
+wall-clock time with multithreading, lower CPU time and higher peak memory. Numerical results
+and execution settings remain in Methods, Supplementary Fig. 10 and Table 16.
+
+**Runtime placement, 2026-10-13 (author review).** Moved the concise runtime sentence after
+all accuracy and contiguity comparisons, at the end of the first phaser-comparison subsection.
+Specified nanopore SNV phasing there to keep its scope clear after the HiFi and co-phasing results.
+
+**Comparison paragraphs consolidated, 2026-10-13 (author review).** Reduced six paragraphs
+to four: nanopore SNV/indel accuracy, HiFi accuracy, SNV/5mC comparison, and contiguity with the
+short runtime sentence at the end. Joined the SNV and indel results with "When indels were
+included". Removed the forward-looking phased-fraction transition; numerical results are unchanged.
+
+**Direct phrasing, 2026-10-13 (author review).** Replaced all six rendered "so that"
+occurrences across Results, Methods and Supplementary Methods with direct statements or
+compact descriptions. Updated the remaining figure-layout source comment as well. Numerical
+claims and method definitions are unchanged.
+
+**Results findings only, 2026-10-13 (author review).** Removed the MethPhaser setup sentence
+(method description and supplied pre-GNN SNV input) from Results. The input setup remains in Methods.
+
+**HiFi emphasis, 2026-10-13 (author-approved revision).** The HiFi comparison now opens
+with the accuracy finding. Moved the use of the nanopore-trained network without retraining
+to the GNN evaluation paragraph, beside the measured HiFi correction effect.
+
 **LongPhase v2.1.1: retrained GNN model, all LongPhase 2 values updated, 2026-10-16 (JHL request).**
 The manuscript now reports release v2.1.1 (`twolinin/longphase` `f9962dd`, PR #131) instead of
 v2.1. The update corrects an error in the training of the v2.1 model; the differences in the
@@ -1419,3 +1535,14 @@ unchanged in substance).
   - [x] `UnphasedComposition.pdf` (old: `.png`)
   - [x] `UnphaseVenn3.pdf` (old: `.png`; the "LongPhase only — phase" label of panel C, clipped
     in the draft and the old screenshot, now fits: left margin of that panel 118 → 130)
+
+
+**Remote-data/local-writing merge, 2026-10-16 (author rule).** Synced to `a8f4237` and retained
+local figure design and manuscript writing. All data use the remote v2.1.1 inputs; Figure 2
+keeps the local two-row, six-panel layout (d MethPhaser, e evidence types), with remote HiFi
+HapCUT2 values in c/f and Supplementary Fig. 16e. Local title, prose organization and hidden
+secondary-phaser text are retained. Data-derived claims were refreshed, including claims
+outside Git conflicts. Corrected the all-configuration indel-pair reduction to 22–40%.
+Rebuilt the figures and both PDFs (27/39 pages); fixed table overflow with column spacing.
+Full conflict inventory, calculations, data hashes and validation: `notes/sync_2026-10-16/`.
+Original local work remains in stash `3cb51b087b8edc310a84069330f582adad04abbf`.

@@ -31,18 +31,20 @@
 \newcommand{\methphaser}{MethPhaser\xspace}
 \newcommand{\todo}[1]{\textcolor{red}{[#1]}}     % items to verify before submission
 
-% Title (Nature style: declarative, no colon, states the advance and its consequence).
+% Title: contribution first, followed by the data type and tool name; no colon.
 % Alternatives:
 %  (a) Learned phase-error detection enables accurate co-phasing of variants and methylation from long reads
 %  (b) LongPhase 2 co-phases genetic and epigenetic variation and detects unreliable haplotype assignments
 %  (c) Evidence calibration and learned error detection yield accurate long-read haplotypes
-\title{Uncertainty-aware haplotype phasing of genetic and epigenetic variation from long reads}
+\title{Joint phasing of sequence variants and DNA methylation from long reads with LongPhase 2}
 
 \author{%
 Jyun-Hong Lin$^{1}$, Yang-Ming Yeh$^{2}$, Yu-Chun Chen$^{1}$, Yao-Ting Huang$^{1,\ast}$\\[4pt]
-\small $^{1}$Department of Computer Science and Information Engineering, National Chung Cheng University, Chiayi, Taiwan\\
-\small $^{2}$Department of Computer Science and Engineering, National Sun Yat-sen University, Kaohsiung, Taiwan\\
-\small $^{\ast}$Correspondence: ythuang@cs.ccu.edu.tw}
+\parbox{0.95\textwidth}{\centering\small
+$^{1}$Department of Computer Science and Information Engineering, National Chung Cheng University, Chiayi, Taiwan\\
+$^{2}$Department of Computer Science and Engineering, National Sun Yat-sen University, Kaohsiung, Taiwan\\
+$^{\ast}$Correspondence: ythuang@cs.ccu.edu.tw}
+}
 \date{}
 
 \begin{document}
@@ -85,13 +87,14 @@ Long-read phasers rarely combine sequence variants with the methylation signal o
 
 \begin{figure}[p]
   \centering
-  \includegraphics[width=\textwidth,height=0.64\textheight,keepaspectratio]{fig2_phaser_comparison.pdf}% four rows; height-limited so that the legend fits on the page
+  \includegraphics[width=\textwidth,height=0.64\textheight,keepaspectratio]{fig2_phaser_comparison.pdf}% two rows; height limit preserves space for the legend on the page
   \caption{\textbf{Accuracy and contiguity of \toolname compared with other phasers for each type of phasing evidence and on PacBio HiFi data.}
-  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$ (\textbf{a}--\textbf{i}) and PacBio HiFi reads down-sampled to 10--50$\times$ (\textbf{j}--\textbf{l}); identical variant calls for every tool, scored against the T2T-HG002-derived v5.0q benchmark. Nanopore values at 10--20$\times$ are means of ten down-sampling replicates with the s.d.\ as a light band; all other values come from one down-sampling (Methods). Columns show the switch error rate (log scale), block-wise Hamming distance, and SNV switch error rate against phase-block N50, one point per coverage from the lowest (bottom right) to the highest (top left). Phased fractions are shown in Fig.~\ref{fig:unphased}.
-  \textbf{a}--\textbf{c}, SNV phasing compared with \whatshap and \hapcut.
-  \textbf{d}--\textbf{f}, SNV and indel co-phasing compared with \whatshap; in \textbf{f}, the dashed line adds SVs and 5mC, which \whatshap cannot use, to the co-phasing of \toolname. In \textbf{d}, solid lines score consecutive SNV pairs and dotted lines consecutive pairs that include an indel; \textbf{e} refers to indels (Supplementary Table~14).
-  \textbf{g}--\textbf{i}, SNV and 5mC co-phasing compared with MethPhaser, replicate~1; MethPhaser was given the SNV-only output of \toolname without GNN correction (Methods).
-  \textbf{j}--\textbf{l}, SNV phasing of PacBio HiFi (Revio) data compared with \whatshap and \hapcut, with variants called at each coverage; \toolname uses the network trained on nanopore data. The N50 axis of \textbf{l} differs from those of \textbf{c}, \textbf{f} and \textbf{i}.}
+  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$ (\textbf{a},\textbf{b},\textbf{d},\textbf{e}) and PacBio HiFi reads down-sampled to 10--50$\times$ (\textbf{c},\textbf{f}); identical variant calls for every tool, scored against the T2T-HG002-derived v5.0q benchmark. Nanopore values at 10--20$\times$ are means of ten down-sampling replicates; all other values come from one down-sampling (Methods). Top row, switch error rate against coverage (log scale); bottom row, SNV switch error rate against phase-block N50, one point per coverage from the lowest (bottom right) to the highest (top left). The 5mC switch error rate against coverage and the Hamming distances are shown in Supplementary Fig.~16, and phased fractions in Fig.~\ref{fig:unphased}.
+  \textbf{a}, SNV phasing compared with \whatshap and \hapcut.
+  \textbf{b}, SNV and indel co-phasing compared with \whatshap; solid lines score consecutive SNV pairs and dotted lines consecutive pairs that include an indel (SNV--indel or indel--indel; Supplementary Table~14).
+  \textbf{c},\textbf{f}, SNV phasing of PacBio HiFi (Revio) data compared with \whatshap and \hapcut, with variants called at each coverage; \toolname uses the network trained on nanopore data. The axes of \textbf{f} differ from those of \textbf{d} and \textbf{e}.
+  \textbf{d}, SNV and 5mC co-phasing compared with MethPhaser, replicate~1; MethPhaser was given the SNV-only output of \toolname without GNN correction (Methods).
+  \textbf{e}, Accuracy and contiguity by evidence type: \toolname with SNVs, with SNVs and indels, and with SNVs, indels, SVs and 5mC, compared with \whatshap with SNVs and with SNVs and indels (Supplementary Table~10).}
   \label{fig:phasers}
 \end{figure}
 

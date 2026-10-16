@@ -1,0 +1,62 @@
+P1.lp_sw_10_60	0.081	0.022
+P1.ratio_whatshap_v28	2.882	3.4--3.9	all:	2.9--3.9
+P1.paired_whatshap_v28	2.8--4.2
+P1.ratio_hapcut2_v134	3.297	4.3--5.0	all:	3.3--5.0
+P1.paired_hapcut2_v134	3.2--5.2
+P1.ham_ratio	1.3--1.8
+P2.n50_10	0.84--0.95	n50_60	2.72--2.87
+P2.lp_vs_wh_n50	shorter 10-20 up to	10.6	longer 30-60	2.1--5.4	all	0.894 0.896 0.915 0.943 0.962 0.977 1.027 1.021 1.023 1.054
+P2.fourclass_vs_whsnv	n50 +%	6--52	rate ratio	2.5--3.2	10x 2.5 20x 3.2
+P4.ralphi	2.5--3.6
+P4.margin	10x 0.069 vs 0.081	12x 0.0665 vs 0.0649	14-20	1.2--1.6	blocks	2.1--3.2
+P6.lp_indel_vs_wh_indel	3.0--3.7
+P7.wh_indel_longer	10-18	27--33	60	12	all	1.272 1.308 1.330 1.295 1.278 1.225 1.202 1.158 1.139 1.121
+P7.fourclass_vs_wh_indel	shorter	1--20	50-60	1--1	rate ratio	3.0--3.8	60x 0.026 vs 0.097
+P8.meth	rate	1.50 1.72 1.73 1.56 1.55 1.59	ham	1.34 2.10 2.90 2.08 2.77 2.47	n50	1.10 1.31 1.61 1.63 1.76 1.78	lp n50	0.88--3.09	psnv gap	0.07--0.23
+P9.gnn_share	0.95 0.65 0.74 0.81 0.86 0.87	gnn sw	1537 877 658 606 606 485
+P10.hifi	ratio	2.59 2.84 2.80 2.38 2.35	lp	0.049->0.033	wh	0.128->0.077	ham lp	0.73 1.13 0.81 0.77 0.82	ham wh	1.03 1.21 0.92 0.87 0.68	n50 lp kb	341 488 540 573 584	n50 wh kb	340 478 525 561 577	n50 diff%	0.2--3.0	ont/hifi	2.5--4.3
+P15.psnv_gap	0.7--1.0	plateau	89.58 90.94 91.35	gnn loss	0.08--0.26	hifi gap	0.42--0.50	hifi lp	87.0 91.7 91.9 91.9 91.6	indel gap	2.53--4.52
+P23.gnn_red	32.3--35.8	per rep	30.8--38.0	psnv loss 10x	0.26	30-60	0.08--0.11	n50 loss 10-20	4.8--8.7	30-60	1.4--4.0
+P23.pooled	removed 34.3%	cost 7.98
+P24.hifi_gnn	removed	23.2--30.8	psnv loss	0.10--0.12	n50 loss	0.8--1.6
+P25.gnn_red	no indel	31.2--35.7	indel	36.1--42.8
+P25.additional_removed	38--71
+P25.n50_loss	indel	12--22	no indel	1--9
+P26.mod	rate within %	3.0	n50 10x	2.2	18x+	7.5--13.4	all	1.022 1.050 1.056 1.071 1.078 1.082 1.080 1.132 1.134 1.075
+P26.indel	n50 +%	16--33	rate +%	14--24
+P26.four	n50 +%	19--45	60x 4.14 vs 2.87	abstract +%	44	rate +%	14--30	longest everywhere	False	not longest at	[(12, 'Mod+Indel'), (30, 'Mod+Indel'), (50, 'Mod+Indel')]
+P26.vs_wh_min	2.50
+ABS.ratio	2.9--5.0	hifi	2.4--2.8
+P11.v4_lp_sw	1,641--1,839
+P11.v4_spread	10x 1.6	30-60	1.2--1.3
+P11.v5_spread	10x 3.3	30-60	4.3--5.0	lp v5 sw	1,503 -> 477	v5<v4 for lp at all	True
+P3.heldout_whatshap_v28_onlySNVs	10-20	2.9--4.0	30-60	2.7--4.6
+P3.heldout_hapcut2_v134	10-20	3.4--5.1	30-60	2.8--4.9
+P3.heldout_lp_errors_30_60	37--82
+P4.heldout_margin	10x 0.099 vs 0.124	blocks	3.3	lower at	[10, 12]
+P24.heldout	10-20	22--25	30-60	14--20	per run removed 30-60	9--17	pooled removed 23.5%	cost 9.26
+P12.coincident	63% -> 93%	60x WH	86	HC	74	v5	38 10 8
+P12.shared_30_60	v4	1,133--1,492	v5	32--393
+P13.wh	v5bed 10x 2.1	30-60	3.3--3.8	segdup	4.91 3.24	not_difficult	1.75 2.10	new	4.2--8.3	shared	1.7--2.5
+P13.hc	v5bed 10x 2.6	30-60	7.8--9.5	segdup	5.44 4.85	not_difficult	1.69 2.21	new	7.1--11.1	shared	2.0--9.4
+P13.lp_new_errors	18--41
+P14.outside_lp	28% 69%	rate	0.8--1.1
+P14.outside_wh	46% 75%	rate	2.6--4.6
+P14.outside_hc	43% 62%	rate	2.8--4.9
+P14.diff_share_wh	56% 77%
+P14.diff_share_hc	50% 60%
+P6.indel_pairs	lp	0.100 -> 0.029	wh	0.75--0.91	ratio	8 10 12 13 14 15 19 21 27 32
+P25.indel_pair_removed	22--40	table covs	24--40	per cfg	coh_indel:24--39 coh_indel_sv:25--40 coh_indel_methyl:22--37 cophasing:24--37
+P26.indel_pair_change_fourclass_vs_indel	3.8%
+P6.indel_ham	lp	6.9 -> 3.6	wh	9.0--13.8
+P18.wh_phased_lp_unphased	124,038--150,889	match%	14.8--19.9	lp_only_gnn share	16.5 17.0 19.5
+P18.lp_phased_wh_unphased	34,359--49,514	absent%	89.6--90.2
+P18.wrong_lp_only	22.8 16.2 9.9	assessed	23616 19946 24629	enrich	4.3 8.1 9.5
+P18.wrong_wh_only	12.7 14.9 14.8	assessed	1478 1489 958	enrich	2.4 4.1 9.9
+P19.depth	dp_at_cap lp_only 60x	15.5
+P21.gnn_share_lp_only	17--20
+P17.hom	lp	14,154 9,578 8,339	wh	27,135 13,706 11,815	ratio	1.92 1.43 1.42
+P17.other	ratio other allele	1.44 1.31 1.29	absent	1.40 1.34 1.29	60x absent	190,344 147,307
+P16.precision	lp	89.6 -> 93.3	wh	86.2 -> 91.5	diff	3.41 3.20 2.91 2.65 2.65 2.41 2.36 2.12 1.76 1.75	lp higher every rep	True
+P16.f1	diff	1.01 1.08 1.02 0.94 0.96 0.85 0.81 0.66 0.42 0.37	lp	83.3--92.3	wh	82.3--91.9	lp higher every rep	True
+P22.t2t	removed 62,230	in 1:1 11.4%	bg 92.6%	odds 98.1	auto 9.1% vs 92.9% odds 131	within 7,072 no variant 3,843 (54%)	every autosome enriched	True

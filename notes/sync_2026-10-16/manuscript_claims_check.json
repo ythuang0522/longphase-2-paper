@@ -1,0 +1,22 @@
+{
+  "status": "PASS",
+  "claims": {
+    "snv_switch_rate_percent": "0.022--0.081",
+    "snv_whatshap_ratio": "2.9--3.9",
+    "snv_hapcut_ratio": "3.3--5.0",
+    "snv_n50_longer_percent_30_60": "2--5",
+    "snv_hamming_ratio_30_60": "1.4--1.8",
+    "indel_n50_wh_longer_percent": "12--33",
+    "indel_hamming_wh_ratio": "1.8--2.7",
+    "hifi_wh_ratio": "2.4--2.8",
+    "hifi_hapcut_ratio": "2.9--3.5",
+    "heldout_overall_ratio": "2.7--5.1",
+    "all_indel_configurations_pair_error_reduction_percent": "22--40",
+    "workbook_sheet_count": 13
+  },
+  "source_sha256": {
+    "supplementary.xlsx": "3b2f37f2d349e828d13e49e9fc4c57227f0951b03c83df22f7abd7a983e9d89d",
+    "notes/benchmark_strata/item3_indel.tsv": "6397418499168aa1157339e8a2f30255552666ba46d25624ba1df10c2f37e2b2",
+    "notes/heldout/heldout_v50q.txt": "62478c00233d9afb9b16f417f0e8b36f03267489156aa2ffdb95d16dad6f90f8"
+  }
+}
