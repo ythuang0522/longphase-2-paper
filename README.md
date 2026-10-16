@@ -1380,6 +1380,16 @@ unchanged in substance).
   - not rerun: the held-out indel tables (`notes/heldout/`, SNV only was rescored);
     `input_md5.txt` of `notes/benchmark_strata/` still lists the v2.1 inputs;
     the slim data archive still holds the v2.1 VCFs.
+- **Done: HapCUT2 on the PacBio HiFi data (2026-10-16).** HapCUT2 1.3.4 (`--pacbio 1`) on the
+  same per-coverage HiFi calls and BAMs, 10–50×, replicate 1, scored like the other HiFi runs;
+  details, commands and the records HapCUT2 cannot read in `notes/hifi/README.md`. Changed:
+  `supplementary.xlsx` `SNV_Detail` (the empty `hapcut2_v134` block of the HiFi rows, by
+  `notes/hifi/add_hapcut2.py`; no other cell), Fig. 2j–l (HapCUT2 added; Liberation Sans),
+  Supplementary Table 11 (HapCUT2 rows), abstract ("2.4- to 2.8-fold fewer than WhatsHap" →
+  "2.4- to 3.5-fold fewer than both"), Results (HiFi paragraph: 2.9–3.5-fold lower than HapCUT2,
+  Hamming of three tools; completeness: WhatsHap and HapCUT2 0.4–0.5 points more), Fig. 2 legend,
+  Methods and Supplementary Table 5 (`--pacbio 1`, dropped records). Not changed: Fig. 4b
+  (completeness, LongPhase 2 and WhatsHap only, as in Fig. 4a), the HiFi JSX drafts.
 - **Done: HapCUT2 re-timed at 30× and 40× (2026-10-16).** The original logs of these two runs were
   overwritten in July, so the runtime table had no HapCUT2 value there. Both runs were repeated
   with the same binaries, commands and inputs, one at a time with no other job running

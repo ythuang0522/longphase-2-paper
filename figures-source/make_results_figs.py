@@ -332,7 +332,8 @@ def _path(ax, get, covs, color, ls, marker, msz, mfc="none", z=3):
 def fig2():
     """LongPhase 2 against other phasers for each evidence type and on HiFi data (v5.0q).
     Rows: SNV phasing (WhatsHap, HapCUT2), SNV and indel co-phasing (WhatsHap), SNV and
-    5mC co-phasing (MethPhaser), all nanopore; SNV phasing of PacBio HiFi data (WhatsHap; former
+    5mC co-phasing (MethPhaser), all nanopore; SNV phasing of PacBio HiFi data (WhatsHap, HapCUT2
+    added 2026-10-16; former
     Fig. 5a-c, author decision, 2026-10-09: one message per main figure, HiFi completeness in
     Fig. 4b; one replicate per coverage). Columns: switch error rate, Hamming distance, and the
     switch error rate against block N50 across coverage. Each row compares the tools on the
@@ -357,7 +358,8 @@ def fig2():
         ("SNV and 5mC co-phasing", BAR_COVS,
          [("lp_gnn", "LongPhase 2", mod1), ("meth", "MethPhaser", meth)], False),
         ("SNV phasing, PacBio HiFi", HIFI_COVS,
-         [("lp_gnn", "LongPhase 2", hifi("lp_gnn")), ("wh", "WhatsHap", hifi("wh"))], False),
+         [("lp_gnn", "LongPhase 2", hifi("lp_gnn")), ("wh", "WhatsHap", hifi("wh")),
+          ("hc", "HapCUT2", hifi("hc"))], False),
     ]
     last = len(rows) - 1
     indel = {"lp_gnn": _indel_runs("longphase_coh_indel_gnn"), "wh": _indel_runs("whatshap_v28")}
@@ -1245,7 +1247,7 @@ def tables():
     w(r"\label{tab:hifi}\scriptsize")
     w(r"\begin{tabular}{@{}llrrrrrr@{}}\toprule")
     w(r"Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(kb)} \\ \midrule")
-    for t in ["lp_gnn", "lp", "wh"]:
+    for t in ["lp_gnn", "lp", "wh", "hc"]:
         for c in HIFI_COVS:
             r = D["snv"]["HiFi"][XLSX_TOOL[t]][c]
             w(f"{NAME[t] if c == 10 else ''} & {c}$\\times$ & {cell(r, 'psnv_pct', 2)} & {cell(r, 'sw', 0)} & {cell(r, 'sw_pct', 3)} & "

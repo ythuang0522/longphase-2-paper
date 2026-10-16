@@ -66,7 +66,39 @@ The earlier rows (one call set for every coverage) had 2,367,609–2,367,619 het
 | 50× (48×) | 2,410,815 | 1,687 | 988 | 740 | 2.28 |
 
 SW: SNV switch errors. The full rows (phased SNVs, Hamming distance, blocks,
-N50) are in `supplementary.xlsx`.
+N50) are in `supplementary.xlsx`. (LongPhase values in this table are from v2.1; the v2.1.1
+values are in `supplementary.xlsx` and below.)
+
+## HapCUT2 (added 2026-10-16)
+
+HapCUT2 1.3.4, the same binaries and two steps as the nanopore runs, with `--pacbio 1` in place
+of `--ont 1`, on the same per-coverage call sets and BAMs, replicate 1, one run at a time on an
+idle machine (`/ssd/longphase_process/runtime/run_hapcut2_hifi.sh`; outputs, logs and compare
+reports in `/disk/research/pacbio/hapcut2_v1.3.4/`):
+
+```
+extractHAIRS --pacbio 1 --bam hg002.hifi.${c}x.1.bam --ref REF --VCF pepper_hifi_${c}x.vcf --out fragment_${c}x
+HAPCUT2 --fragments fragment_${c}x --VCF pepper_hifi_${c}x.vcf --output hapcut2_v134_hifi_${c}x_1
+```
+
+HapCUT2 stops on any genotype that is not two alleles from {0,1,2}, so records with such a GT
+were dropped when the VCF was unzipped: refCall `./.` (171, 151, 193, 204, 134 at 10–50×) and
+one PASS `2/3` indel at 50×; none is a heterozygous SNV, and the nanopore calls have none. Scored
+like the other HiFi runs (v5.0q chr1–22, no BED); `notes/hifi/add_hapcut2.py` writes the reports
+into the empty `hapcut2_v134` block of the HiFi rows of `SNV_Detail`.
+
+| Coverage | LongPhase 2.1.1 SW (%) | WhatsHap SW (%) | HapCUT2 SW (%) | HapCUT2 / LP | Hamming (%) | Phased SNV (%) | N50 (kb) | CPU (min) | Peak RSS (GiB) |
+|---|---|---|---|---|---|---|---|---|---|
+| 10× | 1,020 (0.049) | 2,655 (0.128) | 3,174 (0.152) | 3.10 | 1.06 | 87.47 | 340 | 19.4 | 7.1 |
+| 20× | 878 (0.040) | 2,504 (0.114) | 3,071 (0.140) | 3.48 | 1.13 | 92.25 | 480 | 44.4 | 11.4 |
+| 30× | 829 (0.038) | 2,331 (0.106) | 2,806 (0.127) | 3.36 | 1.00 | 92.45 | 527 | 44.5 | 14.3 |
+| 40× | 815 (0.037) | 1,954 (0.089) | 2,345 (0.106) | 2.86 | 0.97 | 92.41 | 562 | 59.5 | 17.2 |
+| 50× (48×) | 714 (0.033) | 1,687 (0.077) | 2,116 (0.096) | 2.95 | 0.75 | 92.08 | 577 | 59.1 | 19.6 |
+
+HapCUT2 had 1.20–1.25 times the switch errors of WhatsHap at every coverage, with almost the
+same phased fraction and N50. HiFi runtimes are not compared in the paper: the LongPhase and
+WhatsHap HiFi runs shared the machine with other jobs (WhatsHap 73–82% CPU at 10–20×,
+LongPhase v2.1.1 20× 32.7 min wall at 25% CPU), so only the HapCUT2 times are clean.
 
 The number of heterozygous SNV calls falls above 20× because PEPPER makes
 fewer false heterozygous calls: on chr1–22, against the v5.0q heterozygous
