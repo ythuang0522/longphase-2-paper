@@ -10,7 +10,7 @@ half-open; a site at 1-based POS is inside when start < POS <= end.
 import bisect, gzip, sys
 from collections import defaultdict
 sys.argv, out_path = sys.argv[:1] + ['.'], sys.argv[1]
-src = open('/ssd/longphase_process/unphased_sets/issue6.py').read()
+src = open('/ssd/longphase_process/unphased_sets_v2.1.1/issue6.py').read()
 exec(src.split('truth_het, bypos = read_truth()')[0])      # functions and paths of issue6.py
 
 V5BED = '/disk/software/longphase-2-paper/data/truth/HG002_GRCh38_v5.0q_smvar.benchmark.bed'
@@ -62,7 +62,7 @@ out = gzip.open(out_path, 'wt')
 out.write('coverage\tset\tchrom\tpos\tref\talt\tdepth\ttruth\tin_v5_bed\tin_segdup\tin_dipcall_1to1'
           '\tin_other_sw_interval\twh_wrong\twh_sw_endpoint\n')
 for cov in (10, 30, 60):
-    lp_v, lp_c, dp = read_call(f'{R}/longphase_gnn/longphase_gnn_{cov}x_1.vcf', info=True)
+    lp_v, lp_c, dp = read_call(f'{G}/longphase_gnn/longphase_gnn_{cov}x_1.vcf', info=True)
     pre_v, _, _ = read_call(f'{R}/longphase/longphase_{cov}x_1.vcf')
     wh_v, wh_c, _ = read_call(f'{R}/whatshap_v2.8/only/whatshap_v28_onlySNVs_{cov}x_1.vcf')
     alt = {(k[0], k[1]): (k[2], k[3]) for k in lp_c if len(k[2]) == 1 and len(k[3]) == 1}

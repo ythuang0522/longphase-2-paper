@@ -30,7 +30,7 @@
 set -u
 
 BASE=${1:-/disk/research/longphase/longphase_60x_1.vcf}
-CORR=${2:-/disk/research/longphase_gnn/longphase_gnn_60x_1.vcf}
+CORR=${2:-/disk/research/v2.1.1/longphase_gnn/longphase_gnn_60x_1.vcf}   # v2.1: /disk/research/longphase_gnn/
 RES=${3:-.}
 OUT=${4:-.}
 SAMPLE_N=${SAMPLE_N:-50000}     # background sample size

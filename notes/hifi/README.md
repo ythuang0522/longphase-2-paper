@@ -85,3 +85,9 @@ old HiFi 10× row):
 
 The old 10× row and the new 10× row differ by 6 PASS 1/1 calls (a separate
 PEPPER run on the same BAM).
+
+## LongPhase v2.1.1 (2026-10-16)
+
+The GNN rows (`longphase_v2.1.1` block of `SNV_Detail`) come from the v2.1.1 release binary,
+`/disk/research/v2.1.1/run_hifi.sh` (same command as above, output in `/disk/research/v2.1.1/pacbio/`).
+The `--disableGNN` and WhatsHap rows are unchanged.

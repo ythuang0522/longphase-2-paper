@@ -864,9 +864,9 @@ def fig_s4():
     for k, pr in enumerate(probs):
         h = hmax * pr
         S.rect(ox0 + k * odx - 1.3, base - h, 2.6, h,
-               fill=AMBER if pr >= 0.30 else GREY, r=0.4)
+               fill=AMBER if pr >= 0.35 else GREY, r=0.4)
     S.line(ox0 - 4, base, 760, base, stroke=INK, w=0.9)
-    thr = base - hmax * 0.30
+    thr = base - hmax * 0.35
     S.line(ox0 - 4, thr, 760, thr, stroke=AMBER, w=0.9, dash="2.5,2")
     S.text(760, thr - 5, "cutoff", cls="sb", anchor="end", fill=AMBER)
     S.text(DX + 84, 188, "=", cls="pl", anchor="middle", fill=GREY)
@@ -1007,7 +1007,7 @@ def fig_s5():
         S.node(x, yb, "a", H2, r=9)
     S.rect(xs[flagged] - 16, yt - 18, 32, (yb - yt) + 36, fill="none",
            stroke=AMBER, sw=1.4, r=3)
-    S.text(xs[flagged], yb + 36, "score = 0.62 ≥ 0.30", cls="sb",
+    S.text(xs[flagged], yb + 36, "score = 0.62 ≥ 0.35", cls="sb",
            anchor="middle", fill=AMBER)
     S.text(XL, yb + 36, "PS 1001, GT 0|1 / 1|0", cls="s")
 

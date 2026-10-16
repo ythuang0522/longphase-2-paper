@@ -3,16 +3,16 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 // SNV-only, seed 1. Variants phased by LongPhase but unphased by the GNN.
 // n_* fields carry the absolute counts behind each percentage.
 const A_DATA = [
-  {cov:"10x", n:63797, fp:81.13, hom:5.27, het:13.59, n_fp:51760, n_hom:3364, n_het:8673},
-  {cov:"12x", n:64428, fp:83.67, hom:4.81, het:11.52, n_fp:53909, n_hom:3100, n_het:7419},
-  {cov:"14x", n:63987, fp:86.14, hom:4.35, het: 9.51, n_fp:55121, n_hom:2782, n_het:6084},
-  {cov:"16x", n:63438, fp:87.92, hom:3.92, het: 8.16, n_fp:55776, n_hom:2486, n_het:5176},
-  {cov:"18x", n:63102, fp:88.71, hom:3.75, het: 7.54, n_fp:55976, n_hom:2366, n_het:4760},
-  {cov:"20x", n:63575, fp:90.06, hom:3.75, het: 6.19, n_fp:57256, n_hom:2382, n_het:3937},
-  {cov:"30x", n:60442, fp:91.09, hom:3.55, het: 5.36, n_fp:55055, n_hom:2148, n_het:3239},
-  {cov:"40x", n:60629, fp:92.11, hom:3.21, het: 4.68, n_fp:55848, n_hom:1944, n_het:2837},
-  {cov:"50x", n:59445, fp:92.12, hom:3.34, het: 4.53, n_fp:54762, n_hom:1988, n_het:2695},
-  {cov:"60x", n:60267, fp:93.03, hom:2.97, het: 4.00, n_fp:56069, n_hom:1787, n_het:2411},
+  {cov:"10x", n:61389, fp:84.03, hom:5.08, het:10.89, n_fp:51585, n_hom:3120, n_het:6684},
+  {cov:"12x", n:62268, fp:86.19, hom:4.77, het:9.04, n_fp:53670, n_hom:2968, n_het:5630},
+  {cov:"14x", n:62373, fp:87.75, hom:4.31, het: 7.93, n_fp:54735, n_hom:2689, n_het:4949},
+  {cov:"16x", n:63747, fp:89.02, hom:3.95, het: 7.03, n_fp:56749, n_hom:2516, n_het:4482},
+  {cov:"18x", n:62883, fp:90.06, hom:3.73, het: 6.21, n_fp:56632, n_hom:2343, n_het:3908},
+  {cov:"20x", n:64201, fp:91.28, hom:3.69, het: 5.03, n_fp:58602, n_hom:2371, n_het:3228},
+  {cov:"30x", n:63611, fp:91.98, hom:3.41, het: 4.62, n_fp:58507, n_hom:2166, n_het:2938},
+  {cov:"40x", n:62459, fp:92.79, hom:3.15, het: 4.06, n_fp:57957, n_hom:1966, n_het:2536},
+  {cov:"50x", n:61888, fp:92.77, hom:3.36, het: 3.87, n_fp:57411, n_hom:2081, n_het:2396},
+  {cov:"60x", n:62230, fp:93.56, hom:2.98, het: 3.46, n_fp:58222, n_hom:1852, n_het:2156},
 ];
 
 const FONT = "'Libre Franklin','Helvetica Neue',Arial,sans-serif";

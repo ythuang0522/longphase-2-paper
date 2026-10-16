@@ -12,8 +12,9 @@ import bisect, glob, os, sys
 from collections import defaultdict, Counter
 
 R = '/disk/research'
+G = '/disk/research/v2.1.1'   # LongPhase 2 with GNN correction (v2.1.1 rerun)
 TRUTH = '/ssd/longphase_process/HG002_GRCh38_v5.0q_smvar.chr1_22.vcf'
-SWDIR = glob.glob('/ssd/longphase_process/unphased_sets/out/tmp*')[0]  # --sw-bed of summarize_sets.py
+SWDIR = glob.glob('/ssd/longphase_process/unphased_sets_v2.1.1/out/tmp*')[0]  # --sw-bed of summarize_sets.py
 OUT = sys.argv[1] if len(sys.argv) > 1 else '.'
 XY = ('chrX', 'chrY')
 BIN, NB = 2, 63            # run_coverage.sh histograms: 2x bins, last bin = DP >= 124
@@ -181,7 +182,7 @@ iv6.write('coverage\tset\tother_tool\tn\tin_other_sw_pct\tin_other_sw_incl_secon
           '\tother_background_pct\tother_background_incl_second_pct\tenrichment\tenrichment_incl_second\n')
 
 for cov in (10, 30, 60):
-    lp_v, lp_c, dp = read_call(f'{R}/longphase_gnn/longphase_gnn_{cov}x_1.vcf', info=True)
+    lp_v, lp_c, dp = read_call(f'{G}/longphase_gnn/longphase_gnn_{cov}x_1.vcf', info=True)
     pre_v, _, _ = read_call(f'{R}/longphase/longphase_{cov}x_1.vcf')
     wh_v, wh_c, _ = read_call(f'{R}/whatshap_v2.8/only/whatshap_v28_onlySNVs_{cov}x_1.vcf')
     alt = {(k[0], k[1]): (k[2], k[3]) for k in lp_c if len(k[2]) == 1 and len(k[3]) == 1}
@@ -206,7 +207,7 @@ for cov in (10, 30, 60):
         acc[tool + '_ma'] = sum(1 for k in hits if q[k][2])     # calls with two ALTs, outside the Venn universe
         # check against the manuscript table (compare, v5.0q chr1-22, no BED)
         name = ('whatshap_v28_onlySNVs' if tool == 'WhatsHap' else 'longphase_gnn') + f'_{cov}x_1.vcf'
-        for l in open(f'{R}/20260924_v50q.txt'):
+        for l in open('/disk/software/longphase-2-paper/20260924_v50q.txt'):   # v2.1.1 rows since 2026-10-16
             if l.startswith('###' + name):
                 t = l.split('\t')
                 chk.write(f'{cov}x\t{tool}\tPhased_SNV\t{phased_snv}\t{t[1]}\n')

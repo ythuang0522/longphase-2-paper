@@ -8,14 +8,21 @@ workstation of Methods (inputs and outputs on the hard-disk drive `/disk/researc
 
 | Tool | Threads | 10× wall | 10× CPU | 10× peak RSS | 60× wall | 60× CPU | 60× peak RSS |
 |---|---|---|---|---|---|---|---|
-| LongPhase 2 | 24 | 4.6 min | 13.6 min | 36.0 GiB | 16.3 min | 34.5 min | 63.0 GiB |
-| LongPhase 2 | 1 | 8.1 min | 8.3 min | 6.2 GiB | 18.0 min | 18.8 min | 7.4 GiB |
+| LongPhase 2 | 24 | 3.5 min | 12.3 min | 19.3 GiB | 15.5 min | 30.7 min | 30.1 GiB |
+| LongPhase 2 | 1 | 8.3 min | 8.4 min | 6.3 GiB | 19.1 min | 18.8 min | 7.4 GiB |
 | WhatsHap 2.8 `--only-snvs` | 1 | 25.2 min | 25.1 min | 1.5 GiB | 113.8 min | 113.6 min | 4.0 GiB |
 | HapCUT2 1.3.4 | 1 | 24.1 min | 24.1 min | 6.6 GiB | 96.4 min | 95.9 min | 19.4 GiB |
 
 ## Sources
 
-- **24 threads (LongPhase 2), WhatsHap, HapCUT2:** the runs that produced the phased VCFs of
+- **LongPhase 2 (v2.1.1, 2026-10-16):** 24 threads from the logs of the v2.1.1 rerun,
+  `/disk/research/v2.1.1/longphase_gnn/longphase_gnn_{c}x_1.log` (one `phase` command, GNN
+  included); 1 thread re-timed on 2026-10-16 with the release binary
+  (`/ssd/longphase_process/runtime/run_t1_v2.1.1.sh`, `time/longphase_v2.1.1_gnn-t1_{c}.time`),
+  after waiting for no other phasing job and a load average below 2, BAM read once before the
+  run. The v2.1 values (24 threads 4.6 and 16.3 min, 36.0 and 63.0 GiB; 1 thread 8.1 and
+  18.0 min) are in git history.
+- **WhatsHap, HapCUT2 (and LongPhase 2 v2.1, superseded):** the runs that produced the phased VCFs of
   the paper. Their logs end with the output of `/usr/bin/time`; these are the values behind
   the current Results sentence (about 4 and 16 min, 25 and 95 min, 25 and 112 min).
   - LongPhase 2: `/disk/research/longphase/longphase_{c}x_1.log` (`phase`) plus
@@ -26,15 +33,14 @@ workstation of Methods (inputs and outputs on the hard-disk drive `/disk/researc
     `extractHAIRS` and `HAPCUT2`). No time at 30× and 40×: these two logs were overwritten on
     2026-07-18 by a rerun that was stopped after 3–5 s (`Command terminated by signal 2`), and no
     other copy of the original logs was found; `build_runtime.py` skips them.
-- **1 thread (LongPhase 2):** timed on 2026-10-09 with `/usr/bin/time -v`, same machine and
+- **1 thread (LongPhase 2 v2.1, superseded):** timed on 2026-10-09 with `/usr/bin/time -v`, same machine and
   disk, with every other job on the server stopped.
 
 ## Commands
 
 ```
-# LongPhase 2, 24 threads (paper runs)
-longphase phase --ont -t 24 --dot -s pepper_${c}x_1.vcf.gz -b hg002.sup.${c}x.1.bam -r REF -o longphase_${c}x_1
-longphase gnn -t 24 -B 0.30 -s longphase_${c}x_1.vcf -r REF -o longphase_gnn_${c}x_1
+# LongPhase 2 v2.1.1, 24 threads (paper runs; GNN correction runs within phase, threshold 0.35)
+longphase phase --ont -t 24 -s pepper_${c}x_1.vcf.gz -b hg002.sup.${c}x.1.bam -r REF -o longphase_gnn_${c}x_1
 
 # LongPhase 2, 1 thread
 longphase phase --ont -t 1 -s pepper_${c}x_1.vcf.gz -b hg002.sup.${c}x.1.bam -r REF -o lp_gnn_t1_${c}x
@@ -49,3 +55,13 @@ HAPCUT2 --fragments fragment_file --VCF pepper_calling3/pepper_${c}x_1.vcf --out
 
 REF: `GCA_000001405.15_GRCh38_no_alt_analysis_set.fa`. Check of the timing environment: a
 WhatsHap 10× run repeated on 2026-10-09 took 1,490 s against 1,510 s in the paper run.
+
+## All tools, every run (`all_tools_runtime.tsv`, 2026-10-16)
+
+Wall-clock minutes of SNV-only phasing for every nanopore run (10–20× replicates 1–10, 30–60×
+replicate 1), all tools, inputs and outputs on `/disk/research`. 10–20× start from the authors'
+table (`longphaseGNN-RunTime.tsv`); every value with a log was re-read from it, values without
+a log (GCphase, Ralphi) are kept as given, tools without a run at a coverage are empty, and
+`LongPhase_GNN` is replaced by `longphase_v2.1.1` (one `phase` command, `-t 24`, from the
+2026-10-14/16 rerun). `build_all_tools_runtime.py` rebuilds it on the lab server; its docstring
+lists the log of every column.

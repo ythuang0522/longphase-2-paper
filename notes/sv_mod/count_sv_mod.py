@@ -5,6 +5,7 @@ For each run: heterozygous records (GT 0|1, 1|0 or 0/1) and phased ones (0|1 or 
 Usage: count_sv_mod.py <config> <coverage>x_<replicate>   (prints one TSV line)"""
 import sys, re
 R = '/disk/research'
+G = '/disk/research/v2.1.1'   # LongPhase 2 with GNN correction (v2.1.1 rerun)
 AUTO = {f'chr{i}' for i in range(1, 23)}
 def count(p):
     het = ph = het_a = ph_a = 0
@@ -22,7 +23,7 @@ cfg, run = sys.argv[1:3]
 c, r = re.match(r'(\d+)x_(\d+)', run).groups()
 out = [cfg, c, r]
 for g in ('', '_gnn'):
-    pre = f'{R}/longphase_{cfg}{g}/longphase_{cfg}{g}_{run}'
+    pre = f'{G if g else R}/longphase_{cfg}{g}/longphase_{cfg}{g}_{run}'
     for kind in ('SV', 'mod'):
         try: out += count(f'{pre}_{kind}.vcf')
         except FileNotFoundError: out += ['NA'] * 4

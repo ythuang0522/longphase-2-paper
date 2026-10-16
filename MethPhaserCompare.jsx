@@ -4,21 +4,21 @@ import {
 } from "recharts";
 
 // HG002 ONT R10.4.1, replicate 1, scored against GIAB v5.0q.
-// MethPhaser: 0.0.4 output VCFs (notes/methphaser/, issue #5); LongPhase 2.1: SNV + 5mC co-phasing.
+// MethPhaser: 0.0.4 output VCFs (notes/methphaser/, issue #5); LongPhase 2.1.1: SNV + 5mC co-phasing.
 // Block N50 is in Mb; Phased SNV is the percentage of assessable
 // heterozygous SNVs in the benchmark.
 const data = [
-  { cov: 10, methphaser_sw: 2319, methphaser_psnv: 78.11491, methphaser_ham: 7.18543, methphaser_n50: 0.9637, lpgnn_sw: 1554, lpgnn_psnv: 77.89168, lpgnn_ham: 5.30991, lpgnn_n50: 0.8787 },
-  { cov: 20, methphaser_sw: 1508, methphaser_psnv: 91.08722, methphaser_ham: 7.16216, methphaser_n50: 2.2772, lpgnn_sw: 910, lpgnn_psnv: 90.97687, lpgnn_ham: 3.39801, lpgnn_n50: 1.7425 },
-  { cov: 30, methphaser_sw: 1143, methphaser_psnv: 91.60825, methphaser_ham: 5.96069, methphaser_n50: 3.3466, lpgnn_sw: 692, lpgnn_psnv: 91.50633, lpgnn_ham: 2.00896, lpgnn_n50: 2.073 },
-  { cov: 40, methphaser_sw: 946, methphaser_psnv: 91.63726, methphaser_ham: 4.54911, methphaser_n50: 4.0649, lpgnn_sw: 611, lpgnn_psnv: 91.55014, lpgnn_ham: 2.19873, lpgnn_n50: 2.4705 },
-  { cov: 50, methphaser_sw: 938, methphaser_psnv: 91.5461, methphaser_ham: 5.1263, methphaser_n50: 5.0305, lpgnn_sw: 610, lpgnn_psnv: 91.46514, lpgnn_ham: 1.8341, lpgnn_n50: 2.8654 },
-  { cov: 60, methphaser_sw: 774, methphaser_psnv: 91.43292, methphaser_ham: 3.95285, methphaser_n50: 5.4858, lpgnn_sw: 497, lpgnn_psnv: 91.36455, lpgnn_ham: 1.5984, lpgnn_n50: 3.0871 },
+  { cov: 10, methphaser_sw: 2319, methphaser_psnv: 78.11491, methphaser_ham: 7.18543, methphaser_n50: 0.9637, lpgnn_sw: 1537, lpgnn_psnv: 77.88247, lpgnn_ham: 5.37739, lpgnn_n50: 0.8771 },
+  { cov: 20, methphaser_sw: 1508, methphaser_psnv: 91.08722, methphaser_ham: 7.16216, methphaser_n50: 2.2772, lpgnn_sw: 877, lpgnn_psnv: 90.9725, lpgnn_ham: 3.40815, lpgnn_n50: 1.745 },
+  { cov: 30, methphaser_sw: 1143, methphaser_psnv: 91.60825, methphaser_ham: 5.96069, methphaser_n50: 3.3466, lpgnn_sw: 658, lpgnn_psnv: 91.49966, lpgnn_ham: 2.05193, lpgnn_n50: 2.0822 },
+  { cov: 40, methphaser_sw: 946, methphaser_psnv: 91.63726, methphaser_ham: 4.54911, methphaser_n50: 4.0649, lpgnn_sw: 606, lpgnn_psnv: 91.54305, lpgnn_ham: 2.19198, lpgnn_n50: 2.4866 },
+  { cov: 50, methphaser_sw: 938, methphaser_psnv: 91.5461, methphaser_ham: 5.1263, methphaser_n50: 5.0305, lpgnn_sw: 606, lpgnn_psnv: 91.46456, lpgnn_ham: 1.84742, lpgnn_n50: 2.8654 },
+  { cov: 60, methphaser_sw: 774, methphaser_psnv: 91.43292, methphaser_ham: 3.95285, methphaser_n50: 5.4858, lpgnn_sw: 485, lpgnn_psnv: 91.36543, lpgnn_ham: 1.60208, lpgnn_n50: 3.0871 },
 ];
 
 const SERIES = [
   { key: "methphaser", name: "MethPhaser",     color: "#0891b2" },
-  { key: "lpgnn",      name: "LongPhase 2.1",  color: "#dc2626" },
+  { key: "lpgnn",      name: "LongPhase 2.1.1",  color: "#dc2626" },
 ];
 
 const PANELS = [
@@ -85,7 +85,7 @@ export default function MethPhaserCompare() {
   return (
     <div style={{ width: "100%", background: "#ffffff", padding: "20px 24px", fontFamily: "Helvetica, Arial, sans-serif" }}>
       <div style={{ textAlign: "center", fontSize: 18, fontWeight: 700, color: "#111827", marginBottom: 12 }}>
-        MethPhaser vs LongPhase 2.1
+        MethPhaser vs LongPhase 2.1.1
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "10px 24px", marginBottom: 18 }}>

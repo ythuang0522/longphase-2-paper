@@ -256,7 +256,7 @@
 <circle cx="588.0" cy="610.0" r="9" fill="#fff" stroke="#DC2B23" stroke-width="1.8"/>
 <text x="588.0" y="613.0" class="n" text-anchor="middle" fill="#DC2B23">a</text>
 <rect x="340.0" y="546.0" width="32.0" height="82.0" rx="3" fill="none" stroke="#B8860B" stroke-width="1.4" opacity="1"/>
-<text x="356.0" y="646.0" class="sb" text-anchor="middle" fill="#B8860B">score = 0.62 ≥ 0.30</text>
+<text x="356.0" y="646.0" class="sb" text-anchor="middle" fill="#B8860B">score = 0.62 ≥ 0.35</text>
 <text x="16.0" y="646.0" class="s" text-anchor="start">PS 1001, GT 0|1 / 1|0</text>
 <line x1="16.0" y1="672.0" x2="764.0" y2="672.0" stroke="#C7D1DB" stroke-width="0.8" stroke-linecap="butt"/>
 <text x="16.0" y="696.0" class="pl" text-anchor="start">f</text>

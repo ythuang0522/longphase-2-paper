@@ -1309,3 +1309,72 @@ No undefined references, undefined citations or missing characters; `git diff --
 passes. The former Table 5 height warning is resolved. The existing Table 17 middle
 column-width warning (9.25 pt), main title/affiliation and underfull warnings remain.
 No figure artwork, numerical results, main manuscript source or internal notes changed.
+
+**LongPhase v2.1.1: retrained GNN model, all LongPhase 2 values updated, 2026-10-16 (JHL request).**
+The manuscript now reports release v2.1.1 (`twolinin/longphase` `f9962dd`, PR #131) instead of
+v2.1. The update corrects an error in the training of the v2.1 model; the differences in the
+reported results are small (switch errors with GNN correction mostly 0–5% lower, the rest
+unchanged in substance).
+
+- **What was wrong.** The haplotype-swap augmentation exchanged the two allele nodes of every
+  variant but kept each edge's vote weight from the node it came from, so the edge weights of
+  half of the training windows did not match their nodes. Node features and labels were correct.
+- **What was tried.** The model was retrained with the weights fixed, with two label
+  definitions (benchmark matched by position, as before, or by position, REF and ALT), each with
+  five seeds (42, 43, 44, 1337, 3407). All ten models were applied to the 60 nanopore runs at
+  10–20× with the threshold set to the cost of the v2.1 model on chr15–16. The REF/ALT labels
+  classified better but removed fewer switch errors on the held-out chromosomes; the
+  position-matched labels were kept and seed 42 (best on the validation chromosomes) released,
+  threshold 0.35. Details: `notes/gnn_retrain/` (`seeds.tsv`), Methods, Supplementary Method 4,
+  Supplementary Tables 4 and 18 (new). The C++ module of v2.1.1 also has the GNN fixes of PR #131
+  (GC/entropy as in training, singleton cleanup, merged 5mC nodes, SV features).
+- **Every value that depends on LongPhase 2 with GNN correction was recomputed automatically**
+  from new runs, by the same scripts as before (no hand-copied values):
+  - nanopore, 7 configurations × 64 runs, rerun on `/disk` one at a time with `-t 24`
+    (`/disk/research/v2.1.1/run.sh`); HiFi SNV-only 10–50× with the release binary;
+  - `supplementary.xlsx`: `longphase_v2.1` blocks renamed `longphase_v2.1.1` and refilled
+    (`SNV_Detail`, `co-phase_Detail`), `SV_5mC_phasing`, and the sheets that are one TSV each
+    (`notes/v2.1.1/update_xlsx.py`, which first checked that every old sheet equals its v2.1
+    source);
+  - `20260924_GIAB421.txt`, `20260924_v50q.txt`, `20260924_cophase_v50q.txt`: GNN rows only;
+  - `notes/benchmark_strata/` (items 3, 4), `notes/heldout/`, `notes/unphased/` (issue #6, #7),
+    `notes/sv_mod/`, `unphase_validation_results.txt` (T2T), Fig. 4e composition,
+    `notes/runtime/` (24 threads from the rerun; one thread re-timed);
+  - every number in the text was recomputed by `notes/v2.1.1/claims.py`, which reproduces the
+    v2.1 text from the committed v2.1 data before giving the v2.1.1 values;
+  - the JSX drafts (`notes/v2.1.1/update_jsx.py`).
+  Runs without GNN correction are unchanged (v2.1.1 `--disableGNN` reproduces them; checked).
+- **Main changes in the text** (v2.1 → v2.1.1): abstract 2.8–4.8-fold → 2.9–5.0-fold fewer
+  switch errors than WhatsHap and HapCUT2 (nanopore), HiFi 2.2–2.6 → 2.4–2.8-fold, four-class N50 gain
+  44% (4.14 vs 2.87 Mb at 60×), "five- to sixfold faster on one thread at 60×" unchanged (now 5.1 and
+  6.0-fold); v5.0q spread at 30–60× 4.3–4.8 → 4.3–5.0-fold; within v5.0q benchmark regions 2.1–10 →
+  2.1–9.5-fold; T2T-validated unphased SNVs 56,076 → 62,230; runtime with 24 threads 4.6–17.6 →
+  3.5–16.9 min and peak memory 36.0–63.0 → 19.3–30.1 GiB (GNN correction now runs inside `phase`),
+  one thread 8.1/18.0 → 8.3/19.1 min (re-timed 2026-10-16, idle machine). Every other change is in
+  the last digit. Each changed sentence keeps its provenance comment, with the v2.1.1 source added.
+- **Corrected along the way:** "four-class phasing produced the longest blocks at every
+  coverage" was already untrue at 50× in v2.1 (SNV+indel+5mC 0.1% longer); now also at 12 and
+  30×, and the sentence says so.
+- **Not rebuilt here (no TeX/Arial on the lab server):** run `make results-figs` and `make` on
+  the writing machine. Items that need manual work:
+  - `make results-figs` (Figs. 2–4, Supplementary Figs. 9–15 and runtime: Arial) and `make`
+    (`main.pdf`, `Supplementary.pdf`); `figures-source/supp_tables.tex` was regenerated here
+    (tables only) and is committed;
+  - Supplementary Figs. 4 and 5: the SVGs were regenerated (threshold 0.35); export the PDFs;
+  - the nine PNGs at the repository root (see the TODO below);
+  - not rerun: the held-out indel tables (`notes/heldout/`, SNV only was rescored);
+    `input_md5.txt` of `notes/benchmark_strata/` still lists the v2.1 inputs;
+    the slim data archive still holds the v2.1 VCFs.
+- **TODO (JHL, manual): re-take the nine JSX screenshots.** The `.jsx` drafts at the repository
+  root now hold the v2.1.1 values (`notes/v2.1.1/update_jsx.py`; HiFi legend "LongPhase 2.1.1",
+  phased-SNV axis widened to 86–93%), but the PNGs are still the v2.1 screenshots. Render each
+  `.jsx` in Claude (web) and replace the PNG of the same name:
+  - [ ] `CophaseGroupCompare.png`
+  - [ ] `PhasingBenchmarkBars.png`
+  - [ ] `PhasingBenchmarkBarsRow.png`
+  - [ ] `PhasingBenchmarkCompare.png`
+  - [ ] `HifiCompare.png`
+  - [ ] `HifiCompare3.png`
+  - [ ] `MethPhaserCompare.png`
+  - [ ] `UnphasedComposition.png`
+  - [ ] `UnphaseVenn3.png`

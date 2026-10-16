@@ -25,7 +25,7 @@
 # =====================================================================
 set -u
 
-LP=${1:-/disk/research/longphase_gnn/longphase_gnn_60x_1.vcf}
+LP=${1:-/disk/research/v2.1.1/longphase_gnn/longphase_gnn_60x_1.vcf}
 WH=${2:-/disk/research/whatshap_v2.8/whatshap_v28_onlySNVs_60x_1.vcf}
 RES=${3:-.}
 OUT=${4:-.}

@@ -4,6 +4,7 @@
 # GT 0|1 or 1|0, chr1-22.
 set -euo pipefail
 R=/disk/research
+G=/disk/research/v2.1.1   # LongPhase 2 with GNN correction (v2.1.1 rerun)
 count() {
     awk -F'\t' '!/^#/ && $1 ~ /^chr([1-9]|1[0-9]|2[0-2])$/ && length($4)==1 && length($5)==1 && $4 ~ /^[ACGT]$/ && $5 ~ /^[ACGT]$/ {
         n=split($9,f,":"); gi=0; for(i=1;i<=n;i++) if(f[i]=="GT") gi=i; if(!gi) next
@@ -17,7 +18,7 @@ export -f count
 {
     printf 'tool\tcoverage\treplicate\tphased_het_snv_calls_chr1_22\n'
     runs | while read c r; do
-        printf 'LongPhase 2\t%s\t%s\t%s\n' "$c" "$r" "$(count $R/longphase_gnn/longphase_gnn_${c}x_${r}.vcf)" &
+        printf 'LongPhase 2\t%s\t%s\t%s\n' "$c" "$r" "$(count $G/longphase_gnn/longphase_gnn_${c}x_${r}.vcf)" &
         printf 'WhatsHap\t%s\t%s\t%s\n' "$c" "$r" "$(count $R/whatshap_v2.8/only/whatshap_v28_onlySNVs_${c}x_${r}.vcf)" &
         wait
     done | sort -t$'\t' -k1,1 -k2,2n -k3,3n

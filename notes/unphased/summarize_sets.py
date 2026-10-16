@@ -23,6 +23,7 @@ scripts (scripts/):
 import bisect, os, subprocess, sys, tempfile
 from collections import defaultdict
 R = '/disk/research'
+G = '/disk/research/v2.1.1'   # LongPhase 2 with GNN correction (v2.1.1 rerun)
 TRUTH = '/ssd/longphase_process/HG002_GRCh38_v5.0q_smvar.vcf.gz'
 LP = '/disk/software/longphase_v2.1_release/longphase_linux-x64'
 CAP = 124
@@ -86,7 +87,7 @@ print('coverage\tset\tn\tdp_q1\tdp_median\tdp_q3\tdp_at_cap_pct\tpe_sites\tpe_ze
 tmp = tempfile.mkdtemp(dir=sys.argv[1] if len(sys.argv) > 1 else '.')
 for c in (10, 30, 60):
     pre = read(f'{R}/longphase/longphase_{c}x_1.vcf')
-    gnn = read(f'{R}/longphase_gnn/longphase_gnn_{c}x_1.vcf', info=True)
+    gnn = read(f'{G}/longphase_gnn/longphase_gnn_{c}x_1.vcf', info=True)
     wh = read(f'{R}/whatshap_v2.8/only/whatshap_v28_onlySNVs_{c}x_1.vcf')
     lp_u = {s for s, x in gnn.items() if not x[0]}; lp_p = {s for s, x in gnn.items() if x[0]}
     wh_u = {s for s, x in wh.items() if not x[0]}; wh_p = {s for s, x in wh.items() if x[0]}
@@ -95,7 +96,7 @@ for c in (10, 30, 60):
     lp_gnn = lp_only & removed; lp_phase = lp_only - removed
     bg = set(gnn) - lp_only - wh_only - both
     sw_wh = swbed(f'{R}/whatshap_v2.8/only/whatshap_v28_onlySNVs_{c}x_1.vcf', tmp)
-    sw_lp = swbed(f'{R}/longphase_gnn/longphase_gnn_{c}x_1.vcf', tmp)
+    sw_lp = swbed(f'{G}/longphase_gnn/longphase_gnn_{c}x_1.vcf', tmp)
     bg_wh = 100 * inside(sw_wh, wh_p) / len(wh_p); bg_lp = 100 * inside(sw_lp, lp_p) / len(lp_p)
     for name, S, other, sw, b in (('lp_only_phase', lp_phase, 'WhatsHap', sw_wh, bg_wh),
                                   ('lp_only_gnn', lp_gnn, 'WhatsHap', sw_wh, bg_wh),

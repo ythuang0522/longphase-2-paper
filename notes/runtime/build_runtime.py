@@ -1,12 +1,15 @@
 """Issue #3 runtime table (notes/runtime/runtime.tsv).
 
-WhatsHap, HapCUT2 and LongPhase at 24 threads: the GNU time output at the end
-of the logs of the paper's own runs (lab server, /disk/research). LongPhase at
-1 thread: timed 2026-10-09 with /usr/bin/time -v on the same
-machine and disk, all other jobs stopped (/ssd/longphase_process/runtime/time)."""
+WhatsHap and HapCUT2: the GNU time output at the end of the logs of the paper's own runs
+(lab server, /disk/research). LongPhase 2 (v2.1.1, one `phase` command with GNN correction)
+at 24 threads: /usr/bin/time -v of the 2026-10-14/16 rerun (/disk/research/v2.1.1/run.sh, one
+run at a time); at 1 thread: timed separately with /usr/bin/time -v on the same machine and
+disk, all other jobs stopped (/ssd/longphase_process/runtime/time). The v2.1 rows (`phase`
+plus the separate `gnn` command, and the 2026-10-09 one-thread runs) are in git history."""
 import os, re
 R = '/disk/research'
 T = '/ssd/longphase_process/runtime/time'
+G = '/disk/research/v2.1.1'
 
 def secs(s):
     return sum(float(v) * 60 ** i for i, v in enumerate(reversed(s.split(':'))))
@@ -25,9 +28,8 @@ def gnu_v(p):  # time -v
 
 rows = []
 for c in (10, 12, 14, 16, 18, 20, 30, 40, 50, 60):  # replicate 1 at every coverage of the paper
-    a, b = gnu(f'{R}/longphase/longphase_{c}x_1.log'), gnu_v(f'{R}/longphase_gnn/longphase_gnn_{c}x_1.log')
-    rows.append(('LongPhase 2', 'phase + GNN', 24, c, a[0] + b[0], a[1] + b[1], max(a[2], b[2])))
-    t1 = f'{T}/longphase_v2.1_gnn-t1_{c}.time'  # timed separately; skip coverages not yet timed
+    rows.append(('LongPhase 2', 'phase + GNN', 24, c, *gnu_v(f'{G}/longphase_gnn/longphase_gnn_{c}x_1.log')))
+    t1 = f'{T}/longphase_v2.1.1_gnn-t1_{c}.time'  # timed separately; skip coverages not yet timed
     if os.path.exists(t1):
         rows.append(('LongPhase 2', 'phase + GNN', 1, c, *gnu_v(t1)))
     rows.append(('WhatsHap 2.8', '--only-snvs', 1, c, *gnu(f'{R}/whatshap_v2.8/only/whatshap_v28_onlySNVs_{c}x_1.log')))

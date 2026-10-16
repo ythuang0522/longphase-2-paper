@@ -163,21 +163,21 @@ where $[\cdot]_t$ selects the 32 coordinates of head $t$, $\mathbf{W}_e$ is a pe
 
 \paragraph{Scoring zone and inference.} Inference was implemented in C++ without external runtime dependencies and used the erf-based GELU. Predictions for the two allele nodes of a variant were averaged. Only variants in the central zone of each window were scored: those whose genomic distance from the trigger is at most half the largest such distance in the window, $|p - p_c| \le \tfrac{1}{2}\max_u |p_u - p_c|$. Only labelled variants in this zone contributed to the training loss, and the same zone was scored at inference; the other variants supplied graph context. A variant scored in several windows received the running mean of its predictions from those windows.
 
-\paragraph{Phase-set update.} A variant with a mean onset score $\ge 0.30$ was unphased while preserving its alleles: both \code{0|1} and \code{1|0} became \code{0/1}, and the PS tag was removed. Bridge protection was disabled in the reported runs. Connectivity was then evaluated over the surviving graph edges within each original phase set. The largest connected component retained the original PS identifier; each other component received the 1-based position of its first variant as its identifier. Corrected records were written separately for small variants, SVs and methylation sites.
+\paragraph{Phase-set update.} A variant with a mean onset score $\ge 0.35$ was unphased while preserving its alleles: both \code{0|1} and \code{1|0} became \code{0/1}, and the PS tag was removed. Bridge protection was disabled in the reported runs. Connectivity was then evaluated over the surviving graph edges within each original phase set. The largest connected component retained the original PS identifier; each other component received the 1-based position of its first variant as its identifier. Corrected records were written separately for small variants, SVs and methylation sites.
 
 \paragraph{Labels.} Labels were derived from the v5.0q benchmark restricted to chr1--chr22 small variants, the same truth set used for evaluation, and describe the phase of a variant relative to its neighbours rather than in absolute terms. Within each window the variants were grouped by phase set; in each group the first variant present in the benchmark fixed the orientation of that group and was labelled \emph{correct}, and every later variant was labelled \emph{correct} if its allele-to-haplotype orientation agreed with that anchor and \emph{disagreeing} otherwise. Maximal runs of consecutive disagreeing variants were then resolved so that a run is charged to the event that created the run, not to each member. A run of length one became \emph{unphase} if that variant's PE was at least 0.9 and \emph{flip} otherwise, whereas a run of length two or more had its first variant, the switch point, relabelled \emph{break}, and all remaining members reset to \emph{correct}. Variants absent from the benchmark, and all SV and 5mC records, for which the benchmark carries no phase truth, were left unlabelled: they remained in the graph as context but did not contribute to the loss. The released model was trained and applied in binary mode, in which \emph{flip}, \emph{unphase} and \emph{break} are merged into a single \emph{error} class.
 
 \paragraph{Class balance and loss.} Among the labelled central nodes of the training split, 17,812,710 (97.04\%) were \emph{correct} and 544,170 (2.96\%) \emph{error}, and 21.5\% of windows contained at least one error node; the prevalence is far above the genome-wide switch-error rate because windows are opened only at high-entropy triggers and because the label is assigned relative to a window-local anchor rather than to a whole phase block. Each minibatch kept all of its error nodes and a uniform random sample of correct nodes of at most four times that number (\code{--ratio\_corr 4}), drawn again for every minibatch. The cross-entropy on that subset was focal-weighted\cite{lin2017focal} by $(1-p_t)^{\gamma}$ with $\gamma = 1.5$ and used label smoothing of 0.05.
 
-\paragraph{Training augmentations.} Two label-preserving augmentations were applied to training windows only, each independently with probability 0.5: a haplotype swap, which exchanges the two allele nodes of every variant and complements the HP feature, an operation the phasing problem is invariant under; and a coverage down-scaling, which multiplies $h_1$, $h_2$, their sum, the outgoing-weight standard deviation and the raw edge weights by a factor drawn uniformly from $[0.4, 0.7]$ and recomputes the derived logarithmic features, applied only to windows containing at least one error node.
+\paragraph{Training augmentations.} Two label-preserving augmentations were applied to training windows only, each independently with probability 0.5: a haplotype swap, which exchanges the two allele nodes of every variant and complements the HP feature, an operation the phasing problem is invariant under, and gives every edge the vote weight $w$ of the allele node it leaves after the exchange (the model of release v2.1 had kept the weight of the node the edge left before the exchange, so the edge weights of swapped windows did not match their nodes; the model was retrained with this corrected for v2.1.1); and a coverage down-scaling, which multiplies $h_1$, $h_2$, their sum, the outgoing-weight standard deviation and the raw edge weights by a factor drawn uniformly from $[0.4, 0.7]$ and recomputes the derived logarithmic features, applied only to windows containing at least one error node.
 
 \paragraph{Model selection.} Checkpoints were selected on the validation chromosomes by a normalized net-gain criterion. At each epoch the predicted onset score was thresholded at each of 81 values spanning $[0.01, 0.99]$. For $P>0.5$, the score was
 \begin{equation}
 S = R\,\Big(2 - \frac{1}{P}\Big) = \frac{\mathrm{TP}-\mathrm{FP}}{\mathrm{TP}+\mathrm{FN}},
 \end{equation}
-where $P=\mathrm{TP}/(\mathrm{TP}+\mathrm{FP})$ and $R=\mathrm{TP}/(\mathrm{TP}+\mathrm{FN})$ are precision and recall for the label-defined error class. For a fixed evaluation set, $\mathrm{TP}+\mathrm{FN}$ is constant. Thus, maximizing $S$ is equivalent to maximizing $\mathrm{TP}-\mathrm{FP}$, assigning unit benefit to each true-positive detection and unit cost to each false-positive prediction. This score serves as a proxy for correction utility, rather than an exact fraction of switch errors removed from the corrected VCF. The score was maximized over thresholds subject to recall of at least $0.005$; for $P\le0.5$, the score was instead $P-1$. The selected checkpoint was epoch 44 ($S = 0.0235$ at $P = 0.626$, $R = 0.058$ and a threshold of 0.868); its classification metrics on the validation and held-out chromosomes are given in Supplementary Table~4. The score $S$ governed checkpoint selection; the deployment threshold was chosen separately using the end-to-end phasing trade-off described below.
+where $P=\mathrm{TP}/(\mathrm{TP}+\mathrm{FP})$ and $R=\mathrm{TP}/(\mathrm{TP}+\mathrm{FN})$ are precision and recall for the label-defined error class. For a fixed evaluation set, $\mathrm{TP}+\mathrm{FN}$ is constant. Thus, maximizing $S$ is equivalent to maximizing $\mathrm{TP}-\mathrm{FP}$, assigning unit benefit to each true-positive detection and unit cost to each false-positive prediction. This score serves as a proxy for correction utility, rather than an exact fraction of switch errors removed from the corrected VCF. The score was maximized over thresholds subject to recall of at least $0.005$; for $P\le0.5$, the score was instead $P-1$. The selected checkpoint was epoch 30 ($S = 0.0221$ at $P = 0.621$, $R = 0.057$ and a threshold of 0.574); its classification metrics on the validation and held-out chromosomes are given in Supplementary Table~4. The score $S$ governed checkpoint selection; the deployment threshold was chosen separately using the end-to-end phasing trade-off described below.
 
-\paragraph{Deployment-threshold selection.} Onset score thresholds $B$ from 0.05 to 0.95 in steps of 0.05 were evaluated on 60 HG002 nanopore runs, comprising ten down-sampling replicates at each of 10, 12, 14, 16, 18 and 20$\times$. Each threshold was scored, relative to phasing without GNN correction, by the fraction of switch errors removed and by the cost of correction, the number of phased SNVs withheld divided by the number of switch errors removed. Because the two trade off against each other, the criterion was the largest fraction of switch errors removed at a cost of at most ten withheld SNVs per removed error. For the released model, $B=0.30$ removed 33.1\% of switch errors at a cost of 8.3 withheld SNVs per removed error (60 runs pooled, whole genome). On the held-out chromosomes chr17, chr21 and chr22, the same threshold removed 21.2\% of switch errors at a cost of 10.5, slightly above the limit; the threshold was not re-selected on these chromosomes (Supplementary Table~15). This criterion concerns the final phasing output and is distinct from the classifier-based criterion used to rank training checkpoints.
+\paragraph{Label definitions, seeds and deployment threshold.} Two label definitions were trained with the settings above, each with five seeds (42, 43, 44, 1337 and 3407): benchmark variants matched to the calls by position, as described under Labels, and matched by position, REF and ALT, which leaves calls whose alleles differ from the benchmark unlabelled. Every model was applied to 60 HG002 nanopore SNV-only runs, comprising ten down-sampling replicates at each of 10, 12, 14, 16, 18 and 20$\times$, and scored relative to phasing without GNN correction by the fraction of switch errors removed and by the cost of correction, the number of phased SNVs withheld divided by the number of switch errors removed. Because the two trade off against each other through the onset-score threshold $B$, each model's threshold was set on the validation chromosomes chr15 and chr16 to the same cost, 6.35 withheld SNVs per removed error (the cost of the release v2.1 model at $B=0.30$), and the models were compared at that cost (Supplementary Table~18). The REF/ALT-matched labels gave higher classification scores on the held-out chromosomes (error-class $F_1$ 0.367--0.382 against 0.345--0.355) but removed fewer switch errors there (mean of five seeds 21.6\% against 23.0\%), and over the whole genome (33.5\% against 33.8\%). The position-matched labels were therefore kept. Among their five seeds, the released model is the one that removed the most switch errors on the validation chromosomes (seed 42, 50.8\%); its calibrated threshold, 0.34, was rounded to $B=0.35$. With the released implementation and $B=0.35$, correction removed 34.3\% of switch errors at a cost of 7.98 withheld SNVs per removed error (60 runs pooled, whole genome), and 23.5\% at a cost of 9.26 on the held-out chromosomes chr17, chr21 and chr22 (Supplementary Table~15). Neither the label definition nor the threshold was selected on the held-out chromosomes. This criterion concerns the final phasing output and is distinct from the classifier-based criterion used to rank training checkpoints.
 
 %  [optional] Report the achieved maximum differences for the first two links as
 %  well; the export script prints both, but the export log was not retained.
@@ -330,7 +330,7 @@ Feed-forward & 128 $\rightarrow$ 256 $\rightarrow$ 128, GELU, residual, LayerNor
 Classifier & concat[$h_i$, $\sum_j \sigma(w_{ij})$, $\max_j \sigma(w_{ij})$] (130) $\rightarrow$ 128 (GELU) $\rightarrow$ 2, softmax; $\sigma$ logistic, self-loop excluded \\
 Stored values & 687,358, including frozen normalization statistics \\
 Window & trigger PE $\ge 0.8$; $\pm 20$ variants ($\le 41$ variants, $\le 82$ allele nodes) \\
-Decision & unphase if the mean onset score over the two allele nodes and windows in which the variant lies in the scoring zone is $\ge 0.30$ \\
+Decision & unphase if the mean onset score over the two allele nodes and windows in which the variant lies in the scoring zone is $\ge 0.35$ \\
 Post-processing & split disconnected phase sets (largest component keeps PS); bridge protection off \\
 Training & see Supplementary Table~\ref{tab:gnntrain} \\
 \bottomrule
@@ -362,16 +362,16 @@ Learning rate & $3 \times 10^{-4}$, no warm-up, cosine annealing to $10^{-5}$ ov
 Batch size & 64 windows, batched as disjoint graphs \\
 Regularization & dropout 0.4 (local branch, global branch, FFN; inactive at inference); gradient-norm clipping 1.0 \\
 Graph preprocessing & reverse edge added per DOT edge with identical features (undirected) \\
-Augmentation (train only) & haplotype swap, $p = 0.5$; coverage down-scaling $\times\,U[0.4, 0.7]$, $p = 0.5$, error-bearing windows only \\
-Epochs & budget 100, early stopping after 25 epochs without improvement; stopped at 69 \\
-Seed & 42 (Python and PyTorch generators) \\
+Augmentation (train only) & haplotype swap with edge weights of the new source node, $p = 0.5$; coverage down-scaling $\times\,U[0.4, 0.7]$, $p = 0.5$, error-bearing windows only \\
+Epochs & budget 100, early stopping after 25 epochs without improvement; stopped at 55 \\
+Seed & 42 (Python and PyTorch generators); four further seeds and a second label definition in Supplementary Table~18 \\
 Environment & PyTorch 2.11.0, PyTorch Geometric 2.7.0, Python 3.12, CUDA 13.0, cuDNN 9.19, one NVIDIA GeForce RTX 5090 \\
 \addlinespace
 \multicolumn{2}{@{}l}{\textit{Selection and export}}\\
 Selection criterion & max over 81 thresholds in $[0.01, 0.99]$ of $R\,(2 - 1/P)$ subject to $R \ge 0.005$, on chr15--chr16; $P - 1$ where $P \le 0.5$ \\
-Selected checkpoint & epoch 44; $S = 0.0235$ at $P = 0.626$, $R = 0.058$, threshold 0.868 \\
-Held-out test (chr17, 21, 22) & argmax: accuracy 0.941, error-class $P/R/F_1 = 0.258/0.499/0.340$; tuned threshold: 0.946, $0.273/0.468/0.345$; $n = 41{,}378$ error nodes \\
-Deployment threshold & 0.30; phased-SNV/switch-error trade-off (Supplementary Method~4) \\
+Selected checkpoint & epoch 30; $S = 0.0221$ at $P = 0.621$, $R = 0.057$, threshold 0.574 \\
+Held-out test (chr17, 21, 22) & argmax: accuracy 0.936, error-class $P/R/F_1 = 0.251/0.564/0.347$; tuned threshold: 0.950, $0.294/0.471/0.362$; $n = 41{,}378$ error nodes \\
+Deployment threshold & 0.35; calibrated to a validation cost of 6.35 withheld SNVs per removed switch error (Supplementary Method~4) \\
 Export & ONNX opset 17, dynamic $N$, compiled into the C++ module; C++ vs.\ ONNX Runtime max.\ absolute difference $3 \times 10^{-7}$ \\
 \bottomrule
 \end{tabular}
@@ -410,7 +410,7 @@ Ralphi & v0.0.1 (commit \code{d7d17b1}) & SNV-only comparison, 10--20$\times$; m
 MethPhaser & 0.0.4 & run on the uncorrected SNV-only \toolname output (same SNV phasing as the joint SNV+5mC run), replicate~1, with its alignments haplotagged by \code{longphase haplotag} (v2.0.2) and restricted to primary records; \code{meth\_phaser\_parallel} with that VCF (\code{-vc}) and a GTF of its phase blocks (\code{-g}), then \code{meth\_phaser\_post\_processing}, otherwise default parameters; one local fix (when the block of a record cannot be found from its PS, which in \toolname output can precede the first phased variant of the block, it is found from the record position; 0.0.4 otherwise stops with an error), and output records split at missing line breaks and sorted \\
 HG002 PacBio HiFi reads & Revio, PacBio release 2023-10-31 & ccs 7.0.0, lima 2.7.1, primrose 1.4.0; aligned with pbmm2 1.10.0 (48$\times$); down-sampled with samtools 1.23.1 (seed 1) to 10--40$\times$, 48$\times$ used as 50$\times$; PEPPER-Margin-DeepVariant r0.8 \code{--hifi}, called separately at every coverage \\
 \longphase~1.0 & v1.0 & \code{--ont}; commit \code{fe8c1fdff11ba2a082d3}\allowbreak\code{63a7ffcb5c923cacc316} \\
-\toolname & v2.1, commit \code{46ba470} & Nanopore mode (\code{--pb} for HiFi); GNN correction with defaults \\
+\toolname & v2.1.1, commit \code{f9962dd} & Nanopore mode (\code{--pb} for HiFi); GNN correction with defaults \\
 \end{longtable}
 }
 
@@ -465,6 +465,33 @@ Duet\cite{zhou2022duet} & BMC Bioinformatics 2022 & comparison method for SV pha
 \clearpage
 \input{figures-source/supp_tables}
 
+\begin{table}[h]
+\caption{\textbf{GNN models trained with two label definitions and five seeds.} Each model was trained on the same windows with the settings of Supplementary Table~4; labels matched the v5.0q benchmark to the calls by position (\emph{position}) or by position, REF and ALT (\emph{REF/ALT}). Selected epoch and held-out classification (error class, argmax) from training; $B$, onset-score threshold that gives on the validation chromosomes (chr15, chr16) the cost of the release v2.1 model at $B=0.30$ (6.35 phased SNVs withheld per removed switch error). At that threshold: switch errors removed by GNN correction relative to phasing without it, and the cost, on the validation chromosomes, the held-out chromosomes (chr17, chr21, chr22) and the whole genome, over the 60 HG002 nanopore SNV-only runs at 10--20$\times$, applied with the Python correction pipeline and scored with \code{longphase compare} against v5.0q. The released model (v2.1.1) is marked with an asterisk; its threshold was rounded to 0.35, and the values of the released C++ implementation are in Supplementary Method~4 and Supplementary Table~15.}\label{tab:seeds}
+\small
+\begin{tabular}{@{}llrrrrrrrr@{}}
+\toprule
+ & & & Held-out & & \multicolumn{3}{c}{Switch errors removed (\%)} & \multicolumn{2}{c}{Cost} \\
+\cmidrule(lr){6-8}\cmidrule(l){9-10}
+Labels & Seed & Epoch & $F_1$ & $B$ & Valid. & Held-out & Genome & Held-out & Genome \\
+\midrule
+Position & 42* & 30 & 0.347 & 0.340 & 50.8 & 23.9 & 34.7 & 9.5 & 8.2 \\
+Position & 43 & 58 & 0.348 & 0.263 & 48.1 & 22.4 & 32.9 & 9.8 & 8.1 \\
+Position & 44 & 37 & 0.345 & 0.311 & 49.6 & 22.6 & 33.9 & 10.2 & 8.1 \\
+Position & 1337 & 27 & 0.355 & 0.343 & 50.3 & 23.2 & 34.0 & 9.7 & 8.1 \\
+Position & 3407 & 34 & 0.349 & 0.336 & 49.7 & 23.0 & 33.6 & 9.4 & 7.8 \\
+\addlinespace
+REF/ALT & 42 & 48 & 0.381 & 0.232 & 49.8 & 22.9 & 34.1 & 9.8 & 8.3 \\
+REF/ALT & 43 & 19 & 0.382 & 0.346 & 50.5 & 21.9 & 33.3 & 9.4 & 8.2 \\
+REF/ALT & 44 & 52 & 0.367 & 0.218 & 47.9 & 20.8 & 33.1 & 10.6 & 8.5 \\
+REF/ALT & 1337 & 44 & 0.369 & 0.238 & 49.4 & 21.4 & 33.6 & 10.2 & 8.3 \\
+REF/ALT & 3407 & 42 & 0.370 & 0.251 & 49.1 & 21.2 & 33.6 & 10.4 & 8.4 \\
+\addlinespace
+Release v2.1 model & 42 & 44 & 0.340 & 0.30 & 48.5 & 21.2 & 33.2 & 10.5 & 8.3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
 \clearpage
 \paragraph{Supplementary Data 1.} \code{supplementary.xlsx} contains the metrics behind Figs.~2--4, Supplementary Figs.~9 and 11--15 and Supplementary Tables~7--11, 13, 14 and~17. Per-run metrics are indexed by coverage and down-sampling replicate. Blank cells denote runs that were not performed. The 13 sheets are described below.
 
@@ -481,7 +508,7 @@ The code \code{both}, present in the composition, depth and sets sheets, denotes
 \midrule
 \code{Variant\_Calling} & Input call sets. \\[4pt]
 \code{SNV\_Detail} & SNV-only phasing by every tool on nanopore and HiFi data. \\[4pt]
-\code{co-phase\_Detail} & The six co-phasing configurations of \toolname without (\code{longphase\_v2.0.1}) and with (\code{longphase\_v2.1}) GNN correction, and \whatshap with indels. \\[4pt]
+\code{co-phase\_Detail} & The six co-phasing configurations of \toolname without (\code{longphase\_v2.0.1}) and with (\code{longphase\_v2.1.1}) GNN correction, and \whatshap with indels. \\[4pt]
 \code{SNV\_switch\_by\_region} & SNV switch errors and assessed pairs for SNV-only runs, by truth set, benchmark region and GIAB v3.6 stratum. \\[4pt]
 \code{SNV\_switch\_coincidence} & Switch errors at identical SNV pairs across tools (replicate~1). \\[4pt]
 \code{Indel\_accuracy} & Indel and SNV switch errors, assessed pairs and Hamming distance for co-phasing runs, without and within the v5.0q benchmark regions. \\[4pt]
@@ -491,7 +518,7 @@ The code \code{both}, present in the composition, depth and sets sheets, denotes
 \code{Unphased\_sets} & Per set: read-depth quartiles and share at the depth cap, phasing entropy (PE) of \toolname where it reports one, and enrichment in the other tool's switch-error intervals. \\[4pt]
 \code{Phased\_calls} & Phased heterozygous SNV calls on chr1--22 for every SNV-only run of \toolname and \whatshap; the denominator of precision in Fig.~4c and Supplementary Table~8. \\[4pt]
 \code{MethPhaser} & MethPhaser applied to the SNV-only output of \toolname without GNN correction, scored as in \code{SNV\_Detail} (Fig.~2g--i and Supplementary Fig.~11). \\[4pt]
-\code{SV\_5mC\_phasing} & Heterozygous SVs (Sniffles2) and 5mC sites (\texttt{modcall}) of every co-phasing configuration with SVs or 5mC, and how many \toolname phased without (\code{longphase\_v2.0.1}) and with (\code{longphase\_v2.1}) GNN correction; all contigs, as in \code{Variant\_Calling}. \\
+\code{SV\_5mC\_phasing} & Heterozygous SVs (Sniffles2) and 5mC sites (\texttt{modcall}) of every co-phasing configuration with SVs or 5mC, and how many \toolname phased without (\code{longphase\_v2.0.1}) and with (\code{longphase\_v2.1.1}) GNN correction; all contigs, as in \code{Variant\_Calling}. \\
 \bottomrule
 \end{tabular}
 }
@@ -536,7 +563,7 @@ The code \code{both}, present in the composition, depth and sets sheets, denotes
 \textbf{a}, Every phased variant with a phasing entropy of at least 0.8 (amber) triggers a window of $\pm 20$ variants.
 \textbf{b}, The window is represented as a graph of allele nodes with 31 node features and six edge features (Supplementary Tables~1 and~2); squares represent features, not their values.
 \textbf{c}, Each of four GPS layers combines a local GATv2 branch with a global self-attention branch; a classifier head assigns each allele node a score for a label-defined phase-disagreement onset.
-\textbf{d}, Variants with an onset score of at least 0.30 are unphased without changing their genotypes, and the phase set is split where the remaining graph is disconnected.
+\textbf{d}, Variants with an onset score of at least 0.35 are unphased without changing their genotypes, and the phase set is split where the remaining graph is disconnected.
 Details are shown in Supplementary Figs.~5 and~6.}
 \end{figure}
 
@@ -547,7 +574,7 @@ Details are shown in Supplementary Figs.~5 and~6.}
 \textbf{b}, Bridge-vertex feature: a variant whose removal disconnects the window graph.
 \textbf{c}, Only variants within half the largest distance from the trigger contribute to the training loss and to inference scores; the other variants supply graph context.
 \textbf{d}, The phasing graph in its DOT export format (\code{--dot}), with the vote weight at the source as the edge label.
-\textbf{e}, Before correction: a variant with an onset score $\ge 0.30$ (amber) inside a phase set.
+\textbf{e}, Before correction: a variant with an onset score $\ge 0.35$ (amber) inside a phase set.
 \textbf{f}, After correction: the variant is unphased; the largest remaining component keeps the original PS and every other component receives the position of its first variant as its PS.}
 \end{figure}
 

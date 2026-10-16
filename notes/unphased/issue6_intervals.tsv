@@ -1,13 +1,13 @@
 coverage	set	other_tool	n	in_other_sw_pct	in_other_sw_incl_second_pct	other_background_pct	other_background_incl_second_pct	enrichment	enrichment_incl_second
 10x	lp_only_phase	WhatsHap	125981	9.82	10.69	2.33	2.47	4.22	4.33
-10x	lp_only_gnn	WhatsHap	22592	10.41	12.72	2.33	2.47	4.47	5.15
-10x	lp_only	WhatsHap	148573	9.91	11.00	2.33	2.47	4.26	4.45
-10x	wh_only	LongPhase 2	37676	3.38	3.51	1.73	1.80	1.95	1.95
+10x	lp_only_gnn	WhatsHap	24908	11.09	13.31	2.33	2.47	4.76	5.39
+10x	lp_only	WhatsHap	150889	10.03	11.13	2.33	2.47	4.31	4.50
+10x	wh_only	LongPhase 2	34359	3.74	3.87	1.59	1.66	2.35	2.34
 30x	lp_only_phase	WhatsHap	111718	13.44	14.05	1.52	1.58	8.83	8.87
-30x	lp_only_gnn	WhatsHap	20720	6.41	7.18	1.52	1.58	4.21	4.53
-30x	lp_only	WhatsHap	132438	12.34	12.98	1.52	1.58	8.11	8.19
-30x	wh_only	LongPhase 2	52152	3.97	4.09	0.94	0.96	4.21	4.25
+30x	lp_only_gnn	WhatsHap	22865	6.67	7.45	1.52	1.58	4.38	4.70
+30x	lp_only	WhatsHap	134583	12.29	12.93	1.52	1.58	8.07	8.16
+30x	wh_only	LongPhase 2	47788	3.77	3.89	0.93	0.95	4.07	4.11
 60x	lp_only_phase	WhatsHap	99813	11.70	12.17	1.12	1.17	10.46	10.44
-60x	lp_only_gnn	WhatsHap	22178	6.52	7.11	1.12	1.17	5.83	6.10
-60x	lp_only	WhatsHap	121991	10.76	11.25	1.12	1.17	9.62	9.65
-60x	wh_only	LongPhase 2	53621	10.10	10.19	1.06	1.08	9.49	9.44
+60x	lp_only_gnn	WhatsHap	24225	6.11	6.65	1.12	1.17	5.46	5.70
+60x	lp_only	WhatsHap	124038	10.61	11.09	1.12	1.17	9.48	9.52
+60x	wh_only	LongPhase 2	49514	10.48	10.56	1.06	1.07	9.92	9.87

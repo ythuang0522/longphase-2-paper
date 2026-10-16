@@ -161,3 +161,13 @@ Per genome, 10× (mean of ten replicates) / 60×:
 | `summary.txt` | printed output of `aggregate.py` |
 
 Tools: `longphase compare` from release v2.1 (validation only), Python 3.12, numpy 2.4.4.
+
+## LongPhase v2.1.1 (2026-10-16)
+
+The `_gnn` groups are now the v2.1.1 runs (`/disk/research/v2.1.1/<group>`; `data/vcf/<group>` was
+repointed, the v2.1 links are in `data/vcf_v2.1/`). `run_scoring.sh`/`run_all.sh` take them from
+`G=/disk/research/v2.1.1`; only the 384 GNN results were rescored (the v2.1 ones are in
+`/ssd/longphase_process/benchmark_strata/out_v2.1/`), then `aggregate.py` rebuilt the four tables.
+Step 0: all 1,024 runs with a table value match the updated tables. Only GNN rows changed. The
+input md5 list covers the v2.1 inputs; the v2.1.1 VCFs were not checksummed (about 250 GB over the
+NTFS mount). The slim release archive in `data/benchmark_strata/release/` still holds v2.1.

@@ -195,3 +195,11 @@ in `issue6_composition.tsv`): all six values are equal.
 | 10× | 2,082,426 | 2,189,936 |
 | 30× | 2,389,756 | 2,466,839 |
 | 60× | 2,354,981 | 2,420,295 |
+
+## LongPhase v2.1.1 (2026-10-16)
+
+All scripts read LongPhase 2 with GNN correction from `/disk/research/v2.1.1` (`G=` in each script);
+working directory `/ssd/longphase_process/unphased_sets_v2.1.1` (`chain.sh` runs `summarize_sets.py`,
+`issue6.py`, `issue6_sites.py` and `count_phased.sh` after `run_all.sh`). `issue6.py` now checks
+against the repository's `20260924_v50q.txt` (v2.1.1 rows); every check in `issue6_checks.tsv`
+matches. WhatsHap values are unchanged; the sets change because LongPhase 2's unphased calls change.

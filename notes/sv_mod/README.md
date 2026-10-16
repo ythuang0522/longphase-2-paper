@@ -58,3 +58,10 @@ for cfg in coh_sv coh_indel_sv coh_methyl coh_indel_methyl cophasing; do
 # sv_mod.tsv = counts.tsv with a header and the configuration labels; then:
 python3 build_sheet.py   # writes the SV_5mC_phasing sheet
 ```
+
+## LongPhase v2.1.1 (2026-10-16)
+
+`count_sv_mod.py` reads the GNN runs from `/disk/research/v2.1.1`; `sv_mod.tsv` rebuilt (the columns
+without GNN correction are identical to v2.1, checked), then `build_sheet.py`. With v2.1.1, GNN
+correction unphases fewer 5mC sites (merged 5mC nodes now decide for all their sites) and more SVs
+(SV nodes no longer get reference-sequence features, and singleton phase sets are unphased).

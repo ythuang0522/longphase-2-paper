@@ -111,3 +111,14 @@ GNN training only. The constants of Supplementary Method 3 date from LongPhase d
 The alignments evaluated in the paper were made in 2026-03, after these sweeps, and the
 chromosome split was defined only for GNN training. The B = 0.30 deployment threshold was also
 chosen on whole-genome results of the 60 runs at 10–20× (Supplementary Method 4).
+
+## LongPhase v2.1.1 (2026-10-16)
+
+`run_heldout.sh` now scores the GNN groups from `/disk/research/v2.1.1` in
+`/ssd/longphase_process/heldout_v2.1.1` (the other runs' reports were copied from the v2.1 working
+directory, which is kept). The three tables were rebuilt with it.
+`heldout_summary.tsv` rebuilt with `summary_table.py`: pooled over the 60 runs at 10–20× (v5.0q),
+GNN correction removes 23.5% of switch errors at a cost of 9.26 (v2.1: 21.2% at 10.5), against 34.3%
+at 7.98 genome-wide. The B = 0.30 "cost ≤ 10" criterion above is replaced in v2.1.1 by a calibration
+on chr15–16 (`notes/gnn_retrain/`). The indel tables (`heldout_indel*`, `run_indel.sh`) were not
+rerun: they are not quoted in the manuscript and remain v2.1.
