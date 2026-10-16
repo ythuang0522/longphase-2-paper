@@ -40,6 +40,8 @@ def rep1(rs): return [x for x in rs if x['rep'] == 1]
 
 
 def setval(line, key, val):
+    if key.startswith('hc_') and not re.search(r'\b' + key + r':', line):   # HapCUT2 HiFi series, added 2026-10-16
+        line = re.sub(r'\s*\},?\s*$', lambda m: f', {key}: 0' + m.group(0), line, count=1)
     new, n = re.subn(r'(\b' + re.escape(key) + r':\s*)[-0-9.]+', lambda m: m.group(1) + val, line)
     assert n <= 1, (key, line[:80])
     if n == 0 and not key.startswith('lp_'):
@@ -94,7 +96,7 @@ def hifi_other(name):
     return {int(r[2].split('x_')[0]): dict(zip(SNV, r[i0:i0 + 8])) for r in R[2:] if r[1] and r[1].startswith('PB')}
 
 
-HIFI_WH, HIFI_LP0 = hifi_other('whatshap_v28'), hifi_other('longphase_v2.0.1')
+HIFI_WH, HIFI_LP0, HIFI_HC = hifi_other('whatshap_v28'), hifi_other('longphase_v2.0.1'), hifi_other('hapcut2_v134')
 
 
 # per-coverage HiFi calls phase 87% at 10x but 91.5-92.4% at 20-50x: widen the fixed axis
@@ -105,10 +107,20 @@ def hifi(c):
     """All three series: the drafts predate the per-coverage HiFi call sets (issue #4), so the
     WhatsHap and uncorrected values are refreshed from SNV_Detail too, not only the GNN ones."""
     d = {}
-    for k, r in (('lpgnn', runs[('HiFi', 'SNV', c)][0]), ('wh', HIFI_WH[c]), ('lp', HIFI_LP0[c])):
+    for k, r in (('lpgnn', runs[('HiFi', 'SNV', c)][0]), ('wh', HIFI_WH[c]), ('lp', HIFI_LP0[c]), ('hc', HIFI_HC[c])):
         d.update({f'{k}_sw': f"{int(r['sw'])}", f'{k}_psnv': g5(float(r['psnv_pct'])),
                   f'{k}_ham': g5(float(r['ham'])), f'{k}_n50': g4(float(r['n50']) / 1e6)})
     return d
+
+
+def add_hapcut2(path):
+    """HapCUT2 on HiFi (2026-10-16): a fourth series and the title; the values come from hifi()."""
+    p = os.path.join(ROOT, path)
+    s = open(p).read()
+    if 'key: "hc"' not in s:
+        s = re.sub(r'(\n  \{ key: "wh",[^\n]*\n)', r'\1  { key: "hc",    name: "HapCUT2",       color: "#525252", dash: "2 2" },\n', s, count=1)
+    s = s.replace('WhatsHap vs LongPhase 2.1.1 on PacBio HiFi', 'WhatsHap, HapCUT2 and LongPhase 2.1.1 on PacBio HiFi')
+    open(p, 'w').write(s)
 
 
 def meth(c):
@@ -174,6 +186,7 @@ if __name__ == '__main__':
     edit_rows('HifiCompare3.jsx', hifi, rename=(('"LongPhase 2.1 (phase + gnn)"', '"LongPhase 2.1.1"'),
                                                 ('LongPhase 2.1 (phase)', 'LongPhase 2.1.1 (--disableGNN)'),
                                                 ('LongPhase 2.1 on', 'LongPhase 2.1.1 on'), HIFI_AXIS))
+    add_hapcut2('HifiCompare.jsx'); add_hapcut2('HifiCompare3.jsx')
     edit_rows('MethPhaserCompare.jsx', meth, rename=(('LongPhase 2.1', 'LongPhase 2.1.1'),))
     comp_line('UnphasedComposition.jsx')
     venn('UnphaseVenn3.jsx')

@@ -40,6 +40,31 @@ workstation of Methods (inputs and outputs on the hard-disk drive `/disk/researc
 - **1 thread (LongPhase 2 v2.1, superseded):** timed on 2026-10-09 with `/usr/bin/time -v`, same machine and
   disk, with every other job on the server stopped.
 
+## PacBio HiFi (`runtime_hifi.tsv`, 2026-10-17)
+
+Replicate 1 at 10–50×, same columns, written by `build_runtime.py`:
+
+- LongPhase 2 v2.1.1 (`--pb -t 24`) at 10–50× and WhatsHap at 10× and 20×: re-timed
+  (`/ssd/longphase_process/runtime/run_hifi_retime.sh`, `hifi_retime/*.time`), because the
+  original runs had shared the machine (LongPhase 20× 25% CPU, WhatsHap 10–20× 73–82%). One run
+  at a time on an idle machine, BAM read once before each run (page cache), output identical to
+  the original VCFs. The 10× LongPhase run overlapped a 20-s figure rendering and was repeated
+  (53.1 s against 54.4 s); the overlapped files are in `hifi_retime/overlapped/`.
+- WhatsHap 30–50×: original logs (`/disk/research/pacbio/whatshap_v28_hifi_onlySNVs_{c}x_1.log`,
+  95–99% CPU).
+- HapCUT2 (`extractHAIRS --pacbio 1` + `HAPCUT2`): the 2026-10-16 runs that produced its output
+  (`/disk/research/pacbio/hapcut2_v1.3.4/hapcut2_v134_hifi_{c}x_1.log`), idle machine.
+
+| Tool | 10× wall | 10× CPU | 10× RSS | 50× wall | 50× CPU | 50× RSS |
+|---|---|---|---|---|---|---|
+| LongPhase 2, 24 threads | 0.9 min | 6.0 min | 16.7 GiB | 2.4 min | 14.3 min | 22.6 GiB |
+| WhatsHap 2.8 | 23.9 min | 23.8 min | 1.5 GiB | 98.4 min | 98.2 min | 3.7 GiB |
+| HapCUT2 1.3.4 | 19.5 min | 19.4 min | 7.1 GiB | 59.5 min | 59.1 min | 19.6 GiB |
+
+The LongPhase wall time profits from the page cache (the nanopore 24-thread runs did not read the
+BAM first), so CPU time is the comparison to use: 4.0–7.8-fold less than WhatsHap, 3.2–5.1-fold less
+than HapCUT2.
+
 ## Commands
 
 ```

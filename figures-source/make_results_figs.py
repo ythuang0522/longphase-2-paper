@@ -877,36 +877,46 @@ def sfig10():
     save(fig, os.path.join(SUPP, "suppfig10_more_tools.pdf"))
 
 
-def _runtime():
+def _runtime(name="runtime.tsv"):
     """notes/runtime/runtime.tsv (issue #8): (tool, threads, coverage) -> (wall min, CPU min,
     peak RSS GiB). Replicate 1, GNU time of the paper runs; LongPhase 2 on one thread timed at
-    10x and 60x only; HapCUT2 at 30x and 40x re-timed (original logs overwritten)."""
+    10x and 60x only; HapCUT2 at 30x and 40x re-timed (original logs overwritten).
+    runtime_hifi.tsv: the same for PacBio HiFi 10-50x (2026-10-17; see build_runtime.py)."""
     import csv
-    rows = csv.DictReader(open(os.path.join(ROOT, "notes", "runtime", "runtime.tsv")), delimiter="\t")
+    rows = csv.DictReader(open(os.path.join(ROOT, "notes", "runtime", name)), delimiter="\t")
     return {(r["tool"], r["threads"], int(r["coverage"])):
             (int(r["wall_s"]) / 60, int(r["cpu_s"]) / 60, int(r["max_rss_kb"]) / 1024 ** 2) for r in rows}
 
 
 # ============================================== Supplementary Fig. 10 =====
 def sfig_runtime():
-    """Runtime and peak memory of SNV-only phasing across coverage (issue #8). LongPhase 2 on one
-    thread has points only."""
-    rt = _runtime()
-    fig, axs = new_fig(52, 1, 3)
+    """Runtime and peak memory of SNV-only phasing across coverage (issue #8): nanopore (a-c) and,
+    since 2026-10-17, PacBio HiFi (d-f). LongPhase 2 on one thread has points only."""
+    fig = plt.figure(figsize=(FIGW, 104 * MM), layout="constrained")
+    fig.get_layout_engine().set(w_pad=2 * MM, h_pad=1.2 * MM, wspace=0.05, hspace=0.0)
+    sfs = fig.subfigures(2, 1, hspace=0.035)
     tools = (("hc", ("HapCUT2 1.3.4", "1")), ("wh", ("WhatsHap 2.8", "1")), ("lp_gnn", ("LongPhase 2", "24")))
-    for ax, lab, j, L in zip(axs, ("Wall-clock time (min)", "CPU time (min)", "Peak memory (GiB)"), range(3), "abc"):
-        for t, key in tools:
-            st_ = STY[t]
-            ax.plot(COVS, [rt[key + (c,)][j] if key + (c,) in rt else float("nan") for c in COVS], color=C[t],
-                    ls=st_["ls"], marker=st_["marker"], ms=st_["ms"], mfc=st_["mfc"], mew=0.8)
-        xs = [c for c in COVS if ("LongPhase 2", "1", c) in rt]
-        ax.plot(xs, [rt[("LongPhase 2", "1", c)][j] for c in xs], ls="none", color=C["lp_gnn"], marker="o",
-                ms=3.0, mew=0.8)
-        ax.set_ylim(bottom=0); ax.set_ylabel(lab); cov_axis(ax); letter(ax, L)
+    letters = iter("abcdef")
+    for sf, (rt, covs, title) in zip(sfs, ((_runtime(), COVS, "Nanopore R10.4.1"),
+                                           (_runtime("runtime_hifi.tsv"), HIFI_COVS, "PacBio HiFi"))):
+        axs = sf.subplots(1, 3)
+        for ax, lab, j in zip(axs, ("Wall-clock time (min)", "CPU time (min)", "Peak memory (GiB)"), range(3)):
+            for t, key in tools:
+                st_ = STY[t]
+                ax.plot(covs, [rt[key + (c,)][j] if key + (c,) in rt else float("nan") for c in covs], color=C[t],
+                        ls=st_["ls"], marker=st_["marker"], ms=st_["ms"], mfc=st_["mfc"], mew=0.8)
+            xs = [c for c in covs if ("LongPhase 2", "1", c) in rt]
+            ax.plot(xs, [rt[("LongPhase 2", "1", c)][j] for c in xs], ls="none", color=C["lp_gnn"], marker="o",
+                    ms=3.0, mew=0.8)
+            ax.set_ylim(bottom=0); ax.set_ylabel(lab); letter(ax, next(letters))
+            cov_axis(ax, HIFI_COVS) if covs is HIFI_COVS else cov_axis(ax)
+        _row_header(sf, title)
     h = [thandle("lp_gnn", "LongPhase 2, 24 threads"),
          Line2D([], [], color=C["lp_gnn"], ls="none", marker="o", ms=3.4, label="LongPhase 2, 1 thread"),
          thandle("wh", "WhatsHap"), thandle("hc", "HapCUT2")]
     fig.legend(handles=h, loc="outside upper center", ncol=4, handlelength=2.6, columnspacing=1.6)
+    for ax in sfs[1].axes:   # same coverage scale in both rows
+        ax.set_xlim(sfs[0].axes[0].get_xlim())
     save(fig, os.path.join(SUPP, "suppfig_runtime.pdf"))
 
 
@@ -1198,19 +1208,23 @@ def runtime_table(w):
     r1 = lambda x: str(Decimal(repr(x)).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP))
     rt = _runtime()
     w(r"\begin{table}[h]")
-    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data, replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~10). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB, from \code{/usr/bin/time}. \toolname includes GNN correction, which runs within the \code{phase} command. \toolname was timed on one thread at 10 and 60$\times$ only (--, no value); \hapcut at 30 and 40$\times$ was re-timed (Methods). \hapcut includes fragment extraction.}\label{tab:runtime}")
+    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data (top) and PacBio HiFi data (bottom), replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~10). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB, from \code{/usr/bin/time}. \toolname includes GNN correction, which runs within the \code{phase} command. \toolname was timed on one thread at 10 and 60$\times$ only (--, no value); \hapcut at 30 and 40$\times$ was re-timed (Methods). On HiFi data, \toolname and \whatshap at 10 and 20$\times$ were re-timed with the alignments already in the page cache (Methods). \hapcut includes fragment extraction.}\label{tab:runtime}")
     w(r"\small\setlength{\tabcolsep}{4pt}\begin{tabular}{@{}rrrrrrrrrrrrr@{}}\toprule")
     groups = [(("LongPhase 2", "24"), r"\toolname, 24 threads"), (("LongPhase 2", "1"), r"\toolname, 1 thread"),
               (("WhatsHap 2.8", "1"), r"\whatshap"), (("HapCUT2 1.3.4", "1"), r"\hapcut")]
     w(" & " + " & ".join(rf"\multicolumn{{3}}{{c}}{{{n}}}" for _, n in groups) + r" \\ "
       + "".join(rf"\cmidrule({'lr' if i < 3 else 'l'}){{{2 + 3 * i}-{4 + 3 * i}}}" for i in range(4)))
     w("Coverage & " + " & ".join(["Wall & CPU & Memory"] * 4) + r" \\ \midrule")
-    for c in COVS:
-        cells = []
-        for key, _ in groups:
-            v = rt.get(key + (c,))
-            cells += [r1(x) for x in v] if v else ["--"] * 3
-        w(rf"{c}$\times$ & " + " & ".join(cells) + r" \\")
+    for blk, (rt, covs) in enumerate(((rt, COVS), (_runtime("runtime_hifi.tsv"), HIFI_COVS))):
+        w(rf"\multicolumn{{13}}{{@{{}}l}}{{\textit{{{('Nanopore R10.4.1', 'PacBio HiFi')[blk]}}}}} \\")
+        for c in covs:
+            cells = []
+            for key, _ in groups:
+                v = rt.get(key + (c,))
+                cells += [r1(x) for x in v] if v else ["--"] * 3
+            w(rf"{c}$\times$ & " + " & ".join(cells) + r" \\")
+        if blk == 0:
+            w(r"\midrule")
     w(r"\bottomrule\end{tabular}\end{table}")
 
 def f(x, d=2):

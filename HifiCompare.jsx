@@ -7,15 +7,16 @@ import {
 // Block N50 is in Mb; Phased SNV is the percentage of assessable
 // heterozygous SNVs in the benchmark.
 const data = [
-  { cov: 10, wh_sw: 2655, wh_psnv: 87.42959, wh_ham: 1.03425, wh_n50: 0.3402, lpgnn_sw: 1020, lpgnn_psnv: 87.00731, lpgnn_ham: 0.73414, lpgnn_n50: 0.3409 },
-  { cov: 20, wh_sw: 2504, wh_psnv: 92.19548, wh_ham: 1.20866, wh_n50: 0.4782, lpgnn_sw: 878, lpgnn_psnv: 91.71522, lpgnn_ham: 1.13262, lpgnn_n50: 0.488 },
-  { cov: 30, wh_sw: 2331, wh_psnv: 92.40225, wh_ham: 0.92098, wh_n50: 0.5245, lpgnn_sw: 829, lpgnn_psnv: 91.90218, lpgnn_ham: 0.80942, lpgnn_n50: 0.5403 },
-  { cov: 40, wh_sw: 1954, wh_psnv: 92.37269, wh_ham: 0.86784, wh_n50: 0.5609, lpgnn_sw: 815, lpgnn_psnv: 91.87433, lpgnn_ham: 0.77218, lpgnn_n50: 0.5728 },
-  { cov: 50, wh_sw: 1687, wh_psnv: 92.0457, wh_ham: 0.67536, wh_n50: 0.577, lpgnn_sw: 714, lpgnn_psnv: 91.55606, lpgnn_ham: 0.82454, lpgnn_n50: 0.5838 },
+  { cov: 10, wh_sw: 2655, wh_psnv: 87.42959, wh_ham: 1.03425, wh_n50: 0.3402, lpgnn_sw: 1020, lpgnn_psnv: 87.00731, lpgnn_ham: 0.73414, lpgnn_n50: 0.3409, hc_sw: 3174, hc_psnv: 87.46503, hc_ham: 1.05695, hc_n50: 0.3401 },
+  { cov: 20, wh_sw: 2504, wh_psnv: 92.19548, wh_ham: 1.20866, wh_n50: 0.4782, lpgnn_sw: 878, lpgnn_psnv: 91.71522, lpgnn_ham: 1.13262, lpgnn_n50: 0.488, hc_sw: 3071, hc_psnv: 92.24726, hc_ham: 1.13333, hc_n50: 0.4804 },
+  { cov: 30, wh_sw: 2331, wh_psnv: 92.40225, wh_ham: 0.92098, wh_n50: 0.5245, lpgnn_sw: 829, lpgnn_psnv: 91.90218, lpgnn_ham: 0.80942, lpgnn_n50: 0.5403, hc_sw: 2806, hc_psnv: 92.44735, hc_ham: 1.00166, hc_n50: 0.5265 },
+  { cov: 40, wh_sw: 1954, wh_psnv: 92.37269, wh_ham: 0.86784, wh_n50: 0.5609, lpgnn_sw: 815, lpgnn_psnv: 91.87433, lpgnn_ham: 0.77218, lpgnn_n50: 0.5728, hc_sw: 2345, hc_psnv: 92.41054, hc_ham: 0.97422, hc_n50: 0.5617 },
+  { cov: 50, wh_sw: 1687, wh_psnv: 92.0457, wh_ham: 0.67536, wh_n50: 0.577, lpgnn_sw: 714, lpgnn_psnv: 91.55606, lpgnn_ham: 0.82454, lpgnn_n50: 0.5838, hc_sw: 2116, hc_psnv: 92.07864, hc_ham: 0.74919, hc_n50: 0.577 },
 ];
 
 const SERIES = [
   { key: "wh",    name: "WhatsHap",      color: "#2563eb" },
+  { key: "hc",    name: "HapCUT2",       color: "#525252", dash: "2 2" },
   { key: "lpgnn", name: "LongPhase 2.1.1", color: "#dc2626" },
 ];
 
@@ -83,7 +84,7 @@ export default function HifiCompare() {
   return (
     <div style={{ width: "100%", background: "#ffffff", padding: "20px 24px", fontFamily: "Helvetica, Arial, sans-serif" }}>
       <div style={{ textAlign: "center", fontSize: 18, fontWeight: 700, color: "#111827", marginBottom: 12 }}>
-        WhatsHap vs LongPhase 2.1.1 on PacBio HiFi
+        WhatsHap, HapCUT2 and LongPhase 2.1.1 on PacBio HiFi
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "10px 24px", marginBottom: 18 }}>
