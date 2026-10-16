@@ -1361,20 +1361,25 @@ unchanged in substance).
     (`main.pdf`, `Supplementary.pdf`); `figures-source/supp_tables.tex` was regenerated here
     (tables only) and is committed;
   - Supplementary Figs. 4 and 5: the SVGs were regenerated (threshold 0.35); export the PDFs;
-  - the nine PNGs at the repository root (see the TODO below);
+  - the nine JSX drafts: done, rendered to PDF (below); their PNGs are the old v2.1 versions;
   - not rerun: the held-out indel tables (`notes/heldout/`, SNV only was rescored);
     `input_md5.txt` of `notes/benchmark_strata/` still lists the v2.1 inputs;
     the slim data archive still holds the v2.1 VCFs.
-- **TODO (JHL, manual): re-take the nine JSX screenshots.** The `.jsx` drafts at the repository
-  root now hold the v2.1.1 values (`notes/v2.1.1/update_jsx.py`; HiFi legend "LongPhase 2.1.1",
-  phased-SNV axis widened to 86–93%), but the PNGs are still the v2.1 screenshots. Render each
-  `.jsx` in Claude (web) and replace the PNG of the same name:
-  - [ ] `CophaseGroupCompare.png`
-  - [ ] `PhasingBenchmarkBars.png`
-  - [ ] `PhasingBenchmarkBarsRow.png`
-  - [ ] `PhasingBenchmarkCompare.png`
-  - [ ] `HifiCompare.png`
-  - [ ] `HifiCompare3.png`
-  - [ ] `MethPhaserCompare.png`
-  - [ ] `UnphasedComposition.png`
-  - [ ] `UnphaseVenn3.png`
+- **Done: the nine JSX drafts rendered to PDF (2026-10-16).** The `.jsx` drafts at the
+  repository root hold the v2.1.1 values (`notes/v2.1.1/update_jsx.py`; HiFi legend
+  "LongPhase 2.1.1", phased-SNV axis widened to 86–93%). Instead of new screenshots, each draft is
+  rendered to a vector PDF of the same name by `notes/v2.1.1/render_jsx_pdf.py` (headless Chrome,
+  React 18 + Recharts 2; width = old screenshot width / 2; Helvetica/Arial replaced by the system
+  font on the lab server, Libre Franklin as a web font in the two unphased drafts). **The PDFs are
+  the current versions; the PNGs of the same name are the old v2.1 screenshots** and are kept
+  only for comparison:
+  - [x] `CophaseGroupCompare.pdf` (old: `.png`)
+  - [x] `PhasingBenchmarkBars.pdf` (old: `.png`)
+  - [x] `PhasingBenchmarkBarsRow.pdf` (old: `.png`)
+  - [x] `PhasingBenchmarkCompare.pdf` (old: `.png`)
+  - [x] `HifiCompare.pdf` (old: `.png`)
+  - [x] `HifiCompare3.pdf` (old: `.png`)
+  - [x] `MethPhaserCompare.pdf` (old: `.png`)
+  - [x] `UnphasedComposition.pdf` (old: `.png`)
+  - [x] `UnphaseVenn3.pdf` (old: `.png`; the clipped "LongPhase only — phase" label in panel C
+    is in the draft itself and in the old screenshot too)
