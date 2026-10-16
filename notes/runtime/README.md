@@ -65,6 +65,43 @@ The LongPhase wall time profits from the page cache (the nanopore 24-thread runs
 BAM first), so CPU time is the comparison to use: 4.0–7.8-fold less than WhatsHap, 3.2–5.1-fold less
 than HapCUT2.
 
+### Original HiFi runs against the re-timed runs
+
+Original: `/disk/research/v2.1.1/pacbio/longphase_hifi_{c}x_1.log` (time -v) and
+`/disk/research/pacbio/whatshap_v28_hifi_onlySNVs_{c}x_1.log` (GNU time); re-timed:
+`/ssd/longphase_process/runtime/hifi_retime/*.time`. Same commands, binaries and inputs; the
+phased genotypes of every re-timed run equal the original VCF (chrom, pos and sample column of
+every record), so only the times differ.
+
+LongPhase 2 v2.1.1, `--pb -t 24`:
+
+| Coverage | Wall (min), original → re-timed | CPU (min) | CPU use | Peak RSS (GiB) |
+|---|---|---|---|---|
+| 10× | 2.1 → 0.9 | 5.9 → 6.0 | 279% → 676% | 16.1 → 16.7 |
+| 20× | 32.7 → 1.0 | 8.4 → 8.7 | 25% → 837% | 18.5 → 19.5 |
+| 30× | 8.7 → 1.2 | 11.0 → 11.2 | 126% → 961% | 19.5 → 20.9 |
+| 40× | 10.5 → 1.7 | 12.5 → 13.0 | 119% → 775% | 20.8 → 21.8 |
+| 50× | 16.2 → 2.4 | 14.7 → 14.3 | 90% → 607% | 21.9 → 22.6 |
+
+WhatsHap 2.8 `--only-snvs` (30–50× not re-timed; 95–99% CPU in the original runs):
+
+| Coverage | Wall (min), original → re-timed | CPU (min) | CPU use | Peak RSS (GiB) |
+|---|---|---|---|---|
+| 10× | 32.5 → 23.9 (−27%) | 26.9 → 23.8 (−12%) | 82% → 99% | 1.50 → 1.50 |
+| 20× | 101.5 → 62.9 (−38%) | 75.1 → 62.9 (−16%) | 73% → 99% | 1.93 → 2.19 |
+
+- LongPhase: the original wall times were dominated by waiting for input (25–279% CPU with 24
+  threads); CPU time changed by −3% to +4%, so it was already usable. The re-timed wall times
+  had the BAM in the page cache and are therefore the favourable case; the nanopore 24-thread
+  times were not measured that way. Peak RSS rose by 0.6–1.4 GiB (not investigated).
+- WhatsHap: CPU time also fell, by 12–16%, presumably because the original runs shared caches
+  and memory bandwidth with other jobs (not verified).
+- Effect on the comparison (CPU time): WhatsHap / LongPhase 4.5–8.9-fold with the original
+  times (4.55, 8.95, 7.86, 7.45, 6.69 at 10–50×), 4.0–7.8-fold with the re-timed ones;
+  HapCUT2 / LongPhase 3.3–5.3-fold (3.28, 5.30, 4.04, 4.76, 4.03) and 3.2–5.1-fold. The re-timed
+  values, used in `runtime_hifi.tsv` and Supplementary Table 16, give the more conservative
+  comparison.
+
 ## Commands
 
 ```
