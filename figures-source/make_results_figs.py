@@ -890,33 +890,24 @@ def _runtime(name="runtime.tsv"):
 
 # ============================================== Supplementary Fig. 10 =====
 def sfig_runtime():
-    """Runtime and peak memory of SNV-only phasing across coverage (issue #8): nanopore (a-c) and,
-    since 2026-10-17, PacBio HiFi (d-f). LongPhase 2 on one thread has points only."""
-    fig = plt.figure(figsize=(FIGW, 104 * MM), layout="constrained")
-    fig.get_layout_engine().set(w_pad=2 * MM, h_pad=1.2 * MM, wspace=0.05, hspace=0.0)
-    sfs = fig.subfigures(2, 1, hspace=0.035)
+    """Runtime and peak memory of SNV-only phasing across coverage (issue #8). LongPhase 2 on one
+    thread has points only."""
+    rt = _runtime()
+    fig, axs = new_fig(52, 1, 3)
     tools = (("hc", ("HapCUT2 1.3.4", "1")), ("wh", ("WhatsHap 2.8", "1")), ("lp_gnn", ("LongPhase 2", "24")))
-    letters = iter("abcdef")
-    for sf, (rt, covs, title) in zip(sfs, ((_runtime(), COVS, "Nanopore R10.4.1"),
-                                           (_runtime("runtime_hifi.tsv"), HIFI_COVS, "PacBio HiFi"))):
-        axs = sf.subplots(1, 3)
-        for ax, lab, j in zip(axs, ("Wall-clock time (min)", "CPU time (min)", "Peak memory (GiB)"), range(3)):
-            for t, key in tools:
-                st_ = STY[t]
-                ax.plot(covs, [rt[key + (c,)][j] if key + (c,) in rt else float("nan") for c in covs], color=C[t],
-                        ls=st_["ls"], marker=st_["marker"], ms=st_["ms"], mfc=st_["mfc"], mew=0.8)
-            xs = [c for c in covs if ("LongPhase 2", "1", c) in rt]
-            ax.plot(xs, [rt[("LongPhase 2", "1", c)][j] for c in xs], ls="none", color=C["lp_gnn"], marker="o",
-                    ms=3.0, mew=0.8)
-            ax.set_ylim(bottom=0); ax.set_ylabel(lab); letter(ax, next(letters))
-            cov_axis(ax, HIFI_COVS) if covs is HIFI_COVS else cov_axis(ax)
-        _row_header(sf, title)
+    for ax, lab, j, L in zip(axs, ("Wall-clock time (min)", "CPU time (min)", "Peak memory (GiB)"), range(3), "abc"):
+        for t, key in tools:
+            st_ = STY[t]
+            ax.plot(COVS, [rt[key + (c,)][j] if key + (c,) in rt else float("nan") for c in COVS], color=C[t],
+                    ls=st_["ls"], marker=st_["marker"], ms=st_["ms"], mfc=st_["mfc"], mew=0.8)
+        xs = [c for c in COVS if ("LongPhase 2", "1", c) in rt]
+        ax.plot(xs, [rt[("LongPhase 2", "1", c)][j] for c in xs], ls="none", color=C["lp_gnn"], marker="o",
+                ms=3.0, mew=0.8)
+        ax.set_ylim(bottom=0); ax.set_ylabel(lab); cov_axis(ax); letter(ax, L)
     h = [thandle("lp_gnn", "LongPhase 2, 24 threads"),
          Line2D([], [], color=C["lp_gnn"], ls="none", marker="o", ms=3.4, label="LongPhase 2, 1 thread"),
          thandle("wh", "WhatsHap"), thandle("hc", "HapCUT2")]
     fig.legend(handles=h, loc="outside upper center", ncol=4, handlelength=2.6, columnspacing=1.6)
-    for ax in sfs[1].axes:   # same coverage scale in both rows
-        ax.set_xlim(sfs[0].axes[0].get_xlim())
     save(fig, os.path.join(SUPP, "suppfig_runtime.pdf"))
 
 

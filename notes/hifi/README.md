@@ -100,8 +100,8 @@ same phased fraction and N50. The original LongPhase and WhatsHap HiFi runs shar
 73–82% CPU at 10–20×, LongPhase v2.1.1 20× 32.7 min wall at 25% CPU), so LongPhase 10–50× and
 WhatsHap 10–20× were re-timed on 2026-10-16/17 (`/ssd/longphase_process/runtime/run_hifi_retime.sh`,
 one at a time on an idle machine, BAM read once before each run; phased genotypes identical to
-the original VCFs). Runtime table: `notes/runtime/runtime_hifi.tsv` (Supplementary Table 16,
-Supplementary Fig. 10d–f).
+the original VCFs). Runtime table: `notes/runtime/runtime_hifi.tsv` (Supplementary Table 16; Supplementary
+Fig. 10 stays nanopore only, it is a figure of the professor's).
 
 The number of heterozygous SNV calls falls above 20× because PEPPER makes
 fewer false heterozygous calls: on chr1–22, against the v5.0q heterozygous

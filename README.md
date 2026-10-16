@@ -1500,12 +1500,14 @@ unchanged in substance).
   20×) re-timed on HiFi, one at a time on an idle machine, because the original runs had shared
   it (LongPhase 20× 25% CPU, WhatsHap 10–20× 73–82%); output identical to the original VCFs,
   details in `notes/runtime/README.md`. New `notes/runtime/runtime_hifi.tsv`; Supplementary
-  Table 16 has a HiFi block and Supplementary Fig. 10 a HiFi row (d–f); Methods and the figure
-  caption. No Results sentence (the Results no longer have a runtime paragraph); the ratios are in
+  Table 16 has a HiFi block (table caption and Methods updated). No Results sentence (the Results no longer have a runtime paragraph); the ratios are in
   a provenance comment (CPU time 4.0–7.8-fold less than WhatsHap, 3.2–5.1-fold less than HapCUT2).
-  The HiFi JSX drafts (`HifiCompare*.jsx` and PDFs) now include HapCUT2. Fig. 4b keeps the
-  two-tool comparison (merge decision of 2511af2). `suppfig_runtime.pdf` was generated on the lab
-  server with Liberation Sans: rebuild with `make results-figs` for Arial.
+  The HiFi JSX drafts (`HifiCompare*.jsx` and PDFs) now include HapCUT2. Figures of the
+  professor (`figures/`, made by `make_results_figs.py`) are left as in 2511af2 (author request,
+  2026-10-17: update the data and JHL's figures only): Supplementary Fig. 10 stays nanopore only and
+  Fig. 4b keeps its two tools. If they are to show the HiFi runtime or HapCUT2, the data are in
+  `notes/runtime/runtime_hifi.tsv` and `SNV_Detail`; the two-row Supplementary Fig. 10 code is
+  in commit d022b71.
 - **Done: HapCUT2 on the PacBio HiFi data (2026-10-16).** HapCUT2 1.3.4 (`--pacbio 1`) on the
   same per-coverage HiFi calls and BAMs, 10–50×, replicate 1, scored like the other HiFi runs;
   details, commands and the records HapCUT2 cannot read in `notes/hifi/README.md`. Changed:
