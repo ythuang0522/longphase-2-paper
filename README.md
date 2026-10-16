@@ -1372,9 +1372,7 @@ unchanged in substance).
   - `main.pdf` and `Supplementary.pdf`: not rebuilt (no TeX here); run `make`;
   - the twelve PDFs above use Liberation Sans: `make results-figs` and `rsvg-convert` of
     Supplementary Figs. 4–5 on the Mac give the Arial versions if the font must match exactly;
-  - runtime (Supplementary Fig. 9, Supplementary Table 16, the Results runtime paragraph): HapCUT2
-    30× and 40× are being re-timed (see below); after that, `notes/runtime/build_runtime.py`,
-    `supp_tables.tex`, `suppfig_runtime.pdf` and the text ranges change again;
+  - runtime: done (below, HapCUT2 30× and 40× re-timed); `suppfig_runtime.pdf` is Liberation Sans too;
   - not data-dependent, no change needed: Fig. 1 and Supplementary Figs. 1–3 and 6–8 (their
     numbers are worked examples); `figures/supp/imagen/*.png` and
     `figures-source/longphase_parallel_consistent_v22.png` are old drafts not used by any `.tex`;
@@ -1382,6 +1380,17 @@ unchanged in substance).
   - not rerun: the held-out indel tables (`notes/heldout/`, SNV only was rescored);
     `input_md5.txt` of `notes/benchmark_strata/` still lists the v2.1 inputs;
     the slim data archive still holds the v2.1 VCFs.
+- **Done: HapCUT2 re-timed at 30× and 40× (2026-10-16).** The original logs of these two runs were
+  overwritten in July, so the runtime table had no HapCUT2 value there. Both runs were repeated
+  with the same binaries, commands and inputs, one at a time with no other job running
+  (`/ssd/longphase_process/runtime/run_hapcut2_30_40.sh`); the phased genotypes are identical to
+  the paper's VCFs (every record's chrom, pos and sample column). 30×: 59.4 min wall, 59.0 min CPU,
+  11.3 GiB; 40×: 75.6, 75.2 min, 14.0 GiB. Changed: `notes/runtime/` (both build scripts, both
+  TSVs, README), Supplementary Table 16 (`supp_tables.tex`) and Fig. 10 (`suppfig_runtime.pdf`,
+  HapCUT2 line no longer broken), Results (CPU time 2.0–3.1 → 2.0–3.2-fold lower than HapCUT2,
+  3.23 at 40×; "at every coverage" instead of "at the coverages with available timing data"),
+  Methods and both captions (the re-timing replaces "not available"). Wall-time and memory ranges
+  are unchanged.
 - **Done: the nine JSX drafts rendered to PDF (2026-10-16).** The `.jsx` drafts at the
   repository root hold the v2.1.1 values (`notes/v2.1.1/update_jsx.py`; HiFi legend
   "LongPhase 2.1.1", phased-SNV axis widened to 86–93%). Instead of new screenshots, each draft is

@@ -4,12 +4,16 @@ WhatsHap and HapCUT2: the GNU time output at the end of the logs of the paper's 
 (lab server, /disk/research). LongPhase 2 (v2.1.1, one `phase` command with GNN correction)
 at 24 threads: /usr/bin/time -v of the 2026-10-14/16 rerun (/disk/research/v2.1.1/run.sh, one
 run at a time); at 1 thread: timed separately with /usr/bin/time -v on the same machine and
-disk, all other jobs stopped (/ssd/longphase_process/runtime/time). The v2.1 rows (`phase`
+disk, all other jobs stopped (/ssd/longphase_process/runtime/time). HapCUT2 at 30x and 40x: the
+original logs were overwritten by an interrupted rerun, so both were re-timed on 2026-10-16 with the
+same binaries, inputs and commands, one at a time on an idle machine (H2 below); the phased
+genotypes are identical to the paper's VCFs (chrom, pos, sample column of every record). The v2.1 rows (`phase`
 plus the separate `gnn` command, and the 2026-10-09 one-thread runs) are in git history."""
 import os, re
 R = '/disk/research'
 T = '/ssd/longphase_process/runtime/time'
 G = '/disk/research/v2.1.1'
+H2 = '/ssd/longphase_process/runtime/hapcut2_rerun'
 
 def secs(s):
     return sum(float(v) * 60 ** i for i, v in enumerate(reversed(s.split(':'))))
@@ -33,9 +37,8 @@ for c in (10, 12, 14, 16, 18, 20, 30, 40, 50, 60):  # replicate 1 at every cover
     if os.path.exists(t1):
         rows.append(('LongPhase 2', 'phase + GNN', 1, c, *gnu_v(t1)))
     rows.append(('WhatsHap 2.8', '--only-snvs', 1, c, *gnu(f'{R}/whatshap_v2.8/only/whatshap_v28_onlySNVs_{c}x_1.log')))
-    h = f'{R}/hapcut2_v1.3.4/hapcut2_v134_{c}x_1.log'
-    if 'Command terminated by signal' not in open(h).read():  # 30x, 40x: log overwritten by an interrupted rerun
-        rows.append(('HapCUT2 1.3.4', 'extractHAIRS + HAPCUT2', 1, c, *gnu(h)))
+    h = f'{H2 if c in (30, 40) else R + "/hapcut2_v1.3.4"}/hapcut2_v134_{c}x_1.log'
+    rows.append(('HapCUT2 1.3.4', 'extractHAIRS + HAPCUT2', 1, c, *gnu(h)))
 with open('runtime.tsv', 'w') as f:
     f.write('tool\tconfiguration\tthreads\tcoverage\twall_s\tcpu_s\tmax_rss_kb\n')
     for r in rows:

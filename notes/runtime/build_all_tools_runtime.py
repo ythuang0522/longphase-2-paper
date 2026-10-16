@@ -7,7 +7,9 @@
     log (GCphase, ralphi) are kept as they are,
   - LongPhase_GNN is replaced by longphase_v2.1.1 (/disk/research/v2.1.1, one `phase` command, -t 24).
 30-60x (replicate 1 only): read from the logs; tools without a run at that coverage are left empty
-  (GCphase, ralphi, Margin; HapCUT2 at 30x and 40x, whose runs stopped after 3-5 s).
+  (GCphase, ralphi, Margin). HapCUT2 at 30x and 40x: the original logs were overwritten by a rerun
+  stopped after 3-5 s, so these two runs were re-timed on 2026-10-16 (RERUN; same commands and
+  inputs, phased genotypes identical to the paper's VCFs).
 Times are GNU time `elapsed` (or `Elapsed (wall clock)` from time -v), rounded to 0.1 min.
 """
 import csv, re, sys
@@ -20,7 +22,9 @@ LOG = {
     'LongPhase_v2.0.1': R + '/longphase/longphase_{}.log',
     'longphase_v2.1.1': R + '/v2.1.1/longphase_gnn/longphase_gnn_{}.log',
 }
-MIN_S = 60   # shorter runs did not finish (HapCUT2 30x/40x)
+RERUN = {('hapcut2_v1.3.4', f'{c}x_1'): f'/ssd/longphase_process/runtime/hapcut2_rerun/hapcut2_v134_{c}x_1.log'
+         for c in (30, 40)}
+MIN_S = 60   # shorter runs did not finish (the overwritten HapCUT2 30x/40x logs)
 
 def minutes(path):
     try:
@@ -50,7 +54,7 @@ for r in rows[2:]:
     out.append([d.get(c, '') for c in head])
 for c in (30, 40, 50, 60):
     run = f'{c}x_1'
-    out.append([run, '', ''] + [fmt(minutes(LOG[col].format(run))) if col in LOG else ''
+    out.append([run, '', ''] + [fmt(minutes(RERUN.get((col, run), LOG[col].format(run)))) if col in LOG else ''
                                 for col in head[3:]])
 w = csv.writer(sys.stdout, delimiter='\t', lineterminator='\n')
 w.writerow(['Time(min)']); w.writerow(head); w.writerows(out)

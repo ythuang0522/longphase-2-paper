@@ -802,7 +802,7 @@ def sfig10():
 def _runtime():
     """notes/runtime/runtime.tsv (issue #8): (tool, threads, coverage) -> (wall min, CPU min,
     peak RSS GiB). Replicate 1, GNU time of the paper runs; LongPhase 2 on one thread timed at
-    10x and 60x only; no HapCUT2 rows at 30x and 40x (logs overwritten)."""
+    10x and 60x only; HapCUT2 at 30x and 40x re-timed (original logs overwritten)."""
     import csv
     rows = csv.DictReader(open(os.path.join(ROOT, "notes", "runtime", "runtime.tsv")), delimiter="\t")
     return {(r["tool"], r["threads"], int(r["coverage"])):
@@ -811,8 +811,8 @@ def _runtime():
 
 # ============================================== Supplementary Fig. 10 =====
 def sfig_runtime():
-    """Runtime and peak memory of SNV-only phasing across coverage (issue #8). The HapCUT2 line
-    is broken at 30-40x, where no timing exists; LongPhase 2 on one thread has points only."""
+    """Runtime and peak memory of SNV-only phasing across coverage (issue #8). LongPhase 2 on one
+    thread has points only."""
     rt = _runtime()
     fig, axs = new_fig(52, 1, 3)
     tools = (("hc", ("HapCUT2 1.3.4", "1")), ("wh", ("WhatsHap 2.8", "1")), ("lp_gnn", ("LongPhase 2", "24")))
@@ -1120,7 +1120,7 @@ def runtime_table(w):
     r1 = lambda x: str(Decimal(repr(x)).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP))
     rt = _runtime()
     w(r"\begin{table}[h]")
-    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data, replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~10). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB, from \code{/usr/bin/time}. \toolname includes GNN correction, which runs within the \code{phase} command. \toolname was timed on one thread at 10 and 60$\times$ only, and \hapcut times are not available at 30 and 40$\times$ (Methods); --, no value. \hapcut includes fragment extraction.}\label{tab:runtime}")
+    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data, replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~10). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB, from \code{/usr/bin/time}. \toolname includes GNN correction, which runs within the \code{phase} command. \toolname was timed on one thread at 10 and 60$\times$ only (--, no value); \hapcut at 30 and 40$\times$ was re-timed (Methods). \hapcut includes fragment extraction.}\label{tab:runtime}")
     w(r"\small\setlength{\tabcolsep}{4pt}\begin{tabular}{@{}rrrrrrrrrrrrr@{}}\toprule")
     groups = [(("LongPhase 2", "24"), r"\toolname, 24 threads"), (("LongPhase 2", "1"), r"\toolname, 1 thread"),
               (("WhatsHap 2.8", "1"), r"\whatshap"), (("HapCUT2 1.3.4", "1"), r"\hapcut")]
