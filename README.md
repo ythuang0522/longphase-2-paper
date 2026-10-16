@@ -1355,12 +1355,29 @@ unchanged in substance).
 - **Corrected along the way:** "four-class phasing produced the longest blocks at every
   coverage" was already untrue at 50× in v2.1 (SNV+indel+5mC 0.1% longer); now also at 12 and
   30×, and the sentence says so.
-- **Not rebuilt here (no TeX/Arial on the lab server):** run `make results-figs` and `make` on
-  the writing machine. Items that need manual work:
-  - `make results-figs` (Figs. 2–4, Supplementary Figs. 9–15 and runtime: Arial) and `make`
-    (`main.pdf`, `Supplementary.pdf`); `figures-source/supp_tables.tex` was regenerated here
-    (tables only) and is committed;
-  - Supplementary Figs. 4 and 5: the SVGs were regenerated (threshold 0.35); export the PDFs;
+- **Figures regenerated on the lab server with Liberation Sans (2026-10-16).** Arial is not
+  installed here, so `figures-source/make_results_figs.py` was run on a copy of the repository with
+  `"font.family"` set to Liberation Sans (same glyph widths as Arial, so the layout is unchanged;
+  the script itself still says Arial). All of these were checked by eye against the v2.1.1 data;
+  a run of the same script on the v2.1 data (a066c7e) differs from it in every one of them:
+  - Fig. 2 `figures/fig2_phaser_comparison.pdf`, Fig. 3 `fig3_two_benchmarks.pdf`,
+    Fig. 4 `fig4_phased_unphased.pdf`;
+  - Supplementary `suppfig10_more_tools.pdf`, `suppfig_runtime.pdf` (24 threads from the rerun,
+    one thread re-timed), `suppfig11_methphaser.pdf`, `suppfig12_giveup_depth.pdf`,
+    `suppfig13_gnn_effect.pdf`, `suppfig14_cophase_gnn.pdf`, `suppfig15_cophasing_all.pdf`;
+  - Supplementary Figs. 4 and 5 (`suppfig4_gnn_overview.pdf`, `suppfig5_gnn_window.pdf`,
+    threshold 0.35) converted from their SVGs with headless Chrome (no `rsvg-convert` here).
+  `figures-source/supp_tables.tex` from the same run equals the committed one.
+- **Still to check or rebuild (author, writing machine):**
+  - `main.pdf` and `Supplementary.pdf`: not rebuilt (no TeX here); run `make`;
+  - the twelve PDFs above use Liberation Sans: `make results-figs` and `rsvg-convert` of
+    Supplementary Figs. 4–5 on the Mac give the Arial versions if the font must match exactly;
+  - runtime (Supplementary Fig. 9, Supplementary Table 16, the Results runtime paragraph): HapCUT2
+    30× and 40× are being re-timed (see below); after that, `notes/runtime/build_runtime.py`,
+    `supp_tables.tex`, `suppfig_runtime.pdf` and the text ranges change again;
+  - not data-dependent, no change needed: Fig. 1 and Supplementary Figs. 1–3 and 6–8 (their
+    numbers are worked examples); `figures/supp/imagen/*.png` and
+    `figures-source/longphase_parallel_consistent_v22.png` are old drafts not used by any `.tex`;
   - the nine JSX drafts: done, rendered to PDF (below); their PNGs are the old v2.1 versions;
   - not rerun: the held-out indel tables (`notes/heldout/`, SNV only was rescored);
     `input_md5.txt` of `notes/benchmark_strata/` still lists the v2.1 inputs;
