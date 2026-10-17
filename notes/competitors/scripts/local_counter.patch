@@ -1,0 +1,25 @@
+diff --git a/bridge.py b/bridge.py
+index 270237c..9d35fdd 100644
+--- a/bridge.py
++++ b/bridge.py
+@@ -615,9 +615,8 @@ class MethBridger(Bridger):
+         def meth_options(self):
+             return 8, 0.3, 0.3
+         
+-        global zero_count
+-        global no_zero_count
+         def bridge(self):
++            global zero_count, no_zero_count   # local patch: debug counters were never defined (UnboundLocalError)
+             meths0, meths1, unphased = self.collect_meths()
+ 
+             meths3 = self.collect_middle_block_meths()
+@@ -1256,6 +1255,9 @@ class MethBridger(Bridger):
+                     meths[rloc].add(read.qname, read.is_forward, m/256, ps, hp)
+         
+ 
++zero_count = 0      # local patch: see MethBridger.Gap.bridge
++no_zero_count = 0
++
+ def main():
+     import argparse
+     parse = argparse.ArgumentParser(description='Bridge phased blocks.')

@@ -1496,6 +1496,14 @@ unchanged in substance).
   - not rerun: the held-out indel tables (`notes/heldout/`, SNV only was rescored);
     `input_md5.txt` of `notes/benchmark_strata/` still lists the v2.1 inputs;
     the slim data archive still holds the v2.1 VCFs.
+- **Done: further phasers (2026-10-17).** LongHap 0.2.0 (SNVs with/without 5mC, and all variant
+  types with 5mC), HapBridge and TinkerHap on nanopore 10–60×; HiPhase 1.7.0 and TinkerHap on HiFi
+  10–50×; LongPhase 2.1.1, WhatsHap and HapCUT2 with indels (HapCUT2 on both platforms, LongPhase and
+  WhatsHap on HiFi). Replicate 1, default parameters or the documented workflow, scored as
+  `SNV_Detail`. New sheet `Other_phasers` of `supplementary.xlsx` (inventory row in
+  `Supplementary.tex`); scripts, settings and summary tables in `notes/competitors/`. LongPhase has
+  the lowest SNV switch error in every comparison. Not in the main text or figures; for the authors
+  to decide.
 - **Done: HiFi runtime of all three tools (2026-10-17).** LongPhase 2 (10–50×) and WhatsHap (10×,
   20×) re-timed on HiFi, one at a time on an idle machine, because the original runs had shared
   it (LongPhase 20× 25% CPU, WhatsHap 10–20× 73–82%); output identical to the original VCFs,

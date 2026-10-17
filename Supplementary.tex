@@ -494,7 +494,7 @@ Release v2.1 model & 42 & 44 & 0.340 & 0.30 & 48.5 & 21.2 & 33.2 & 10.5 & 8.3 \\
 
 
 \clearpage
-\paragraph{Supplementary Data 1.} \code{supplementary.xlsx} contains the metrics behind Figs.~2--4, Supplementary Figs.~9 and 11--16 and Supplementary Tables~7--11, 13, 14 and~17. Per-run metrics are indexed by coverage and down-sampling replicate. Blank cells denote runs that were not performed. The 13 sheets are described below.
+\paragraph{Supplementary Data 1.} \code{supplementary.xlsx} contains the metrics behind Figs.~2--4, Supplementary Figs.~9 and 11--16 and Supplementary Tables~7--11, 13, 14 and~17. Per-run metrics are indexed by coverage and down-sampling replicate. Blank cells denote runs that were not performed. The 14 sheets are described below.
 
 The four \code{Unphased} sheets report replicate~1 at 10, 30 and 60$\times$. They use \code{lp\_only} for calls left unphased by \toolname only (phased by \whatshap only), and \code{wh\_only} for calls left unphased by \whatshap only (phased by \toolname only). In \code{Unphased\_composition}, \code{lp\_only\_phase} and \code{lp\_only\_gnn} divide \code{lp\_only} into calls left unphased by the phasing graph before GNN correction and calls unphased by GNN correction, respectively.
 
@@ -519,7 +519,8 @@ The code \code{both}, present in the composition, depth and sets sheets, denotes
 \code{Unphased\_sets} & Per set: read-depth quartiles and share at the depth cap, phasing entropy (PE) of \toolname where it reports one, and enrichment in the other tool's switch-error intervals. \\[4pt]
 \code{Phased\_calls} & Phased heterozygous SNV calls on chr1--22 for every SNV-only run of \toolname and \whatshap; the denominator of precision in Fig.~4c and Supplementary Table~8. \\[4pt]
 \code{MethPhaser} & MethPhaser applied to the SNV-only output of \toolname without GNN correction, scored as in \code{SNV\_Detail} (Fig.~2d and Supplementary Figs.~11 and~16). \\[4pt]
-\code{SV\_5mC\_phasing} & Heterozygous SVs (Sniffles2) and 5mC sites (\texttt{modcall}) of every co-phasing configuration with SVs or 5mC, and how many \toolname phased without (\code{longphase\_v2.0.1}) and with (\code{longphase\_v2.1.1}) GNN correction; all contigs, as in \code{Variant\_Calling}. \\
+\code{SV\_5mC\_phasing} & Heterozygous SVs (Sniffles2) and 5mC sites (\texttt{modcall}) of every co-phasing configuration with SVs or 5mC, and how many \toolname phased without (\code{longphase\_v2.0.1}) and with (\code{longphase\_v2.1.1}) GNN correction; all contigs, as in \code{Variant\_Calling}. \\[4pt]
+\code{Other\_phasers} & Replicate~1 of further phasers, run with default parameters or the documented workflow, scored as in \code{SNV\_Detail}: LongHap (SNVs with and without 5mC, and all variant types with 5mC), HapBridge and TinkerHap on nanopore data; HiPhase and TinkerHap on HiFi data; and \toolname, \whatshap and HapCUT2 with indels. \\
 \bottomrule
 \end{tabular}
 }
