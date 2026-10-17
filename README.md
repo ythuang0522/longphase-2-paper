@@ -50,6 +50,45 @@ Panel c shows the uncertainty bars with a y-axis label and no threshold line, an
 edge (6) feature-vector strips segmented by feature group (16/6/5/4 and 3/1/1/1, from
 `PhasingProcess.cpp` nf[0..30] and ep[0..5] in v2.1 and the Methods grouping). Open polish: the PDF still embeds five Type 3 fonts (rsvg-convert output).
 
+## Comparison with further phasers (2026-10-17)
+
+Supplementary Data 1, sheet `Other_phasers` (61 runs); commands, inputs and full tables in
+`notes/competitors/README.md`, scripts in `notes/competitors/scripts/`. Not in the main text or
+figures yet: whether and how to use them is for the authors to decide.
+
+**Tools added and why**
+
+| Tool | Platform | Why it was added |
+|---|---|---|
+| LongHap 0.2.0 (bioRxiv 2026) | ONT 10–60× | Co-phases SNVs, indels and SVs with 5mC, the same claim as LongPhase 2; its preprint compares itself with LongPhase; cited in the Introduction. Run as SNVs + 5mC (vs LongPhase Mod and MethPhaser) and as all variant types + 5mC (vs LongPhase Indel+Mod+SV). |
+| HapBridge | ONT 10–60× | Methylation post-processor of the MethPhaser kind (bridges blocks, corrects switches); MethPhaser is already compared; cited. |
+| HiPhase 1.7.0 (PacBio) | HiFi 10–50× | Phaser of PacBio's human WGS pipeline, the default for HiFi users. HiFi only: a PacBio tool. |
+| TinkerHap 1.0.0 (2025) | ONT 10–60×, HiFi 10–50× | Recently published read-based phaser benchmarked against WhatsHap and HapCUT2. |
+| LongPhase, WhatsHap, HapCUT2 with indels | HapCUT2: both; LongPhase, WhatsHap: HiFi (ONT rows already existed) | HiPhase and TinkerHap phase indels by default, which lengthens blocks; comparing them with SNV-only runs would favour them. These runs complete the SNV + indel comparison on both platforms. |
+
+All replicate 1, the paper's inputs, default parameters or the workflow each tool documents (no
+tuning), scored as `SNV_Detail` (`longphase compare`, v5.0q chr1–22, SNV switch error).
+
+**Results** (SNV switch error % / Hamming % / block N50; 10×, 30×, 60× on ONT, 10×, 30×, 50× on HiFi)
+
+| Comparison | LongPhase 2.1.1 | Others |
+|---|---|---|
+| ONT, SNV + 5mC | 0.083 / 5.4 / 0.88 Mb; 0.030 / 2.1 / 2.08 Mb; 0.022 / 1.6 / 3.09 Mb | MethPhaser 0.124, 0.052, 0.035; HapBridge 0.122, 0.046, 0.033; LongHap 0.180, 0.158, 0.110 (Hamming 18–20% from 20×) |
+| ONT, SNV + indel | 0.091, 0.037, 0.027 | WhatsHap 0.270, 0.137, 0.097; HapCUT2 0.315, 0.177, 0.126; TinkerHap 0.332, 0.197, 0.151 |
+| ONT, all variants + 5mC | 0.092, 0.038, 0.026 (N50 1.02, 2.65, 4.14 Mb) | LongHap 0.219, 0.166, 0.114 (Hamming 6–22%, N50 0.47, 4.52, 6.83 Mb) |
+| HiFi, SNV + indel | 0.094, 0.054, 0.041 (SNV only: 0.049, 0.038, 0.033) | HiPhase 0.164, 0.091, 0.070; WhatsHap 0.252, 0.144, 0.096; HapCUT2 0.272, 0.177, 0.131; TinkerHap 0.283, 0.181, 0.133 |
+
+- LongPhase has the lowest SNV switch error in every comparison, platform and coverage, and the
+  lowest Hamming distance except LongHap at 10× (which phases only 60% of SNVs there).
+- The others' advantage is block length: MethPhaser, LongHap and HapBridge (60×) on ONT, HiPhase on
+  HiFi (N50 10–15% above LongPhase with indels), bought with higher Hamming distance; WhatsHap,
+  HapCUT2 and TinkerHap phase 1–7 percentage points more SNVs or indels.
+- HapBridge corrected no switch error and left the 10× and 20× input unchanged.
+- LongHap's ONT mode leaves alleles seen on one strand only unphased: 60% of SNVs phased at 10×.
+- HiPhase on HiFi 50×: 12 min wall, 187 CPU-min (LongPhase 2.4 and 14.3).
+- Adding indels raises the SNV switch error of every tool (LongPhase HiFi 0.033 → 0.041% at 50×)
+  and lengthens its blocks.
+
 ## Before submission
 
 Red `\todo{}` marks are reserved for what blocks submission: 26 remain after the
@@ -1496,14 +1535,7 @@ unchanged in substance).
   - not rerun: the held-out indel tables (`notes/heldout/`, SNV only was rescored);
     `input_md5.txt` of `notes/benchmark_strata/` still lists the v2.1 inputs;
     the slim data archive still holds the v2.1 VCFs.
-- **Done: further phasers (2026-10-17).** LongHap 0.2.0 (SNVs with/without 5mC, and all variant
-  types with 5mC), HapBridge and TinkerHap on nanopore 10–60×; HiPhase 1.7.0 and TinkerHap on HiFi
-  10–50×; LongPhase 2.1.1, WhatsHap and HapCUT2 with indels (HapCUT2 on both platforms, LongPhase and
-  WhatsHap on HiFi). Replicate 1, default parameters or the documented workflow, scored as
-  `SNV_Detail`. New sheet `Other_phasers` of `supplementary.xlsx` (inventory row in
-  `Supplementary.tex`); scripts, settings and summary tables in `notes/competitors/`. LongPhase has
-  the lowest SNV switch error in every comparison. Not in the main text or figures; for the authors
-  to decide.
+- **Done: further phasers (2026-10-17).** See "Comparison with further phasers" above.
 - **Done: HiFi runtime of all three tools (2026-10-17).** LongPhase 2 (10–50×) and WhatsHap (10×,
   20×) re-timed on HiFi, one at a time on an idle machine, because the original runs had shared
   it (LongPhase 20× 25% CPU, WhatsHap 10–20× 73–82%); output identical to the original VCFs,
