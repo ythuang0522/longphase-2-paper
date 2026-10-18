@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Write the sheet `Other_phasers` of supplementary.xlsx: the phasers added on 2026-10-17 (LongHap,
 HapBridge, TinkerHap, HiPhase) and the SNV+indel runs of LongPhase, WhatsHap and HapCUT2 that the
-indel-phasing tools are compared with. One row per run (replicate 1), from the `longphase compare`
-reports of the runs (scripts/, README.md). Columns as in SNV_Detail and co-phase_Detail. The sheet
+indel-phasing tools are compared with, and HiPhase and TinkerHap on an SNV-only input VCF (neither
+has an SNV-only option) for the SNV-only comparison. One row per run (replicate 1), from the
+`longphase compare` reports of the runs (scripts/, README.md). Columns as in SNV_Detail and co-phase_Detail. The sheet
 is rebuilt from scratch; no other sheet changes.
 
     python3 build_sheet.py          (run on the lab server; needs openpyxl)
@@ -24,6 +25,8 @@ RUNS = [
     ('ONT R10.4.1', 'SNV + indel', 'HapCUT2 1.3.4 (--indels 1)', ONT, '/disk/research/hapcut2_v1.3.4/indels/sw_hapcut2_v134_indels_{c}x_1.tsv'),
     ('ONT R10.4.1', 'SNV + indel', 'TinkerHap 1.0.0', ONT, S + '/others_ont/sw_tinkerhap_{c}x_1.tsv'),
     ('ONT R10.4.1', 'SNV + indel + SV + 5mC', 'LongHap 0.2.0 (all variants, with 5mC)', ONT, S + '/longhap/allvar/sw_longhap_all_{c}x_1.tsv'),
+    ('PB HiFi Revio', 'SNV only', 'HiPhase 1.7.0 (SNV-only input VCF)', HIFI, S + '/hifi_snvonly/sw_hiphase_v170_hifi_snv_{c}x_1.tsv'),
+    ('PB HiFi Revio', 'SNV only', 'TinkerHap 1.0.0 (SNV-only input VCF)', HIFI, S + '/hifi_snvonly/sw_tinkerhap_hifi_snv_{c}x_1.tsv'),
     ('PB HiFi Revio', 'SNV + indel', 'LongPhase 2.1.1 (--indels)', HIFI, '/disk/research/v2.1.1/pacbio/indels/sw_longphase_hifi_indel_{c}x_1.tsv'),
     ('PB HiFi Revio', 'SNV + indel', 'WhatsHap 2.8 (indels)', HIFI, '/disk/research/pacbio/whatshap_v2.8_indels/sw_whatshap_v28_hifi_indels_{c}x_1.tsv'),
     ('PB HiFi Revio', 'SNV + indel', 'HapCUT2 1.3.4 (--indels 1)', HIFI, '/disk/research/pacbio/hapcut2_v1.3.4/indels/sw_hapcut2_v134_hifi_indels_{c}x_1.tsv'),

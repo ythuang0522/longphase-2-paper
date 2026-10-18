@@ -52,7 +52,7 @@ edge (6) feature-vector strips segmented by feature group (16/6/5/4 and 3/1/1/1,
 
 ## Comparison with further phasers (2026-10-17)
 
-Supplementary Data 1, sheet `Other_phasers` (61 runs); commands, inputs and full tables in
+Supplementary Data 1, sheet `Other_phasers` (71 runs); commands, inputs and full tables in
 `notes/competitors/README.md`, scripts in `notes/competitors/scripts/`. Not in the main text or
 figures yet: whether and how to use them is for the authors to decide.
 
@@ -65,6 +65,7 @@ figures yet: whether and how to use them is for the authors to decide.
 | HiPhase 1.7.0 (PacBio) | HiFi 10–50× | Phaser of PacBio's human WGS pipeline, the default for HiFi users. HiFi only: a PacBio tool. |
 | TinkerHap 1.0.0 (2025) | ONT 10–60×, HiFi 10–50× | Recently published read-based phaser benchmarked against WhatsHap and HapCUT2. |
 | LongPhase, WhatsHap, HapCUT2 with indels | HapCUT2: both; LongPhase, WhatsHap: HiFi (ONT rows already existed) | HiPhase and TinkerHap phase indels by default, which lengthens blocks; comparing them with SNV-only runs would favour them. These runs complete the SNV + indel comparison on both platforms. |
+| HiPhase, TinkerHap on SNVs only | HiFi 10–50× | Counterpart of the SNV-only rows (WhatsHap `--only-snvs`). Neither tool has an SNV-only option, so both read an SNV-only input VCF (the PEPPER calls restricted to SNVs). |
 
 All replicate 1, the paper's inputs, default parameters or the workflow each tool documents (no
 tuning), scored as `SNV_Detail` (`longphase compare`, v5.0q chr1–22, SNV switch error).
@@ -76,10 +77,12 @@ tuning), scored as `SNV_Detail` (`longphase compare`, v5.0q chr1–22, SNV switc
 | ONT, SNV + 5mC | 0.083 / 5.4 / 0.88 Mb; 0.030 / 2.1 / 2.08 Mb; 0.022 / 1.6 / 3.09 Mb | MethPhaser 0.124, 0.052, 0.035; HapBridge 0.122, 0.046, 0.033; LongHap 0.180, 0.158, 0.110 (Hamming 18–20% from 20×) |
 | ONT, SNV + indel | 0.091, 0.037, 0.027 | WhatsHap 0.270, 0.137, 0.097; HapCUT2 0.315, 0.177, 0.126; TinkerHap 0.332, 0.197, 0.151 |
 | ONT, all variants + 5mC | 0.092, 0.038, 0.026 (N50 1.02, 2.65, 4.14 Mb) | LongHap 0.219, 0.166, 0.114 (Hamming 6–22%, N50 0.47, 4.52, 6.83 Mb) |
+| HiFi, SNV only | 0.049, 0.038, 0.033 | HiPhase 0.085, 0.068, 0.057; WhatsHap 0.128, 0.106, 0.077; HapCUT2 0.152, 0.127, 0.096; TinkerHap 0.169, 0.130, 0.095 (HiPhase and TinkerHap on an SNV-only input VCF) |
 | HiFi, SNV + indel | 0.094, 0.054, 0.041 (SNV only: 0.049, 0.038, 0.033) | HiPhase 0.164, 0.091, 0.070; WhatsHap 0.252, 0.144, 0.096; HapCUT2 0.272, 0.177, 0.131; TinkerHap 0.283, 0.181, 0.133 |
 
 - LongPhase has the lowest SNV switch error in every comparison, platform and coverage, and the
-  lowest Hamming distance except LongHap at 10× (which phases only 60% of SNVs there).
+  lowest Hamming distance except LongHap at 10× (which phases only 60% of SNVs there) and HiFi
+  SNVs only at 20× (HiPhase, TinkerHap) and 50× (WhatsHap, HapCUT2), by at most 0.14 points.
 - The others' advantage is block length: MethPhaser, LongHap and HapBridge (60×) on ONT, HiPhase on
   HiFi (N50 10–15% above LongPhase with indels), bought with higher Hamming distance; WhatsHap,
   HapCUT2 and TinkerHap phase 1–7 percentage points more SNVs or indels.
