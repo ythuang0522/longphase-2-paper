@@ -1545,26 +1545,6 @@ unchanged in substance).
   - not rerun: the held-out indel tables (`notes/heldout/`, SNV only was rescored);
     `input_md5.txt` of `notes/benchmark_strata/` still lists the v2.1 inputs;
     the slim data archive still holds the v2.1 VCFs.
-- **Done: further phasers (2026-10-17, HiFi SNV-only runs 2026-10-18).** Results and reasons in
-  "Comparison with further phasers" above; commands, inputs and full tables in
-  `notes/competitors/README.md`, run scripts in `notes/competitors/scripts/`. All replicate 1, the
-  paper's inputs, default parameters or the documented workflow, scored like `SNV_Detail`.
-  - Added runs:
-    - nanopore 10–60×: LongHap 0.2.0 (SNVs with and without 5mC; all variant types with 5mC,
-      Sniffles SVs made sequence-resolved by `merge_sv.py`), HapBridge ec48f02 on the MethPhaser
-      input (`local_counter.patch`: two undefined debug counters, phasing unchanged), TinkerHap
-      1.0.0, HapCUT2 with `--indels 1`;
-    - HiFi 10–50×: HiPhase 1.7.0 and TinkerHap 1.0.0 with indels (their default) and on an
-      SNV-only input VCF (neither has an SNV-only option; the PEPPER calls restricted to SNVs, the
-      set WhatsHap `--only-snvs` phases), LongPhase 2.1.1 `--indels`, WhatsHap 2.8 with indels,
-      HapCUT2 with `--indels 1`;
-    - HiPhase timed on an idle machine (50×: 12.2 min wall, 187 CPU-min with indels; 10.4 and 173
-      on SNVs only).
-  - Changed: `supplementary.xlsx` new sheet `Other_phasers` (71 rows, by
-    `notes/competitors/build_sheet.py`; no other sheet changed); `Supplementary.tex` sheet
-    inventory (13 → 14 sheets, row for `Other_phasers`); this README (section above).
-  - Not changed: main text, Methods, figures (including the JSX drafts) and every other
-    Supplementary table. Whether and how to use these results is for the authors to decide.
 - **Done: HiFi runtime of all three tools (2026-10-17).** LongPhase 2 (10–50×) and WhatsHap (10×,
   20×) re-timed on HiFi, one at a time on an idle machine, because the original runs had shared
   it (LongPhase 20× 25% CPU, WhatsHap 10–20× 73–82%); output identical to the original VCFs,
@@ -1627,3 +1607,24 @@ outside Git conflicts. Corrected the all-configuration indel-pair reduction to 2
 Rebuilt the figures and both PDFs (27/39 pages); fixed table overflow with column spacing.
 Full conflict inventory, calculations, data hashes and validation: `notes/sync_2026-10-16/`.
 Original local work remains in stash `3cb51b087b8edc310a84069330f582adad04abbf`.
+
+**Further phasers, 2026-10-17 to 2026-10-18.** Results and reasons in
+"Comparison with further phasers" above; commands, inputs and full tables in
+`notes/competitors/README.md`, run scripts in `notes/competitors/scripts/`. All replicate 1, the
+paper's inputs, default parameters or the documented workflow, scored like `SNV_Detail`.
+- Added runs:
+  - nanopore 10–60×: LongHap 0.2.0 (SNVs with and without 5mC; all variant types with 5mC,
+    Sniffles SVs made sequence-resolved by `merge_sv.py`), HapBridge ec48f02 on the MethPhaser
+    input (`local_counter.patch`: two undefined debug counters, phasing unchanged), TinkerHap
+    1.0.0, HapCUT2 with `--indels 1`;
+  - HiFi 10–50×: HiPhase 1.7.0 and TinkerHap 1.0.0 with indels (their default) and on an
+    SNV-only input VCF (neither has an SNV-only option; the PEPPER calls restricted to SNVs, the
+    set WhatsHap `--only-snvs` phases), LongPhase 2.1.1 `--indels`, WhatsHap 2.8 with indels,
+    HapCUT2 with `--indels 1`;
+  - HiPhase timed on an idle machine (50×: 12.2 min wall, 187 CPU-min with indels; 10.4 and 173
+    on SNVs only).
+- Changed: `supplementary.xlsx` new sheet `Other_phasers` (71 rows, by
+  `notes/competitors/build_sheet.py`; no other sheet changed); `Supplementary.tex` sheet
+  inventory (13 → 14 sheets, row for `Other_phasers`); this README (section above).
+- Not changed: main text, Methods, figures (including the JSX drafts) and every other
+  Supplementary table. Whether and how to use these results is for the authors to decide.
