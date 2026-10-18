@@ -62,7 +62,7 @@ figures yet: whether and how to use them is for the authors to decide.
 |---|---|---|
 | LongHap 0.2.0 (bioRxiv 2026) | ONT 10–60× | Co-phases SNVs, indels and SVs with 5mC, the same claim as LongPhase 2; its preprint compares itself with LongPhase; cited in the Introduction. Run as SNVs + 5mC (vs LongPhase Mod and MethPhaser) and as all variant types + 5mC (vs LongPhase Indel+Mod+SV). |
 | HapBridge | ONT 10–60× | Methylation post-processor of the MethPhaser kind (bridges blocks, corrects switches); MethPhaser is already compared; cited. |
-| HiPhase 1.7.0 (PacBio) | HiFi 10–50× | Phaser of PacBio's human WGS pipeline, the default for HiFi users. HiFi only: a PacBio tool. |
+| HiPhase 1.7.0 (PacBio) | HiFi 10–50× | Phaser of PacBio's human WGS pipeline, the default for HiFi users. |
 | TinkerHap 1.0.0 (2025) | ONT 10–60×, HiFi 10–50× | Recently published read-based phaser benchmarked against WhatsHap and HapCUT2. |
 | LongPhase, WhatsHap, HapCUT2 with indels | HapCUT2: both; LongPhase, WhatsHap: HiFi (ONT rows already existed) | HiPhase and TinkerHap phase indels by default, which lengthens blocks; comparing them with SNV-only runs would favour them. These runs complete the SNV + indel comparison on both platforms. |
 | HiPhase, TinkerHap on SNVs only | HiFi 10–50× | Counterpart of the SNV-only rows (WhatsHap `--only-snvs`). Neither tool has an SNV-only option, so both read an SNV-only input VCF (the PEPPER calls restricted to SNVs). |
@@ -83,12 +83,19 @@ tuning), scored as `SNV_Detail` (`longphase compare`, v5.0q chr1–22, SNV switc
 - LongPhase has the lowest SNV switch error in every comparison, platform and coverage, and the
   lowest Hamming distance except LongHap at 10× (which phases only 60% of SNVs there) and HiFi
   SNVs only at 20× (HiPhase, TinkerHap) and 50× (WhatsHap, HapCUT2), by at most 0.14 points.
+- HiPhase is second on HiFi, at 1.7–1.9 times LongPhase's switch error with or without indels;
+  WhatsHap, HapCUT2 and TinkerHap are at 2.3–3.2 times.
 - The others' advantage is block length: MethPhaser, LongHap and HapBridge (60×) on ONT, HiPhase on
-  HiFi (N50 10–15% above LongPhase with indels), bought with higher Hamming distance; WhatsHap,
-  HapCUT2 and TinkerHap phase 1–7 percentage points more SNVs or indels.
+  HiFi (N50 11–17% above LongPhase with indels), bought with higher Hamming distance; WhatsHap,
+  HapCUT2 and TinkerHap phase 1–9 percentage points more SNVs or indels (HiFi indels: HiPhase 5–8,
+  HapCUT2 and TinkerHap 6–9 points more than LongPhase).
+- On HiFi SNVs only the block advantage disappears: every tool's N50 is within 3% of LongPhase's
+  (HiPhase within 1%). HiPhase and TinkerHap have no SNV-only option; these rows read an SNV-only
+  input VCF (the PEPPER calls restricted to SNVs, the set WhatsHap `--only-snvs` phases).
 - HapBridge corrected no switch error and left the 10× and 20× input unchanged.
 - LongHap's ONT mode leaves alleles seen on one strand only unphased: 60% of SNVs phased at 10×.
-- HiPhase on HiFi 50×: 12 min wall, 187 CPU-min (LongPhase 2.4 and 14.3).
+- HiPhase on HiFi 50×: 12 min wall, 187 CPU-min with indels, 10 min and 173 CPU-min on SNVs only
+  (LongPhase 2.4 and 14.3).
 - Adding indels raises the SNV switch error of every tool (LongPhase HiFi 0.033 → 0.041% at 50×)
   and lengthens its blocks.
 
@@ -1538,7 +1545,26 @@ unchanged in substance).
   - not rerun: the held-out indel tables (`notes/heldout/`, SNV only was rescored);
     `input_md5.txt` of `notes/benchmark_strata/` still lists the v2.1 inputs;
     the slim data archive still holds the v2.1 VCFs.
-- **Done: further phasers (2026-10-17).** See "Comparison with further phasers" above.
+- **Done: further phasers (2026-10-17, HiFi SNV-only runs 2026-10-18).** Results and reasons in
+  "Comparison with further phasers" above; commands, inputs and full tables in
+  `notes/competitors/README.md`, run scripts in `notes/competitors/scripts/`. All replicate 1, the
+  paper's inputs, default parameters or the documented workflow, scored like `SNV_Detail`.
+  - Added runs:
+    - nanopore 10–60×: LongHap 0.2.0 (SNVs with and without 5mC; all variant types with 5mC,
+      Sniffles SVs made sequence-resolved by `merge_sv.py`), HapBridge ec48f02 on the MethPhaser
+      input (`local_counter.patch`: two undefined debug counters, phasing unchanged), TinkerHap
+      1.0.0, HapCUT2 with `--indels 1`;
+    - HiFi 10–50×: HiPhase 1.7.0 and TinkerHap 1.0.0 with indels (their default) and on an
+      SNV-only input VCF (neither has an SNV-only option; the PEPPER calls restricted to SNVs, the
+      set WhatsHap `--only-snvs` phases), LongPhase 2.1.1 `--indels`, WhatsHap 2.8 with indels,
+      HapCUT2 with `--indels 1`;
+    - HiPhase timed on an idle machine (50×: 12.2 min wall, 187 CPU-min with indels; 10.4 and 173
+      on SNVs only).
+  - Changed: `supplementary.xlsx` new sheet `Other_phasers` (71 rows, by
+    `notes/competitors/build_sheet.py`; no other sheet changed); `Supplementary.tex` sheet
+    inventory (13 → 14 sheets, row for `Other_phasers`); this README (section above).
+  - Not changed: main text, Methods, figures (including the JSX drafts) and every other
+    Supplementary table. Whether and how to use these results is for the authors to decide.
 - **Done: HiFi runtime of all three tools (2026-10-17).** LongPhase 2 (10–50×) and WhatsHap (10×,
   20×) re-timed on HiFi, one at a time on an idle machine, because the original runs had shared
   it (LongPhase 20× 25% CPU, WhatsHap 10–20× 73–82%); output identical to the original VCFs,

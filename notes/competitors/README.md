@@ -20,14 +20,13 @@ errors; SVs themselves are not scored. Run scripts in `scripts/`.
 | HapBridge | Humonex/HapBridge ec48f02 | ONT | `bridge.py <vcf> <bam> <out> -t 16` (default bridge2) on the MethPhaser input: LongPhase 2 SNV phasing without GNN and its haplotagged BAM (primary alignments, MM/ML kept). `local_counter.patch`: two debug counters were never defined, so every call raised UnboundLocalError; phasing logic unchanged | `run_hapbridge.sh` |
 | TinkerHap | 1.0.0 (pip) | ONT, HiFi | defaults, one run per chromosome (`-r chr<i>`, no thread option); phases indels by default | `run_others_ont.sh`, `run_extra.sh` |
 | HiPhase, TinkerHap SNV-only | as above | HiFi | as above on an SNV-only input VCF: neither tool has an SNV-only option, so SNV-only phasing reads the PEPPER calls restricted to SNVs (REF and every ALT one base), the set WhatsHap `--only-snvs` phases | `run_hifi_snvonly.sh` |
-| HiPhase | 1.7.0 | HiFi | defaults (global realignment on), `--threads 16 --ignore-read-groups` (required: BAM read groups do not name the VCF sample); phases indels by default | `run_hiphase_hifi.sh` |
+| HiPhase | 1.7.0 | HiFi | defaults, `--threads 16 --ignore-read-groups` (required: BAM read groups do not name the VCF sample); phases indels by default | `run_hiphase_hifi.sh` |
 | LongPhase | 2.1.1 static | HiFi | the paper's HiFi command with `--indels` | `run_hifi_indels.sh` |
 | WhatsHap | 2.8 | HiFi | the paper's HiFi command without `--only-snvs` | `run_hifi_indels.sh` |
 | HapCUT2 | 1.3.4 | ONT, HiFi | the paper's commands with `extractHAIRS --indels 1`; ONT input = full PEPPER calls (`pepper_calling/`; the paper's SNV runs read the SNV-only `pepper_calling3/`); records whose GT is not two alleles from {0,1,2} dropped | `run_hapcut2_indels.sh`, `run_hapcut2_indels_hifi.sh` |
 
-Dropped: HiPhase on nanopore (a PacBio tool; 10-40x were run, `/ssd/longphase_process/others_ont/`,
-not in the sheet); LongHap on HiFi (5mC on HiFi not used in the paper); HiPhase all-variant
-co-phasing on nanopore. A chr22 30x screen of HiPhase and TinkerHap is in `run_quicktest.sh`.
+LongHap was not run on HiFi (5mC on HiFi is not used in the paper). A chr22 30x screen of HiPhase
+and TinkerHap is in `run_quicktest.sh`.
 
 ## Results (SNV switch error % / Hamming % / block N50)
 
@@ -78,13 +77,19 @@ TinkerHap read an SNV-only VCF, as neither has an SNV-only option)
 | Cov | LongPhase SNV | LongPhase indels | WhatsHap | HapCUT2 | HiPhase | TinkerHap |
 |---|---|---|---|---|---|---|
 | 10x | 0.049 / 0.73 / 341 | 0.094 / 2.54 / 402 | 0.252 / 4.89 / 435 | 0.272 / 5.44 / 449 | 0.164 / 4.15 / 445 | 0.283 / 5.36 / 439 |
+| 20x | 0.040 / 1.13 / 488 | 0.060 / 2.06 / 557 | 0.176 / 4.13 / 597 | 0.213 / 4.91 / 649 | 0.112 / 3.43 / 653 | 0.217 / 4.75 / 628 |
 | 30x | 0.038 / 0.81 / 540 | 0.054 / 1.84 / 626 | 0.144 / 3.24 / 650 | 0.177 / 4.27 / 704 | 0.091 / 2.60 / 713 | 0.181 / 3.94 / 688 |
+| 40x | 0.037 / 0.77 / 573 | 0.048 / 1.64 / 664 | 0.112 / 2.20 / 674 | 0.147 / 3.51 / 730 | 0.079 / 2.46 / 762 | 0.153 / 3.85 / 718 |
 | 50x | 0.033 / 0.82 / 584 | 0.041 / 1.49 / 681 | 0.096 / 2.05 / 686 | 0.131 / 3.39 / 746 | 0.070 / 2.11 / 778 | 0.133 / 3.44 / 747 |
+
+Phased indels (% of benchmark indels), 10-50x: LongPhase 47.6, 53.1, 55.7, 57.2, 57.8; WhatsHap
+50.6, 55.2, 57.5, 58.9, 59.4; HapCUT2 53.6, 61.3, 64.2, 65.8, 66.5; HiPhase 52.9, 60.5, 63.4, 65.0,
+65.7; TinkerHap 53.7, 61.3, 64.2, 65.9, 66.5.
 
 HiPhase wall/CPU/RSS on HiFi (16 threads, alone on the machine): 10x 3.4 min / 57 min / 4.1 GiB,
 50x 12.2 min / 187 min / 4.1 GiB (LongPhase 50x: 2.4 / 14.3 min); SNV-only input 10x 3.1 min /
 51 min / 4.0 GiB, 50x 10.4 min / 173 min / 4.0 GiB. Other runs shared the machine
 and are not timed.
 
-On chr22 alone (30x screen) HiPhase had fewer switches than LongPhase (ONT 38 vs 42, HiFi 45 vs 49);
+On chr22 alone (30x screen) HiPhase had fewer switches than LongPhase on HiFi (45 vs 49);
 genome-wide LongPhase has about half (HiFi 10-50x). chr22 is not representative.
