@@ -1,0 +1,16 @@
+tool	coverage	replicate	phased_het_snv_calls_chr1_22
+HiPhase	10	1	2297397
+HiPhase	20	1	2408289
+HiPhase	30	1	2396501
+HiPhase	40	1	2371247
+HiPhase	50	1	2347551
+LongPhase 2	10	1	2264734
+LongPhase 2	20	1	2363647
+LongPhase 2	30	1	2352945
+LongPhase 2	40	1	2334030
+LongPhase 2	50	1	2312997
+WhatsHap	10	1	2322322
+WhatsHap	20	1	2423412
+WhatsHap	30	1	2398079
+WhatsHap	40	1	2363946
+WhatsHap	50	1	2333836
