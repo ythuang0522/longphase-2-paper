@@ -53,8 +53,10 @@ edge (6) feature-vector strips segmented by feature group (16/6/5/4 and 3/1/1/1,
 ## Comparison with further phasers (2026-10-17)
 
 Supplementary Data 1, sheet `Other_phasers` (71 runs); commands, inputs and full tables in
-`notes/competitors/README.md`, scripts in `notes/competitors/scripts/`. Not in the main text or
-figures yet: whether and how to use them is for the authors to decide.
+`notes/competitors/README.md`, scripts in `notes/competitors/scripts/`. In the manuscript since
+2026-10-19 as Supplementary Table 18, one Results paragraph, Methods and one Discussion sentence (log
+entries at the end). HiPhase (SNV-only) is also in Figs. 2c,f and 4b, Supplementary Fig. 16e,
+Supplementary Table 11 and the abstract; the other further phasers are not in the main figures.
 
 **Tools added and why**
 
@@ -1655,3 +1657,51 @@ comparison, and the comparison between LongPhase 2 and WhatsHap. Only the openin
 was clarified; all analysis definitions, numerical values and limitations were retained.
 Changes 1, 2 and 4 remain deferred. Rebuilt `main.pdf` (27 pages), checked pages 22--23
 visually, and confirmed no undefined references, missing characters or overfull boxes.
+
+**Further phasers in the manuscript, 2026-10-19 (author request).** Used the `Other_phasers`
+sheet (JHL, 2026-10-17/18) in the text; no new runs. New Supplementary Table 18 (`other_phasers_table()`
+in `make_results_figs.py`): five comparison blocks (nanopore SNV + 5mC, SNV + indel, all classes +
+5mC; HiFi SNV-only, SNV + indel), LongPhase 2 first in each block, with the switch error rate relative
+to LongPhase 2; the GNN-model table is now Supplementary Table 19 (two references renumbered).
+Results: one paragraph after the MethPhaser paragraph (HiPhase 1.7–1.9-fold, TinkerHap, HapBridge 1.5-fold,
+LongHap 2.2–5.3-fold, with its 18–22% Hamming distances), ratios in its provenance comment; "three tools"
+made explicit where the paragraph made it ambiguous; the runtime sentence now covers both platforms.
+Methods: one passage on the four phasers in "Comparison with other methods"; the HiFi runtime
+sentence rewritten to state that wall-clock times of the re-timed HiFi runs had the alignment file
+in the page cache and that CPU time is the cross-platform measure (Table 16 caption to match, and it
+now says LongPhase 2 was re-timed at every coverage). Discussion: one sentence after the LongHap
+contrast (1.5–1.7-fold vs MethPhaser and HapBridge, 2.2–5.3-fold vs LongHap; most of the MethPhaser
+gap from GNN correction). Supplementary Table 5: rows for HapBridge, LongHap, TinkerHap and HiPhase,
+HapCUT2 indel runs. New reference `hartmann2025tinkerhap` (GigaScience 2025). Supplementary Data 1
+paragraph: tables 7–11, 13, 14, 17 and 18. Rebuilt: main.pdf 28 pages, Supplementary.pdf 42 pages,
+no undefined references, overfull boxes or missing characters.
+
+**HiPhase in the HiFi comparison, 2026-10-19 (author decision: "HiPhase must be included as the
+official PacBio phaser").** HiPhase 1.7.0 (SNV-only input VCF, sheet `Other_phasers`) is now a fourth
+tool in Fig. 2c,f, Supplementary Fig. 16e and Supplementary Table 11 (`hiphase()` in
+`make_results_figs.py`; teal, down triangle, in the top key). Layout and message unchanged. Results
+HiFi paragraph: 1.7–1.9-fold vs HiPhase at every coverage; the Hamming sentence corrected for four
+tools (LongPhase 2 lowest at 10, 30 and 40×, HiPhase at 20×, WhatsHap at 50×; LongPhase 2 is no
+longer the highest at 50×). The further-phasers paragraph keeps only HiPhase with indels. Fig. 2
+legend (c,f), Supplementary Fig. 16 legend (e), Table 11 caption and Methods name HiPhase. Fig. 4b
+(HiFi completeness) also shows HiPhase (author, same day; key entry in row 1, legend and the Results
+completeness sentence: HiPhase phased 0.2–0.3 points more benchmark SNVs than LongPhase 2, WhatsHap
+and HapCUT2 0.4–0.5). Rebuilt: 28 and 42 pages, clean logs.
+Related descriptions changed to match (author, same day): Fig. 4 row 1 title "Calls phased by
+LongPhase 2, WhatsHap and HiPhase" and legend title; abstract HiFi clause now "1.7- to 3.5-fold
+lower rates than HiPhase, WhatsHap and HapCUT2" (was 2.4- to 3.5-fold than both); `Other_phasers`
+row of the Supplementary Data 1 table names the figures and tables that use the HiPhase values.
+
+**HiFi precision in Fig. 4, 2026-10-19 (issue #9; author approved the figure first).** JHL counted
+the phased heterozygous SNV calls on chr1–22 of the HiFi SNV-only runs (4393308,
+`notes/unphased/phased_calls_hifi_chr1_22.tsv`). Fig. 4 is now a 4 × 2 grid without row titles:
+a nanopore completeness, b nanopore precision, c HiFi completeness, d HiFi precision (LongPhase 2,
+WhatsHap, HiPhase), e genotype errors phased, f–h SNVs unphased by GNN (former e–g). Every
+`fig:unphased` panel reference in Results and Methods remapped (Methods had cited c for the
+genotype errors; now e), legend rewritten, Supplementary Data 1 rows updated (Fig. 4b,d and 4e).
+Results: one sentence after the nanopore F1 sentence (HiFi precision 92.2–95.0% LongPhase 2,
+90.3–94.6% WhatsHap, 91.1–93.9% HiPhase; lead over WhatsHap 1.8 → 0.3 points, over HiPhase
+1.1–1.5), values in its provenance comment. Supplementary Table 11 has a Precision column
+(LongPhase 2, WhatsHap, HiPhase; -- for the others). Sheet `Phased_calls` now has a `platform` column
+and the 15 HiFi rows (143 rows), from the new `notes/unphased/phased_calls_sheet.tsv`, which
+`notes/v2.1.1/update_xlsx.py` now reads. Rebuilt: 28 and 42 pages, clean logs.

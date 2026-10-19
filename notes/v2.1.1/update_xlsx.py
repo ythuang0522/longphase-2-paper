@@ -30,7 +30,7 @@ TSV_SHEETS = {  # sheet -> source TSV (relative to notes/)
     'Unphased_intervals': 'unphased/issue6_intervals.tsv',
     'Unphased_depth': 'unphased/issue6_depth_hist.tsv',
     'Unphased_sets': 'unphased/unphased_sets.tsv',
-    'Phased_calls': 'unphased/phased_calls_chr1_22.tsv',
+    'Phased_calls': 'unphased/phased_calls_sheet.tsv',   # nanopore (issue #7) + HiFi (issue #9), 2026-10-19
 }
 
 

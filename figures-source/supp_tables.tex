@@ -214,33 +214,39 @@ all four & no & 10$\times$ & 30.79 (0.05) & 2,897 (49) & 0.155 (0.003) & 11.08 (
 \end{longtable}}
 
 \begin{table}[h]
-\caption{\textbf{SNV-only phasing of HG002 PacBio HiFi (Revio) data.} One replicate per coverage, scored against v5.0q. The network was trained on nanopore data only and applied without retraining. Variants were called separately at every coverage (Methods).}
+\caption{\textbf{SNV-only phasing of HG002 PacBio HiFi (Revio) data.} One replicate per coverage, scored against v5.0q. The network was trained on nanopore data only and applied without retraining. Variants were called separately at every coverage (Methods). HiPhase has no SNV-only option and was given the call set restricted to SNVs. Precision, share of the phased heterozygous SNV calls on chr1--22 that match a benchmark heterozygous SNV (Fig.~4d); --, not computed.}
 \label{tab:hifi}\scriptsize
-\begin{tabular}{@{}llrrrrrr@{}}\toprule
-Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(kb)} \\ \midrule
-LongPhase 2 & 10$\times$ & 87.01 & 1,020 & 0.049 & 0.73 & 15,924 & 341 \\
- & 20$\times$ & 91.72 & 878 & 0.040 & 1.13 & 12,199 & 488 \\
- & 30$\times$ & 91.90 & 829 & 0.038 & 0.81 & 11,181 & 540 \\
- & 40$\times$ & 91.87 & 815 & 0.037 & 0.77 & 10,569 & 573 \\
- & 50$\times$ & 91.56 & 714 & 0.033 & 0.82 & 10,237 & 584 \\
+\begin{tabular}{@{}llrrrrrrr@{}}\toprule
+Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Precision\\(\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(kb)} \\ \midrule
+LongPhase 2 & 10$\times$ & 87.01 & 92.16 & 1,020 & 0.049 & 0.73 & 15,924 & 341 \\
+ & 20$\times$ & 91.72 & 93.08 & 878 & 0.040 & 1.13 & 12,199 & 488 \\
+ & 30$\times$ & 91.90 & 93.70 & 829 & 0.038 & 0.81 & 11,181 & 540 \\
+ & 40$\times$ & 91.87 & 94.43 & 815 & 0.037 & 0.77 & 10,569 & 573 \\
+ & 50$\times$ & 91.56 & 94.96 & 714 & 0.033 & 0.82 & 10,237 & 584 \\
 \midrule
-LongPhase 2 without GNN & 10$\times$ & 87.12 & 1,328 & 0.064 & 0.96 & 15,708 & 346 \\
- & 20$\times$ & 91.84 & 1,268 & 0.058 & 1.28 & 11,980 & 492 \\
- & 30$\times$ & 92.02 & 1,137 & 0.052 & 1.02 & 10,926 & 545 \\
- & 40$\times$ & 91.98 & 1,153 & 0.052 & 0.98 & 10,347 & 580 \\
- & 50$\times$ & 91.66 & 988 & 0.045 & 1.10 & 10,010 & 588 \\
+LongPhase 2 without GNN & 10$\times$ & 87.12 & -- & 1,328 & 0.064 & 0.96 & 15,708 & 346 \\
+ & 20$\times$ & 91.84 & -- & 1,268 & 0.058 & 1.28 & 11,980 & 492 \\
+ & 30$\times$ & 92.02 & -- & 1,137 & 0.052 & 1.02 & 10,926 & 545 \\
+ & 40$\times$ & 91.98 & -- & 1,153 & 0.052 & 0.98 & 10,347 & 580 \\
+ & 50$\times$ & 91.66 & -- & 988 & 0.045 & 1.10 & 10,010 & 588 \\
 \midrule
-WhatsHap (SNVs only) & 10$\times$ & 87.43 & 2,655 & 0.128 & 1.03 & 15,804 & 340 \\
- & 20$\times$ & 92.20 & 2,504 & 0.114 & 1.21 & 12,090 & 478 \\
- & 30$\times$ & 92.40 & 2,331 & 0.106 & 0.92 & 11,082 & 525 \\
- & 40$\times$ & 92.37 & 1,954 & 0.089 & 0.87 & 10,512 & 561 \\
- & 50$\times$ & 92.05 & 1,687 & 0.077 & 0.68 & 10,186 & 577 \\
+WhatsHap (SNVs only) & 10$\times$ & 87.43 & 90.31 & 2,655 & 0.128 & 1.03 & 15,804 & 340 \\
+ & 20$\times$ & 92.20 & 91.26 & 2,504 & 0.114 & 1.21 & 12,090 & 478 \\
+ & 30$\times$ & 92.40 & 92.43 & 2,331 & 0.106 & 0.92 & 11,082 & 525 \\
+ & 40$\times$ & 92.37 & 93.74 & 1,954 & 0.089 & 0.87 & 10,512 & 561 \\
+ & 50$\times$ & 92.05 & 94.61 & 1,687 & 0.077 & 0.68 & 10,186 & 577 \\
 \midrule
-HapCUT2 & 10$\times$ & 87.47 & 3,174 & 0.152 & 1.06 & 15,779 & 340 \\
- & 20$\times$ & 92.25 & 3,071 & 0.140 & 1.13 & 12,084 & 480 \\
- & 30$\times$ & 92.45 & 2,806 & 0.127 & 1.00 & 11,088 & 527 \\
- & 40$\times$ & 92.41 & 2,345 & 0.106 & 0.97 & 10,509 & 562 \\
- & 50$\times$ & 92.08 & 2,116 & 0.096 & 0.75 & 10,186 & 577 \\
+HapCUT2 & 10$\times$ & 87.47 & -- & 3,174 & 0.152 & 1.06 & 15,779 & 340 \\
+ & 20$\times$ & 92.25 & -- & 3,071 & 0.140 & 1.13 & 12,084 & 480 \\
+ & 30$\times$ & 92.45 & -- & 2,806 & 0.127 & 1.00 & 11,088 & 527 \\
+ & 40$\times$ & 92.41 & -- & 2,345 & 0.106 & 0.97 & 10,509 & 562 \\
+ & 50$\times$ & 92.08 & -- & 2,116 & 0.096 & 0.75 & 10,186 & 577 \\
+\midrule
+HiPhase & 10$\times$ & 87.20 & 91.05 & 1,768 & 0.085 & 0.80 & 15,715 & 343 \\
+ & 20$\times$ & 91.95 & 91.60 & 1,662 & 0.076 & 1.03 & 12,036 & 490 \\
+ & 30$\times$ & 92.19 & 92.28 & 1,499 & 0.068 & 0.86 & 11,028 & 538 \\
+ & 40$\times$ & 92.19 & 93.26 & 1,378 & 0.063 & 0.87 & 10,433 & 567 \\
+ & 50$\times$ & 91.88 & 93.89 & 1,256 & 0.057 & 0.85 & 10,106 & 584 \\
 \bottomrule\end{tabular}\end{table}
 
 \begin{table}[h]
@@ -396,7 +402,7 @@ v4.2.1 & 10$\times$ & 135 (9) & 0.151 & 0.178 & 0.215 & 0.225 & 0.080 & 0.195 & 
 
 \bottomrule\end{longtable}}
 \begin{table}[h]
-\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data (top) and PacBio HiFi data (bottom), replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~10). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB, from \code{/usr/bin/time}. \toolname includes GNN correction, which runs within the \code{phase} command. \toolname was timed on one thread at 10 and 60$\times$ only (--, no value); \hapcut at 30 and 40$\times$ was re-timed (Methods). On HiFi data, \toolname and \whatshap at 10 and 20$\times$ were re-timed with the alignments already in the page cache (Methods). \hapcut includes fragment extraction.}\label{tab:runtime}
+\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data (top) and PacBio HiFi data (bottom), replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~10). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB, from \code{/usr/bin/time}. \toolname includes GNN correction, which runs within the \code{phase} command. \toolname was timed on one thread at 10 and 60$\times$ only (--, no value); \hapcut at 30 and 40$\times$ was re-timed (Methods). On HiFi data, \toolname at every coverage and \whatshap at 10 and 20$\times$ were re-timed with the alignment file already in the page cache, which shortens wall-clock time but leaves CPU time largely unchanged; CPU time is therefore the measure to compare between platforms (Methods). \hapcut includes fragment extraction.}\label{tab:runtime}
 \small\setlength{\tabcolsep}{4pt}\begin{tabular}{@{}rrrrrrrrrrrrr@{}}\toprule
  & \multicolumn{3}{c}{\toolname, 24 threads} & \multicolumn{3}{c}{\toolname, 1 thread} & \multicolumn{3}{c}{\whatshap} & \multicolumn{3}{c}{\hapcut} \\ \cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}\cmidrule(l){11-13}
 Coverage & Wall & CPU & Memory & Wall & CPU & Memory & Wall & CPU & Memory & Wall & CPU & Memory \\ \midrule
@@ -462,3 +468,135 @@ Cov. & \shortstack[r]{Additional calls\\phased by \whatshap} & Het. (\%) & Other
 60$\times$ & 74,524 & 23,701 (32) & 690 & 3,476 & 43,037 & 3,620 \\
 \bottomrule\end{tabular}\end{table}
 
+\clearpage
+{\scriptsize\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}lrrrrrrr@{}}
+\caption{\textbf{Phasing compared with further phasers.} HG002, replicate~1; nanopore R10.4.1 data at 10--60$\times$ in steps of 10$\times$ and PacBio HiFi data at 10--50$\times$. Each block compares tools given the same reads, variant calls and evidence classes; within a block, \toolname is listed first. MethPhaser and HapBridge were given the SNV-only output of \toolname without GNN correction. HiPhase and TinkerHap have no SNV-only mode, so their SNV-only rows used call sets restricted to SNVs. LongHap with indels, SVs and 5mC was given deletions and insertions from Sniffles2 as sequence-resolved records. Switch error rates are over consecutive SNV pairs; Hamming distance includes indels where both files contain them, so it is comparable only within a block. Phased fractions are percentages of benchmark heterozygous SNVs or indels; --, not applicable. Source: Supplementary Data~1, sheets \code{Other\_phasers}, \code{SNV\_Detail}, \code{co-phase\_Detail} and \code{MethPhaser}.}\label{tab:otherphasers}\\
+\toprule Tool & Cov. & \shortstack[r]{Phased\\SNVs (\%)} & \shortstack[r]{Phased\\indels (\%)} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate relative\\to \toolname} & \shortstack[r]{Hamming\\(\%)} & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead
+\toprule Tool & Cov. & \shortstack[r]{Phased\\SNVs (\%)} & \shortstack[r]{Phased\\indels (\%)} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate relative\\to \toolname} & \shortstack[r]{Hamming\\(\%)} & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead
+\multicolumn{8}{@{}l}{\textit{Nanopore R10.4.1, SNVs and 5mC}} \\
+\toolname & 10$\times$ & 77.88 & -- & 0.083 & -- & 5.38 & 0.88 \\
+ & 20$\times$ & 90.97 & -- & 0.040 & -- & 3.41 & 1.74 \\
+ & 30$\times$ & 91.50 & -- & 0.030 & -- & 2.05 & 2.08 \\
+ & 40$\times$ & 91.54 & -- & 0.028 & -- & 2.19 & 2.49 \\
+ & 50$\times$ & 91.46 & -- & 0.028 & -- & 1.85 & 2.87 \\
+ & 60$\times$ & 91.37 & -- & 0.022 & -- & 1.60 & 3.09 \\
+MethPhaser & 10$\times$ & 78.11 & -- & 0.124 & 1.50 & 7.19 & 0.96 \\
+ & 20$\times$ & 91.09 & -- & 0.069 & 1.72 & 7.16 & 2.28 \\
+ & 30$\times$ & 91.61 & -- & 0.052 & 1.73 & 5.96 & 3.35 \\
+ & 40$\times$ & 91.64 & -- & 0.043 & 1.56 & 4.55 & 4.06 \\
+ & 50$\times$ & 91.55 & -- & 0.043 & 1.55 & 5.13 & 5.03 \\
+ & 60$\times$ & 91.43 & -- & 0.035 & 1.59 & 3.95 & 5.49 \\
+HapBridge & 10$\times$ & 78.11 & -- & 0.122 & 1.48 & 6.93 & 0.94 \\
+ & 20$\times$ & 91.09 & -- & 0.060 & 1.49 & 3.99 & 1.70 \\
+ & 30$\times$ & 91.61 & -- & 0.046 & 1.53 & 2.58 & 1.98 \\
+ & 40$\times$ & 91.64 & -- & 0.040 & 1.46 & 2.39 & 2.44 \\
+ & 50$\times$ & 91.55 & -- & 0.040 & 1.46 & 2.11 & 3.07 \\
+ & 60$\times$ & 91.43 & -- & 0.033 & 1.51 & 2.50 & 4.18 \\
+LongHap & 10$\times$ & 59.88 & -- & 0.180 & 2.18 & 4.35 & 0.41 \\
+ & 20$\times$ & 87.26 & -- & 0.181 & 4.49 & 17.99 & 2.56 \\
+ & 30$\times$ & 90.09 & -- & 0.158 & 5.28 & 19.99 & 4.35 \\
+ & 40$\times$ & 90.44 & -- & 0.141 & 5.12 & 19.01 & 4.93 \\
+ & 50$\times$ & 90.51 & -- & 0.126 & 4.56 & 19.90 & 5.25 \\
+ & 60$\times$ & 90.50 & -- & 0.110 & 4.96 & 18.44 & 5.40 \\
+LongHap, without 5mC & 10$\times$ & 59.87 & -- & 0.175 & 2.12 & 4.09 & 0.40 \\
+ & 20$\times$ & 87.25 & -- & 0.158 & 3.92 & 10.50 & 1.39 \\
+ & 30$\times$ & 90.08 & -- & 0.136 & 4.52 & 8.81 & 1.79 \\
+ & 40$\times$ & 90.43 & -- & 0.123 & 4.44 & 10.13 & 2.02 \\
+ & 50$\times$ & 90.51 & -- & 0.109 & 3.96 & 9.95 & 2.35 \\
+ & 60$\times$ & 90.49 & -- & 0.096 & 4.35 & 10.06 & 2.55 \\
+\midrule
+\multicolumn{8}{@{}l}{\textit{Nanopore R10.4.1, SNVs and indels}} \\
+\toolname & 10$\times$ & 77.78 & 30.38 & 0.091 & -- & 7.02 & 0.98 \\
+ & 20$\times$ & 90.90 & 40.97 & 0.048 & -- & 6.15 & 2.07 \\
+ & 30$\times$ & 91.47 & 43.35 & 0.037 & -- & 4.96 & 2.48 \\
+ & 40$\times$ & 91.50 & 44.36 & 0.033 & -- & 4.49 & 2.93 \\
+ & 50$\times$ & 91.41 & 44.99 & 0.031 & -- & 3.43 & 3.23 \\
+ & 60$\times$ & 91.31 & 45.32 & 0.027 & -- & 3.56 & 3.74 \\
+\whatshap & 10$\times$ & 78.78 & 32.90 & 0.270 & 2.98 & 12.47 & 1.28 \\
+ & 20$\times$ & 91.73 & 44.28 & 0.157 & 3.23 & 10.58 & 2.42 \\
+ & 30$\times$ & 92.27 & 47.14 & 0.137 & 3.72 & 9.71 & 2.98 \\
+ & 40$\times$ & 92.36 & 48.52 & 0.116 & 3.57 & 10.40 & 3.39 \\
+ & 50$\times$ & 92.38 & 49.36 & 0.106 & 3.46 & 8.46 & 3.68 \\
+ & 60$\times$ & 92.34 & 49.84 & 0.097 & 3.60 & 9.29 & 4.20 \\
+\hapcut & 10$\times$ & 78.83 & 33.84 & 0.315 & 3.47 & 12.79 & 1.37 \\
+ & 20$\times$ & 91.80 & 46.47 & 0.196 & 4.06 & 12.90 & 2.88 \\
+ & 30$\times$ & 92.32 & 49.34 & 0.177 & 4.81 & 11.65 & 3.45 \\
+ & 40$\times$ & 92.41 & 50.69 & 0.157 & 4.81 & 11.21 & 4.05 \\
+ & 50$\times$ & 92.41 & 51.57 & 0.137 & 4.46 & 11.45 & 4.37 \\
+ & 60$\times$ & 92.37 & 52.04 & 0.126 & 4.69 & 13.48 & 5.01 \\
+TinkerHap & 10$\times$ & 78.89 & 33.98 & 0.332 & 3.66 & 8.14 & 0.80 \\
+ & 20$\times$ & 91.84 & 46.61 & 0.229 & 4.73 & 8.91 & 1.48 \\
+ & 30$\times$ & 92.34 & 49.46 & 0.197 & 5.34 & 9.72 & 1.96 \\
+ & 40$\times$ & 92.43 & 50.78 & 0.170 & 5.23 & 10.82 & 2.27 \\
+ & 50$\times$ & 92.45 & 51.64 & 0.162 & 5.30 & 11.86 & 2.67 \\
+ & 60$\times$ & 92.41 & 52.11 & 0.151 & 5.64 & 13.16 & 3.13 \\
+\midrule
+\multicolumn{8}{@{}l}{\textit{Nanopore R10.4.1, SNVs, indels, SVs and 5mC}} \\
+\toolname & 10$\times$ & 77.79 & 30.46 & 0.092 & -- & 6.92 & 1.02 \\
+ & 20$\times$ & 90.91 & 41.02 & 0.047 & -- & 6.95 & 2.32 \\
+ & 30$\times$ & 91.47 & 43.39 & 0.038 & -- & 5.49 & 2.65 \\
+ & 40$\times$ & 91.50 & 44.41 & 0.033 & -- & 4.73 & 3.18 \\
+ & 50$\times$ & 91.43 & 45.02 & 0.031 & -- & 3.73 & 3.63 \\
+ & 60$\times$ & 91.34 & 45.36 & 0.026 & -- & 3.34 & 4.14 \\
+LongHap & 10$\times$ & 59.84 & 27.13 & 0.219 & 2.39 & 6.43 & 0.47 \\
+ & 20$\times$ & 87.26 & 43.76 & 0.194 & 4.10 & 19.52 & 2.95 \\
+ & 30$\times$ & 90.09 & 47.68 & 0.166 & 4.34 & 21.91 & 4.52 \\
+ & 40$\times$ & 90.43 & 49.28 & 0.148 & 4.47 & 21.68 & 5.81 \\
+ & 50$\times$ & 90.51 & 50.23 & 0.129 & 4.21 & 20.79 & 5.79 \\
+ & 60$\times$ & 90.49 & 50.73 & 0.114 & 4.32 & 20.97 & 6.83 \\
+\midrule
+\multicolumn{8}{@{}l}{\textit{PacBio HiFi, SNVs}} \\
+\toolname & 10$\times$ & 87.01 & -- & 0.049 & -- & 0.73 & 0.34 \\
+ & 20$\times$ & 91.72 & -- & 0.040 & -- & 1.13 & 0.49 \\
+ & 30$\times$ & 91.90 & -- & 0.038 & -- & 0.81 & 0.54 \\
+ & 40$\times$ & 91.87 & -- & 0.037 & -- & 0.77 & 0.57 \\
+ & 50$\times$ & 91.56 & -- & 0.033 & -- & 0.82 & 0.58 \\
+\whatshap & 10$\times$ & 87.43 & -- & 0.128 & 2.59 & 1.03 & 0.34 \\
+ & 20$\times$ & 92.20 & -- & 0.114 & 2.84 & 1.21 & 0.48 \\
+ & 30$\times$ & 92.40 & -- & 0.106 & 2.80 & 0.92 & 0.52 \\
+ & 40$\times$ & 92.37 & -- & 0.089 & 2.38 & 0.87 & 0.56 \\
+ & 50$\times$ & 92.05 & -- & 0.077 & 2.35 & 0.68 & 0.58 \\
+\hapcut & 10$\times$ & 87.47 & -- & 0.152 & 3.10 & 1.06 & 0.34 \\
+ & 20$\times$ & 92.25 & -- & 0.140 & 3.48 & 1.13 & 0.48 \\
+ & 30$\times$ & 92.45 & -- & 0.127 & 3.36 & 1.00 & 0.53 \\
+ & 40$\times$ & 92.41 & -- & 0.106 & 2.86 & 0.97 & 0.56 \\
+ & 50$\times$ & 92.08 & -- & 0.096 & 2.95 & 0.75 & 0.58 \\
+HiPhase & 10$\times$ & 87.20 & -- & 0.085 & 1.73 & 0.80 & 0.34 \\
+ & 20$\times$ & 91.95 & -- & 0.076 & 1.89 & 1.03 & 0.49 \\
+ & 30$\times$ & 92.19 & -- & 0.068 & 1.80 & 0.86 & 0.54 \\
+ & 40$\times$ & 92.19 & -- & 0.063 & 1.69 & 0.87 & 0.57 \\
+ & 50$\times$ & 91.88 & -- & 0.057 & 1.75 & 0.85 & 0.58 \\
+TinkerHap & 10$\times$ & 87.61 & -- & 0.169 & 3.44 & 1.22 & 0.34 \\
+ & 20$\times$ & 92.33 & -- & 0.146 & 3.64 & 1.03 & 0.48 \\
+ & 30$\times$ & 92.52 & -- & 0.130 & 3.45 & 0.98 & 0.52 \\
+ & 40$\times$ & 92.48 & -- & 0.109 & 2.93 & 1.00 & 0.56 \\
+ & 50$\times$ & 92.14 & -- & 0.095 & 2.92 & 0.97 & 0.58 \\
+\midrule
+\multicolumn{8}{@{}l}{\textit{PacBio HiFi, SNVs and indels}} \\
+\toolname & 10$\times$ & 86.86 & 47.64 & 0.094 & -- & 2.54 & 0.40 \\
+ & 20$\times$ & 91.65 & 53.06 & 0.060 & -- & 2.06 & 0.56 \\
+ & 30$\times$ & 91.87 & 55.69 & 0.054 & -- & 1.84 & 0.63 \\
+ & 40$\times$ & 91.83 & 57.15 & 0.048 & -- & 1.64 & 0.66 \\
+ & 50$\times$ & 91.52 & 57.76 & 0.041 & -- & 1.49 & 0.68 \\
+\whatshap & 10$\times$ & 87.55 & 50.64 & 0.252 & 2.67 & 4.89 & 0.44 \\
+ & 20$\times$ & 92.27 & 55.23 & 0.176 & 2.92 & 4.13 & 0.60 \\
+ & 30$\times$ & 92.46 & 57.55 & 0.144 & 2.69 & 3.24 & 0.65 \\
+ & 40$\times$ & 92.42 & 58.86 & 0.112 & 2.31 & 2.20 & 0.67 \\
+ & 50$\times$ & 92.09 & 59.37 & 0.096 & 2.37 & 2.05 & 0.69 \\
+\hapcut & 10$\times$ & 87.59 & 53.56 & 0.272 & 2.89 & 5.44 & 0.45 \\
+ & 20$\times$ & 92.33 & 61.26 & 0.213 & 3.53 & 4.91 & 0.65 \\
+ & 30$\times$ & 92.52 & 64.16 & 0.177 & 3.31 & 4.27 & 0.70 \\
+ & 40$\times$ & 92.47 & 65.77 & 0.147 & 3.05 & 3.51 & 0.73 \\
+ & 50$\times$ & 92.13 & 66.45 & 0.131 & 3.24 & 3.39 & 0.75 \\
+HiPhase & 10$\times$ & 87.40 & 52.85 & 0.164 & 1.75 & 4.15 & 0.45 \\
+ & 20$\times$ & 92.13 & 60.48 & 0.112 & 1.86 & 3.43 & 0.65 \\
+ & 30$\times$ & 92.34 & 63.38 & 0.091 & 1.71 & 2.60 & 0.71 \\
+ & 40$\times$ & 92.33 & 65.00 & 0.079 & 1.64 & 2.46 & 0.76 \\
+ & 50$\times$ & 92.02 & 65.68 & 0.070 & 1.74 & 2.11 & 0.78 \\
+TinkerHap & 10$\times$ & 87.65 & 53.68 & 0.283 & 3.00 & 5.36 & 0.44 \\
+ & 20$\times$ & 92.38 & 61.34 & 0.217 & 3.61 & 4.75 & 0.63 \\
+ & 30$\times$ & 92.56 & 64.24 & 0.181 & 3.38 & 3.94 & 0.69 \\
+ & 40$\times$ & 92.51 & 65.85 & 0.153 & 3.18 & 3.85 & 0.72 \\
+ & 50$\times$ & 92.17 & 66.52 & 0.133 & 3.29 & 3.44 & 0.75 \\
+\bottomrule\end{longtable}}
