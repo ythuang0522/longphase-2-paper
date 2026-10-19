@@ -1628,3 +1628,30 @@ paper's inputs, default parameters or the documented workflow, scored like `SNV_
   inventory (13 → 14 sheets, row for `Other_phasers`); this README (section above).
 - Not changed: main text, Methods, figures (including the JSX drafts) and every other
   Supplementary table. Whether and how to use these results is for the authors to decide.
+
+**Abstract GNN sentence, 2026-10-19 (author request).** The two sentences on the method are one
+sentence. The abstract no longer uses "phase-disagreement onsets" (author decision, replaces the
+2026-10-10 rule for the abstract only); it says that the GNN unphases likely misphased variants.
+The phasing-uncertainty clause is removed from the abstract: phasing entropy was built for the
+GNN, so the abstract names only the GNN (author). The Introduction, Fig. 1 legend, Results and Methods keep the term.
+
+
+**Sentence-level wording revision, 2026-10-19 (author-approved review).** Applied the
+20 reviewed wording recommendations across the abstract, Introduction, Results, Discussion,
+Methods, supplementary methods and Supplementary Table 12 caption. GNN correction is
+defined by its operation; error-rate comparisons and threshold-selection terminology are
+explicit; redundant narration and development-history phrasing are revised. Numerical
+results and scientific limitations are retained. The four proposed paragraph-level changes
+are deferred: the Introduction pipeline inventory, Results evaluation setup, unphased-SNV
+Methods structure and Supplementary Table 18 caption are unchanged. The metric comparisons
+also remain in their original paragraph. The Table 12 caption is synchronized with
+`figures-source/make_results_figs.py`. Both PDFs rebuilt successfully (27 and 39 pages);
+rendered revised pages checked, with no undefined references, missing characters or
+overfull boxes in the build logs. No figure artwork was changed.
+
+**Unphased-SNV Methods paragraph breaks, 2026-10-19 (author approval of change 3 only).**
+Separated the existing analysis text into three paragraphs: GNN-removed SNVs, assembly
+comparison, and the comparison between LongPhase 2 and WhatsHap. Only the opening wording
+was clarified; all analysis definitions, numerical values and limitations were retained.
+Changes 1, 2 and 4 remain deferred. Rebuilt `main.pdf` (27 pages), checked pages 22--23
+visually, and confirmed no undefined references, missing characters or overfull boxes.
