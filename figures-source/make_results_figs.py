@@ -75,12 +75,14 @@ C = {
     "gc":     "#BF812D",
     "meth":   "#6A3D9A",
     "hp":     "#35978F",   # HiPhase (PacBio), HiFi only
+    "hb":     "#E08214",   # HapBridge, nanopore SNV + 5mC only
+    "lh":     "#4D9221",   # LongHap, nanopore SNV + 5mC only
 }
 NAME = {
     "lp_gnn": "LongPhase 2", "lp": "LongPhase 2 without GNN",
     "wh": "WhatsHap (SNVs only)", "wh_ind": "WhatsHap (SNVs + indels)",
     "hc": "HapCUT2", "margin": "Margin", "ralphi": "Ralphi", "gc": "GCphase",
-    "meth": "MethPhaser", "hp": "HiPhase",
+    "meth": "MethPhaser", "hp": "HiPhase", "hb": "HapBridge", "lh": "LongHap",
 }
 XLSX_TOOL = {"lp": "longphase_v2.0.1", "lp_gnn": "longphase_v2.1.1",
              "wh": "whatshap_v28", "hc": "hapcut2_v134", "margin": "margin_v231",
@@ -174,6 +176,8 @@ STY = {
     "gc":     dict(marker="P", ls="-", mfc="none", dx=0.0, ms=3.4),
     "meth":   dict(marker="^", ls="-", mfc="none", dx=0.0, ms=3.4),
     "hp":     dict(marker="v", ls="-", mfc="none", dx=0.0, ms=3.4),
+    "hb":     dict(marker="P", ls="-", mfc="none", dx=0.0, ms=3.6),
+    "lh":     dict(marker="X", ls="-", mfc="none", dx=0.0, ms=3.6),
 }
 
 
@@ -184,6 +188,19 @@ def hiphase(c):
     (author decision: the PacBio phaser must be in the HiFi comparison)."""
     r = _other_phasers().get(("HiFi", "HiPhase 1.7.0 (SNV-only input VCF)", c))
     return [r] if r else None
+
+
+def meth_other(t):
+    """HapBridge (on the MethPhaser input) or LongHap (SNVs with 5mC) on nanopore data, replicate 1:
+    sheet Other_phasers of Supplementary Data 1. With MethPhaser in Fig. 2d and Supplementary
+    Fig. 16a,d since 2026-10-20 (author decision: every methylation-aware phaser that the
+    Introduction names and that phases variants; NanoMethPhase does not)."""
+    label = {"hb": "HapBridge ec48f02 (on LongPhase 2 SNV output, no GNN)",
+             "lh": "LongHap 0.2.0 (SNVs, with 5mC)"}[t]
+    def get(c):
+        r = _other_phasers().get(("ONT", label, c))
+        return [r] if r else None
+    return get
 
 
 def tline(ax, t, xs, m, s, scale=1.0, label=None, band=True):
@@ -262,7 +279,7 @@ def save(fig, path):
         lt = fig.text(max(tb.x0, 0) / W, yb, s_, fontsize=8, fontweight="bold", va="baseline", ha="left")
         x = lt.get_window_extent(r).x1 + 1.6 * MM * fig.dpi
         fig.text(x / W, yb, title, fontsize=7, fontweight="bold", va="baseline", ha="left")
-    fig.savefig(path)
+    fig.savefig(path, metadata={"CreationDate": None})   # no timestamp: unchanged figures stay byte-identical
     w_mm = fig.get_size_inches()[0] * 25.4
     plt.close(fig)
     print(f"wrote {os.path.relpath(path, ROOT)} ({w_mm:.0f} mm wide)")
@@ -391,7 +408,7 @@ def fig2():
     coverage — a SNV phasing (WhatsHap, HapCUT2), b SNV and indel co-phasing (WhatsHap; solid
     SNV pairs, dotted pairs with an indel, Supplementary Table 14), c SNV phasing of PacBio HiFi
     data (WhatsHap, HapCUT2, HiPhase, one replicate per coverage); row 2 switch error rate against block N50 —
-    d SNV and 5mC co-phasing against MethPhaser (replicate 1), e by evidence type (LongPhase 2
+    d SNV and 5mC co-phasing against MethPhaser, HapBridge and LongHap (replicate 1), e by evidence type (LongPhase 2
     with SNVs, SNVs + indels and all four classes, Supplementary Table 10, against WhatsHap with
     SNVs and SNVs + indels; marker = tool, line style = evidence; no HapCUT2, which is in a),
     f HiFi (own axes, WhatsHap, HapCUT2 and HiPhase). d precedes e so that each evidence class is met before the panel that
@@ -437,7 +454,8 @@ def fig2():
         ex, ey = _path(ev, get, PLOT_COVS, C[t], ls, STY[t]["marker"], STY[t]["ms"], mfc=C[t] if filled else "none")
         if i == 0:   # coverage of the first and last point, on WhatsHap with indels
             _cov_ends(ev, PLOT_COVS, ex, ey)
-    for ax, covs, tools, comp in ((mp, BAR_COVS, (("meth", meth), ("lp_gnn", mod1)), "meth"),
+    for ax, covs, tools, comp in ((mp, BAR_COVS, (("lh", meth_other("lh")), ("hb", meth_other("hb")),
+                                                  ("meth", meth), ("lp_gnn", mod1)), "meth"),
                                   (f, HIFI_COVS, (("hc", hifi("hc")), ("wh", hifi("wh")), ("hp", hiphase),
                                                   ("lp_gnn", hifi("lp_gnn"))), "wh")):
         for t, get in tools:
@@ -455,7 +473,8 @@ def fig2():
     style = lambda ls, label, mfc="none", marker=None: Line2D(
         [], [], color=grey, ls=ls, marker=marker, ms=3.0, mfc=mfc, label=label)
     tools = [thandle(t, n) for t, n in (("lp_gnn", "LongPhase 2"), ("wh", "WhatsHap"), ("hc", "HapCUT2"),
-                                        ("hp", "HiPhase"), ("meth", "MethPhaser"))]
+                                        ("hp", "HiPhase"), ("meth", "MethPhaser"), ("hb", "HapBridge"),
+                                        ("lh", "LongHap"))]
     kb = [style("-", "SNV pairs"), style(":", "Pairs with an indel")]
     ke = [style("-", "SNVs"), style("--", "+ indels"), style("-.", "+ indels, SVs and 5mC", grey, "o")]
     _light(fig, tools + kb + ke)
@@ -464,9 +483,10 @@ def fig2():
     ev.legend(handles=ke, loc="lower left", **keyargs)
     fig.legend(handles=tools, loc="outside upper center", ncol=len(tools), frameon=False, handlelength=2.6,
                columnspacing=2.0)
-    for ax, L, title in ((a, "a", "SNV phasing"), (b, "b", "SNV and indel co-phasing"),
-                         (c, "c", "SNV phasing, PacBio HiFi"), (d, "d", "SNV and 5mC co-phasing"),
-                         (e, "e", "SNV phasing by evidence type"), (f, "f", "SNV phasing, PacBio HiFi")):
+    # platform first in every title, so that a-b, d-e read as nanopore and c, f as HiFi (author, 2026-10-20)
+    for ax, L, title in ((a, "a", "Nanopore: SNV phasing"), (b, "b", "Nanopore: SNV and indel co-phasing"),
+                         (c, "c", "PacBio HiFi: SNV phasing"), (d, "d", "Nanopore: SNV and 5mC co-phasing"),
+                         (e, "e", "Nanopore: by evidence type"), (f, "f", "PacBio HiFi: SNV phasing")):
         letter(ax, L, title=title)
     save(fig, os.path.join(OUT, "fig2_phaser_comparison.pdf"))
 
@@ -475,7 +495,7 @@ def fig2():
 def sfig16():
     """Coverage views of the Fig. 2 comparisons that Fig. 2 does not plot (author decision,
     2026-10-13): a SNV and 5mC co-phasing switch error rate against coverage (MethPhaser,
-    replicate 1; former Fig. 2d; its N50 is Fig. 2d), b-e block-wise Hamming distance (former Hamming column of
+    HapBridge and LongHap, replicate 1; former Fig. 2d; its N50 is Fig. 2d), b-e block-wise Hamming distance (former Hamming column of
     Fig. 2): b SNV phasing, c SNV and indel co-phasing (SNVs solid, indels dotted; SNV values
     calculated, see `_indel_runs()`), d SNV and 5mC co-phasing, e PacBio HiFi."""
     fig, axs = new_fig(50, 1, 5)
@@ -483,7 +503,7 @@ def sfig16():
     mod1 = lambda c: [r for r in D["coph"]["Mod"]["longphase_v2.1.1"][c] if r["rep"] == 1]
     meth = lambda c: [{k: meth_value(c, k) for k in ("sw_pct", "ham")}]
     a, b, c_, d, e = axs
-    for t, get in (("meth", meth), ("lp_gnn", mod1)):
+    for t, get in (("lh", meth_other("lh")), ("hb", meth_other("hb")), ("meth", meth), ("lp_gnn", mod1)):
         tline(a, t, *_series(get, BAR_COVS)("sw_pct"), band=False)
         tline(d, t, *_series(get, BAR_COVS)("ham"), band=False)
     _log_rate_axis(a)
@@ -506,7 +526,7 @@ def sfig16():
         letter(ax, L)
     e.set_xlim(7.5, 52.5)
     grey = "#555555"
-    h = [thandle(t, NAME[t].split(" (")[0]) for t in ("lp_gnn", "wh", "hc", "hp", "meth")]
+    h = [thandle(t, NAME[t].split(" (")[0]) for t in ("lp_gnn", "wh", "hc", "hp", "meth", "hb", "lh")]
     h += [Line2D([], [], color=grey, ls="-", label="c: SNVs"),
           Line2D([], [], color=grey, ls=":", marker="o", ms=3.0, mfc="none", mew=0.8, label="c: indels")]
     _light(fig, h)
