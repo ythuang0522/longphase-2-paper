@@ -1,0 +1,101 @@
+platform	input	tool	gnn	coverage	replicate	phased_snv	snv_switch	snv_switch_rate_pct	hamming_pct	blocks	block_n50	vcf
+ONT	SNV+SV	LongPhase 2	yes	10	1	1866871	1492	0.08018	5.41489	7025	855973	/disk/research/v2.1.2/longphase_coh_sv_gnn/longphase_coh_sv_gnn_10x_1.vcf
+ONT	SNV+SV	LongPhase 2	no	10	1	1873437	2269	0.12147	6.97905	6017	944368	/disk/research/v2.1.2/longphase_coh_sv/longphase_coh_sv_10x_1.vcf
+ONT	SNV+SV	WhatsHap	-	10	1	1889676	4276	0.22692	7.67021	5894	966560	/disk/research/v2.1.2/issue10/wh_snv_sv_ont_10x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	yes	10	1	1865420	1680	0.09032	6.96756	6302	997089	/disk/research/v2.1.2/longphase_coh_indel_sv_gnn/longphase_coh_indel_sv_gnn_10x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	no	10	1	1873880	2903	0.15527	11.10516	4696	1231064	/disk/research/v2.1.2/longphase_coh_indel_sv/longphase_coh_indel_sv_10x_1.vcf
+ONT	SNV+indel+SV	WhatsHap	-	10	1	1889877	5155	0.27334	12.56825	4590	1283653	/disk/research/v2.1.2/issue10/wh_snv_indel_sv_ont_10x_1.vcf
+ONT	SNV+SV	LongPhase 2	yes	12	1	2027440	1336	0.06605	6.24934	5764	1131188	/disk/research/v2.1.2/longphase_coh_sv_gnn/longphase_coh_sv_gnn_12x_1.vcf
+ONT	SNV+SV	LongPhase 2	no	12	1	2032961	2017	0.09943	7.85654	4844	1222203	/disk/research/v2.1.2/longphase_coh_sv/longphase_coh_sv_12x_1.vcf
+ONT	SNV+SV	WhatsHap	-	12	1	2048731	4311	0.21086	8.74078	4821	1282848	/disk/research/v2.1.2/issue10/wh_snv_sv_ont_12x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	yes	12	1	2025530	1551	0.07673	7.50123	5102	1291203	/disk/research/v2.1.2/longphase_coh_indel_sv_gnn/longphase_coh_indel_sv_gnn_12x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	no	12	1	2032995	2633	0.12972	11.63128	3620	1635876	/disk/research/v2.1.2/longphase_coh_indel_sv/longphase_coh_indel_sv_12x_1.vcf
+ONT	SNV+indel+SV	WhatsHap	-	12	1	2048912	5037	0.24620	13.69488	3637	1800485	/disk/research/v2.1.2/issue10/wh_snv_indel_sv_ont_12x_1.vcf
+ONT	SNV+SV	LongPhase 2	yes	14	1	2106183	1070	0.05091	5.56490	5218	1278478	/disk/research/v2.1.2/longphase_coh_sv_gnn/longphase_coh_sv_gnn_14x_1.vcf
+ONT	SNV+SV	LongPhase 2	no	14	1	2110872	1680	0.07973	7.24831	4309	1412495	/disk/research/v2.1.2/longphase_coh_sv/longphase_coh_sv_14x_1.vcf
+ONT	SNV+SV	WhatsHap	-	14	1	2125918	3779	0.17808	7.52161	4382	1444863	/disk/research/v2.1.2/issue10/wh_snv_sv_ont_14x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	yes	14	1	2104588	1294	0.06159	6.80390	4643	1523204	/disk/research/v2.1.2/longphase_coh_indel_sv_gnn/longphase_coh_indel_sv_gnn_14x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	no	14	1	2110889	2238	0.10616	11.09874	3156	1988243	/disk/research/v2.1.2/longphase_coh_indel_sv/longphase_coh_indel_sv_14x_1.vcf
+ONT	SNV+indel+SV	WhatsHap	-	14	1	2126125	4556	0.21455	13.86772	3202	2085473	/disk/research/v2.1.2/issue10/wh_snv_indel_sv_ont_14x_1.vcf
+ONT	SNV+SV	LongPhase 2	yes	16	1	2149698	954	0.04446	4.52786	4842	1442853	/disk/research/v2.1.2/longphase_coh_sv_gnn/longphase_coh_sv_gnn_16x_1.vcf
+ONT	SNV+SV	LongPhase 2	no	16	1	2154041	1437	0.06682	5.70488	4043	1543365	/disk/research/v2.1.2/longphase_coh_sv/longphase_coh_sv_16x_1.vcf
+ONT	SNV+SV	WhatsHap	-	16	1	2168470	3442	0.15899	6.16915	4228	1547859	/disk/research/v2.1.2/issue10/wh_snv_sv_ont_16x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	yes	16	1	2148322	1119	0.05217	6.55067	4194	1732465	/disk/research/v2.1.2/longphase_coh_indel_sv_gnn/longphase_coh_indel_sv_gnn_16x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	no	16	1	2153753	1891	0.08790	10.97926	2928	2150810	/disk/research/v2.1.2/longphase_coh_indel_sv/longphase_coh_indel_sv_16x_1.vcf
+ONT	SNV+indel+SV	WhatsHap	-	16	1	2168641	4000	0.18466	12.31755	3144	2214334	/disk/research/v2.1.2/issue10/wh_snv_indel_sv_ont_16x_1.vcf
+ONT	SNV+SV	LongPhase 2	yes	18	1	2169378	913	0.04216	3.67078	4533	1514625	/disk/research/v2.1.2/longphase_coh_sv_gnn/longphase_coh_sv_gnn_18x_1.vcf
+ONT	SNV+SV	LongPhase 2	no	18	1	2173163	1367	0.06300	4.87169	3747	1586587	/disk/research/v2.1.2/longphase_coh_sv/longphase_coh_sv_18x_1.vcf
+ONT	SNV+SV	WhatsHap	-	18	1	2187957	3283	0.15028	5.10914	3977	1552907	/disk/research/v2.1.2/issue10/wh_snv_sv_ont_18x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	yes	18	1	2168104	1072	0.04951	5.55847	3972	1888293	/disk/research/v2.1.2/longphase_coh_indel_sv_gnn/longphase_coh_indel_sv_gnn_18x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	no	18	1	2172903	1807	0.08325	10.05715	2727	2293144	/disk/research/v2.1.2/longphase_coh_indel_sv/longphase_coh_indel_sv_18x_1.vcf
+ONT	SNV+indel+SV	WhatsHap	-	18	1	2188154	3909	0.17884	11.72826	2984	2369165	/disk/research/v2.1.2/issue10/wh_snv_indel_sv_ont_18x_1.vcf
+ONT	SNV+SV	LongPhase 2	yes	20	1	2181827	903	0.04145	3.12246	4380	1598256	/disk/research/v2.1.2/longphase_coh_sv_gnn/longphase_coh_sv_gnn_20x_1.vcf
+ONT	SNV+SV	LongPhase 2	no	20	1	2184981	1328	0.06087	4.16629	3567	1698900	/disk/research/v2.1.2/longphase_coh_sv/longphase_coh_sv_20x_1.vcf
+ONT	SNV+SV	WhatsHap	-	20	1	2200283	2823	0.12849	3.80665	3876	1658507	/disk/research/v2.1.2/issue10/wh_snv_sv_ont_20x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	yes	20	1	2180212	1044	0.04795	5.87361	3787	2079685	/disk/research/v2.1.2/longphase_coh_indel_sv_gnn/longphase_coh_indel_sv_gnn_20x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	no	20	1	2184395	1727	0.07914	9.79543	2570	2391830	/disk/research/v2.1.2/longphase_coh_indel_sv/longphase_coh_indel_sv_20x_1.vcf
+ONT	SNV+indel+SV	WhatsHap	-	20	1	2200458	3522	0.16022	10.60553	2876	2469364	/disk/research/v2.1.2/issue10/wh_snv_indel_sv_ont_20x_1.vcf
+ONT	SNV+SV	LongPhase 2	yes	30	1	2194866	649	0.02961	1.75359	3738	1923581	/disk/research/v2.1.2/longphase_coh_sv_gnn/longphase_coh_sv_gnn_30x_1.vcf
+ONT	SNV+SV	LongPhase 2	no	30	1	2197461	1005	0.04579	2.38402	3010	1964974	/disk/research/v2.1.2/longphase_coh_sv/longphase_coh_sv_30x_1.vcf
+ONT	SNV+SV	WhatsHap	-	30	1	2213351	2531	0.11450	3.13162	3467	1886905	/disk/research/v2.1.2/issue10/wh_snv_sv_ont_30x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	yes	30	1	2194109	812	0.03705	4.83077	3188	2453483	/disk/research/v2.1.2/longphase_coh_indel_sv_gnn/longphase_coh_indel_sv_gnn_30x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	no	30	1	2196859	1327	0.06046	7.89768	2176	2932289	/disk/research/v2.1.2/longphase_coh_indel_sv/longphase_coh_indel_sv_30x_1.vcf
+ONT	SNV+indel+SV	WhatsHap	-	30	1	2213483	2937	0.13280	9.25712	2626	2992441	/disk/research/v2.1.2/issue10/wh_snv_indel_sv_ont_30x_1.vcf
+ONT	SNV+SV	LongPhase 2	yes	40	1	2195874	611	0.02786	1.54981	3367	2196496	/disk/research/v2.1.2/longphase_coh_sv_gnn/longphase_coh_sv_gnn_40x_1.vcf
+ONT	SNV+SV	LongPhase 2	no	40	1	2198196	902	0.04108	2.08027	2625	2288709	/disk/research/v2.1.2/longphase_coh_sv/longphase_coh_sv_40x_1.vcf
+ONT	SNV+SV	WhatsHap	-	40	1	2215562	2156	0.09742	3.42010	3180	2172651	/disk/research/v2.1.2/issue10/wh_snv_sv_ont_40x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	yes	40	1	2194852	727	0.03315	4.45305	2909	2930753	/disk/research/v2.1.2/longphase_coh_indel_sv_gnn/longphase_coh_indel_sv_gnn_40x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	no	40	1	2197419	1162	0.05292	7.78934	1905	3348242	/disk/research/v2.1.2/longphase_coh_indel_sv/longphase_coh_indel_sv_40x_1.vcf
+ONT	SNV+indel+SV	WhatsHap	-	40	1	2215658	2508	0.11328	10.67752	2449	3398881	/disk/research/v2.1.2/issue10/wh_snv_indel_sv_ont_40x_1.vcf
+ONT	SNV+SV	LongPhase 2	yes	50	1	2193745	598	0.02729	1.51989	3153	2542088	/disk/research/v2.1.2/longphase_coh_sv_gnn/longphase_coh_sv_gnn_50x_1.vcf
+ONT	SNV+SV	LongPhase 2	no	50	1	2195963	897	0.04089	1.83903	2392	2570482	/disk/research/v2.1.2/longphase_coh_sv/longphase_coh_sv_50x_1.vcf
+ONT	SNV+SV	WhatsHap	-	50	1	2215878	2024	0.09143	2.96012	3012	2477959	/disk/research/v2.1.2/issue10/wh_snv_sv_ont_50x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	yes	50	1	2192814	667	0.03044	3.33266	2700	3219277	/disk/research/v2.1.2/longphase_coh_indel_sv_gnn/longphase_coh_indel_sv_gnn_50x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	no	50	1	2194980	1085	0.04946	6.23716	1722	3808104	/disk/research/v2.1.2/longphase_coh_indel_sv/longphase_coh_indel_sv_50x_1.vcf
+ONT	SNV+indel+SV	WhatsHap	-	50	1	2216022	2332	0.10531	8.82916	2324	3689648	/disk/research/v2.1.2/issue10/wh_snv_indel_sv_ont_50x_1.vcf
+ONT	SNV+SV	LongPhase 2	yes	60	1	2191300	460	0.02101	1.64426	2947	2886980	/disk/research/v2.1.2/longphase_coh_sv_gnn/longphase_coh_sv_gnn_60x_1.vcf
+ONT	SNV+SV	LongPhase 2	no	60	1	2193236	730	0.03331	1.88294	2226	2906664	/disk/research/v2.1.2/longphase_coh_sv/longphase_coh_sv_60x_1.vcf
+ONT	SNV+SV	WhatsHap	-	60	1	2215103	1819	0.08220	3.46693	2886	2758586	/disk/research/v2.1.2/issue10/wh_snv_sv_ont_60x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	yes	60	1	2190368	568	0.02595	3.50783	2535	3693798	/disk/research/v2.1.2/longphase_coh_indel_sv_gnn/longphase_coh_indel_sv_gnn_60x_1.vcf
+ONT	SNV+indel+SV	LongPhase 2	no	60	1	2192339	942	0.04299	6.40488	1583	4331465	/disk/research/v2.1.2/longphase_coh_indel_sv/longphase_coh_indel_sv_60x_1.vcf
+ONT	SNV+indel+SV	WhatsHap	-	60	1	2215215	2136	0.09648	9.74980	2230	4197262	/disk/research/v2.1.2/issue10/wh_snv_indel_sv_ont_60x_1.vcf
+HiFi	SNV+SV	LongPhase 2	yes	10	1	2086903	989	0.04775	0.77643	15910	344401	/disk/research/v2.1.2/pacbio/longphase_hifi_sv_gnn/longphase_hifi_sv_gnn_10x_1.vcf
+HiFi	SNV+SV	LongPhase 2	no	10	1	2089642	1321	0.06369	1.00711	15700	346074	/disk/research/v2.1.2/pacbio/longphase_hifi_sv/longphase_hifi_sv_10x_1.vcf
+HiFi	SNV+SV	WhatsHap	-	10	1	2097409	2677	0.12858	1.10264	15787	340949	/disk/research/v2.1.2/issue10/wh_snv_sv_hifi_10x_1.vcf
+HiFi	SNV+SV	HiPhase	-	10	1	2092937	1500	0.07221	0.79459	15696	346449	/disk/research/v2.1.2/issue10/hp_snv_sv_hifi_10x_1.vcf.gz
+HiFi	SNV+indel+SV	LongPhase 2	yes	10	1	2083381	1936	0.09357	2.55027	14388	406903	/disk/research/v2.1.2/pacbio/longphase_hifi_indel_sv_gnn/longphase_hifi_indel_sv_gnn_10x_1.vcf
+HiFi	SNV+indel+SV	LongPhase 2	no	10	1	2089739	3015	0.14521	3.89922	13339	429992	/disk/research/v2.1.2/pacbio/longphase_hifi_indel_sv/longphase_hifi_indel_sv_10x_1.vcf
+HiFi	SNV+indel+SV	WhatsHap	-	10	1	2100178	5291	0.25349	4.93791	13869	437523	/disk/research/v2.1.2/issue10/wh_snv_indel_sv_hifi_10x_1.vcf
+HiFi	SNV+indel+SV	HiPhase	-	10	1	2097759	3179	0.15247	4.03434	13284	451430	/disk/research/v2.1.2/issue10/hp_snv_indel_sv_hifi_10x_1.vcf.gz
+HiFi	SNV+SV	LongPhase 2	yes	20	1	2199831	882	0.04031	1.16458	12182	491504	/disk/research/v2.1.2/pacbio/longphase_hifi_sv_gnn/longphase_hifi_sv_gnn_20x_1.vcf
+HiFi	SNV+SV	LongPhase 2	no	20	1	2202792	1265	0.05773	1.32282	11968	491684	/disk/research/v2.1.2/pacbio/longphase_hifi_sv/longphase_hifi_sv_20x_1.vcf
+HiFi	SNV+SV	WhatsHap	-	20	1	2211761	2571	0.11687	1.28416	12077	482976	/disk/research/v2.1.2/issue10/wh_snv_sv_hifi_20x_1.vcf
+HiFi	SNV+SV	HiPhase	-	20	1	2207381	1398	0.06367	0.86340	12021	491053	/disk/research/v2.1.2/issue10/hp_snv_sv_hifi_20x_1.vcf.gz
+HiFi	SNV+indel+SV	LongPhase 2	yes	20	1	2198224	1300	0.05943	1.98831	11094	561328	/disk/research/v2.1.2/pacbio/longphase_hifi_indel_sv_gnn/longphase_hifi_indel_sv_gnn_20x_1.vcf
+HiFi	SNV+indel+SV	LongPhase 2	no	20	1	2202789	2057	0.09382	3.17197	10363	597378	/disk/research/v2.1.2/pacbio/longphase_hifi_indel_sv/longphase_hifi_indel_sv_20x_1.vcf
+HiFi	SNV+indel+SV	WhatsHap	-	20	1	2213500	3909	0.17741	4.00341	10675	598686	/disk/research/v2.1.2/issue10/wh_snv_indel_sv_hifi_20x_1.vcf
+HiFi	SNV+indel+SV	HiPhase	-	20	1	2211755	2228	0.10118	3.42107	9780	657083	/disk/research/v2.1.2/issue10/hp_snv_indel_sv_hifi_20x_1.vcf.gz
+HiFi	SNV+SV	LongPhase 2	yes	30	1	2204338	835	0.03807	0.81893	11165	536642	/disk/research/v2.1.2/pacbio/longphase_hifi_sv_gnn/longphase_hifi_sv_gnn_30x_1.vcf
+HiFi	SNV+SV	LongPhase 2	no	30	1	2207210	1158	0.05272	1.02949	10912	544910	/disk/research/v2.1.2/pacbio/longphase_hifi_sv/longphase_hifi_sv_30x_1.vcf
+HiFi	SNV+SV	WhatsHap	-	30	1	2216695	2358	0.10689	1.05642	11053	530754	/disk/research/v2.1.2/issue10/wh_snv_sv_hifi_30x_1.vcf
+HiFi	SNV+SV	HiPhase	-	30	1	2213031	1369	0.06216	0.96947	10992	545553	/disk/research/v2.1.2/issue10/hp_snv_sv_hifi_30x_1.vcf.gz
+HiFi	SNV+indel+SV	LongPhase 2	yes	30	1	2203452	1171	0.05338	1.79104	10128	625886	/disk/research/v2.1.2/pacbio/longphase_hifi_indel_sv_gnn/longphase_hifi_indel_sv_gnn_30x_1.vcf
+HiFi	SNV+indel+SV	LongPhase 2	no	30	1	2207131	1716	0.07808	2.58820	9521	656403	/disk/research/v2.1.2/pacbio/longphase_hifi_indel_sv/longphase_hifi_indel_sv_30x_1.vcf
+HiFi	SNV+indel+SV	WhatsHap	-	30	1	2218036	3201	0.14493	3.44482	9806	652539	/disk/research/v2.1.2/issue10/wh_snv_indel_sv_hifi_30x_1.vcf
+HiFi	SNV+indel+SV	HiPhase	-	30	1	2216901	1841	0.08337	2.67298	8840	725325	/disk/research/v2.1.2/issue10/hp_snv_indel_sv_hifi_30x_1.vcf.gz
+HiFi	SNV+SV	LongPhase 2	yes	40	1	2203580	799	0.03643	0.86418	10541	572790	/disk/research/v2.1.2/pacbio/longphase_hifi_sv_gnn/longphase_hifi_sv_gnn_40x_1.vcf
+HiFi	SNV+SV	LongPhase 2	no	40	1	2206158	1162	0.05291	1.00777	10337	579549	/disk/research/v2.1.2/pacbio/longphase_hifi_sv/longphase_hifi_sv_40x_1.vcf
+HiFi	SNV+SV	WhatsHap	-	40	1	2215991	1998	0.09058	0.95208	10471	565103	/disk/research/v2.1.2/issue10/wh_snv_sv_hifi_40x_1.vcf
+HiFi	SNV+SV	HiPhase	-	40	1	2213169	1234	0.05601	0.92374	10399	575788	/disk/research/v2.1.2/issue10/hp_snv_sv_hifi_40x_1.vcf.gz
+HiFi	SNV+indel+SV	LongPhase 2	yes	40	1	2202598	1066	0.04860	1.66471	9562	660674	/disk/research/v2.1.2/pacbio/longphase_hifi_indel_sv_gnn/longphase_hifi_indel_sv_gnn_40x_1.vcf
+HiFi	SNV+indel+SV	LongPhase 2	no	40	1	2205702	1521	0.06924	2.16161	9079	684513	/disk/research/v2.1.2/pacbio/longphase_hifi_indel_sv/longphase_hifi_indel_sv_40x_1.vcf
+HiFi	SNV+indel+SV	WhatsHap	-	40	1	2217075	2512	0.11376	2.29027	9323	677093	/disk/research/v2.1.2/issue10/wh_snv_indel_sv_hifi_40x_1.vcf
+HiFi	SNV+indel+SV	HiPhase	-	40	1	2216634	1586	0.07181	2.43776	8272	766641	/disk/research/v2.1.2/issue10/hp_snv_indel_sv_hifi_40x_1.vcf.gz
+HiFi	SNV+SV	LongPhase 2	yes	50	1	2195942	699	0.03197	0.71098	10230	580876	/disk/research/v2.1.2/pacbio/longphase_hifi_sv_gnn/longphase_hifi_sv_gnn_50x_1.vcf
+HiFi	SNV+SV	LongPhase 2	no	50	1	2198426	984	0.04496	1.01904	10000	588043	/disk/research/v2.1.2/pacbio/longphase_hifi_sv/longphase_hifi_sv_50x_1.vcf
+HiFi	SNV+SV	WhatsHap	-	50	1	2208114	1742	0.07924	0.93715	10131	580090	/disk/research/v2.1.2/issue10/wh_snv_sv_hifi_50x_1.vcf
+HiFi	SNV+SV	HiPhase	-	50	1	2205749	1120	0.05100	0.83580	10062	593216	/disk/research/v2.1.2/issue10/hp_snv_sv_hifi_50x_1.vcf.gz
+HiFi	SNV+indel+SV	LongPhase 2	yes	50	1	2195052	901	0.04121	1.41273	9219	677587	/disk/research/v2.1.2/pacbio/longphase_hifi_indel_sv_gnn/longphase_hifi_indel_sv_gnn_50x_1.vcf
+HiFi	SNV+indel+SV	LongPhase 2	no	50	1	2197892	1279	0.05842	2.01170	8775	700269	/disk/research/v2.1.2/pacbio/longphase_hifi_indel_sv/longphase_hifi_indel_sv_50x_1.vcf
+HiFi	SNV+indel+SV	WhatsHap	-	50	1	2209143	2139	0.09720	2.12049	9037	689939	/disk/research/v2.1.2/issue10/wh_snv_indel_sv_hifi_50x_1.vcf
+HiFi	SNV+indel+SV	HiPhase	-	50	1	2209143	1408	0.06396	2.18008	7993	783838	/disk/research/v2.1.2/issue10/hp_snv_indel_sv_hifi_50x_1.vcf.gz
