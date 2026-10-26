@@ -33,7 +33,7 @@ also a red `\todo{}` in the manuscript. Paths into `longphase/` refer to
 
 - Small-variant caller: PEPPER-Margin-DeepVariant, not Clair3 (author, 2026-10-05); release and preset still missing.
 - Supplementary Method 6 claimed switch rate and Hamming "share one denominator"; corrected.
-- Several numerical overstatements in Results/Discussion (e.g. "at least halves", "exactly as accurate") corrected on 2026-10-05; see README.
+- Several numerical overstatements in Results/Discussion (e.g. "at least halves", "exactly as accurate") corrected on 2026-10-05; see `notes/log/2026-10-05-codex-review-applied.md`.
 
 ## Missing analyses (not errors, but required)
 

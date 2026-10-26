@@ -239,7 +239,7 @@ Metrics were computed with \code{longphase compare} (Supplementary Fig.~8), a C+
 
 \paragraph{Phased fraction.} Phased fraction is counted before partitioning the truth--query intersection into blocks. Its numerator is the number of truth heterozygous variants whose position, REF and first ALT match a query record that is heterozygous and phased. Its denominator is all truth heterozygous variants of the same class.
 
-\paragraph{Block N50.} Query phase sets with fewer than two variants are excluded. The span of each remaining block is the distance in bp between its first and last variants. Block spans are sorted in decreasing order, and N50 is the span at which the cumulative sum first reaches half the total, which is the span-weighted median. It is computed once per chromosome and once over the block spans of all chromosomes pooled. The values plotted in Figs.~2c,f,i,l are the pooled, genome-wide N50 of the query. This metric uses query phase sets independently of the truth set and does not require truth--query intersection.
+\paragraph{Block N50.} Query phase sets with fewer than two variants are excluded. The span of each remaining block is the distance in bp between its first and last variants. Block spans are sorted in decreasing order, and N50 is the span at which the cumulative sum first reaches half the total, which is the span-weighted median. It is computed once per chromosome and once over the block spans of all chromosomes pooled. The values plotted in Figs.~2e--h and~3a,d are the pooled, genome-wide N50 of the query. This metric uses query phase sets independently of the truth set and does not require truth--query intersection.
 
 
 \clearpage
@@ -496,9 +496,11 @@ Release v2.1 model & 42 & 44 & 0.340 & 0.30 & 48.5 & 21.2 & 33.2 & 10.5 & 8.3 \\
 \end{tabular}
 \end{table}
 
+\input{figures-source/supp_table_sv}
+
 
 \clearpage
-\paragraph{Supplementary Data 1.} \code{supplementary.xlsx} contains the metrics behind Figs.~2--4, Supplementary Figs.~9 and 11--16 and Supplementary Tables~7--11, 13, 14, 17 and~18. Per-run metrics are indexed by coverage and down-sampling replicate. Blank cells denote runs that were not performed. The 14 sheets are described below.
+\paragraph{Supplementary Data 1.} \code{supplementary.xlsx} contains the metrics behind Figs.~2--5, Supplementary Figs.~9 and 11--16 and Supplementary Tables~7--11, 13, 14, 17 and~18. Per-run metrics are indexed by coverage and down-sampling replicate. Blank cells denote runs that were not performed. The 14 sheets are described below.
 
 The four \code{Unphased} sheets report replicate~1 at 10, 30 and 60$\times$. They use \code{lp\_only} for calls left unphased by \toolname only (phased by \whatshap only), and \code{wh\_only} for calls left unphased by \whatshap only (phased by \toolname only). In \code{Unphased\_composition}, \code{lp\_only\_phase} and \code{lp\_only\_gnn} divide \code{lp\_only} into calls left unphased by the phasing graph before GNN correction and calls unphased by GNN correction, respectively.
 
@@ -517,14 +519,14 @@ The code \code{both}, present in the composition, depth and sets sheets, denotes
 \code{SNV\_switch\_by\_region} & SNV switch errors and assessed pairs for SNV-only runs, by truth set, benchmark region and GIAB v3.6 stratum. \\[4pt]
 \code{SNV\_switch\_coincidence} & Switch errors at identical SNV pairs across tools (replicate~1). \\[4pt]
 \code{Indel\_accuracy} & Indel and SNV switch errors, assessed pairs and Hamming distance for co-phasing runs, without and within the v5.0q benchmark regions. \\[4pt]
-\code{Unphased\_composition} & Benchmark status of the calls left unphased, and phase errors of the tool that phased them (Fig.~4e and Supplementary Table~17). \\[4pt]
+\code{Unphased\_composition} & Benchmark status of the calls left unphased, and phase errors of the tool that phased them (Fig.~5e and Supplementary Table~17). \\[4pt]
 \code{Unphased\_intervals} & Co-location of these calls with switch-error intervals of the tool that phased them (Supplementary Table~17). \\[4pt]
 \code{Unphased\_depth} & Read-depth histograms in 2$\times$ bins (Supplementary Fig.~12). \\[4pt]
 \code{Unphased\_sets} & Per set: read-depth quartiles and share at the depth cap, phasing entropy (PE) of \toolname where it reports one, and enrichment in the other tool's switch-error intervals. \\[4pt]
-\code{Phased\_calls} & Phased heterozygous SNV calls on chr1--22 for every SNV-only run of \toolname and \whatshap, and on HiFi data also of HiPhase; the denominator of precision in Fig.~4b,d and Supplementary Tables~8 and~11. \\[4pt]
-\code{MethPhaser} & MethPhaser applied to the SNV-only output of \toolname without GNN correction, scored as in \code{SNV\_Detail} (Fig.~2d and Supplementary Figs.~11 and~16). \\[4pt]
+\code{Phased\_calls} & Phased heterozygous SNV calls on chr1--22 for every SNV-only run of \toolname and \whatshap, and on HiFi data also of HiPhase; the denominator of precision in Fig.~5b,d and Supplementary Tables~8 and~11. \\[4pt]
+\code{MethPhaser} & MethPhaser applied to the SNV-only output of \toolname without GNN correction, scored as in \code{SNV\_Detail} (Fig.~3 and Supplementary Fig.~11). \\[4pt]
 \code{SV\_5mC\_phasing} & Heterozygous SVs (Sniffles2) and 5mC sites (\texttt{modcall}) of every co-phasing configuration with SVs or 5mC, and how many \toolname phased without (\code{longphase\_v2.0.1}) and with (\code{longphase\_v2.1.1}) GNN correction; all contigs, as in \code{Variant\_Calling}. \\[4pt]
-\code{Other\_phasers} & Replicate~1 of further phasers, run with default parameters or the documented workflow, scored as in \code{SNV\_Detail}: LongHap (SNVs with and without 5mC, and all variant types with 5mC), HapBridge and TinkerHap on nanopore data; HiPhase and TinkerHap on HiFi data, with indels and on an SNV-only input VCF (neither has an SNV-only option); and \toolname, \whatshap and HapCUT2 with indels (Supplementary Table~18). The SNV-only HiPhase rows are also the HiPhase values of Figs.~2c,f and~4b, Supplementary Fig.~16e and Supplementary Table~11; the HapBridge rows and the LongHap rows with SNVs and 5mC are also those of Fig.~2d and Supplementary Fig.~16a,d. \\
+\code{Other\_phasers} & Replicate~1 of further phasers, run with default parameters or the documented workflow, scored as in \code{SNV\_Detail}: LongHap (SNVs with and without 5mC, and all variant types with 5mC), HapBridge and TinkerHap on nanopore data; HiPhase and TinkerHap on HiFi data, with indels and on an SNV-only input VCF (neither has an SNV-only option); and \toolname, \whatshap and HapCUT2 with indels (Supplementary Table~18). The SNV-only HiPhase rows are also the HiPhase values of Figs.~2c,g and~5c,d, Supplementary Fig.~16c and Supplementary Table~11; the HiFi rows with indels and the nanopore \hapcut rows with indels are those of Fig.~2b,d,f,h and Supplementary Fig.~16d; the HapBridge and LongHap rows with 5mC are those of Fig.~3. \\
 \bottomrule
 \end{tabular}
 }
@@ -674,10 +676,15 @@ Details are shown in Supplementary Figs.~5 and~6.}
 
 \begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig16_fig2_coverage.pdf}
-\caption{\textbf{Switch error rate of SNV and 5mC co-phasing and block-wise Hamming distance of the phaser comparisons in Fig.~2, across coverage.} Samples, coverages and replicates as in Fig.~2; scored against v5.0q.
-\textbf{a}, Switch error rate of SNV and 5mC co-phasing compared with MethPhaser, HapBridge and LongHap, replicate~1 (log scale; block N50 in Fig.~2d).
-\textbf{b}--\textbf{e}, Hamming distance. \textbf{b}, SNV phasing of nanopore data compared with \whatshap and \hapcut. \textbf{c}, SNV and indel co-phasing compared with \whatshap; solid lines score SNVs and dotted lines indels (Supplementary Table~14). \textbf{d}, SNV and 5mC co-phasing compared with MethPhaser, HapBridge and LongHap, replicate~1. \textbf{e}, SNV phasing of PacBio HiFi data compared with \whatshap, \hapcut and HiPhase.}
+\caption{\textbf{Block-wise Hamming distance of the phaser comparisons in Figs.~2 and~3, across coverage.} Samples, coverages and replicates as in Figs.~2 and~3; scored against v5.0q.
+\textbf{a}, SNV phasing of nanopore data compared with \whatshap and \hapcut. \textbf{b}, SNV and indel co-phasing of nanopore data compared with \whatshap; solid lines score SNVs and dotted lines indels (Supplementary Table~14). \textbf{c}, SNV phasing of PacBio HiFi data compared with \whatshap, \hapcut and HiPhase. \textbf{d}, SNV and indel co-phasing of PacBio HiFi data compared with the same tools; values include indels (replicate~1, Supplementary Table~18). \textbf{e}, SNV and 5mC co-phasing of nanopore data compared with MethPhaser, HapBridge and LongHap (replicate~1; Fig.~3d).}
 \label{fig:supp_fig2_coverage}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig17_sv_indels.pdf}
+\caption{\textbf{SV phasing with SNVs, indels and SVs as input.} HG002 nanopore R10.4.1 reads at 10--60$\times$ and PacBio HiFi (Revio) reads at 10--50$\times$, replicate~1; SV phase scored against the T2T-HG002 assembly. Every tool received the same SNV, indel and SV calls (Methods). SV phasing error rate against the number of SVs phased correctly, one point per coverage, on nanopore (\textbf{a}) and PacBio HiFi (\textbf{b}) data, as in Fig.~3a,b.}
+\label{fig:supp_sv_indels}
 \end{figure}
 
 

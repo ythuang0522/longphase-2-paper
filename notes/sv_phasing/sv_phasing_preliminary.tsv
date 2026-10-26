@@ -1,0 +1,24 @@
+platform	input	tool	gnn	coverage	replicate	svtype	size_class	sv_input	sv_phased	right	wrong	phased_hom_in_truth	phased_no_truth_match
+ONT	SNV+SV	LongPhase 2	yes	10	1	all	all	NA	NA	7497	830	NA	NA
+ONT	SNV+SV	LongPhase 2	yes	30	1	all	all	NA	NA	9649	720	171	NA
+ONT	SNV+SV	LongPhase 2	no	10	1	all	all	NA	NA	7627	1118	NA	NA
+ONT	SNV+SV	LongPhase 2	no	30	1	all	all	NA	NA	9666	919	NA	NA
+ONT	SNV+SV	WhatsHap	-	10	1	all	all	NA	NA	8099	1625	NA	NA
+ONT	SNV+SV	WhatsHap	-	30	1	all	all	NA	NA	10008	1361	458	NA
+ONT	SNV+indel+SV	LongPhase 2	yes	30	1	all	all	NA	NA	8737	967	NA	NA
+ONT	SNV+indel+SV	WhatsHap	-	30	1	all	all	NA	NA	8376	1660	NA	NA
+HiFi	SNV+SV	LongPhase 2	yes	30	1	all	all	NA	NA	10187	715	NA	NA
+HiFi	SNV+SV	LongPhase 2	no	30	1	all	all	NA	NA	10349	865	NA	NA
+HiFi	SNV+SV	WhatsHap	-	30	1	all	all	NA	NA	10405	1101	NA	NA
+HiFi	SNV+indel+SV	LongPhase 2	yes	30	1	all	all	NA	NA	9156	761	NA	NA
+HiFi	SNV+indel+SV	WhatsHap	-	30	1	all	all	NA	NA	8685	1069	NA	NA
+ONT	SNV+SV	LongPhase 2	yes	10	1	DEL	>=10000	NA	NA	34	3	NA	NA
+ONT	SNV+SV	LongPhase 2	yes	30	1	DEL	>=10000	NA	NA	41	3	NA	NA
+ONT	SNV+SV	WhatsHap	-	10	1	DEL	>=10000	NA	NA	36	5	NA	NA
+ONT	SNV+SV	WhatsHap	-	30	1	DEL	>=10000	NA	NA	39	7	NA	NA
+ONT	SNV+indel+SV	LongPhase 2	yes	30	1	DEL	>=10000	NA	NA	36	7	NA	NA
+ONT	SNV+indel+SV	WhatsHap	-	30	1	DEL	>=10000	NA	NA	36	10	NA	NA
+HiFi	SNV+SV	LongPhase 2	yes	30	1	DEL	>=10000	NA	NA	38	2	NA	NA
+HiFi	SNV+SV	WhatsHap	-	30	1	DEL	>=10000	NA	NA	42	2	NA	NA
+HiFi	SNV+indel+SV	LongPhase 2	yes	30	1	DEL	>=10000	NA	NA	38	2	NA	NA
+HiFi	SNV+indel+SV	WhatsHap	-	30	1	DEL	>=10000	NA	NA	44	0	NA	NA
