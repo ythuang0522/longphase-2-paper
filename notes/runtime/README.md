@@ -8,12 +8,20 @@ workstation of Methods (inputs and outputs on the hard-disk drive `/disk/researc
 
 | Tool | Threads | 10× wall | 10× CPU | 10× peak RSS | 60× wall | 60× CPU | 60× peak RSS |
 |---|---|---|---|---|---|---|---|
-| LongPhase 2 | 24 | 3.5 min | 12.3 min | 19.3 GiB | 15.5 min | 30.7 min | 30.1 GiB |
-| LongPhase 2 | 1 | 8.3 min | 8.4 min | 6.3 GiB | 19.1 min | 18.8 min | 7.4 GiB |
+| LongPhase 2 | 24 | 2.9 min | 4.5 min | 1.4 GiB | 14.8 min | 22.8 min | 3.5 GiB |
+| LongPhase 2 | 1 | 3.2 min | 2.8 min | 1.2 GiB | 12.8 min | 11.9 min | 1.2 GiB |
 | WhatsHap 2.8 `--only-snvs` | 1 | 25.2 min | 25.1 min | 1.5 GiB | 113.8 min | 113.6 min | 4.0 GiB |
 | HapCUT2 1.3.4 | 1 | 24.1 min | 24.1 min | 6.6 GiB | 96.4 min | 95.9 min | 19.4 GiB |
 
 ## Sources
+
+- **LongPhase 2 v2.1.2 (2026-10-26), the values in the tables above:** release binary, all runs repeated on
+  the same workstation and disk (`/ssd/longphase_process/v2.1.2/run_a.sh`): nanopore 24 threads at every
+  coverage (64 runs), one thread at 10× and 60×, HiFi 24 threads at 10–50×; one run at a time on an idle
+  machine, page cache cleared before each run, output identical to v2.1.1. Logs:
+  `/disk/research/v2.1.2/{longphase_gnn,longphase_gnn_t1,pacbio/longphase_hifi}/*.log`. Compared with
+  v2.1.1 (10–20×, 60 runs, medians): wall 4.8 → 4.3 min, CPU 13.8 → 6.3 min, peak memory 22.9 → 1.7 GiB.
+  The v2.1.1 rows below are in git history.
 
 - **LongPhase 2 (v2.1.1, 2026-10-16):** 24 threads from the logs of the v2.1.1 rerun,
   `/disk/research/v2.1.1/longphase_gnn/longphase_gnn_{c}x_1.log` (one `phase` command, GNN
@@ -57,10 +65,12 @@ Replicate 1 at 10–50×, same columns, written by `build_runtime.py`:
 
 | Tool | 10× wall | 10× CPU | 10× RSS | 50× wall | 50× CPU | 50× RSS |
 |---|---|---|---|---|---|---|
-| LongPhase 2, 24 threads | 0.9 min | 6.0 min | 16.7 GiB | 2.4 min | 14.3 min | 22.6 GiB |
+| LongPhase 2, 24 threads | 1.6 min | 2.5 min | 1.4 GiB | 5.9 min | 10.0 min | 1.6 GiB |
 | WhatsHap 2.8 | 23.9 min | 23.8 min | 1.5 GiB | 98.4 min | 98.2 min | 3.7 GiB |
 | HapCUT2 1.3.4 | 19.5 min | 19.4 min | 7.1 GiB | 59.5 min | 59.1 min | 19.6 GiB |
 
+v2.1.2: LongPhase 2 timed with the page cache cleared (as on nanopore data); CPU time 9.7–14.2-fold less
+than WhatsHap and 5.9–10.1-fold less than HapCUT2. Before (v2.1.1, BAM read first):
 The LongPhase wall time profits from the page cache (the nanopore 24-thread runs did not read the
 BAM first), so CPU time is the comparison to use: 4.0–7.8-fold less than WhatsHap, 3.2–5.1-fold less
 than HapCUT2.

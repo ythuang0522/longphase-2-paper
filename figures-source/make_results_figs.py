@@ -84,7 +84,7 @@ NAME = {
     "hc": "HapCUT2", "margin": "Margin", "ralphi": "Ralphi", "gc": "GCphase",
     "meth": "MethPhaser", "hp": "HiPhase", "hb": "HapBridge", "lh": "LongHap",
 }
-XLSX_TOOL = {"lp": "longphase_v2.0.1", "lp_gnn": "longphase_v2.1.1",
+XLSX_TOOL = {"lp": "longphase_v2.0.1", "lp_gnn": "longphase_v2.1.2",
              "wh": "whatshap_v28", "hc": "hapcut2_v134", "margin": "margin_v231",
              "ralphi": "ralphi", "gc": "gcphase"}
 COVS = [10, 12, 14, 16, 18, 20, 30, 40, 50, 60]
@@ -151,7 +151,7 @@ def snv_series(tool, key, plat="ONT", covs=PLOT_COVS):
 
 def coph_series(cfg, tool, key, covs=PLOT_COVS):
     if cfg == "SNV":
-        return snv_series({"longphase_v2.0.1": "lp", "longphase_v2.1.1": "lp_gnn"}[tool], key, covs=covs)
+        return snv_series({"longphase_v2.0.1": "lp", "longphase_v2.1.2": "lp_gnn"}[tool], key, covs=covs)
     xs, m, s = [], [], []
     for c in covs:
         runs = D["coph"][cfg][tool].get(c)
@@ -426,14 +426,14 @@ def fig2():
     snv = lambda tool: (lambda c_: D["snv"]["ONT"][XLSX_TOOL[tool]].get(c_))
     hifi = lambda tool: (lambda c_: D["snv"]["HiFi"][XLSX_TOOL[tool]].get(c_))
     ind = lambda tool: (lambda c_: D["coph"]["Indel"][tool].get(c_))
-    all4 = lambda c_: D["coph"]["Indel+Mod+SV"]["longphase_v2.1.1"].get(c_)
-    mod1 = lambda c_: [r for r in D["coph"]["Mod"]["longphase_v2.1.1"][c_] if r["rep"] == 1]
+    all4 = lambda c_: D["coph"]["Indel+Mod+SV"]["longphase_v2.1.2"].get(c_)
+    mod1 = lambda c_: [r for r in D["coph"]["Mod"]["longphase_v2.1.2"][c_] if r["rep"] == 1]
     meth = lambda c_: [{k: meth_value(c_, k) for k in ("sw_pct", "ham", "n50", "psnv_pct")}]
 
     # row 1: switch error rate against coverage; LongPhase 2 drawn last, on top
     for t in ("hc", "wh", "lp_gnn"):
         tline(a, t, *_series(snv(t), PLOT_COVS)("sw_pct"), band=False)
-    for t, cfg, tool in (("wh", "whatshap_v28", "whatshap_v28"), ("lp_gnn", "longphase_coh_indel_gnn", "longphase_v2.1.1")):
+    for t, cfg, tool in (("wh", "whatshap_v28", "whatshap_v28"), ("lp_gnn", "longphase_coh_indel_gnn", "longphase_v2.1.2")):
         g = _series(_indel_runs(cfg, tool), PLOT_COVS)
         tline(b, t, *g("snv_sw_pct"), band=False)
         line(b, *g("indel_sw_pct"), C[t], ls=":", marker=STY[t]["marker"], ms=STY[t]["ms"], band=False,
@@ -449,7 +449,7 @@ def fig2():
     # row 2: switch error rate against block N50, one point per coverage
     for i, (get, t, ls, filled) in enumerate([   # comparator first, LongPhase 2 on top
             (ind("whatshap_v28"), "wh", "--", False), (snv("wh"), "wh", "-", False),
-            (all4, "lp_gnn", "-.", True), (ind("longphase_v2.1.1"), "lp_gnn", "--", False),
+            (all4, "lp_gnn", "-.", True), (ind("longphase_v2.1.2"), "lp_gnn", "--", False),
             (snv("lp_gnn"), "lp_gnn", "-", False)]):
         ex, ey = _path(ev, get, PLOT_COVS, C[t], ls, STY[t]["marker"], STY[t]["ms"], mfc=C[t] if filled else "none")
         if i == 0:   # coverage of the first and last point, on WhatsHap with indels
@@ -500,7 +500,7 @@ def sfig16():
     calculated, see `_indel_runs()`), d SNV and 5mC co-phasing, e PacBio HiFi."""
     fig, axs = new_fig(50, 1, 5)
     snv = lambda plat, tool: (lambda c: D["snv"][plat][XLSX_TOOL[tool]].get(c))
-    mod1 = lambda c: [r for r in D["coph"]["Mod"]["longphase_v2.1.1"][c] if r["rep"] == 1]
+    mod1 = lambda c: [r for r in D["coph"]["Mod"]["longphase_v2.1.2"][c] if r["rep"] == 1]
     meth = lambda c: [{k: meth_value(c, k) for k in ("sw_pct", "ham")}]
     a, b, c_, d, e = axs
     for t, get in (("lh", meth_other("lh")), ("hb", meth_other("hb")), ("meth", meth), ("lp_gnn", mod1)):
@@ -510,7 +510,7 @@ def sfig16():
     a.set_ylabel("Switch error rate (%)")
     for t in ("hc", "wh", "lp_gnn"):
         tline(b, t, *_series(snv("ONT", t), PLOT_COVS)("ham"), band=False)
-    for t, cfg, tool in (("wh", "whatshap_v28", "whatshap_v28"), ("lp_gnn", "longphase_coh_indel_gnn", "longphase_v2.1.1")):
+    for t, cfg, tool in (("wh", "whatshap_v28", "whatshap_v28"), ("lp_gnn", "longphase_coh_indel_gnn", "longphase_v2.1.2")):
         g = _series(_indel_runs(cfg, tool), PLOT_COVS)
         tline(c_, t, *g("snv_ham"), band=False)
         line(c_, *g("indel_ham"), C[t], ls=":", marker=STY[t]["marker"], ms=STY[t]["ms"], band=False, mfc="none")
@@ -590,7 +590,7 @@ def other_tool_errors(c, s):
     (assessed, wrongly phased = block-wise Hamming error, % wrong, that tool's genome-wide
     Hamming distance %)."""
     n, e = comp(c, s, "other_assessed"), comp(c, s, "other_hamming_err")
-    other = "whatshap_v28" if s.startswith("lp") else "longphase_v2.1.1"
+    other = "whatshap_v28" if s.startswith("lp") else "longphase_v2.1.2"
     gw = [r for r in D["snv"]["ONT"][other][c] if r["rep"] == 1][0]["ham"]
     return n, e, 100 * e / n, gw
 
@@ -773,9 +773,9 @@ def fig4():
 
 # ============================================================ Figure 3 =====
 F3 = [  # key, label, colour, line style, marker, v5.0q source, v4.2.1 tool name (Supplementary Table 9)
-    ("lp_gnn", "LongPhase 2, SNVs", C["lp_gnn"], "-", "o", ("snv", "longphase_v2.1.1"), "longphase_gnn"),
-    ("lp_ind", "LongPhase 2, +indels", C["lp_gnn"], "--", "s", ("coph", "Indel", "longphase_v2.1.1"), "longphase_coh_indel_gnn"),
-    ("lp_isv", "LongPhase 2, +indels+SVs", C["lp_gnn"], ":", "^", ("coph", "Indel+SV", "longphase_v2.1.1"), "longphase_coh_indel_sv_gnn"),
+    ("lp_gnn", "LongPhase 2, SNVs", C["lp_gnn"], "-", "o", ("snv", "longphase_v2.1.2"), "longphase_gnn"),
+    ("lp_ind", "LongPhase 2, +indels", C["lp_gnn"], "--", "s", ("coph", "Indel", "longphase_v2.1.2"), "longphase_coh_indel_gnn"),
+    ("lp_isv", "LongPhase 2, +indels+SVs", C["lp_gnn"], ":", "^", ("coph", "Indel+SV", "longphase_v2.1.2"), "longphase_coh_indel_sv_gnn"),
     ("wh", "WhatsHap, SNVs only", C["wh"], "-", "o", ("snv", "whatshap_v28"), "whatshap_v28_onlySNVs"),
     ("wh_ind", "WhatsHap, SNVs + indels", C["wh"], "--", "s", ("coph", "Indel", "whatshap_v28"), "whatshap_v28"),
     ("hc", "HapCUT2", C["hc"], "-", "o", ("snv", "hapcut2_v134"), "hapcut2_v134"),
@@ -1012,7 +1012,7 @@ def sfig12():
     for ax, cov, L in ((axs[0, 0], 10, "a"), (axs[0, 1], 60, "b")):
         for cfg, name, col in CFG:
             pts = []
-            for tool in ("longphase_v2.0.1", "longphase_v2.1.1"):
+            for tool in ("longphase_v2.0.1", "longphase_v2.1.2"):
                 xs, sw, ssw = coph_series(cfg, tool, "sw_pct", covs=[cov])
                 _, n50, sn50 = coph_series(cfg, tool, "n50", covs=[cov])
                 pts.append((sw[0], n50[0] / 1e6, ssw[0], sn50[0] / 1e6))
@@ -1031,7 +1031,7 @@ def sfig12():
                             (axs[1, 1], "ham", "Hamming distance (%)", "d")):
         single_band(ax)
         for cfg, col in (("SNV", CFGC["SNV"]), ("Indel+Mod+SV", CFGC["Indel+Mod+SV"])):
-            for tool, ls, mfc in (("longphase_v2.0.1", "--", "white"), ("longphase_v2.1.1", "-", None)):
+            for tool, ls, mfc in (("longphase_v2.0.1", "--", "white"), ("longphase_v2.1.2", "-", None)):
                 xs, m, s_ = coph_series(cfg, tool, key)
                 line(ax, xs, m, s_, col, ls=ls, mfc=mfc)
         if key == "sw_pct":
@@ -1058,7 +1058,7 @@ def sfig13():
     fig, axs = new_fig(96, 2, 4)
     specs = [("sw_pct", "SNV switch error rate (%)", 1), ("ham", "Hamming distance (%)", 1),
              ("n50", "Block N50 (Mb)", 1e-6), ("psnv_pct", "Phased SNVs (%)", 1)]
-    for row, tool, tag in ((0, "longphase_v2.0.1", "without GNN correction"), (1, "longphase_v2.1.1", "with GNN correction")):
+    for row, tool, tag in ((0, "longphase_v2.0.1", "without GNN correction"), (1, "longphase_v2.1.2", "with GNN correction")):
         for col, (key, lab, sc) in enumerate(specs):
             ax = axs[row, col]; single_band(ax)
             for cfg, name, c in CFG:
@@ -1085,7 +1085,7 @@ def sfig14():
              ("ham", "Hamming distance (%)", 1), ("n50", "Block N50 (Mb)", 1e-6)]
     covs = BAR_COVS
     for ax, (key, lab, sc), L in zip(axs, specs, "abcd"):
-        ax.plot(covs, [rep1("Mod", "longphase_v2.1.1", c, key) * sc for c in covs], color=C["lp_gnn"],
+        ax.plot(covs, [rep1("Mod", "longphase_v2.1.2", c, key) * sc for c in covs], color=C["lp_gnn"],
                 marker="o", ms=3.0, mfc="none", mew=0.8, label="LongPhase 2, SNVs + 5mC")
         ax.plot(covs, [rep1("Mod", "longphase_v2.0.1", c, key) * sc for c in covs], color=C["lp_gnn"],
                 ls="--", marker="o", ms=3.0, mfc="none", mew=0.8, label="LongPhase 2, SNVs + 5mC, without GNN")
@@ -1254,7 +1254,7 @@ def runtime_table(w):
     r1 = lambda x: str(Decimal(repr(x)).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP))
     rt = _runtime()
     w(r"\begin{table}[h]")
-    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data (top) and PacBio HiFi data (bottom), replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~10). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB, from \code{/usr/bin/time}. \toolname includes GNN correction, which runs within the \code{phase} command. \toolname was timed on one thread at 10 and 60$\times$ only (--, no value); \hapcut at 30 and 40$\times$ was re-timed (Methods). On HiFi data, \toolname at every coverage and \whatshap at 10 and 20$\times$ were re-timed with the alignment file already in the page cache, which shortens wall-clock time but leaves CPU time largely unchanged; CPU time is therefore the measure to compare between platforms (Methods). \hapcut includes fragment extraction.}\label{tab:runtime}")
+    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data (top) and PacBio HiFi data (bottom), replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~10). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB, from \code{/usr/bin/time}. \toolname includes GNN correction, which runs within the \code{phase} command. \toolname was timed on one thread at 10 and 60$\times$ only (--, no value); \hapcut at 30 and 40$\times$ was re-timed (Methods). On HiFi data, \whatshap at 10 and 20$\times$ was re-timed with the alignment file already in the page cache (Methods). \hapcut includes fragment extraction.}\label{tab:runtime}")
     w(r"\small\setlength{\tabcolsep}{4pt}\begin{tabular}{@{}rrrrrrrrrrrrr@{}}\toprule")
     groups = [(("LongPhase 2", "24"), r"\toolname, 24 threads"), (("LongPhase 2", "1"), r"\toolname, 1 thread"),
               (("WhatsHap 2.8", "1"), r"\whatshap"), (("HapCUT2 1.3.4", "1"), r"\hapcut")]
@@ -1311,18 +1311,18 @@ def other_phasers_table(w):
     oth = lambda p, t: lambda c: O[(p, t, c)]
     blocks = [
         ("Nanopore R10.4.1, SNVs and 5mC", "ONT", [
-            (r"\toolname", coph("Mod", "longphase_v2.1.1")),
+            (r"\toolname", coph("Mod", "longphase_v2.1.2")),
             ("MethPhaser", lambda c: D["meth"][c]),
             ("HapBridge", oth("ONT", "HapBridge ec48f02 (on LongPhase 2 SNV output, no GNN)")),
             ("LongHap", oth("ONT", "LongHap 0.2.0 (SNVs, with 5mC)")),
             ("LongHap, without 5mC", oth("ONT", "LongHap 0.2.0 (SNVs, sequence only)"))]),
         ("Nanopore R10.4.1, SNVs and indels", "ONT", [
-            (r"\toolname", coph("Indel", "longphase_v2.1.1")),
+            (r"\toolname", coph("Indel", "longphase_v2.1.2")),
             (r"\whatshap", coph("Indel", "whatshap_v28")),
             (r"\hapcut", oth("ONT", "HapCUT2 1.3.4 (--indels 1)")),
             ("TinkerHap", oth("ONT", "TinkerHap 1.0.0"))]),
         ("Nanopore R10.4.1, SNVs, indels, SVs and 5mC", "ONT", [
-            (r"\toolname", coph("Indel+Mod+SV", "longphase_v2.1.1")),
+            (r"\toolname", coph("Indel+Mod+SV", "longphase_v2.1.2")),
             ("LongHap", oth("ONT", "LongHap 0.2.0 (all variants, with 5mC)"))]),
         ("PacBio HiFi, SNVs", "HiFi", [
             (r"\toolname", lp_snv("HiFi")),
@@ -1449,7 +1449,7 @@ def tables():
     w(r"\toprule Classes & GNN & Cov. & \shortstack[r]{Phased\\indel (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead")
     w(r"\toprule Classes & GNN & Cov. & \shortstack[r]{Phased\\indel (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead")
     for cfg, name, _ in CFG:
-        for tool, tag in (("longphase_v2.0.1", "no"), ("longphase_v2.1.1", "yes")):
+        for tool, tag in (("longphase_v2.0.1", "no"), ("longphase_v2.1.2", "yes")):
             for c in (10, 20, 30, 60):
                 if cfg == "SNV":
                     runs = D["snv"]["ONT"][tool][c]

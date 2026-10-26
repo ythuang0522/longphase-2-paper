@@ -8,19 +8,20 @@
 # Writes heldout_v50q.txt, heldout_cophase_v50q.txt, heldout_GIAB421.txt in
 # the format of the 2026-09-24 tables (one ### summary line per run).
 set -uo pipefail
-cd /ssd/longphase_process/heldout_v2.1.1   # v2.1 GNN runs: /ssd/longphase_process/heldout
+cd /ssd/longphase_process/heldout_v2.1.2   # v2.1.1: heldout_v2.1.1, v2.1 GNN runs: /ssd/longphase_process/heldout
 export LP=/disk/software/longphase_v2.1_release/longphase_linux-x64
 export V5=/ssd/longphase_process/HG002_GRCh38_v5.0q_smvar.chr1_22.vcf
 export V4=/disk/research/HG002_GRCh38_1_22_v4.2.1_benchmark_hifiasm_v11_phasetransfer.noDirty.vcf
 R=/disk/research
-G=/disk/research/v2.1.1   # LongPhase 2 with GNN correction (v2.1.1 rerun)
+G=/disk/research/v2.1.1   # LongPhase 2 with GNN correction (v2.1.1 rerun): SNV-only and SNV+indel, unchanged in v2.1.2
+N=/disk/research/v2.1.2   # v2.1.2 runs with SVs or 5mC, with and without GNN correction (2026-10-26)
 SNV="$G/longphase_gnn $R/longphase $R/whatshap_v2.8/only $R/hapcut2_v1.3.4 $R/margin_v2.3.1 $R/ralphi/output"
 COPH="$G/longphase_gnn $R/longphase $R/whatshap_v2.8/only $R/whatshap_v2.8
-      $R/longphase_cophasing $G/longphase_cophasing_gnn
-      $R/longphase_coh_indel $G/longphase_coh_indel_gnn $R/longphase_coh_sv $G/longphase_coh_sv_gnn
-      $R/longphase_coh_methyl $G/longphase_coh_methyl_gnn
-      $R/longphase_coh_indel_sv $G/longphase_coh_indel_sv_gnn
-      $R/longphase_coh_indel_methyl $G/longphase_coh_indel_methyl_gnn"
+      $N/longphase_cophasing $N/longphase_cophasing_gnn
+      $R/longphase_coh_indel $G/longphase_coh_indel_gnn $N/longphase_coh_sv $N/longphase_coh_sv_gnn
+      $N/longphase_coh_methyl $N/longphase_coh_methyl_gnn
+      $N/longphase_coh_indel_sv $N/longphase_coh_indel_sv_gnn
+      $N/longphase_coh_indel_methyl $N/longphase_coh_indel_methyl_gnn"
 vcfs() { for d in "$@"; do find $d -maxdepth 1 -type f | grep -E "_[0-9]+x_[0-9]+(\.phased)?\.(vcf|VCF)(\.gz)?$"; done; }
 one() {  # truth_tag vcf
     local t=$V5; [[ $1 == v4 ]] && t=$V4

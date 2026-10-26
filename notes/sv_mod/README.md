@@ -65,3 +65,29 @@ python3 build_sheet.py   # writes the SV_5mC_phasing sheet
 without GNN correction are identical to v2.1, checked), then `build_sheet.py`. With v2.1.1, GNN
 correction unphases fewer 5mC sites (merged 5mC nodes now decide for all their sites) and more SVs
 (SV nodes no longer get reference-sequence features, and singleton phase sets are unphased).
+
+## LongPhase v2.1.2 (2026-10-26)
+
+All five configurations were rerun with v2.1.2, with and without GNN correction, on new inputs: Sniffles
+2.8.0 re-called with `--reference` and `modcall` v2.1.2 (CIGAR-boundary fix). `count_sv_mod.py` reads both
+from `/disk/research/v2.1.2`; `sv_mod.tsv` rebuilt, then `build_sheet.py`. Heterozygous counts are still
+identical with and without GNN, and no run has more phased records after it. Four-class, replicate 1, all
+contigs:
+
+| Cov. | Het. SV | Phased | % | Het. 5mC | Phased | % | SV unphased by GNN (%) | 5mC unphased by GNN (%) |
+|---|---|---|---|---|---|---|---|---|
+| 10× | 14,880 | 10,784 | 72.47 | 304,678 | 301,888 | 99.08 | 8.81 | 1.75 |
+| 12× | 16,063 | 11,540 | 71.84 | 391,404 | 387,837 | 99.09 | 7.59 | 1.55 |
+| 14× | 16,709 | 12,052 | 72.13 | 437,564 | 433,988 | 99.18 | 7.37 | 1.12 |
+| 16× | 16,965 | 12,219 | 72.02 | 462,224 | 459,150 | 99.33 | 6.84 | 1.00 |
+| 18× | 17,296 | 12,382 | 71.59 | 475,448 | 472,080 | 99.29 | 6.18 | 0.77 |
+| 20× | 17,417 | 12,347 | 70.89 | 483,550 | 480,151 | 99.30 | 5.65 | 0.67 |
+| 30× | 17,743 | 12,681 | 71.47 | 509,654 | 506,550 | 99.39 | 5.34 | 0.42 |
+| 40× | 17,711 | 12,699 | 71.70 | 521,888 | 518,849 | 99.42 | 5.06 | 0.34 |
+| 50× | 17,545 | 12,648 | 72.09 | 529,974 | 526,717 | 99.39 | 4.94 | 0.25 |
+| 60× | 17,420 | 12,567 | 72.14 | 536,288 | 532,881 | 99.36 | 5.26 | 0.20 |
+
+Ranges: SV phased 70.9–72.5% (v2.1.1 68.1–70.0%), 5mC phased 99.1–99.4%; GNN unphases 4.9–8.8% of the
+phased SVs and 0.2–1.8% of the phased 5mC sites. Over all 64 four-class runs: 70.7–73.0%, 99.0–99.4%,
+4.9–9.0% and 0.2–1.8%. modcall v2.1.2 calls about 7% more heterozygous 5mC sites (10x_1: 304,678
+against 284,230).

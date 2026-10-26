@@ -1,25 +1,25 @@
 """Issue #3 runtime table (notes/runtime/runtime.tsv).
 
 WhatsHap and HapCUT2: the GNU time output at the end of the logs of the paper's own runs
-(lab server, /disk/research). LongPhase 2 (v2.1.1, one `phase` command with GNN correction)
-at 24 threads: /usr/bin/time -v of the 2026-10-14/16 rerun (/disk/research/v2.1.1/run.sh, one
-run at a time); at 1 thread: timed separately with /usr/bin/time -v on the same machine and
-disk, all other jobs stopped (/ssd/longphase_process/runtime/time). HapCUT2 at 30x and 40x: the
+(lab server, /disk/research). LongPhase 2 (v2.1.2 release binary, one `phase` command with GNN correction)
+at 24 threads and at 1 thread (10x and 60x): /usr/bin/time -v of the 2026-10-26 runs
+(/ssd/longphase_process/v2.1.2/run_a.sh: one run at a time on an idle machine, page cache cleared
+before each run; output identical to v2.1.1). HapCUT2 at 30x and 40x: the
 original logs were overwritten by an interrupted rerun, so both were re-timed on 2026-10-16 with the
 same binaries, inputs and commands, one at a time on an idle machine (H2 below); the phased
 genotypes are identical to the paper's VCFs (chrom, pos, sample column of every record).
 
-runtime_hifi.tsv, PacBio HiFi (replicate 1, 10-50x), same columns: LongPhase 2 (v2.1.1, -t 24) and
-WhatsHap at 10x and 20x re-timed on 2026-10-16/17 (HR below; the original runs shared the machine
+runtime_hifi.tsv, PacBio HiFi (replicate 1, 10-50x), same columns: LongPhase 2 (v2.1.2, -t 24) from
+run_a.sh as above. WhatsHap at 10x and 20x re-timed on 2026-10-16/17 (HR below; the original runs shared the machine
 with other jobs, LongPhase 20x at 25% CPU and WhatsHap 10-20x at 73-82%), one at a time on an idle
 machine with the BAM read once before each run; phased genotypes identical to the paper's VCFs.
 WhatsHap 30-50x from the original logs (95-99% CPU). HapCUT2 (extractHAIRS --pacbio 1 + HAPCUT2)
-from its 2026-10-16 runs, one at a time on an idle machine. The v2.1 rows (`phase`
-plus the separate `gnn` command, and the 2026-10-09 one-thread runs) are in git history."""
+from its 2026-10-16 runs, one at a time on an idle machine. The v2.1 and v2.1.1 rows are in git
+history (v2.1: `phase` plus the separate `gnn` command)."""
 import os, re
 R = '/disk/research'
 T = '/ssd/longphase_process/runtime/time'
-G = '/disk/research/v2.1.1'
+G = '/disk/research/v2.1.2'
 H2 = '/ssd/longphase_process/runtime/hapcut2_rerun'
 HR = '/ssd/longphase_process/runtime/hifi_retime'
 P = '/disk/research/pacbio'
@@ -42,7 +42,7 @@ def gnu_v(p):  # time -v
 rows = []
 for c in (10, 12, 14, 16, 18, 20, 30, 40, 50, 60):  # replicate 1 at every coverage of the paper
     rows.append(('LongPhase 2', 'phase + GNN', 24, c, *gnu_v(f'{G}/longphase_gnn/longphase_gnn_{c}x_1.log')))
-    t1 = f'{T}/longphase_v2.1.1_gnn-t1_{c}.time'  # timed separately; skip coverages not yet timed
+    t1 = f'{G}/longphase_gnn_t1/longphase_gnn_t1_{c}x_1.log'  # timed at 10x and 60x only
     if os.path.exists(t1):
         rows.append(('LongPhase 2', 'phase + GNN', 1, c, *gnu_v(t1)))
     rows.append(('WhatsHap 2.8', '--only-snvs', 1, c, *gnu(f'{R}/whatshap_v2.8/only/whatshap_v28_onlySNVs_{c}x_1.log')))
@@ -55,7 +55,7 @@ with open('runtime.tsv', 'w') as f:
 
 hifi = []
 for c in (10, 20, 30, 40, 50):
-    hifi.append(('LongPhase 2', 'phase + GNN', 24, c, *gnu_v(f'{HR}/longphase_hifi_{c}x_1.time')))
+    hifi.append(('LongPhase 2', 'phase + GNN', 24, c, *gnu_v(f'{G}/pacbio/longphase_hifi/longphase_hifi_{c}x_1.log')))
     wh = f'{HR}/whatshap_v28_hifi_onlySNVs_{c}x_1.time'
     hifi.append(('WhatsHap 2.8', '--only-snvs', 1, c, *(gnu_v(wh) if c in (10, 20) else
                  gnu(f'{P}/whatshap_v28_hifi_onlySNVs_{c}x_1.log'))))

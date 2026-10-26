@@ -17,8 +17,8 @@ const data = [
 const SERIES = [
   { key: "wh",    name: "WhatsHap",                     color: "#2563eb" },
   { key: "hc",    name: "HapCUT2",       color: "#525252", dash: "2 2" },
-  { key: "lpgnn", name: "LongPhase 2.1.1",  color: "#dc2626" },
-  { key: "lp",    name: "LongPhase 2.1.1 (--disableGNN)",        color: "#f97316", dash: "6 3" },
+  { key: "lpgnn", name: "LongPhase 2.1.2",  color: "#dc2626" },
+  { key: "lp",    name: "LongPhase 2.1.2 (--disableGNN)",        color: "#f97316", dash: "6 3" },
 ];
 
 const PANELS = [
@@ -85,7 +85,7 @@ export default function HifiCompare3() {
   return (
     <div style={{ width: "100%", background: "#ffffff", padding: "20px 24px", fontFamily: "Helvetica, Arial, sans-serif" }}>
       <div style={{ textAlign: "center", fontSize: 18, fontWeight: 700, color: "#111827", marginBottom: 12 }}>
-        WhatsHap, HapCUT2 and LongPhase 2.1.1 on PacBio HiFi, with and without GNN correction
+        WhatsHap, HapCUT2 and LongPhase 2.1.2 on PacBio HiFi, with and without GNN correction
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "10px 24px", marginBottom: 18 }}>

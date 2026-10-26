@@ -5,7 +5,8 @@
   - every value that has a log is re-read from it (in the source table the replicate-1 rows repeat
     replicate 10, and LongPhase_v2.0.1 differs from its logs by up to 0.5 min); values without a
     log (GCphase, ralphi) are kept as they are,
-  - LongPhase_GNN is replaced by longphase_v2.1.1 (/disk/research/v2.1.1, one `phase` command, -t 24).
+  - LongPhase_GNN is replaced by longphase_v2.1.2 (/disk/research/v2.1.2, one `phase` command, -t 24;
+    v2.1.1 until 2026-10-26).
 30-60x (replicate 1 only): read from the logs; tools without a run at that coverage are left empty
   (GCphase, ralphi, Margin). HapCUT2 at 30x and 40x: the original logs were overwritten by a rerun
   stopped after 3-5 s, so these two runs were re-timed on 2026-10-16 (RERUN; same commands and
@@ -20,7 +21,7 @@ LOG = {
     'margin_v2.3.1': R + '/margin_v2.3.1/margin_v231_{}.log',
     'hapcut2_v1.3.4': R + '/hapcut2_v1.3.4/hapcut2_v134_{}.log',
     'LongPhase_v2.0.1': R + '/longphase/longphase_{}.log',
-    'longphase_v2.1.1': R + '/v2.1.1/longphase_gnn/longphase_gnn_{}.log',
+    'longphase_v2.1.2': R + '/v2.1.2/longphase_gnn/longphase_gnn_{}.log',
 }
 RERUN = {('hapcut2_v1.3.4', f'{c}x_1'): f'/ssd/longphase_process/runtime/hapcut2_rerun/hapcut2_v134_{c}x_1.log'
          for c in (30, 40)}
@@ -42,7 +43,7 @@ def fmt(v):
     return '' if v is None else f'{v + 1e-9:.1f}'
 
 rows = list(csv.reader(open(SRC, newline=''), delimiter='\t'))
-head = rows[1][:7] + ['longphase_v2.1.1']          # drop LongPhase_GNN
+head = rows[1][:7] + ['longphase_v2.1.2']          # drop LongPhase_GNN
 out = []
 for r in rows[2:]:
     run = r[0]; d = dict(zip(rows[1], r))
@@ -50,7 +51,7 @@ for r in rows[2:]:
         v = minutes(LOG[col].format(run))         # a value with a log is taken from the log
         if v is not None:
             d[col] = fmt(v)
-    d['longphase_v2.1.1'] = fmt(minutes(LOG['longphase_v2.1.1'].format(run)))
+    d['longphase_v2.1.2'] = fmt(minutes(LOG['longphase_v2.1.2'].format(run)))
     out.append([d.get(c, '') for c in head])
 for c in (30, 40, 50, 60):
     run = f'{c}x_1'

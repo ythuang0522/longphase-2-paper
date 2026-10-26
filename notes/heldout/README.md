@@ -122,3 +122,11 @@ GNN correction removes 23.5% of switch errors at a cost of 9.26 (v2.1: 21.2% at 
 at 7.98 genome-wide. The B = 0.30 "cost ≤ 10" criterion above is replaced in v2.1.1 by a calibration
 on chr15–16 (`notes/gnn_retrain/`). The indel tables (`heldout_indel*`, `run_indel.sh`) were not
 rerun: they are not quoted in the manuscript and remain v2.1.
+
+## LongPhase v2.1.2 (2026-10-26)
+
+The co-phasing groups with SVs or 5mC (`coh_methyl`, `coh_indel_methyl`, `coh_sv`, `coh_indel_sv`,
+`cophasing`, with and without GNN correction) were rescored from the v2.1.2 runs (`/disk/research/v2.1.2`,
+`N=` in `run_heldout.sh`) in `/ssd/longphase_process/heldout_v2.1.2`; the other reports were copied from
+`heldout_v2.1.1`. Only `heldout_cophase_v50q.txt` changed (640 rows); `heldout_v50q.txt`,
+`heldout_GIAB421.txt` and `heldout_summary.tsv` (SNV-only runs) are identical.

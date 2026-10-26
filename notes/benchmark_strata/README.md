@@ -171,3 +171,12 @@ repointed, the v2.1 links are in `data/vcf_v2.1/`). `run_scoring.sh`/`run_all.sh
 Step 0: all 1,024 runs with a table value match the updated tables. Only GNN rows changed. The
 input md5 list covers the v2.1 inputs; the v2.1.1 VCFs were not checksummed (about 250 GB over the
 NTFS mount). The slim release archive in `data/benchmark_strata/release/` still holds v2.1.
+
+## LongPhase v2.1.2 (2026-10-26)
+
+The item-3 groups whose output changed in v2.1.2 (`longphase_coh_indel_sv`, `longphase_coh_indel_methyl`,
+`longphase_cophasing`, with and without GNN correction; 384 runs) were rescored from `/disk/research/v2.1.2`
+(`/ssd/longphase_process/v2.1.2/run_paper_update_34.sh`; the v2.1.1 results are in
+`/ssd/longphase_process/benchmark_strata/out_v2.1.1/`), then `aggregate.py` rebuilt the tables. Step 0: all
+1,024 runs with a table value match the updated tables. `item3_indel.tsv` and `summary.txt` changed;
+`item4_strata.tsv` and `item4_overlap.tsv` (SNV-only runs) are identical. `data/vcf/` still points to v2.1.1.

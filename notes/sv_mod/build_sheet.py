@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Write sv_mod.tsv (all contigs, as in Variant_Calling) into the SV_5mC_phasing sheet of
 supplementary.xlsx, one row per co-phasing configuration and run, in the column layout of
-co-phase_Detail (longphase_v2.0.1 = without GNN correction, longphase_v2.1.1 = with it)."""
+co-phase_Detail (longphase_v2.0.1 = without GNN correction, longphase_v2.1.2 = with it)."""
 import openpyxl
 X = '../../supplementary.xlsx'
 rows = [l.rstrip('\n').split('\t') for l in open('sv_mod.tsv')]
@@ -10,7 +10,7 @@ ix = {k: i for i, k in enumerate(h)}
 wb = openpyxl.load_workbook(X)
 if 'SV_5mC_phasing' in wb.sheetnames: del wb['SV_5mC_phasing']
 ws = wb.create_sheet('SV_5mC_phasing')
-ws.append([None] * 6 + ['longphase_v2.0.1', None, None, None, 'longphase_v2.1.1'])
+ws.append([None] * 6 + ['longphase_v2.0.1', None, None, None, 'longphase_v2.1.2'])
 ws.append(['No.', 'Platform', 'Co-phase', 'Case', 'Hetero. SV', 'Hetero. methyl'] +
           ['Phased_SV', 'Phased_SV(%)', 'Phased_methyl', 'Phased_methyl(%)'] * 2)
 num = lambda v: None if v == 'NA' else int(v)

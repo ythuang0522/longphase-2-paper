@@ -4,8 +4,8 @@ For each run: heterozygous records (GT 0|1, 1|0 or 0/1) and phased ones (0|1 or 
 <prefix>_SV.vcf and <prefix>_mod.vcf, on chr1-22 and on all contigs.
 Usage: count_sv_mod.py <config> <coverage>x_<replicate>   (prints one TSV line)"""
 import sys, re
-R = '/disk/research'
-G = '/disk/research/v2.1.1'   # LongPhase 2 with GNN correction (v2.1.1 rerun)
+R = '/disk/research/v2.1.2'   # LongPhase 2 v2.1.2 without GNN correction (earlier: /disk/research)
+G = '/disk/research/v2.1.2'   # with GNN correction (earlier: the v2.1.1 rerun /disk/research/v2.1.1)
 AUTO = {f'chr{i}' for i in range(1, 23)}
 def count(p):
     het = ph = het_a = ph_a = 0

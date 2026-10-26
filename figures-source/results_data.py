@@ -17,12 +17,12 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 XLSX = os.path.join(ROOT, "supplementary.xlsx")
 V421 = os.path.join(ROOT, "20260924_GIAB421.txt")
 
-SNV_TOOLS = ["longphase_v2.0.1", "longphase_v2.1.1", "whatshap_v28", "hapcut2_v134",
+SNV_TOOLS = ["longphase_v2.0.1", "longphase_v2.1.2", "whatshap_v28", "hapcut2_v134",
              "margin_v231", "ralphi", "gcphase"]
 SNV_COLS = ["psnv", "psnv_pct", "sw", "sw_pct", "ham", "nblock", "n50", "bsum"]
 COPH_COLS = ["psnv", "psnv_pct", "pindel", "pindel_pct", "sw", "sw_pct", "ham",
              "nblock", "n50", "bsum"]
-COPH_TOOLS = ["longphase_v2.0.1", "longphase_v2.1.1", "whatshap_v28"]
+COPH_TOOLS = ["longphase_v2.0.1", "longphase_v2.1.2", "whatshap_v28"]
 
 
 def _rows(ws):
