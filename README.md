@@ -115,7 +115,7 @@ ten seed values, the chr1-22 derivation of the v5.0q VCF, source data, and one n
 on the Clair3 model (`notes/log/2026-09-24-author-decisions-read-provenance.md`).
 
 SV phasing accuracy: issue #10 data arrived 2026-10-26 (`notes/sv_phasing/`, release v2.1.2, 100 runs,
-HiPhase on HiFi). Fig. 3a–c is drawn from it (option B, author decision 2026-10-26; the + indels input is Supplementary Fig. 17). Results, Discussion, Methods
+HiPhase on HiFi). Fig. 3a–c is drawn from it (redesigned 2026-10-27: SV error rate against coverage, c SVs ≥ 1 kb on both platforms; the + indels input is Supplementary Fig. 17). Results, Discussion, Methods
 and Supplementary Table 20 rewritten from it the same day. The abstract was rewritten as a whole the
 same day (179 words).
 

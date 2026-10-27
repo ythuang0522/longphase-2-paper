@@ -3,6 +3,8 @@
 One file per change, newest first. Moved verbatim from `../../README.md` on 2026-10-20;
 each file adds the entry title as its heading.
 
+- 2026-10-27 — [Fig. 2 switch-error axes changed from log to linear, 2026-10-27 (author decision)](2026-10-27-fig2-linear-axes.md)
+- 2026-10-27 — [Fig. 3 redesigned panel by panel, 2026-10-27 (author decision)](2026-10-27-fig3-redesign.md)
 - 2026-10-26 — [Abstract rewritten as a whole, 2026-10-26 (author decision)](2026-10-26-abstract-rewrite.md)
 - 2026-10-26 — [SV phasing text rewritten from issue #10 data, Supplementary Table 20 added, 2026-10-26 (author decision)](2026-10-26-sv-text-issue-10.md)
 - 2026-10-26 — [Fig. 3a–c redrawn as option B, Supplementary Fig. 17 added, 2026-10-26 (author decision)](2026-10-26-fig3-sv-option-b.md)

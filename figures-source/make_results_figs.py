@@ -346,10 +346,17 @@ def _row_keys(fig, sfs, keys):
                   columnspacing=1.6, borderaxespad=0.0, borderpad=0.0)
 
 
-def _log_rate_axis(ax, ticks=(0.02, 0.05, 0.1, 0.2), lim=(0.018, 0.32)):
-    ax.set_yscale("log"); ax.minorticks_off()
-    ax.set_yticks(list(ticks)); ax.set_yticklabels([f"{t:g}" for t in ticks])
-    ax.set_ylim(*lim)
+def _rate_ticks(axis, ticks):
+    """Linear switch-error axis from 0 to the last tick, all labels with the same number of decimals
+    (Figs. 2 and 3 since 2026-10-27, author: linear, not log, switch-error axes)."""
+    n = max(len(f"{t:g}".partition(".")[2]) for t in ticks)
+    axis.set_ticks(list(ticks)); axis.set_ticklabels([f"{t:.{n}f}" for t in ticks])
+    axis.axes.set_xlim(0, ticks[-1]) if axis is axis.axes.xaxis else axis.axes.set_ylim(0, ticks[-1])
+
+
+def _rate_axis(ax, ticks=(0, 0.1, 0.2, 0.3)):
+    """SNV switch error rate (y, linear) against coverage."""
+    _rate_ticks(ax.yaxis, ticks)
 
 
 def _indel_runs(config, tool):
@@ -381,12 +388,10 @@ def _path(ax, get, covs, color, ls, marker, msz, mfc="none", z=3):
     return xs, ys
 
 
-def _tradeoff_axis(ax, ylim=(0, 5.9), yticks=(0, 1, 2, 3, 4, 5), xlim=(0.018, 0.32)):
-    """SNV switch error rate (log) against block N50 (Fig. 2 row 2, Fig. 3 row 1). The default N50
+def _tradeoff_axis(ax, ylim=(0, 5.9), yticks=(0, 1, 2, 3, 4, 5), xticks=(0, 0.1, 0.2, 0.3)):
+    """SNV switch error rate (linear, from 0) against block N50 (Fig. 2 row 2, Fig. 3e,f). The default N50
     range is that of nanopore data (MethPhaser reaches 5.5 Mb at 60x); HiFi panels pass their own."""
-    ax.set_xscale("log"); ax.minorticks_off()
-    xt = [t for t in (0.02, 0.03, 0.05, 0.1, 0.2, 0.5) if xlim[0] <= t <= xlim[1] and not (t == 0.03 and xlim[0] < 0.025)]
-    ax.set_xticks(xt); ax.set_xticklabels([f"{t:g}" for t in xt]); ax.set_xlim(*xlim)
+    _rate_ticks(ax.xaxis, xticks)
     ax.set_ylim(*ylim); ax.set_yticks(list(yticks))
     ax.set_ylabel("Block N50 (Mb)")
     ax.set_xlabel("SNV switch error rate (%)")
@@ -444,9 +449,9 @@ def fig2():
     for ax, src in ((c, hifi_snv), (d, hifi_ind)):
         for t in ("hc", "wh", "hp", "lp_gnn"):
             tline(ax, t, *_series(src[t], HIFI_COVS)("sw_pct"), band=False)
-    for ax in (a, c, d):
-        _log_rate_axis(ax)
-    _log_rate_axis(b, ticks=(0.02, 0.05, 0.1, 0.2, 0.5, 1), lim=(0.018, 1.4))
+    for ax, ticks in ((a, (0, 0.1, 0.2, 0.3)), (b, (0, 0.2, 0.4, 0.6, 0.8, 1)),
+                      (c, (0, 0.05, 0.1, 0.15, 0.2)), (d, (0, 0.1, 0.2, 0.3))):
+        _rate_axis(ax, ticks)   # linear (author, 2026-10-27); b reaches 1% for WhatsHap indel pairs
     cov_axis(a); cov_axis(b); cov_axis(c, HIFI_COVS); cov_axis(d, HIFI_COVS)
     c.set_xlim(7.5, 52.5); d.set_xlim(7.5, 52.5)
     a.set_ylabel("Switch error rate (%)")
@@ -464,9 +469,9 @@ def fig2():
             ex, ey = _path(ax, src[t], HIFI_COVS, C[t], "-", STY[t]["marker"], STY[t]["ms"])
             if t == "wh":
                 _cov_ends(ax, HIFI_COVS, ex, ey)
-    _tradeoff_axis(e); _tradeoff_axis(f, xlim=(0.018, 0.45))
-    _tradeoff_axis(g, (0, 0.85), [0, 0.2, 0.4, 0.6, 0.8], (0.025, 0.2))   # HiFi blocks are 4-7 times shorter
-    _tradeoff_axis(h, (0, 0.85), [0, 0.2, 0.4, 0.6, 0.8], (0.025, 0.35))
+    _tradeoff_axis(e); _tradeoff_axis(f, xticks=(0, 0.1, 0.2, 0.3, 0.4))
+    _tradeoff_axis(g, (0, 0.85), [0, 0.2, 0.4, 0.6, 0.8], (0, 0.05, 0.1, 0.15, 0.2))   # HiFi blocks are 4-7 times shorter
+    _tradeoff_axis(h, (0, 0.85), [0, 0.2, 0.4, 0.6, 0.8])
     for ax in (f, g, h):
         ax.set_ylabel("")
 
@@ -510,7 +515,6 @@ def sv_rows():
     return [r for r in rows if r["gnn"] in ("yes", "-") and r["replicate"] == "1"]
 
 
-SV_SIZE_ROWS = ((("50-999",), "50 bp–1 kb"), (("1000-9999", ">=10000"), "≥1 kb"))
 SV_COVS = {"ONT": PLOT_COVS, "HiFi": HIFI_COVS}
 
 
@@ -546,50 +550,44 @@ def sv_tradeoff(ax, sv, plat, inp, ylim, yticks):
     ax.set_xlabel("SVs phased correctly (thousands)")
 
 
-def sv_sizes(ax, sv, inp):
-    """Rows = platform x size class (1-10 kb and >=10 kb pooled: 20-47 SVs >=10 kb per run); marker =
-    median over coverages, line = range over coverages (author decision, 2026-10-26, option B)."""
-    y, ticks, labels = 0, [], []
-    for plat, pname in (("ONT", "Nanopore"), ("HiFi", "PacBio HiFi")):
-        ticks.append(y); labels.append(pname); y -= 1
-        for sizes, lab in SV_SIZE_ROWS:
-            tools = [t for t in ("lp_gnn", "wh", "hp") if sv_err(sv, plat, inp, t, sizes)]
-            for i, t in enumerate(tools):
-                e = [p_[2] for p_ in sv_err(sv, plat, inp, t, sizes)]
-                yy = y + ((len(tools) - 1) / 2 - i) * 0.22   # LongPhase 2 on top
-                ax.plot([min(e), max(e)], [yy, yy], color=C[t], lw=0.9, solid_capstyle="butt")
-                ax.plot(st.median(e), yy, marker=STY[t]["marker"], ms=STY[t]["ms"] + 1, mfc="white", mew=0.9,
-                        color=C[t], ls="none")
-            ticks.append(y); labels.append(lab); y -= 1
-        y -= 0.3
-    ax.set_yticks(ticks, labels); ax.tick_params(axis="y", length=0)
-    for tl in ax.get_yticklabels():
-        if tl.get_text() in ("Nanopore", "PacBio HiFi"):
-            tl.set_fontweight("bold")
-    ax.set_ylim(y + 0.5, 0.6); ax.set_xlim(0, 22); ax.set_xticks([0, 5, 10, 15, 20])
-    ax.set_xlabel("SV phasing error rate (%)")
-    ax.grid(axis="x", color="#e6e6e6", lw=0.5); ax.set_axisbelow(True)
+def sv_coverage(ax, sv, plat, inp, sizes=("50-999", "1000-9999", ">=10000"), ls="-"):
+    """SV error rate against coverage, one line per tool (Fig. 3a-c)."""
+    for t in ("hp", "wh", "lp_gnn"):
+        pts = sv_err(sv, plat, inp, t, sizes)
+        if pts:
+            covs, _, ys = zip(*pts)
+            ax.plot(covs, ys, color=C[t], ls=ls, marker=STY[t]["marker"], ms=STY[t]["ms"], mfc="none", mew=0.8, lw=0.9)
 
 
 def fig3_sv_methylation():
     """Joint phasing beyond small variants: SVs and 5mC (author decisions, 2026-10-24: option C, one
-    figure for SVs and 5mC; layout C2 after draft PNGs; 2026-10-26: SV row option B of three drafts, issue #10 data).
-    2 x 3. Row 1, SVs (SNV + SV input; every tool received the same SNV and SV calls; the SNV + indel + SV
-    input is Supplementary Fig. 17): a nanopore and b PacBio HiFi SV error rate against SVs phased
-    correctly, one point per coverage joined from the lowest to the highest (the shared theme of Figs. 3
-    and 5: fewer calls phased, a larger share of them correct); c SV error rate by platform and size
-    (50 bp-1 kb, >=1 kb), median and range over coverages. Row 2, SNVs and 5mC on nanopore data (the panels of the former Fig. 3, author
-    decisions of 2026-10-20 kept): d switch error rate against block N50 against MethPhaser, HapBridge
-    and LongHap; e phased benchmark SNVs, markers side by side; f by evidence type, last as the
-    conclusion. The Hamming panel of the former Fig. 3b is Supplementary Fig. 16e."""
-    fig, axs = plt.subplots(2, 3, figsize=(FIGW, 112 * MM), layout="constrained")
-    fig.get_layout_engine().set(w_pad=2 * MM, h_pad=1.5 * MM, wspace=0.06, hspace=0.1)
-    (a, b, c), (d, e, f) = axs
+    figure for SVs and 5mC; redesigned panel by panel with draft PNGs on 2026-10-27). 2 x 3, one tool key
+    per row on the line of the row title. Row 1, SVs (SNV + SV input; every tool received the same SNV and
+    SV calls; the SNV + indel + SV input is Supplementary Fig. 17): a nanopore and b PacBio HiFi SV error
+    rate against coverage, all sizes (SVs of 50 bp-1 kb are 90-93% of them); c SVs of at least 1 kb on both
+    platforms, nanopore solid and HiFi dotted (dashed means "+ indels" in f). The counts of SVs phased
+    correctly and the 50 bp-1 kb error rates are in Supplementary Table 20 and the text. Row 2, SNVs and
+    5mC on nanopore data: d switch error rate against coverage (linear axis, author) against MethPhaser,
+    HapBridge and LongHap; e switch error rate against block N50 (the former d; phased SNVs, the former e,
+    are in the text and Supplementary Table 18); f by evidence type, last as the conclusion: LongPhase 2
+    SNVs and four classes, WhatsHap SNVs and + indels, LongHap four classes (LongPhase 2 + indels, which
+    coincides with four classes, is Supplementary Fig. 15). e and f use a linear switch-error axis as d.
+    The Hamming panel of the 2026-10-20 Fig. 3 is Supplementary Fig. 16e."""
+    fig = plt.figure(figsize=(FIGW, 120 * MM), layout="constrained")
+    fig.get_layout_engine().set(w_pad=2 * MM, h_pad=1.5 * MM, wspace=0.06, hspace=0.04)
+    sf1, sf2 = fig.subfigures(2, 1, hspace=0.03)
+    a, b, c = sf1.subplots(1, 3)
+    d, e, f = sf2.subplots(1, 3)
     sv = sv_rows()
-    sv_tools = [t for t in ("hp", "wh", "lp_gnn") if any(SV_TOOL[r["tool"]] == t for r in sv)]
-    sv_tradeoff(a, sv, "ONT", "SNV+SV", 20, [0, 5, 10, 15, 20])   # a, b: SNVs + SVs; + indels in Supp. Fig. 17
-    sv_tradeoff(b, sv, "HiFi", "SNV+SV", 12, [0, 3, 6, 9, 12])
-    sv_sizes(c, sv, "SNV+SV")
+    big = ("1000-9999", ">=10000")
+    sv_coverage(a, sv, "ONT", "SNV+SV")
+    sv_coverage(b, sv, "HiFi", "SNV+SV")
+    sv_coverage(c, sv, "HiFi", "SNV+SV", big, ls=":")
+    sv_coverage(c, sv, "ONT", "SNV+SV", big)
+    for ax, covs, ylim, yt in ((a, BAR_COVS, 20, [0, 5, 10, 15, 20]), (b, HIFI_COVS, 12, [0, 3, 6, 9, 12]),
+                               (c, BAR_COVS, 22, [0, 5, 10, 15, 20])):
+        cov_axis(ax, covs); ax.set_xlim(7, covs[-1] + 3)
+        ax.set_ylim(0, ylim); ax.set_yticks(yt); ax.set_ylabel("SV phasing error rate (%)")
 
     snv = lambda tool: (lambda c_: D["snv"]["ONT"][XLSX_TOOL[tool]].get(c_))
     ind = lambda tool: (lambda c_: D["coph"]["Indel"][tool].get(c_))
@@ -597,45 +595,46 @@ def fig3_sv_methylation():
     mod1 = lambda c_: [r for r in D["coph"]["Mod"]["longphase_v2.1.2"][c_] if r["rep"] == 1]
     meth = lambda c_: [{k: meth_value(c_, k) for k in ("sw_pct", "ham", "n50", "psnv_pct")}]
     tools = (("lh", meth_other("lh")), ("hb", meth_other("hb")), ("meth", meth), ("lp_gnn", mod1))
-    for t, get in tools:   # d; comparators first, LongPhase 2 on top
-        ex, ey = _path(d, get, BAR_COVS, C[t], "-", STY[t]["marker"], STY[t]["ms"])
-        if t == "meth":
-            _cov_ends(d, BAR_COVS, ex, ey)
-    _tradeoff_axis(d)
-    for i, (t, get) in enumerate(tools[::-1]):   # e: LongPhase 2, MethPhaser, HapBridge, LongHap from left
+    for t, get in tools:   # d, e; comparators first, LongPhase 2 on top
         st = STY[t]
-        e.plot([c_ + (i - 1.5) * 1.6 for c_ in BAR_COVS], [ms(get(c_), "psnv_pct")[0] for c_ in BAR_COVS],
-               ls="none", marker=st["marker"], ms=st["ms"] + 1.6, mfc="none", mew=0.9, color=C[t])
-    cov_axis(e); e.set_ylim(55, 95); e.set_ylabel("Phased benchmark SNVs (%)"); e.set_xlim(5, 65)
+        d.plot(BAR_COVS, [ms(get(c_), "sw_pct")[0] for c_ in BAR_COVS], color=C[t], ls="-",
+               marker=st["marker"], ms=st["ms"], mfc="none", mew=0.8, lw=0.9)
+        ex, ey = _path(e, get, BAR_COVS, C[t], "-", st["marker"], st["ms"])
+        if t == "meth":
+            _cov_ends(e, BAR_COVS, ex, ey)
+    cov_axis(d); d.set_xlim(7, 63)
+    _rate_axis(d, (0, 0.05, 0.1, 0.15, 0.2)); d.set_ylabel("SNV switch error rate (%)")
+    _tradeoff_axis(e, xticks=(0, 0.05, 0.1, 0.15, 0.2))
     for get, covs, t, ls, filled in (   # f
             (ind("whatshap_v28"), PLOT_COVS, "wh", "--", False), (snv("wh"), PLOT_COVS, "wh", "-", False),
             (_other("ONT", "LongHap 0.2.0 (all variants, with 5mC)"), BAR_COVS, "lh", "-.", True),
-            (all4, PLOT_COVS, "lp_gnn", "-.", True), (ind("longphase_v2.1.2"), PLOT_COVS, "lp_gnn", "--", False),
-            (snv("lp_gnn"), PLOT_COVS, "lp_gnn", "-", False)):
+            (all4, PLOT_COVS, "lp_gnn", "-.", True), (snv("lp_gnn"), PLOT_COVS, "lp_gnn", "-", False)):
         ex, ey = _path(f, get, covs, C[t], ls, STY[t]["marker"], STY[t]["ms"], mfc=C[t] if filled else "none")
         if t == "lh":   # 10x to the right: below it sits the 10x point of WhatsHap
             for i, off, ha, va in ((0, (5, 0), "left", "center"), (-1, (0, 4), "center", "bottom")):
                 f.annotate(f"{covs[i]}×", (ex[i], ey[i]), xytext=off, textcoords="offset points",
                            ha=ha, va=va, fontsize=5.5, color="#555555")
-    _tradeoff_axis(f, (0, 7.5), [0, 2, 4, 6])
+    _tradeoff_axis(f, (0, 8.6), [0, 2, 4, 6, 8])
 
     grey = "#555555"
-    key = [thandle(t, n) for t, n in (("lp_gnn", "LongPhase 2"), ("wh", "WhatsHap"), ("hp", "HiPhase"),
-                                      ("meth", "MethPhaser"), ("hb", "HapBridge"), ("lh", "LongHap"))
-           if t not in ("hp",) or "hp" in sv_tools]
-    ke = [Line2D([], [], color=grey, ls="-", label="SNVs"), Line2D([], [], color=grey, ls="--", label="+ indels"),
-          Line2D([], [], color=grey, ls="-.", marker="o", ms=3.0, mfc=grey, label="+ indels, SVs and 5mC")]
-    _light(fig, key + ke)
-    for ax in (c, e):   # markers only (c: ranges); keep markers at full size
-        for l_ in ax.get_lines():
-            l_.set_markersize(l_.get_markersize() / 0.8)
-    f.legend(handles=ke, loc="upper left", frameon=False, handlelength=2.6)
-    fig.legend(handles=key, loc="outside upper center", ncol=len(key), frameon=False, handlelength=2.6,
-               columnspacing=2.0)
-    for ax, L, title in ((a, "a", "Nanopore: SV accuracy and completeness"),
-                         (b, "b", "PacBio HiFi: SV accuracy and completeness"), (c, "c", "SVs by size"),
-                         (d, "d", "SNVs and 5mC: accuracy and contiguity"), (e, "e", "SNVs and 5mC: phased SNVs"),
-                         (f, "f", "By evidence type")):
+    k1 = [thandle(t, n) for t, n in (("lp_gnn", "LongPhase 2"), ("wh", "WhatsHap"), ("hp", "HiPhase"))]
+    k2 = [thandle(t, n) for t, n in (("lp_gnn", "LongPhase 2"), ("meth", "MethPhaser"), ("hb", "HapBridge"),
+                                     ("lh", "LongHap"), ("wh", "WhatsHap"))]
+    kc = [Line2D([], [], color=grey, ls="-", label="Nanopore"), Line2D([], [], color=grey, ls=":", label="PacBio HiFi")]
+    kf = [Line2D([], [], color=grey, ls="-", label="SNVs"), Line2D([], [], color=grey, ls="--", label="+ indels"),
+          Line2D([], [], color=grey, ls="-.", marker="o", ms=3.0, mfc=grey, label="+ indels, SVs, 5mC")]
+    _light(fig, k1 + k2 + kc + kf)
+    for l_ in [*c.get_lines(), kc[1]]:   # dotted lines need more weight to stay visible
+        if l_.get_linestyle() == ":":
+            l_.set_linewidth(1.1)
+    c.legend(handles=kc, loc="lower left", frameon=False, handlelength=2.6, ncol=2, columnspacing=1.2)
+    f.legend(handles=kf, loc="upper left", frameon=False, handlelength=1.8, ncol=3, columnspacing=0.8,
+             borderaxespad=0.2, handletextpad=0.4).set_in_layout(False)   # one line above the data
+    sf1.suptitle(" Structural variants (SNVs and SVs as input)", x=0.0, ha="left", fontsize=7, fontweight="bold")
+    sf2.suptitle(" SNVs and 5mC, nanopore", x=0.0, ha="left", fontsize=7, fontweight="bold")
+    _row_keys(fig, (sf1, sf2), (k1, k2))
+    for ax, L, title in ((a, "a", "Nanopore"), (b, "b", "PacBio HiFi"), (c, "c", "SVs of 1 kb or longer"),
+                         (d, "d", "Accuracy"), (e, "e", "Accuracy and contiguity"), (f, "f", "By evidence type")):
         letter(ax, L, title=title)
     save(fig, os.path.join(OUT, "fig3_sv_methylation.pdf"))
 
