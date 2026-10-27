@@ -120,8 +120,8 @@ and Supplementary Table 20 rewritten from it the same day. The abstract was rewr
 same day (179 words).
 
 LongPhase v2.1.2 (JH, 2026-10-26, merged with the local Fig. 3 work the same day; JH's notes in
-`notes/log/2026-10-26-longphase-v2-1-2-rerun.md`): still open is the Results memory clause ("at the cost
-of higher peak memory" no longer holds), marked `\todo{}`; the abstract speed claim is resolved (8.9-fold).
+`notes/log/2026-10-26-longphase-v2-1-2-rerun.md`): the Results memory clause was rewritten on 2026-10-27
+(less peak memory at all coverages but one); the abstract speed claim is resolved (8.9-fold).
 
 Everything else was moved out of the rendered text into `%  [tag]` source comments
 next to the paragraph it concerns (grep `^%  \[` in `sections/*.tex` and
