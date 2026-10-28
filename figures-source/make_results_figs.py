@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Generate the Results figures (Figs. 2-4), Supplementary Figs. 9-15 and
-Supplementary Tables 7-17 for the
+Supplementary Tables 6-16 for the
 LongPhase 2 manuscript.
 
 Every number is read from the files listed in results_data.py, from
@@ -184,7 +184,7 @@ STY = {
 def hiphase(c):
     """HiPhase 1.7.0 on PacBio HiFi data, SNV-only phasing (replicate 1): sheet Other_phasers of
     Supplementary Data 1 (JHL, 2026-10-18). HiPhase has no SNV-only option, so it was given the call
-    set restricted to SNVs. In Fig. 2c,g, Supplementary Fig. 16c and Table 11 since 2026-10-19
+    set restricted to SNVs. In Fig. 2c,g, Supplementary Fig. 16c and Table 10 since 2026-10-19
     (author decision: the PacBio phaser must be in the HiFi comparison)."""
     r = _other_phasers().get(("HiFi", "HiPhase 1.7.0 (SNV-only input VCF)", c))
     return [r] if r else None
@@ -419,11 +419,11 @@ def fig2():
     methylation; it replaces the 3 x 2 grid of 2026-10-13), one type of plot per row and one
     column per comparison: a/e nanopore SNVs (WhatsHap, HapCUT2), b/f nanopore SNVs and indels
     (WhatsHap, HapCUT2 with --indels 1, replicate 1; solid SNV pairs, dotted pairs with an indel for
-    LongPhase 2 and WhatsHap, Supplementary Table 14), c/g HiFi SNVs (WhatsHap, HapCUT2, HiPhase),
+    LongPhase 2 and WhatsHap, Supplementary Table 13), c/g HiFi SNVs (WhatsHap, HapCUT2, HiPhase),
     d/h HiFi SNVs and indels (the same tools on the full call sets, sheet Other_phasers; SNV pairs
     only, no indel-pair rate exists for HiFi). Row 1 switch error rate against coverage, row 2
     switch error rate against block N50 (author, 2026-10-20: not Hamming distance, which grows
-    with block length; Hamming distances are Supplementary Fig. 16). TinkerHap stays in Table 18.
+    with block length; Hamming distances are Supplementary Fig. 16). TinkerHap stays in Table 17.
     HiFi panels have their own N50 axis. Title on the panel-letter line, one tool key at the top,
     lighter lines (`_light()`), no s.d. bands (author, 2026-10-12). The phased fractions are in
     Fig. 5."""
@@ -566,10 +566,10 @@ def fig3_sv_methylation():
     SV calls; the SNV + indel + SV input is Supplementary Fig. 17): a nanopore and b PacBio HiFi SV error
     rate against coverage, all sizes (SVs of 50 bp-1 kb are 90-93% of them); c SVs of at least 1 kb on both
     platforms, nanopore solid and HiFi dotted (dashed means "+ indels" in f). The counts of SVs phased
-    correctly and the 50 bp-1 kb error rates are in Supplementary Table 20 and the text. Row 2, SNVs and
+    correctly and the 50 bp-1 kb error rates are in Supplementary Table 19 and the text. Row 2, SNVs and
     5mC on nanopore data: d switch error rate against coverage (linear axis, author) against MethPhaser,
     HapBridge and LongHap; e switch error rate against block N50 (the former d; phased SNVs, the former e,
-    are in the text and Supplementary Table 18); f by evidence type, last as the conclusion: LongPhase 2
+    are in the text and Supplementary Table 17); f by evidence type, last as the conclusion: LongPhase 2
     SNVs and four classes, WhatsHap SNVs and + indels, LongHap four classes (LongPhase 2 + indels, which
     coincides with four classes, is Supplementary Fig. 15). e and f use a linear switch-error axis as d.
     The Hamming panel of the 2026-10-20 Fig. 3 is Supplementary Fig. 16e."""
@@ -829,7 +829,7 @@ def fig5():
     phased by LongPhase 2 and WhatsHap, and in b also HiPhase: one message -- LongPhase 2 phases about 1% fewer benchmark
     SNVs, but more of the calls it phases are benchmark SNVs, and fewer of them are genotype
     errors. Completeness and precision are paired by platform (author decision, 2026-10-19,
-    option A): a completeness and b precision (nanopore; F1 in the text and Supplementary Table 8),
+    option A): a completeness and b precision (nanopore; F1 in the text and Supplementary Table 7),
     c completeness and d precision (PacBio HiFi, with HiPhase, the PacBio phaser; HiFi phased-call
     counts from issue #9), e phased calls at positions where v5.0q is homozygous (genotype errors
     written onto a haplotype; GIAB v5.0q framing; nanopore only, no HiFi counts exist). Row 2, SNVs unphased
@@ -838,8 +838,8 @@ def fig5():
     60x against a random sample of SNVs phased before correction, h the same by chromosome.
     Row 2 is a different set from row 1: GNN correction leaves unphased only about one sixth of
     the calls that LongPhase 2 alone leaves unphased. No numbers inside panels (author,
-    2026-10-09); they are in the text and Supplementary Table 12. The calls left unphased by one
-    tool only, their read depth and interval co-location are in the text, Supplementary Table 17
+    2026-10-09); they are in the text and Supplementary Table 11. The calls left unphased by one
+    tool only, their read depth and interval co-location are in the text, Supplementary Table 16
     and Supplementary Fig. 12; the regions added by v5.0q are in Fig. 3d,e."""
     fig = plt.figure(figsize=(FIGW, 136 * MM), layout="constrained")
     fig.get_layout_engine().set(w_pad=2 * MM, h_pad=1.2 * MM, wspace=0.05, hspace=0.0)
@@ -892,7 +892,7 @@ def fig5():
         ax.bar(xs, v, 0.72, bottom=bottom, color=GREYS[i], label=lab, zorder=3)
         bottom = [x + y for x, y in zip(bottom, v)]
     ax.set_xticks(list(xs)); ax.set_xticklabels([str(c) for c in COVS])
-    ax.set_xlabel("Coverage (×)"); ax.set_ylabel("SNVs unphased by GNN (%)")
+    ax.set_xlabel("Coverage (×)"); ax.set_ylabel("Withheld SNVs (%)")
     ax.set_ylim(0, 100); ax.set_yticks([0, 25, 50, 75, 100])
     ax.set_title("Status in the v5.0q benchmark", loc="center", fontsize=6.5, pad=KEYPAD)
     h, l = ax.get_legend_handles_labels()
@@ -904,7 +904,7 @@ def fig5():
     for y, out in ((1, out_bg), (0, out_rm)):
         ax.barh(y, 100 - out, 0.55, color=GREYS[2], zorder=3)
         ax.barh(y, out, 0.55, left=100 - out, color=GREYS[0], zorder=3)
-    ax.set_yticks([0, 1]); ax.set_yticklabels(["Unphased\nby GNN", "Phased\n(random\nsample)"])
+    ax.set_yticks([0, 1]); ax.set_yticklabels(["Withheld", "Phased\n(random\nsample)"])
     ax.tick_params(axis="y", length=0)
     ax.set_xlim(0, 100); ax.set_xticks([0, 25, 50, 75, 100]); ax.set_ylim(-0.6, 1.6)
     ax.set_xlabel("SNVs at 60× (%)")
@@ -935,13 +935,13 @@ def fig5():
     dot = lambda col, lab: Line2D([], [], color=col, ls="none", marker="o", ms=2.6, label=lab)
     _row_keys(fig, (sf1, sf2), ([thandle(t, n_) for t, n_ in reversed(TOOLS)] + [thandle("hp")],
                                 [Patch(color=C["lp_gnn"], label="LongPhase 2"), Patch(color=C["wh"], label="WhatsHap"),
-                                 dot("#4D4D4D", "phased (random sample)"), dot(C["lp_gnn"], "unphased by GNN")]))
+                                 dot("#4D4D4D", "phased (random sample)"), dot(C["lp_gnn"], "withheld")]))
     save(fig, os.path.join(OUT, "fig5_phased_unphased.pdf"))
 
 
 # ============================================================ Figure 4 =====
 # The two benchmarks (Fig. 3 until 2026-10-20, when the methylation figure became Fig. 3).
-F3 = [  # key, label, colour, line style, marker, v5.0q source, v4.2.1 tool name (Supplementary Table 9)
+F3 = [  # key, label, colour, line style, marker, v5.0q source, v4.2.1 tool name (Supplementary Table 8)
     ("lp_gnn", "LongPhase 2, SNVs", C["lp_gnn"], "-", "o", ("snv", "longphase_v2.1.2"), "longphase_gnn"),
     ("lp_ind", "LongPhase 2, +indels", C["lp_gnn"], "--", "s", ("coph", "Indel", "longphase_v2.1.2"), "longphase_coh_indel_gnn"),
     ("lp_isv", "LongPhase 2, +indels+SVs", C["lp_gnn"], ":", "^", ("coph", "Indel+SV", "longphase_v2.1.2"), "longphase_coh_indel_sv_gnn"),
@@ -1049,7 +1049,7 @@ def fig4():
     save(fig, os.path.join(OUT, "fig4_two_benchmarks.pdf"))
 
 
-# ======================= Fig. 4f-h (former Supplementary Fig. 16) and Table 12 data =====
+# ======================= Fig. 4f-h (former Supplementary Fig. 16) and Table 11 data =====
 # Source: unphased_grid.tsv of analyze_unphased.py + reclassify_unphased.py on the v2.1.1 runs
 # (/ssd/longphase_process/unphased_grid_v2.1.1/run.sh, 2026-10-16; v2.1 values: gnn_prepare/unphased_e6/).
 # SNV-only, seed 1; SNVs phased by LongPhase 2 and unphased after correction, matched to the v5.0q
@@ -1101,21 +1101,23 @@ def sfig10():
     save(fig, os.path.join(SUPP, "suppfig10_more_tools.pdf"))
 
 
-def _runtime(name="runtime.tsv"):
-    """notes/runtime/runtime.tsv (issue #8): (tool, threads, coverage) -> (wall min, CPU min,
-    peak RSS GiB). Replicate 1, GNU time of the paper runs; LongPhase 2 on one thread timed at
-    10x and 60x only; HapCUT2 at 30x and 40x re-timed (original logs overwritten).
-    runtime_hifi.tsv: the same for PacBio HiFi 10-50x (2026-10-17; see build_runtime.py)."""
+def _runtime(platform="nanopore"):
+    """notes/runtime/runtime_ssd.tsv (issue #8, re-timed 2026-10-26/28 by JHL with inputs and outputs on an
+    SSD): (tool, threads, coverage) -> (wall min, CPU min, peak RSS GiB). Replicate 1, one run at a time,
+    page cache cleared before each run, GNU time -v; LongPhase 2 v2.1.2 with 24 threads and one thread at
+    every coverage. Rows with storage = HDD (HapCUT2 at nanopore 60x and on HiFi data, not re-timed) are
+    left out (author decision, 2026-10-28). The HDD values are runtime.tsv and runtime_hifi.tsv."""
     import csv
-    rows = csv.DictReader(open(os.path.join(ROOT, "notes", "runtime", name)), delimiter="\t")
+    rows = csv.DictReader(open(os.path.join(ROOT, "notes", "runtime", "runtime_ssd.tsv")), delimiter="\t")
     return {(r["tool"], r["threads"], int(r["coverage"])):
-            (int(r["wall_s"]) / 60, int(r["cpu_s"]) / 60, int(r["max_rss_kb"]) / 1024 ** 2) for r in rows}
+            (int(r["wall_s"]) / 60, int(r["cpu_s"]) / 60, int(r["max_rss_kb"]) / 1024 ** 2)
+            for r in rows if r["platform"] == platform and r["storage"] == "SSD"}
 
 
 # ============================================== Supplementary Fig. 10 =====
 def sfig_runtime():
-    """Runtime and peak memory of SNV-only phasing across coverage (issue #8). LongPhase 2 on one
-    thread has points only."""
+    """Runtime and peak memory of SNV-only phasing across coverage (issue #8), nanopore, SSD timings.
+    LongPhase 2 on one thread has points only."""
     rt = _runtime()
     fig, axs = new_fig(52, 1, 3)
     tools = (("hc", ("HapCUT2 1.3.4", "1")), ("wh", ("WhatsHap 2.8", "1")), ("lp_gnn", ("LongPhase 2", "24")))
@@ -1127,7 +1129,12 @@ def sfig_runtime():
         xs = [c for c in COVS if ("LongPhase 2", "1", c) in rt]
         ax.plot(xs, [rt[("LongPhase 2", "1", c)][j] for c in xs], ls="none", color=C["lp_gnn"], marker="o",
                 ms=3.0, mew=0.8)
-        ax.set_ylim(bottom=0); ax.set_ylabel(lab); cov_axis(ax); letter(ax, L)
+        if j < 2:  # times span 0.25-148 min: log axis, the same range in a and b (author, 2026-10-28)
+            ax.set_yscale("log"); ax.set_ylim(0.1, 300)
+            ax.set_yticks([0.1, 1, 10, 100]); ax.set_yticklabels(["0.1", "1", "10", "100"]); ax.minorticks_off()
+        else:
+            ax.set_ylim(bottom=0)
+        ax.set_ylabel(lab); cov_axis(ax); letter(ax, L)
     h = [thandle("lp_gnn", "LongPhase 2, 24 threads"),
          Line2D([], [], color=C["lp_gnn"], ls="none", marker="o", ms=3.4, label="LongPhase 2, 1 thread"),
          thandle("wh", "WhatsHap"), thandle("hc", "HapCUT2")]
@@ -1270,7 +1277,7 @@ def sfig14():
 # ============================================== Supplementary Fig. 12 =====
 def sfig17():
     """Read depth of the calls left unphased by one tool only and by both, 10/30/60x; sets named
-    and coloured by the tool that left them unphased, as in Supplementary Table 17."""
+    and coloured by the tool that left them unphased, as in Supplementary Table 16."""
     H = venn_hist()
     fig, axs = new_fig(50, 1, 3)
     for ax, cov, L in zip(axs, (10, 30, 60), "abc"):
@@ -1290,7 +1297,7 @@ def sfig17():
     save(fig, os.path.join(SUPP, "suppfig12_giveup_depth.pdf"))
 
 
-# ------------------------------------------- issue #1 tables (Tables 13-14) ---
+# ------------------------------------------- issue #1 tables (Tables 12-13) ---
 STRATA = os.path.join(ROOT, "notes", "benchmark_strata")
 S_TOOLS = (("longphase_gnn", "LongPhase 2"), ("whatshap_v28_onlySNVs", "WhatsHap"), ("hapcut2_v134", "HapCUT2"))
 S_COVS = (10, 20, 30, 60)
@@ -1373,7 +1380,7 @@ def strata_tables(w, L):
 
 
 # ================================================== Supplementary tables ===
-# ------------------------------------------- issue #2 table (Table 15) ---
+# ------------------------------------------- issue #2 table (Table 14) ---
 HELDOUT = os.path.join(ROOT, "notes", "heldout")
 H_TOOLS = (("longphase_gnn", "LongPhase 2"), ("longphase", "without GNN"), ("whatshap_v28_onlySNVs", "WhatsHap"),
            ("hapcut2_v134", "HapCUT2"), ("margin_v231", "Margin"), ("ralphi", "Ralphi"))
@@ -1416,34 +1423,36 @@ def heldout_table(w):
     w(r"\bottomrule\end{longtable}}")
 
 
-# ------------------------------------------- issue #3 table (Table 16) ---
+# ------------------------------------------- issue #3 table (Table 15) ---
 def runtime_table(w):
-    """Runtime and peak memory of SNV-only phasing at every coverage (notes/runtime/runtime.tsv)."""
+    """Runtime and peak memory of SNV-only phasing at every coverage (notes/runtime/runtime_ssd.tsv)."""
     from decimal import Decimal, ROUND_HALF_UP
     r1 = lambda x: str(Decimal(repr(x)).quantize(Decimal("0.1"), rounding=ROUND_HALF_UP))
+    r2 = lambda x: str(Decimal(repr(x)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
     rt = _runtime()
     w(r"\begin{table}[h]")
-    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data (top) and PacBio HiFi data (bottom), replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~10). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB, from \code{/usr/bin/time}. \toolname includes GNN correction, which runs within the \code{phase} command. \toolname was timed on one thread at 10 and 60$\times$ only (--, no value); \hapcut at 30 and 40$\times$ was re-timed (Methods). On HiFi data, \whatshap at 10 and 20$\times$ was re-timed with the alignment file already in the page cache (Methods). \hapcut includes fragment extraction.}\label{tab:runtime}")
+    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data (top) and PacBio HiFi data (bottom), replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~10). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB. \toolname times include alignment reading, phasing and VCF writing, and \toolname was run with 24 threads and on one thread; outputs of \toolname and \whatshap were identical to the reported VCFs. \hapcut includes fragment extraction; records with genotypes other than two alleles from 0, 1 and 2, which \hapcut does not accept (at most 682 per data set), were removed from its input. \hapcut was not timed at nanopore 60$\times$ or on HiFi data (--, no value).}\label{tab:runtime}")
     w(r"\small\setlength{\tabcolsep}{4pt}\begin{tabular}{@{}rrrrrrrrrrrrr@{}}\toprule")
     groups = [(("LongPhase 2", "24"), r"\toolname, 24 threads"), (("LongPhase 2", "1"), r"\toolname, 1 thread"),
               (("WhatsHap 2.8", "1"), r"\whatshap"), (("HapCUT2 1.3.4", "1"), r"\hapcut")]
     w(" & " + " & ".join(rf"\multicolumn{{3}}{{c}}{{{n}}}" for _, n in groups) + r" \\ "
       + "".join(rf"\cmidrule({'lr' if i < 3 else 'l'}){{{2 + 3 * i}-{4 + 3 * i}}}" for i in range(4)))
     w("Coverage & " + " & ".join(["Wall & CPU & Memory"] * 4) + r" \\ \midrule")
-    for blk, (rt, covs) in enumerate(((rt, COVS), (_runtime("runtime_hifi.tsv"), HIFI_COVS))):
+    for blk, (rt, covs) in enumerate(((rt, COVS), (_runtime("HiFi"), HIFI_COVS))):
         w(rf"\multicolumn{{13}}{{@{{}}l}}{{\textit{{{('Nanopore R10.4.1', 'PacBio HiFi')[blk]}}}}} \\")
         for c in covs:
             cells = []
             for key, _ in groups:
                 v = rt.get(key + (c,))
-                cells += [r1(x) for x in v] if v else ["--"] * 3
+                # 24-thread wall-clock time is below 1 min on the SSD: two decimals
+                cells += ([r2(v[0])] if key[1] == "24" else [r1(v[0])]) + [r1(x) for x in v[1:]] if v else ["--"] * 3
             w(rf"{c}$\times$ & " + " & ".join(cells) + r" \\")
         if blk == 0:
             w(r"\midrule")
     w(r"\bottomrule\end{tabular}\end{table}")
 
 
-# ------------------------------------------- further phasers (Table 18) ---
+# ------------------------------------------- further phasers (Table 17) ---
 # Sheet Other_phasers of Supplementary Data 1 (JHL, 2026-10-17/18; notes/competitors/README.md):
 # replicate 1, ONT 10-60x in steps of 10x, HiFi 10-50x. LongPhase 2, WhatsHap and HapCUT2 rows of
 # the same comparisons come from SNV_Detail, co-phase_Detail and the MethPhaser sheet.
@@ -1471,9 +1480,9 @@ def _other_phasers():
 
 
 def sv_table():
-    """Supplementary Table 20: SV phasing against the T2T-HG002 assembly (issue #10, notes/sv_phasing/),
+    """Supplementary Table 19: SV phasing against the T2T-HG002 assembly (issue #10, notes/sv_phasing/),
     LongPhase 2 as released (no with/without-GNN split: author, 2026-10-26), WhatsHap and HiPhase.
-    Written to its own file, input after Supplementary Table 19 so that no table is renumbered."""
+    Written to its own file, input after Supplementary Table 18 so that no table is renumbered."""
     sv = sv_rows()
     L = []
     w = L.append
@@ -1547,7 +1556,7 @@ def other_phasers_table(w):
             ("HiPhase", oth("HiFi", "HiPhase 1.7.0")),
             ("TinkerHap", oth("HiFi", "TinkerHap 1.0.0"))]),
     ]
-    w(r"\clearpage")   # flush Tables 12-17 (floats) so that the longtable follows them
+    w(r"\clearpage")   # flush Tables 11-16 (floats) so that the longtable follows them
     w(r"{\scriptsize\setlength{\tabcolsep}{4pt}")
     w(r"\begin{longtable}{@{}lrrrrrrr@{}}")
     w(r"\caption{\textbf{Phasing compared with further phasers.} HG002, replicate~1; nanopore R10.4.1 data at 10--60$\times$ in steps of 10$\times$ and PacBio HiFi data at 10--50$\times$. Each block compares tools given the same reads, variant calls and evidence classes; within a block, \toolname is listed first. MethPhaser and HapBridge were given the SNV-only output of \toolname without GNN correction. HiPhase and TinkerHap have no SNV-only mode, so their SNV-only rows used call sets restricted to SNVs. LongHap with indels, SVs and 5mC was given deletions and insertions from Sniffles2 as sequence-resolved records. Switch error rates are over consecutive SNV pairs; Hamming distance includes indels where both files contain them, so it is comparable only within a block. Phased fractions are percentages of benchmark heterozygous SNVs or indels; --, not applicable. Source: Supplementary Data~1, sheets \code{Other\_phasers}, \code{SNV\_Detail}, \code{co-phase\_Detail} and \code{MethPhaser}.}\label{tab:otherphasers}\\")

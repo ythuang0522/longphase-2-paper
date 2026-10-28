@@ -402,28 +402,28 @@ v4.2.1 & 10$\times$ & 135 (9) & 0.151 & 0.178 & 0.215 & 0.225 & 0.080 & 0.195 & 
 
 \bottomrule\end{longtable}}
 \begin{table}[h]
-\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data (top) and PacBio HiFi data (bottom), replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~10). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB, from \code{/usr/bin/time}. \toolname includes GNN correction, which runs within the \code{phase} command. \toolname was timed on one thread at 10 and 60$\times$ only (--, no value); \hapcut at 30 and 40$\times$ was re-timed (Methods). On HiFi data, \whatshap at 10 and 20$\times$ was re-timed with the alignment file already in the page cache (Methods). \hapcut includes fragment extraction.}\label{tab:runtime}
+\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data (top) and PacBio HiFi data (bottom), replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~10). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB. \toolname times include alignment reading, phasing and VCF writing, and \toolname was run with 24 threads and on one thread; outputs of \toolname and \whatshap were identical to the reported VCFs. \hapcut includes fragment extraction; records with genotypes other than two alleles from 0, 1 and 2, which \hapcut does not accept (at most 682 per data set), were removed from its input. \hapcut was not timed at nanopore 60$\times$ or on HiFi data (--, no value).}\label{tab:runtime}
 \small\setlength{\tabcolsep}{4pt}\begin{tabular}{@{}rrrrrrrrrrrrr@{}}\toprule
  & \multicolumn{3}{c}{\toolname, 24 threads} & \multicolumn{3}{c}{\toolname, 1 thread} & \multicolumn{3}{c}{\whatshap} & \multicolumn{3}{c}{\hapcut} \\ \cmidrule(lr){2-4}\cmidrule(lr){5-7}\cmidrule(lr){8-10}\cmidrule(l){11-13}
 Coverage & Wall & CPU & Memory & Wall & CPU & Memory & Wall & CPU & Memory & Wall & CPU & Memory \\ \midrule
 \multicolumn{13}{@{}l}{\textit{Nanopore R10.4.1}} \\
-10$\times$ & 2.9 & 4.5 & 1.4 & 3.2 & 2.8 & 1.2 & 25.2 & 25.1 & 1.5 & 24.1 & 24.1 & 6.6 \\
-12$\times$ & 3.5 & 5.2 & 1.7 & -- & -- & -- & 37.6 & 37.6 & 1.6 & 28.1 & 28.0 & 6.4 \\
-14$\times$ & 4.0 & 5.8 & 1.6 & -- & -- & -- & 49.0 & 49.0 & 1.8 & 35.3 & 35.2 & 8.3 \\
-16$\times$ & 4.5 & 6.7 & 1.8 & -- & -- & -- & 58.9 & 58.8 & 1.9 & 39.4 & 39.3 & 8.9 \\
-18$\times$ & 5.1 & 7.1 & 1.7 & -- & -- & -- & 74.1 & 73.9 & 2.1 & 42.1 & 41.9 & 9.6 \\
-20$\times$ & 5.4 & 8.4 & 1.9 & -- & -- & -- & 74.6 & 73.1 & 2.2 & 44.5 & 42.6 & 8.6 \\
-30$\times$ & 9.8 & 11.8 & 2.1 & -- & -- & -- & 90.7 & 90.4 & 2.6 & 59.4 & 59.0 & 11.3 \\
-40$\times$ & 12.9 & 15.9 & 2.7 & -- & -- & -- & 100.4 & 100.1 & 3.0 & 75.6 & 75.2 & 14.0 \\
-50$\times$ & 16.1 & 19.1 & 2.6 & -- & -- & -- & 107.6 & 107.1 & 3.5 & 85.7 & 84.5 & 16.7 \\
-60$\times$ & 14.8 & 22.8 & 3.5 & 12.8 & 11.9 & 1.2 & 113.8 & 113.6 & 4.0 & 96.4 & 95.9 & 19.4 \\
+10$\times$ & 0.25 & 4.2 & 2.5 & 2.5 & 2.7 & 1.2 & 25.7 & 25.7 & 1.6 & 24.2 & 24.2 & 6.6 \\
+12$\times$ & 0.28 & 4.8 & 2.6 & 2.9 & 3.1 & 1.3 & 38.4 & 38.4 & 1.7 & 30.6 & 30.6 & 7.5 \\
+14$\times$ & 0.30 & 5.4 & 3.2 & 3.2 & 3.4 & 1.3 & 51.2 & 51.2 & 1.9 & 35.2 & 35.2 & 8.3 \\
+16$\times$ & 0.32 & 5.8 & 2.7 & 3.5 & 3.8 & 1.3 & 60.2 & 60.3 & 2.1 & 40.0 & 39.9 & 8.9 \\
+18$\times$ & 0.35 & 6.5 & 2.8 & 3.8 & 4.1 & 1.3 & 71.3 & 71.3 & 2.2 & 43.1 & 43.1 & 9.6 \\
+20$\times$ & 0.38 & 7.0 & 3.0 & 4.1 & 4.5 & 1.2 & 83.4 & 83.4 & 2.3 & 47.0 & 47.0 & 10.2 \\
+30$\times$ & 0.48 & 9.9 & 3.3 & 5.7 & 6.3 & 1.3 & 110.7 & 110.7 & 2.9 & 63.6 & 63.6 & 13.4 \\
+40$\times$ & 0.62 & 13.0 & 3.8 & 7.3 & 8.1 & 1.4 & 124.3 & 124.4 & 3.4 & 80.4 & 80.3 & 16.6 \\
+50$\times$ & 0.73 & 16.0 & 4.3 & 8.9 & 9.9 & 1.4 & 138.7 & 138.7 & 3.9 & 92.1 & 92.1 & 19.7 \\
+60$\times$ & 0.85 & 18.5 & 4.5 & 10.4 & 11.6 & 1.2 & 147.5 & 147.5 & 4.5 & -- & -- & -- \\
 \midrule
 \multicolumn{13}{@{}l}{\textit{PacBio HiFi}} \\
-10$\times$ & 1.6 & 2.5 & 1.4 & -- & -- & -- & 23.9 & 23.8 & 1.5 & 19.5 & 19.4 & 7.1 \\
-20$\times$ & 2.6 & 4.4 & 1.5 & -- & -- & -- & 62.9 & 62.9 & 2.2 & 44.6 & 44.4 & 11.4 \\
-30$\times$ & 3.9 & 6.4 & 1.7 & -- & -- & -- & 90.5 & 86.6 & 2.7 & 44.7 & 44.5 & 14.3 \\
-40$\times$ & 5.0 & 8.7 & 1.7 & -- & -- & -- & 93.5 & 93.2 & 3.2 & 59.8 & 59.5 & 17.2 \\
-50$\times$ & 5.9 & 10.0 & 1.6 & -- & -- & -- & 98.4 & 98.2 & 3.7 & 59.5 & 59.1 & 19.6 \\
+10$\times$ & 0.18 & 2.0 & 2.1 & 1.3 & 1.4 & 1.1 & 22.9 & 23.0 & 1.5 & -- & -- & -- \\
+20$\times$ & 0.27 & 4.1 & 2.5 & 2.1 & 2.3 & 1.2 & 70.7 & 70.7 & 2.4 & -- & -- & -- \\
+30$\times$ & 0.33 & 5.9 & 2.6 & 2.8 & 3.1 & 1.2 & 91.9 & 91.9 & 3.0 & -- & -- & -- \\
+40$\times$ & 0.40 & 7.6 & 2.6 & 3.5 & 4.0 & 1.2 & 101.3 & 101.3 & 3.6 & -- & -- & -- \\
+50$\times$ & 0.48 & 9.3 & 3.0 & 4.1 & 4.6 & 1.2 & 106.9 & 106.9 & 4.1 & -- & -- & -- \\
 \bottomrule\end{tabular}\end{table}
 \begin{table}[h]
 \caption{\textbf{Heterozygous SNV calls phased by \toolname only, by \whatshap only, by both or by neither.} HG002 nanopore R10.4.1 data, SNV-only phasing, replicate~1; single-base calls with genotype 0/1, identical in both VCFs, including chrX and chrY. Calls phased by \whatshap only are split by the \toolname stage that left them unphased: the phasing graph before GNN correction or GNN correction. Benchmark status against the chr1--22 v5.0q VCF without a BED: het., same position, REF and ALT; other allele, another heterozygous record at the position; hom., homozygous; absent, no record; chrX/Y, outside the truth. \textbf{Top}, composition. \textbf{Middle}, benchmark het. SNVs among calls phased by one tool only, scored for that tool: \emph{assessed}, in a block with at least two assessed variants; \emph{all phased}, the tool's block-wise Hamming distance over all its phased SNVs; \emph{fold}, inside divided by expected. The definitions of wrong phase, switch-error intervals and expected share are in Methods, ``Analysis of unphased SNVs''. \textbf{Bottom}, additional calls phased by \whatshap: calls phased by \whatshap only minus calls phased by \toolname only.}

@@ -5,17 +5,22 @@ Single vector source for all four panels, drawn in the house style of the
 original 2026-09-18 master (Helvetica Neue, navy text, blue/red haplotypes).
 Layout follows the 2026-09-18 redesign raster:
 
-  a  two-row legend (no panel headings anywhere); reference with seven variant columns; six
-     reads at 74 px pitch, carrying SNV / indel (boxes with sequence) / SV alleles and a
-     CpG (methylated = filled lollipop, unmethylated = open) on the read line;
-     reads 3 and 4 disagree at the fifth column (the SNV unphased in c). The
-     columns are the same alleles as the haplotypes in d.
-  b  original graph (all edges high-confidence, long-range read links drawn as
-     arcs) -> evidence calibration (uncertain base call with Phred bars,
-     sequence-context reliability as haplotype 1 (blue) over haplotype 2 (red)
-     sequences, miscalled SNVs in a CNV) -> reweighted graph
-     (down-weighted C and CA dashed, their edges low-confidence dashed, filtered
-     CNV variants); grey cross-links are left unstyled.
+  a  two-row legend, each row tagged by source (dashed grey "Upstream callers" for
+     SNV / indel / SV, solid navy "LongPhase 2 modcall" for CpGs), spread over the
+     panel width; reference with the eight variant columns of b (SNV, SNV, indel,
+     CpG, SNV, SNV, SV, SNV), the CpG column tagged "modcall" with a light navy
+     band; six reads at 48 px pitch (the reference, non-SV allele of the SV is the
+     SV box with a dash); reads 3 and 4 disagree at the last column (the C/T
+     trigger SNV of c); reads 7 and 8 (grey, unassigned) span only the fifth and
+     sixth columns, are clipped at both ends (orange zigzags) and carry the
+     alternate allele at both. The CNV is not named in a.
+  b  no stage labels; original graph (all edges high-confidence, long-range read
+     links drawn as arcs; CNV region over the fifth and sixth columns) -> three
+     insets (base-quality weighting with Phred bars; tandem-repeat weighting as
+     haplotype 1 (blue) over haplotype 2 (red) sequences; copy-number filtering,
+     reads 1, 2 and 7 of a at the two CNV SNVs, G/A filtered and A/T kept) ->
+     reweighted graph (down-weighted C and CA dashed, their edges low-confidence
+     dashed, the filtered G/A variant); grey cross-links are left unstyled.
   c  per-variant phasing uncertainty bars (y-axis label; trigger orange, no
      threshold line) above the window; node (31) and edge (6) feature-vector
      strips below it, segmented by feature group -> local message passing (star;
@@ -25,9 +30,10 @@ Layout follows the 2026-09-18 redesign raster:
      refinement (trigger SNV unphased; neighbours still linked, so the haplotype
      block stays intact). The block is framed as one of the four repeated (GPS) layers;
      layer normalization is omitted (see Supplementary Fig. 6).
-  d  two haplotypes carrying the alleles of a, the unphased SNV faded, and
-     four haplotagged reads (no uncertainty strip: it repeats c);
-     row labels sit left of each track.
+  d  two haplotypes carrying the alleles of a and b (the G/A SNV filtered in b
+     as a faded cross; the C/T SNV unphased in c faded; the non-SV
+     allele as a dashed box), and four haplotagged reads (no uncertainty strip:
+     it repeats c); haplotype labels above their tracks, read labels to the left.
 
 Panels c and d are drawn in a 1680 x 1072 frame and lifted 26 px by a group
 transform, the height saved by compacting a and b.
@@ -105,6 +111,11 @@ def box(cx, cy, label, color, w=52, h=30, fs=18.5, sw=2.6, dash=None):
     if label:
         add(f'<text x="{cx:.1f}" y="{cy + fs * 0.35:.1f}" class="nt" fill="{color}" text-anchor="middle" font-size="{fs}">{label}</text>')
 
+def nosv(cx, cy, color, w=44, h=26, fs=18, sw=2.4, dash=None):
+    """Reference (non-SV) allele at an SV: the SV box with a dash."""
+    box(cx, cy, "", color, w=w, h=h, sw=sw, dash=dash)
+    line(cx - w * 0.22, cy, cx + w * 0.22, cy, color, sw + 0.4)
+
 def filtered(cx, cy, r=21):
     k = r * 0.6
     add(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r}" fill="#ffffff" stroke="{INK}" stroke-width="2.6"/>')
@@ -127,7 +138,7 @@ def cross(x1, x2, yt, yb, w=1.9, op=0.85):
     line(x1, yb, x2, yt, GREY, w, op=op)
 
 # separators
-line(498, 22, 498, 634, "#C9D2DC", 1.6, cap="butt")
+line(632, 22, 632, 634, "#C9D2DC", 1.6, cap="butt")
 line(24, 650, 1656, 650, "#C9D2DC", 1.6, cap="butt")
 line(1142, 668, 1142, 1026, "#C9D2DC", 1.6, cap="butt")
 
@@ -135,48 +146,77 @@ line(1142, 668, 1142, 1026, "#C9D2DC", 1.6, cap="butt")
 # Panel a
 # ============================================================================
 text(24, 44, "a", cls="pl")
-# Legend on two rows. Indel alleles are boxes carrying their sequence (reference
-# "A", insertion "CA"), as in panels b and d.
-LY, LY2 = 72, 106
-snp(48, LY, "A", BLUE, r=15, fs=17);                     text(70, LY + 6, "SNV")
-box(140, LY, "CA", BLUE, w=40, h=24, fs=16.5, sw=2.2);   text(166, LY + 6, "Indel")
-box(250, LY, "SV", BLUE, w=44, h=25, fs=16.5, sw=2.2);   text(280, LY + 6, "SV")
-lollipop(48, LY2 - 4, True, r=7.5, stem=22);             text(64, LY2 + 6, "Methylated CpG")
-lollipop(232, LY2 - 4, False, r=7.5, stem=22);           text(248, LY2 + 6, "Unmethylated CpG")
+# Legend on two rows, each tagged by its source: a dashed grey tag for calls from
+# upstream variant callers, a solid navy tag for the LongPhase 2 modcall module.
+# Indel alleles are boxes carrying their sequence (reference "A", insertion "CA"),
+# as in panels b and d.
+def chip(x, y, label, internal, w):
+    if internal:
+        rect(x, y - 13, w, 26, NAVY, rx=13)
+        text(x + w / 2, y + 5.5, label, cls="lbb", fill="#ffffff", anchor="middle")
+    else:
+        rect(x, y - 13, w, 26, "#ffffff", rx=13, stroke=UNPH, sw=1.8, dash="5 3.5")
+        text(x + w / 2, y + 5.5, label, fill=UNPH, anchor="middle")
 
-# Seven variant columns, the same alleles as the phased haplotypes in panel d:
-# SNV, SNV, SV, CpG, SNV (conflicting read support; unphased in c), indel, SNV.
-RX0, RX1 = 150, 478
-COLX = [170 + 48 * i for i in range(7)]
-text(138, 158, "Reference", cls="h1", anchor="end")
-rect(RX0, 145, RX1 - RX0, 13, NAVY)
+LY, LY2 = 72, 108
+chip(24, LY, "Upstream callers", False, 206)
+snp(272, LY, "A", BLUE, r=15, fs=17);                    text(294, LY + 6, "SNV")
+box(410, LY, "CA", BLUE, w=40, h=24, fs=16.5, sw=2.2);   text(436, LY + 6, "Indel")
+box(548, LY, "SV", BLUE, w=40, h=25, fs=16, sw=2.2);     text(574, LY + 6, "SV")
+chip(24, LY2, "LongPhase 2 modcall", True, 206)
+lollipop(272, LY2 - 4, True, r=7.5, stem=22);            text(288, LY2 + 6, "Methylated")
+lollipop(448, LY2 - 4, False, r=7.5, stem=22);           text(464, LY2 + 6, "Unmethylated")
+
+# Eight variant columns, the same variants as the graph in panel b:
+# SNV, SNV, indel, CpG, SNV (false heterozygous call), SNV, SV, SNV (reads 3 and 4
+# disagree; unphased in c). Reads 7 and 8 are clipped at both ends and carry the
+# alternate allele at both SNVs they span.
+RX0, RX1 = 150, 622
+COLX = [170 + 62 * i for i in range(8)]
+REFY = 196
+READS_Y = [250 + 48 * i for i in range(8)]
+rect(COLX[3] - 30, 144, 60, READS_Y[5] + 30 - 144, "#E9EEF5", rx=8)
+chip(COLX[3] - 42, REFY - 38, "modcall", True, 84)
+text(138, REFY + 6.5, "Reference", cls="h1", anchor="end")
+rect(RX0, REFY - 6.5, RX1 - RX0, 13, NAVY)
 for x in COLX:
-    rect(x - 2.6, 133, 5.2, 37, NAVY, rx=2)
-READS_Y = [210 + 74 * i for i in range(6)]
+    rect(x - 2.6, REFY - 18.5, 5.2, 37, NAVY, rx=2)
 for x in COLX:
-    line(x, 176, x, READS_Y[-1] + 22, "#B9C4D0", 1.5, dash="4 6")
-CONFLICT = ["C", "T", "T", "C", "C", "T"]            # column 5 allele per read (reads 3, 4 disagree)
-for i, y in enumerate(READS_Y):
+    line(x, REFY + 24, x, READS_Y[-1] + 22, "#B9C4D0", 1.5, dash="4 6")
+CONFLICT = ["C", "T", "T", "C", "C", "T"]            # column 8 allele per read (reads 3, 4 disagree)
+for i, y in enumerate(READS_Y[:6]):
     hap1 = i % 2 == 0
     col = BLUE if hap1 else RED
     text(138, y + 6, f"Read {i + 1}", anchor="end")
     rect(RX0, y - 6.5, RX1 - RX0, 13, READ, rx=6.5)
     snp(COLX[0], y, "A" if hap1 else "G", col, r=17, fs=19)
     snp(COLX[1], y, "T" if hap1 else "C", col, r=17, fs=19)
-    if hap1 and i != 2:                              # read 3 does not span the SV
-        box(COLX[2], y, "SV", BLUE, w=44, h=26, fs=16.5, sw=2.4)
-    lollipop(COLX[3], y, hap1)
-    snp(COLX[4], y, CONFLICT[i], col, r=17, fs=19)
-    box(COLX[5], y, "A" if hap1 else "CA", col, w=40, h=26, fs=16.5, sw=2.4)
-    snp(COLX[6], y, "G" if hap1 else "A", col, r=17, fs=19)
+    box(COLX[2], y, "A" if hap1 else "CA", col, w=40, h=26, fs=16.5, sw=2.4)
+    if hap1:
+        box(COLX[6], y, "SV", BLUE, w=44, h=26, fs=16.5, sw=2.4)
+    else:
+        nosv(COLX[6], y, RED)
+    snp(COLX[4], y, "G", col, r=17, fs=19)           # true genotype: homozygous G
+    snp(COLX[5], y, "A" if hap1 else "T", col, r=17, fs=19)
+    lollipop(COLX[3], y, hap1, stem=24)
+    snp(COLX[7], y, CONFLICT[i], col, r=17, fs=19)
+def clip(x, y, d):
+    path(f"M{x} {y} l{6 * d} -8 l{6 * d} 16 l{6 * d} -16 l{6 * d} 8", stroke=ORANGE, w=2.6)
+C0, C1 = COLX[4] - 31, COLX[5] + 31
+for k, y in enumerate(READS_Y[6:]):
+    text(138, y + 6, f"Read {k + 7}", anchor="end")
+    rect(C0 + 8, y - 6.5, C1 - C0 - 16, 13, READ, rx=6.5)
+    clip(C0 + 8, y, -1); clip(C1 - 8, y, 1)
+    snp(COLX[4], y, "A", UNPH, r=17, fs=19); snp(COLX[5], y, "T", UNPH, r=17, fs=19)
+
 
 # ============================================================================
 # Panel b
 # ============================================================================
-text(516, 44, "b", cls="pl")
+text(650, 44, "b", cls="pl")
 GXS = [730 + 125.7 * i for i in range(8)]          # 8 variant columns
-TOP = ["A", "T", "A", "T", "G", "A", None, "C"]     # column 7 is the CpG
-BOT = ["G", "C", "CA", "C", "A", "T", None, "T"]
+TOP = ["A", "T", "A", None, "G", "A", "SV", "C"]    # column 4 is the CpG, column 7 the SV
+BOT = ["G", "C", "CA", None, "A", "T", "C", "T"]
 
 def graph(yt, yb, reweighted):
     r, fs = 26, 20.8
@@ -192,14 +232,17 @@ def graph(yt, yb, reweighted):
         else:
             hedge(x1, x2, yt, LBLUE, 9.5); hedge(x1, x2, yb, LRED, 9.5)
     for i, x in enumerate(GXS):
-        if i == 6:
+        if i == 3:
             line(x, yt, x, yb + 24, INK, 3.2)
             add(f'<circle cx="{x:.1f}" cy="{yt}" r="10" fill="{INK}" stroke="{INK}" stroke-width="2.6"/>')
             add(f'<circle cx="{x:.1f}" cy="{yb}" r="10" fill="#ffffff" stroke="{INK}" stroke-width="2.6"/>')
         elif reweighted and i == 4:
             filtered(x, yt); filtered(x, yb)
         else:
-            if i == 2:                              # indel column: reference A / insertion CA
+            if i == 6:                              # SV / reference (non-SV) allele
+                box(x, yt, "SV", BLUE, w=58, h=42, fs=22)
+                nosv(x, yb, RED, w=58, h=42, sw=2.6)
+            elif i == 2:                            # indel column: reference A / insertion CA
                 box(x, yt, "A", BLUE, w=58, h=42, fs=26)
                 box(x, yb, "CA", RED, w=58, h=42, fs=26, dash=("6 4.5" if reweighted else None))
             else:
@@ -208,9 +251,9 @@ def graph(yt, yb, reweighted):
 
 # --- original graph -----------------------------------------------------------
 YT, YB = 104, 166
-rect(1061.1, 72, 343.4, 128, HILITE, rx=7)
-path("M1077.1 56 L1077.1 44 L1388.5 44 L1388.5 56", stroke=NAVY, w=2.2)
-text(1232.8, 30, "CNV region", cls="h1", anchor="middle")
+rect(GXS[4] - 52, 72, GXS[5] - GXS[4] + 104, 128, HILITE, rx=7)
+path(f"M{GXS[4] - 36} 56 L{GXS[4] - 36} 44 L{GXS[5] + 36} 44 L{GXS[5] + 36} 56", stroke=NAVY, w=2.2)
+text((GXS[4] + GXS[5]) / 2, 30, "CNV region", cls="h1", anchor="middle")
 # long-range read links that calibration will expose as unreliable
 path(f"M{GXS[1]:.1f} {YB + 16} Q{GXS[4]:.1f} 272 {GXS[7]:.1f} {YB + 16}", stroke=LRED, w=2.8, op=0.9)
 path(f"M{GXS[2]:.1f} {YB + 18} Q{GXS[4]:.1f} 250 {GXS[6]:.1f} {YB + 18}", stroke=GREY, w=2.2, op=0.6)
@@ -222,15 +265,10 @@ def stage(y1, y2, s1, s2):
 def block_arrow(x, y1, y2, hw=17, hh=20, sw=7):
     add(f'<path d="M{x - sw} {y1} L{x + sw} {y1} L{x + sw} {y2 - hh} L{x + hw} {y2 - hh} L{x} {y2} L{x - hw} {y2 - hh} L{x - sw} {y2 - hh} Z" fill="{ARROW}" stroke="none"/>')
 
-stage(138, 168, "Original", "graph")
-block_arrow(548, 190, 262)
-stage(330, 360, "Evidence", "weighting")
-block_arrow(548, 384, 440)
-stage(482, 512, "Reweighted", "graph")
 
-# --- inset 1: uncertain base call -------------------------------------------
+# --- inset 1: base-quality weighting -------------------------------------------
 BX = -30                                                  # inset offset (raster places it left of the C node)
-text(828 + BX, 254, "Uncertain base call", cls="h2", anchor="middle")
+text(828 + BX, 254, "Base-quality weighting", cls="h2", anchor="middle")
 text(722 + BX, 324, "Read", anchor="end")
 rect(830 + BX - 27, 290, 54, 430 - 290, HILITE, rx=8)          # highlight column: node + bar, as in panel c
 line(748 + BX, 318, 912 + BX, 318, FRED, 9, cap="butt")
@@ -243,12 +281,12 @@ for dx, t in ((-22, "Phred"), (-5, "quality")):
 rect(749 + BX, 378, 34, 52, GREY, rx=2); rect(813 + BX, 410, 34, 20, ORANGE, rx=2, stroke="#C97A0E", sw=1.2); rect(877 + BX, 386, 34, 44, GREY, rx=2)
 line(740 + BX, 430, 920 + BX, 430, NAVY, 2, cap="butt")
 
-# --- inset 2: sequence-context reliability ----------------------------------
+# --- inset 2: tandem-repeat weighting ----------------------------------
 # Each context is the haplotype 1 sequence (top, blue) over the haplotype 2
 # sequence (bottom, red); ticks join identical flanking bases, the boxed
 # alleles are the indel. The CA insertion is solid in unique sequence and
 # dashed (down-weighted) inside the CA repeat, where its placement is ambiguous.
-text(1200, 254, "Sequence-context reliability", cls="h2", anchor="middle")
+text(1200, 254, "Tandem-repeat weighting", cls="h2", anchor="middle")
 def ctx_row(yt, yb, flanks, dash):
     for x, ch in flanks:
         text(x, yt + 6, ch, cls="sm", fill=BLUE, anchor="middle")
@@ -262,13 +300,25 @@ for x0 in (1069.2, 1265.2):
     rect(x0, 364, 89.6, 70, HILITE, rx=5)
 ctx_row(380, 418, [(x, "CA") for x in (1094, 1134, 1290, 1330)], "6 4.5")
 
-# --- inset 3: miscalled SNPs in a CNV ---------------------------------------
-text(1548, 254, "Miscalled SNVs in CNV", cls="h2", anchor="middle")
-rect(1460, 280, 176, 146, HILITE, rx=6)
-for k, (y, right) in enumerate(((306, "A"), (354, "T"), (402, "A"))):
-    text(1448, y + 6, f"Read {k + 1}", anchor="end")
-    line(1486, y, 1610, y, GREY, 2)
-    snp(1486, y, "T", BLUE, r=19, fs=21.5); filtered(1548, y, r=18); snp(1610, y, right, BLUE, r=19, fs=21.5)
+# --- inset 3: copy-number filtering ---------------------------------------
+text(1548, 254, "Copy-number filtering", cls="h2", anchor="middle")
+# Reads 1, 2 and 7 of panel a at the two SNVs inside the CNV region: read 7 is
+# clipped at both ends and carries the alternate allele at both, so the G/A call
+# is filtered and the A/T call is kept.
+def zig(x, y, d):
+    path(f"M{x} {y} l{4.5 * d} -7 l{4.5 * d} 14 l{4.5 * d} -14 l{4.5 * d} 7", stroke=ORANGE, w=2.6)
+XG, XT = 1522, 1600
+rect(XG - 26, 280, 52, 160, HILITE, rx=6)
+for y, lab, a1, a2, col, clipped in ((304, "Read 1", "G", "A", BLUE, False), (346, "Read 2", "G", "T", RED, False), (388, "Read 7", "A", "T", UNPH, True)):
+    text(1462, y + 6, lab, anchor="end")
+    if clipped:
+        rect(XG - 34, y - 6, XT - XG + 68, 12, READ, rx=6); zig(XG - 34, y, -1); zig(XT + 34, y, 1)
+    else:
+        rect(1476, y - 6, 164, 12, READ, rx=6)
+    snp(XG, y, a1, col, r=17, fs=19); snp(XT, y, a2, col, r=17, fs=19)
+text(1462, 432, "Call", cls="lbb", anchor="end")
+filtered(XG, 426, r=15)
+text(XT, 432, "kept", cls="sm", fill=UNPH, anchor="middle")
 
 # --- pointers from each inset to the evidence it calibrates ------------------
 path("M772 234 C776 214 812 212 844 196", stroke=NAVY, w=2, dash="7 6", arrow="aNavy")    # -> C (uncertain call)
@@ -449,49 +499,62 @@ text(1018, YBc + 90, "Unphased SNV", anchor="middle")
 # ============================================================================
 # Panel d
 # ============================================================================
-# Row labels sit to the left of each track (right-aligned, as in panel a).
-# Columns follow panel a: SNV, SNV, SV, CpG, the SNV unphased in c (grey),
-# indel, SNV.
+# Haplotype labels sit above their tracks, read labels to the left (right-aligned),
+# so that the eight columns of a and b fit. Columns follow a and b: SNV, SNV,
+# indel, CpG, the SNV filtered in b, SNV, SV, the SNV unphased in c. Both are
+# unphased in the output, so both are faded; the filtered one keeps its cross.
 text(1156, 722, "d", cls="pl")
-LBX = 1294                                                 # right edge of the label column
-TX0, TX1 = 1306, 1652                                      # track extent
-COLS = [1328 + 51 * i for i in range(7)]
-UP = 4                                                     # unphased column
-HY1, HY2 = 752, 822                                        # enlarged: panel d has no uncertainty strip
+LBX = 1214                                                 # right edge of the read labels
+TX0, TX1 = 1180, 1652                                      # haplotype track extent
+COLS = [1242 + 56 * i for i in range(8)]
+FL, UP = 4, 7                                              # filtered and unphased columns
+HY1, HY2 = 778, 852
 HR, HFS = 21, 23.5                                         # haplotype node radius / letter size
-RR, RFS, RP = 16, 18.5, 40                                 # read node radius / letter size / row pitch
+RR, RFS, RP = 16, 18.5, 32                                 # read node radius / letter size / row pitch
+
+
+def faded_filtered(cx, cy, r):
+    k = r * 0.6
+    add(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{r}" fill="{FADEF}" stroke="{FADE}" stroke-width="2.6"/>')
+    add(f'<path d="M{cx - k:.1f} {cy - k:.1f} L{cx + k:.1f} {cy + k:.1f} M{cx + k:.1f} {cy - k:.1f} L{cx - k:.1f} {cy + k:.1f}" stroke="{FADE}" stroke-width="2.6" stroke-linecap="round"/>')
 
 
 def hap_row(y, hap):
     col = BLUE if hap == 1 else RED
-    text(LBX, y + 7, f"Haplotype {hap}", cls="h2", fill=col, anchor="end")
+    text(TX0, y - 34, f"Haplotype {hap}", cls="h2", fill=col)
     hedge(TX0, TX1, y, LBLUE if hap == 1 else LRED, 8)
     snp(COLS[0], y, "A" if hap == 1 else "G", col, r=HR, fs=HFS)
     snp(COLS[1], y, "T" if hap == 1 else "C", col, r=HR, fs=HFS)
+    box(COLS[2], y, "A" if hap == 1 else "CA", col, w=46, h=34, fs=20)
+    lollipop(COLS[3], y, hap == 1, r=9.5, stem=30)
+    faded_filtered(COLS[FL], y, r=HR)
+    snp(COLS[5], y, "A" if hap == 1 else "T", col, r=HR, fs=HFS)
     if hap == 1:
-        box(COLS[2], y, "SV", BLUE, w=48, h=34, fs=20)
-    lollipop(COLS[3], y, hap == 1, r=9.5, stem=32)
+        box(COLS[6], y, "SV", BLUE, w=46, h=34, fs=20)
+    else:
+        nosv(COLS[6], y, RED, w=46, h=34, sw=2.6)
     snp(COLS[UP], y, "C" if hap == 1 else "T", FADE, r=HR, fs=HFS, fill=FADEF)
-    box(COLS[5], y, "A" if hap == 1 else "CA", col, w=48, h=34, fs=20)
-    snp(COLS[6], y, "G" if hap == 1 else "A", col, r=HR, fs=HFS)
 
 hap_row(HY1, 1)
 hap_row(HY2, 2)
 
-text(1178, 896, "Haplotagging reads", cls="h2")
+text(TX0, 912, "Haplotagging reads", cls="h2")
 for k, (lab, hap) in enumerate((("Read 1", 1), ("Read 2", 1), ("Read 3", 2), ("Read 4", 2))):
-    y = 928 + k * RP
+    y = 942 + k * RP
     col, rf = (BLUE, READ_B) if hap == 1 else (RED, READ_R)
     text(LBX, y + 6, lab, anchor="end", fill=col)
-    rect(TX0, y - 6, TX1 - TX0, 12, rf, rx=6)
+    rect(LBX + 8, y - 6, TX1 - LBX - 8, 12, rf, rx=6)
     snp(COLS[0], y, "A" if hap == 1 else "G", col, r=RR, fs=RFS)
     snp(COLS[1], y, "T" if hap == 1 else "C", col, r=RR, fs=RFS)
+    box(COLS[2], y, "A" if hap == 1 else "CA", col, w=40, h=26, fs=17, sw=2.4)
+    lollipop(COLS[3], y, hap == 1, r=7, stem=17, sw=3)
+    faded_filtered(COLS[FL], y, r=RR)
+    snp(COLS[5], y, "A" if hap == 1 else "T", col, r=RR, fs=RFS)
     if hap == 1:
-        box(COLS[2], y, "SV", col, w=42, h=28, fs=18, sw=2.4)
-    lollipop(COLS[3], y, hap == 1, r=7, stem=20, sw=3)
+        box(COLS[6], y, "SV", col, w=40, h=26, fs=17, sw=2.4)
+    else:
+        nosv(COLS[6], y, col, w=40, h=26)
     snp(COLS[UP], y, "C" if hap == 1 else "T", FADE, r=RR, fs=RFS, fill=FADEF)
-    box(COLS[5], y, "A" if hap == 1 else "CA", col, w=42, h=28, fs=18, sw=2.4)
-    snp(COLS[6], y, "G" if hap == 1 else "A", col, r=RR, fs=RFS)
 
 add("</g>")
 add("</svg>")

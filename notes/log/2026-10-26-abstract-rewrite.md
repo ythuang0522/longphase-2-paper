@@ -22,3 +22,8 @@ T2T-derived benchmark is the better measure (Fig. 4). New sentence: "Switch erro
 under the earlier GIAB benchmark largely disappeared under the T2T-derived benchmark, which distinguished the
 phasers more clearly, particularly in segmental duplications and other difficult regions." Sources in the
 abstract provenance comment.
+
+**Closing sentence, same day (author: version E5 of five).** "LongPhase 2 runs up to 8.9-fold faster on one
+thread and, as a drop-in replacement for LongPhase, brings joint genetic and epigenetic phasing to established
+long-read workflows." → "LongPhase 2 makes joint phasing of genetic and epigenetic variation accurate and fast
+enough for routine long-read analysis." Abstract now 170 words.

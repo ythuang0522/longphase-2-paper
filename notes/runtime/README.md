@@ -109,7 +109,7 @@ WhatsHap 2.8 `--only-snvs` (30–50× not re-timed; 95–99% CPU in the original
 - Effect on the comparison (CPU time): WhatsHap / LongPhase 4.5–8.9-fold with the original
   times (4.55, 8.95, 7.86, 7.45, 6.69 at 10–50×), 4.0–7.8-fold with the re-timed ones;
   HapCUT2 / LongPhase 3.3–5.3-fold (3.28, 5.30, 4.04, 4.76, 4.03) and 3.2–5.1-fold. The re-timed
-  values, used in `runtime_hifi.tsv` and Supplementary Table 16, give the more conservative
+  values, used in `runtime_hifi.tsv` and Supplementary Table 15, give the more conservative
   comparison.
 
 ## Commands

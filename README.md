@@ -13,9 +13,9 @@ sections/results.tex
 sections/methods.tex
 sections/discussion.tex
 references.bib
-Supplementary.tex         # Supplementary Methods, Notes, Tables 1-6, Figs. 1-9 (separate PDF)
+Supplementary.tex         # Supplementary Methods, Notes, Tables 1-5, Figs. 1-9 (separate PDF)
 figures/                  # fig1_overview.svg/.pdf, fig2-6_*.pdf (generated), supp/
-figures-source/           # make_fig1.py (Fig. 1); make_results_figs.py + results_data.py (Figs. 2-5, Supp. Figs. 9-16, Supp. Tables 7-18)
+figures-source/           # make_fig1.py (Fig. 1); make_results_figs.py + results_data.py (Figs. 2-5, Supp. Figs. 9-16, Supp. Tables 6-17)
 Makefile                  # `make`, `make wordcount`, `make clean`; rebuilds Fig. 1 from its source
 notes/log/                # dated change log, one file per change; index in notes/log/README.md
 ```
@@ -55,9 +55,9 @@ edge (6) feature-vector strips segmented by feature group (16/6/5/4 and 3/1/1/1,
 
 Supplementary Data 1, sheet `Other_phasers` (71 runs); commands, inputs and full tables in
 `notes/competitors/README.md`, scripts in `notes/competitors/scripts/`. In the manuscript since
-2026-10-19 as Supplementary Table 18, one Results paragraph, Methods and one Discussion sentence (log
+2026-10-19 as Supplementary Table 17, one Results paragraph, Methods and one Discussion sentence (log
 entries in `notes/log/`). HiPhase (SNV-only) is also in Figs. 2c,g and 5c,d, Supplementary Fig. 16c,
-Supplementary Table 11 and the abstract; the HiFi runs with indels and nanopore HapCUT2 with indels are in
+Supplementary Table 10 and the abstract; the HiFi runs with indels and nanopore HapCUT2 with indels are in
 Fig. 2b,d,f,h and Supplementary Fig. 16d; HapBridge and LongHap (SNVs with 5mC, and LongHap on all
 classes) are in Fig. 3 since 2026-10-20; TinkerHap is not in the figures.
 
@@ -116,17 +116,17 @@ on the Clair3 model (`notes/log/2026-09-24-author-decisions-read-provenance.md`)
 
 SV phasing accuracy: issue #10 data arrived 2026-10-26 (`notes/sv_phasing/`, release v2.1.2, 100 runs,
 HiPhase on HiFi). Fig. 3a–c is drawn from it (redesigned 2026-10-27: SV error rate against coverage, c SVs ≥ 1 kb on both platforms; the + indels input is Supplementary Fig. 17). Results, Discussion, Methods
-and Supplementary Table 20 rewritten from it the same day. The abstract was rewritten as a whole the
-same day (179 words).
+and Supplementary Table 19 rewritten from it the same day. The abstract was rewritten as a whole the
+same day (170 words).
 
 LongPhase v2.1.2 (JH, 2026-10-26, merged with the local Fig. 3 work the same day; JH's notes in
-`notes/log/2026-10-26-longphase-v2-1-2-rerun.md`): the Results memory clause was rewritten on 2026-10-27
-(less peak memory at all coverages but one); the abstract speed claim is resolved (8.9-fold).
+`notes/log/2026-10-26-longphase-v2-1-2-rerun.md`). The HDD runtime text of 2026-10-27 is superseded by the
+SSD times below.
 
 Runtime on an SSD (2026-10-28, `notes/log/2026-10-28-runtime-ssd.md`, `notes/runtime/runtime_ssd.tsv`, sheet
-`Runtime` of `supplementary.xlsx`): all SNV-only runs re-timed with inputs and outputs on an SSD. To decide
-(author): HDD or SSD times in Supplementary Fig. 10, Supplementary Table 16, Results, the abstract's 8.9-fold
-(9.3–14.2-fold at 60× on the SSD) and the Methods sentence on the hard-disk drive.
+`Runtime` of `supplementary.xlsx`): all SNV-only runs re-timed with inputs and outputs on an SSD. Decided
+(author, 2026-10-28, `notes/log/2026-10-28-runtime-ssd-adopted.md`): Supplementary Fig. 10, Supplementary
+Table 15, Results and Methods use the SSD times; the HapCUT2 runs not re-timed (nanopore 60×, HiFi) are left out.
 
 Everything else was moved out of the rendered text into `%  [tag]` source comments
 next to the paragraph it concerns (grep `^%  \[` in `sections/*.tex` and

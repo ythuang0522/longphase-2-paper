@@ -54,14 +54,14 @@ $^{\ast}$Correspondence: ythuang@cs.ccu.edu.tw}
 \maketitle
 
 \begin{abstract}
-Long-read sequencing captures SNVs, indels, structural variants (SVs) and 5-methylcytosine (5mC) on the same molecules, yet phasers use these classes separately. Here we present \toolname, which phases all four in one graph and uses a graph neural network to withhold likely misphased variants. Scored against the telomere-to-telomere (T2T) HG002 assembly on nanopore and PacBio HiFi data at 10--60$\times$ coverage, \toolname had 1.7- to 5.0-fold lower SNV switch error rates than widely used read-based phasers and 1.5- to 5.4-fold lower rates than methylation-aware phasers at every coverage, and phased SVs with 1.3- to 2.3-fold lower error rates than WhatsHap. Co-phasing all four classes lengthened phase blocks by 18--46\% while switch error rates stayed at least 2.5-fold below those of WhatsHap. Switch errors shared by all phasers under the earlier GIAB benchmark largely disappeared under the T2T-derived benchmark, which distinguished the phasers more clearly, particularly in segmental duplications and other difficult regions. \toolname runs up to 8.9-fold faster on one thread and, as a drop-in replacement for \longphase, brings joint genetic and epigenetic phasing to established long-read workflows.
+Long-read sequencing captures SNVs, indels, structural variants (SVs) and 5-methylcytosine (5mC) on the same molecules, yet phasers use these classes separately. Here we present \toolname, which phases all four in one graph and uses a graph neural network to withhold likely misphased variants. Scored against the telomere-to-telomere (T2T) HG002 assembly on nanopore and PacBio HiFi data at 10--60$\times$ coverage, \toolname had 1.7- to 5.0-fold lower SNV switch error rates than widely used read-based phasers and 1.5- to 5.4-fold lower rates than methylation-aware phasers at every coverage, and phased SVs with 1.3- to 2.3-fold lower error rates than WhatsHap. Co-phasing all four classes lengthened phase blocks by 18--46\% while switch error rates stayed at least 2.5-fold below those of WhatsHap. Switch errors shared by all phasers under the earlier GIAB benchmark largely disappeared under the T2T-derived benchmark, which distinguished the phasers more clearly, particularly in segmental duplications and other difficult regions. \toolname makes joint phasing of genetic and epigenetic variation accurate and fast enough for routine long-read analysis.
 \end{abstract}
 %  [provenance] Abstract rewritten 2026-10-08 (author request: Nature Methods register,
 %  150 words). Sources (v2.1.1, 2026-10-16, notes/v2.1.1/claims.py): 2.9--5.0-fold = 2.9--3.9x WhatsHap, 3.3--5.0x HapCUT2, 10--60x
-%  (Results, Supp. Table 8); HiFi 2.4--3.5x = 2.4--2.8x WhatsHap, 2.9--3.5x HapCUT2 (HapCUT2 added
-%  2026-10-16, notes/hifi/README.md; was 2.4--2.8x vs WhatsHap only) (Supp. Table 11, per-coverage calls,
+%  (Results, Supp. Table 7); HiFi 2.4--3.5x = 2.4--2.8x WhatsHap, 2.9--3.5x HapCUT2 (HapCUT2 added
+%  2026-10-16, notes/hifi/README.md; was 2.4--2.8x vs WhatsHap only) (Supp. Table 10, per-coverage calls,
 %  issue #4); 44% = four-class corrected N50 4.14 vs SNV-only 2.87 Mb at 60x
-%  (Supp. Table 10); 1.2--1.3-fold at 30--60x and 93% coincident errors (Supp. Tables 9, 13).
+%  (Supp. Table 9); 1.2--1.3-fold at 30--60x and 93% coincident errors (Supp. Tables 8, 12).
 %  Speed claim restored 2026-10-08 (author request). 6--7x at 60x = HapCUT2 95 and WhatsHap
 %  112 min vs LongPhase 2 with GNN 16 min, read from JHL's original Fig. 2e chart (initial
 %  commit b8339ba, figures/fig2_snv_comparison.png, panel E, log scale); exact table: issue #3.
@@ -79,14 +79,16 @@ Long-read sequencing captures SNVs, indels, structural variants (SVs) and 5-meth
 %  1.5--1.8x, HapBridge 1.5--1.6x, LongHap 2.2--5.4x (Results, v2.1.2 numbers). SVs 1.3--2.3-fold =
 %  WhatsHap / LongPhase 2 SV error rate, both platforms and inputs, every coverage (notes/sv_phasing/,
 %  issue #10). 18--46% and >= 2.5-fold = four-class vs SNV-only N50 and the WhatsHap comparison (Results,
-%  Supp. Table 10). Benchmarks: 1.2--1.3x at 30--60x and 93% coincident errors at 60x under v4.2.1;
+%  Supp. Table 9). Benchmarks: 1.2--1.3x at 30--60x and 93% coincident errors at 60x under v4.2.1;
 %  4.3--5.0x at 30--60x under v5.0q (Results, Fig. 4). Speed 8.9-fold = one thread at 60x, LongPhase 2
 %  v2.1.2 12.8 vs WhatsHap 113.8 min (7.6-fold vs HapCUT2 96.4 min; notes/runtime/runtime.tsv, JH).
-%  Not named: Margin and Ralphi (10--20x only; Margin lower at 10x) and TinkerHap (Supp. Table 18).
+%  Not named: Margin and Ralphi (10--20x only; Margin lower at 10x) and TinkerHap (Supp. Table 17).
 %  Benchmark sentence replaced 2026-10-26 (author, version H2: no coverage-specific numbers): shared errors
 %  at 60x 93/86/74% of each tool's under v4.2.1 vs 38/10/8% under v5.0q (Fig. 4c); shared regions 30--60x
-%  1,133--1,492 vs 32--393 errors per tool (Supp. Table 13); separation 1.2--1.6x vs 3.3--5.0x (Fig. 4a,b);
+%  1,133--1,492 vs 32--393 errors per tool (Supp. Table 12); separation 1.2--1.6x vs 3.3--5.0x (Fig. 4a,b);
 %  segmental duplications 3.2--5.4x vs outside difficult regions 1.7--2.2x (Fig. 4d,e).
+%  Closing sentence replaced 2026-10-26 (author, version E5): "fast" = one thread at 60x 8.9-fold vs WhatsHap,
+%  7.6-fold vs HapCUT2 (v2.1.2, notes/runtime/runtime.tsv); LongPhase compatibility stays in the Introduction (same interface and output formats).
 
 \section*{Introduction}
 \input{sections/introduction}
@@ -95,10 +97,10 @@ Long-read sequencing captures SNVs, indels, structural variants (SVs) and 5-meth
   \centering
   \includegraphics[width=\textwidth]{fig1_overview}
   \caption{\textbf{Overview of \toolname.}
-  \textbf{a}, SNVs, small indels, SVs and 5mC sites carried by the same long reads enter one phasing problem; alleles are coloured by read haplotype.
-  \textbf{b}, Weighted phasing graph. Read-supported edges link allele nodes, and each observation is weighted by base quality and sequence context; the inset shows an indel down-weighted inside a tandem repeat.
+  \textbf{a}, SNVs, small indels and SVs from upstream variant callers (dashed tag) and 5mC sites called by the \texttt{modcall} module of \toolname (navy tag), carried by the same long reads, enter one phasing problem; alleles are coloured by read haplotype, a dash marks the reference allele of the SV, and grey reads are clipped at both ends (orange).
+  \textbf{b}, Weighted phasing graph before (top) and after (bottom) evidence weighting. Read-supported edges link allele nodes; observations at low-quality bases and indels in tandem repeats are down-weighted, and a variant whose alternate allele comes from clipped reads in a copy-number-altered region is filtered (insets).
   \textbf{c}, A graph neural network evaluates local phasing graphs centred on variants with high phasing uncertainty (Methods). Predicted phase-disagreement onsets are selectively unphased (GNN correction; grey).
-  \textbf{d}, Output: phased haplotypes of all four variant classes, with the selected variant left unphased (faded), and haplotagged reads.}
+  \textbf{d}, Output: phased haplotypes of all four variant classes, with the filtered variant (cross) and the selected variant left unphased (faded), and haplotagged reads.}
   \label{fig:overview}
 \end{figure}
 
@@ -109,11 +111,11 @@ Long-read sequencing captures SNVs, indels, structural variants (SVs) and 5-meth
   \centering
   \includegraphics[width=\textwidth]{fig2_phaser_comparison.pdf}
   \caption{\textbf{Accuracy and contiguity of \toolname compared with other phasers on sequence variants from nanopore and PacBio HiFi data.}
-  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$ (\textbf{a},\textbf{b},\textbf{e},\textbf{f}) and PacBio HiFi (Revio) reads down-sampled to 10--50$\times$ (\textbf{c},\textbf{d},\textbf{g},\textbf{h}); identical variant calls for every tool, scored against the T2T-HG002-derived v5.0q benchmark. Nanopore values at 10--20$\times$ are means of ten down-sampling replicates, except for \hapcut with indels; all other values come from one down-sampling (Methods). Top row, SNV switch error rate against coverage; bottom row, SNV switch error rate against phase-block N50, one point per coverage from the lowest (bottom right) to the highest (top left); the N50 axes of \textbf{g} and \textbf{h} differ from those of \textbf{e} and \textbf{f}. Hamming distances are shown in Supplementary Fig.~16 and phased fractions in Fig.~\ref{fig:unphased}.
-  \textbf{a},\textbf{e}, Nanopore data: SNV phasing compared with \whatshap and \hapcut.
-  \textbf{b},\textbf{f}, Nanopore data: SNV and indel co-phasing compared with \whatshap and \hapcut; in \textbf{b}, solid lines score consecutive SNV pairs and dotted lines consecutive pairs that include an indel (SNV--indel or indel--indel; Supplementary Table~14).
-  \textbf{c},\textbf{g}, PacBio HiFi data: SNV phasing compared with \whatshap, \hapcut and HiPhase; HiPhase, which has no SNV-only option, was given the calls restricted to SNVs.
-  \textbf{d},\textbf{h}, PacBio HiFi data: SNV and indel co-phasing compared with the same tools, scored on consecutive SNV pairs (Supplementary Table~18). On HiFi data, \toolname uses the network trained on nanopore data.}
+  HG002 nanopore R10.4.1 data at 10--60$\times$ and PacBio HiFi data at 10--50$\times$, scored against the v5.0q benchmark. Top row, SNV switch error rate against coverage; bottom row, SNV switch error rate against phase-block N50 for the same runs, one point per coverage.
+  \textbf{a},\textbf{e}, Nanopore SNVs.
+  \textbf{b},\textbf{f}, Nanopore SNVs and indels; in \textbf{b}, dotted lines show variant pairs that include an indel.
+  \textbf{c},\textbf{g}, PacBio HiFi SNVs.
+  \textbf{d},\textbf{h}, PacBio HiFi SNVs and indels.}
   \label{fig:phasers}
 \end{figure}
 
@@ -121,12 +123,12 @@ Long-read sequencing captures SNVs, indels, structural variants (SVs) and 5-meth
   \centering
   \includegraphics[width=\textwidth]{fig3_sv_methylation.pdf}
   \caption{\textbf{Joint phasing of SVs and 5mC by \toolname compared with other phasers.}
-  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$ and PacBio HiFi (Revio) reads down-sampled to 10--50$\times$, replicate~1 unless stated. SV phase was scored against the T2T-HG002 assembly and SNV phase against v5.0q. In \textbf{a}--\textbf{c}, every tool received the same SNV and SV calls (Methods). MethPhaser and HapBridge were given the SNV-only output of \toolname without GNN correction; LongHap phased the same calls with its own 5mC input (Methods and Supplementary Table~5).
+  HG002 nanopore R10.4.1 reads down-sampled to 10--60$\times$ and PacBio HiFi (Revio) reads down-sampled to 10--50$\times$, replicate~1 unless stated. SV phase was scored against the T2T-HG002 assembly and SNV phase against v5.0q. LongHap used its own 5mC input (Methods and Supplementary Table~5).
   \textbf{a},\textbf{b}, SV phasing error rate against coverage on nanopore (\textbf{a}) and PacBio HiFi (\textbf{b}) data, with SNVs and SVs as input (with SNVs, indels and SVs in Supplementary Fig.~17); SVs shorter than 1~kb are 90--93\% of the SVs scored.
-  \textbf{c}, SV phasing error rate of SVs of at least 1~kb on nanopore (solid) and PacBio HiFi (dotted) data. Counts and error rates by size are in Supplementary Table~20.
+  \textbf{c}, SV phasing error rate of SVs of at least 1~kb on nanopore (solid) and PacBio HiFi (dotted) data. Counts and error rates by size are in Supplementary Table~19.
   \textbf{d}, SNV switch error rate against coverage of SNV and 5mC co-phasing on nanopore data.
-  \textbf{e}, SNV switch error rate against phase-block N50 of the runs in \textbf{d}, one point per coverage from the lowest (bottom right) to the highest (top left). Phased fractions are in Supplementary Table~18 and Hamming distances in Supplementary Fig.~16e.
-  \textbf{f}, SNV switch error rate against phase-block N50 by evidence type on nanopore data: \toolname with SNVs and with SNVs, indels, SVs and 5mC (means of ten replicates at 10--20$\times$; Supplementary Table~10), compared with \whatshap with SNVs and with SNVs and indels and with LongHap with SNVs, indels, SVs and 5mC; filled markers, four classes. Other evidence types are in Supplementary Fig.~15.}
+  \textbf{e}, SNV switch error rate against phase-block N50 of the runs in \textbf{d}, one point per coverage from the lowest (bottom right) to the highest (top left). Phased fractions are in Supplementary Table~17 and Hamming distances in Supplementary Fig.~16e.
+  \textbf{f}, SNV switch error rate against phase-block N50 by evidence type on nanopore data: \toolname with SNVs and with SNVs, indels, SVs and 5mC (means of ten replicates at 10--20$\times$; Supplementary Table~9), compared with \whatshap with SNVs and with SNVs and indels and with LongHap with SNVs, indels, SVs and 5mC; filled markers, four classes. Other evidence types are in Supplementary Fig.~15.}
   \label{fig:methylation}
 \end{figure}
 
@@ -137,22 +139,22 @@ Long-read sequencing captures SNVs, indels, structural variants (SVs) and 5-meth
   SNV-only phasing of HG002 nanopore R10.4.1 data; replicates as in Fig.~\ref{fig:phasers}; both truth VCFs used in full.
   \textbf{a},\textbf{b}, Genome-wide switch errors under v4.2.1 (\textbf{a}) and v5.0q (\textbf{b}).
   \textbf{c}, Switch errors at 60$\times$; grey, switch errors made by all three tools at the same SNV pair, with their share of each tool's total.
-  \textbf{d},\textbf{e}, Switch error rate against v5.0q at 10$\times$ (\textbf{d}) and 60$\times$ (\textbf{e}) inside the v5.0q benchmark regions and in subsets of them: outside difficult regions and in segmental duplications (GIAB v3.6 strata), and in the parts that v4.2.1 also covers or that v5.0q adds. Below the dashed line, outside the benchmark regions of both truth sets, where the truth phase is least certain (exploratory). A variant pair is assigned to a region when both of its variants lie in it (Supplementary Table~13).}
+  \textbf{d},\textbf{e}, Switch error rate against v5.0q at 10$\times$ (\textbf{d}) and 60$\times$ (\textbf{e}) inside the v5.0q benchmark regions and in subsets of them: outside difficult regions and in segmental duplications (GIAB v3.6 strata), and in the parts that v4.2.1 also covers or that v5.0q adds. Below the dashed line, outside the benchmark regions of both truth sets, where the truth phase is least certain (exploratory). A variant pair is assigned to a region when both of its variants lie in it (Supplementary Table~12).}
   \label{fig:benchmarks}
 \end{figure}
 
 \begin{figure}[p]
   \centering
   \includegraphics[width=\textwidth]{fig5_phased_unphased.pdf}
-  \caption{\textbf{Calls phased by \toolname, \whatshap and HiPhase, and SNVs unphased by GNN correction.}
+  \caption{\textbf{Calls phased by \toolname, \whatshap and HiPhase, and SNVs withheld at high phasing uncertainty.}
   SNV-only phasing of HG002 nanopore R10.4.1 data (\textbf{a}, \textbf{b}, \textbf{e}--\textbf{h}) and PacBio HiFi data (\textbf{c}, \textbf{d}). \textbf{a}--\textbf{d}, coverages and replicates as in Fig.~\ref{fig:phasers}; \textbf{e}--\textbf{h}, replicate~1.
   \textbf{a},\textbf{c}, Completeness: fraction of the heterozygous SNVs of the v5.0q benchmark phased from nanopore (\textbf{a}) and HiFi (\textbf{c}) data; every tool received the same heterozygous calls.
-  \textbf{b},\textbf{d}, Precision: share of the phased calls on chr1--22 that match a benchmark heterozygous SNV in position and alleles, for nanopore (\textbf{b}) and HiFi (\textbf{d}) data (Supplementary Tables~8 and~11).
+  \textbf{b},\textbf{d}, Precision: share of the phased calls on chr1--22 that match a benchmark heterozygous SNV in position and alleles, for nanopore (\textbf{b}) and HiFi (\textbf{d}) data (Supplementary Tables~7 and~10).
   \textbf{c},\textbf{d} also show HiPhase, which was given the calls restricted to SNVs.
-  \textbf{e}, Phased heterozygous calls on chr1--22 at positions where v5.0q has a homozygous genotype (genotype errors; Supplementary Table~17).
-  \textbf{f}, SNVs phased before and unphased after GNN correction, by their genotype in the v5.0q benchmark VCF, matched by position without a benchmark BED.
-  \textbf{g}, At 60$\times$, these SNVs and a random sample of SNVs phased before correction, inside or outside the regions where both haplotypes of the T2T-HG002 assembly align one-to-one to GRCh38 (exploratory).
-  \textbf{h}, The share outside these regions for each chromosome (Supplementary Table~12).}
+  \textbf{e}, Phased heterozygous calls on chr1--22 at positions where v5.0q has a homozygous genotype (genotype errors; Supplementary Table~16).
+  \textbf{f}, SNVs that \toolname withheld at high phasing uncertainty, by their genotype in the v5.0q benchmark VCF, matched by position without a benchmark BED.
+  \textbf{g}, At 60$\times$, these SNVs and a random sample of phased SNVs, inside or outside the regions where both haplotypes of the T2T-HG002 assembly align one-to-one to GRCh38 (exploratory).
+  \textbf{h}, The share outside these regions for each chromosome (Supplementary Table~11).}
   \label{fig:unphased}
 \end{figure}
 

@@ -1,4 +1,4 @@
-"""Load the benchmark tables behind Figs. 2-6 and Supplementary Tables 7-11.
+"""Load the benchmark tables behind Figs. 2-6 and Supplementary Tables 6-10.
 
 Sources (repo root):
   supplementary.xlsx        per-run v5.0q metrics (JHL, 2026-10-04)

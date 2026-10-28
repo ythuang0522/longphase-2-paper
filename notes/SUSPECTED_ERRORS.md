@@ -26,9 +26,9 @@ also a red `\todo{}` in the manuscript. Paths into `longphase/` refer to
 
 ## Resolved or superseded
 
-- Runtimes without a source (former item 6): measured by JHL (issue #3, `notes/runtime/`, 2026-10-09). Abstract and Results now use the one-thread comparison (5.4–6.3-fold at 60×); Supplementary Table 16. Memory is reported in GiB (`/usr/bin/time` gives KiB; `notes/runtime/README.md` divides by 10^6 and labels it GB).
+- Runtimes without a source (former item 6): measured by JHL (issue #3, `notes/runtime/`, 2026-10-09). Abstract and Results now use the one-thread comparison (5.4–6.3-fold at 60×); Supplementary Table 15. Memory is reported in GiB (`/usr/bin/time` gives KiB; `notes/runtime/README.md` divides by 10^6 and labels it GB).
 - Plot-read values of the old Supplementary Fig. 17 (former item 8): figure deleted on 2026-10-09 (author), with the two Results sentences that quoted its values (PE = 0 share; clustering and low-GQ shares of benchmark-absent calls). The Discussion claim about candidates an entropy threshold would miss is now worded as a possibility.
-- Training/evaluation overlap (former item 13): held-out chr17/21/22 rescored by JHL (issue #2, `notes/heldout/`, 2026-10-09); Results, Supplementary Table 15 and Supplementary Method 4 report them. GNN correction removes 14–23% of switch errors there against 31–33% genome-wide; the advantage over WhatsHap/HapCUT2 is unchanged.
+- Training/evaluation overlap (former item 13): held-out chr17/21/22 rescored by JHL (issue #2, `notes/heldout/`, 2026-10-09); Results, Supplementary Table 14 and Supplementary Method 4 report them. GNN correction removes 14–23% of switch errors there against 31–33% genome-wide; the advantage over WhatsHap/HapCUT2 is unchanged.
 - Total SNVs unphased at 60x: **56,076**, confirmed by the author on 2026-10-06; the old 60,267 total is superseded.
 
 - Small-variant caller: PEPPER-Margin-DeepVariant, not Clair3 (author, 2026-10-05); release and preset still missing.
