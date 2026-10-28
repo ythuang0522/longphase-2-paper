@@ -123,6 +123,11 @@ LongPhase v2.1.2 (JH, 2026-10-26, merged with the local Fig. 3 work the same day
 `notes/log/2026-10-26-longphase-v2-1-2-rerun.md`): still open is the Results memory clause ("at the cost
 of higher peak memory" no longer holds), marked `\todo{}`; the abstract speed claim is resolved (8.9-fold).
 
+Runtime on an SSD (2026-10-28, `notes/log/2026-10-28-runtime-ssd.md`, `notes/runtime/runtime_ssd.tsv`, sheet
+`Runtime` of `supplementary.xlsx`): all SNV-only runs re-timed with inputs and outputs on an SSD. To decide
+(author): HDD or SSD times in Supplementary Fig. 10, Supplementary Table 16, Results, the abstract's 8.9-fold
+(9.3–14.2-fold at 60× on the SSD) and the Methods sentence on the hard-disk drive.
+
 Everything else was moved out of the rendered text into `%  [tag]` source comments
 next to the paragraph it concerns (grep `^%  \[` in `sections/*.tex` and
 `Supplementary.tex`):

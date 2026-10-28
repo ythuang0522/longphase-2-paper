@@ -3,6 +3,7 @@
 One file per change, newest first. Moved verbatim from `../../README.md` on 2026-10-20;
 each file adds the entry title as its heading.
 
+- 2026-10-28 — [Runtime re-timed on an SSD, 2026-10-28 (HDD or SSD left to the author)](2026-10-28-runtime-ssd.md)
 - 2026-10-26 — [Abstract rewritten as a whole, 2026-10-26 (author decision)](2026-10-26-abstract-rewrite.md)
 - 2026-10-26 — [SV phasing text rewritten from issue #10 data, Supplementary Table 20 added, 2026-10-26 (author decision)](2026-10-26-sv-text-issue-10.md)
 - 2026-10-26 — [Fig. 3a–c redrawn as option B, Supplementary Fig. 17 added, 2026-10-26 (author decision)](2026-10-26-fig3-sv-option-b.md)
