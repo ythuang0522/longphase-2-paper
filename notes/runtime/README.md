@@ -141,3 +141,13 @@ a log (GCphase, Ralphi) are kept as given, tools without a run at a coverage are
 `LongPhase_GNN` is replaced by `longphase_v2.1.1` (one `phase` command, `-t 24`, from the
 2026-10-14/16 rerun). `build_all_tools_runtime.py` rebuilds it on the lab server; its docstring
 lists the log of every column.
+
+## SSD (`runtime_ssd.tsv`, 2026-10-28)
+
+The same SNV-only runs (replicate 1, nanopore 10–60×, HiFi 10–50×) re-timed with inputs and outputs on an
+SSD (ext4, NVMe), one run at a time on an idle machine, page cache cleared before every run; LongPhase 2
+v2.1.2 with 24 threads and one thread at every coverage. `build_runtime_ssd.py` writes the table (its
+docstring has the details: binaries, HapCUT2 input, output checks); scripts in `ssd/`. HapCUT2 at nanopore
+60× and on HiFi data was not re-timed (column `storage` = HDD). Tables and fold changes are in
+`notes/log/2026-10-28-runtime-ssd.md`. `build_runtime_sheet.py` writes the HDD and SSD values into the `Runtime`
+sheet of `supplementary.xlsx`.
