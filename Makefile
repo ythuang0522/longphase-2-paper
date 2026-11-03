@@ -1,13 +1,14 @@
-PYTHON ?= python3
+# The base miniforge numpy is broken; the gemini env has matplotlib + openpyxl.
+PYTHON ?= $(HOME)/miniforge3/envs/gemini/bin/python3
 
 all: main.pdf Supplementary.pdf
 
-# Figs. 2-6, Supp. Figs. 10-12/14 and Supp. Tables 7-12 from supplementary.xlsx;
-# needs matplotlib + openpyxl (here: make results-figs PYTHON=~/miniforge3/envs/gemini/bin/python3)
+# Figs. 2-4, Supp. Figs. 9-16 and Supp. Tables 6-17 from supplementary.xlsx;
+# needs matplotlib + openpyxl (override with make results-figs PYTHON=...)
 results-figs:
 	cd figures-source && $(PYTHON) make_results_figs.py
 
-Supplementary.pdf: Supplementary.tex references.bib figures/supp/*.pdf figures-source/supp_tables.tex
+Supplementary.pdf: Supplementary.tex references.bib figures/supp/*.pdf figures-source/supp_tables/*.tex figures-source/supp_table_sv.tex
 	latexmk -pdf -interaction=nonstopmode -halt-on-error Supplementary.tex
 
 figures/supp/%.pdf: figures/supp/%.svg

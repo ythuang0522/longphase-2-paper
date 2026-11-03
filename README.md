@@ -13,9 +13,9 @@ sections/results.tex
 sections/methods.tex
 sections/discussion.tex
 references.bib
-Supplementary.tex         # Supplementary Methods, Notes, Tables 1-5, Figs. 1-9 (separate PDF)
+Supplementary.tex         # Supplementary Methods, Note, Tables 1-19, Figs. 1-17 in order of first citation in the main text (separate PDF)
 figures/                  # fig1_overview.svg/.pdf, fig2-6_*.pdf (generated), supp/
-figures-source/           # make_fig1.py (Fig. 1); make_results_figs.py + results_data.py (Figs. 2-5, Supp. Figs. 9-16, Supp. Tables 6-17)
+figures-source/           # make_fig1.py (Fig. 1); make_results_figs.py + results_data.py (Figs. 2-5, Supp. Figs. 1-7, 15, 17, Supp. Tables 1-11, 17, 18; one file per table in supp_tables/)
 Makefile                  # `make`, `make wordcount`, `make clean`; rebuilds Fig. 1 from its source
 notes/log/                # dated change log, one file per change; index in notes/log/README.md
 ```
@@ -33,7 +33,7 @@ calibration insets, reweighted graph with low-confidence and faded edges (b);
 feature-labelled window → local message passing (GATv2 star) + global self-attention
 (Transformer token row) → feature fusion with input skip → feed-forward network with skip,
 framed as repeated layers → phase-confidence refinement; layer norm and classifier head
-left to the caption and Supplementary Fig. 6 (c); haplotypes with SV, indel and
+left to the caption and Supplementary Fig. 14 (c); haplotypes with SV, indel and
 CpG alleles plus haplotagged reads (d). Edit the script, not the SVG.
 Revised 2026-09-24 for Nature Methods print requirements: no text below 5 pt at 180 mm; SNV
 terminology and indel-as-sequence-box glyph throughout; panel d is the phased result of the
@@ -53,20 +53,24 @@ edge (6) feature-vector strips segmented by feature group (16/6/5/4 and 3/1/1/1,
 
 ## Comparison with further phasers (2026-10-17)
 
-Supplementary Data 1, sheet `Other_phasers` (71 runs); commands, inputs and full tables in
+Supplementary Data 1, sheet `Other_phasers` (65 runs; the 6 HapBridge runs moved to
+`notes/competitors/hapbridge_hidden_rows.tsv` on 2026-11-03); commands, inputs and full tables in
 `notes/competitors/README.md`, scripts in `notes/competitors/scripts/`. In the manuscript since
-2026-10-19 as Supplementary Table 17, one Results paragraph, Methods and one Discussion sentence (log
-entries in `notes/log/`). HiPhase (SNV-only) is also in Figs. 2c,g and 5c,d, Supplementary Fig. 16c,
-Supplementary Table 10 and the abstract; the HiFi runs with indels and nanopore HapCUT2 with indels are in
-Fig. 2b,d,f,h and Supplementary Fig. 16d; HapBridge and LongHap (SNVs with 5mC, and LongHap on all
-classes) are in Fig. 3 since 2026-10-20; TinkerHap is not in the figures.
+2026-10-19 as Supplementary Table 4 (Table 17 until 2026-11-03), one Results paragraph, Methods and one Discussion sentence (log
+entries in `notes/log/`). HiPhase (SNV-only) is also in Figs. 2c,g and 5c,d, Supplementary Fig. 1c,
+Supplementary Table 3 and the abstract; the HiFi runs with indels and nanopore HapCUT2 with indels are in
+Fig. 2b,d,f,h and Supplementary Fig. 1d; LongHap (SNVs with 5mC, and on all classes) is in Fig. 3
+since 2026-10-20; TinkerHap is not in the figures. HapBridge is hidden from the main text, the
+Supplementary Information, the figures and Supplementary Table 4 since 2026-11-03 (author decision:
+bioRxiv preprint, little public use); its rows are kept in `notes/competitors/hapbridge_hidden_rows.tsv` (out of
+Supplementary Data 1 since 2026-11-03), and `HIDE = {"hb"}` in `figures-source/make_results_figs.py` shows it again when emptied.
 
 **Tools added and why**
 
 | Tool | Platform | Why it was added |
 |---|---|---|
 | LongHap 0.2.0 (bioRxiv 2026) | ONT 10–60× | Co-phases SNVs, indels and SVs with 5mC, the same claim as LongPhase 2; its preprint compares itself with LongPhase; cited in the Introduction. Run as SNVs + 5mC (vs LongPhase Mod and MethPhaser) and as all variant types + 5mC (vs LongPhase Indel+Mod+SV). |
-| HapBridge | ONT 10–60× | Methylation post-processor of the MethPhaser kind (bridges blocks, corrects switches); MethPhaser is already compared; cited. |
+| HapBridge | ONT 10–60× | Methylation post-processor of the MethPhaser kind (bridges blocks, corrects switches); MethPhaser is already compared; cited. Hidden since 2026-11-03 (kept for a reviewer request). |
 | HiPhase 1.7.0 (PacBio) | HiFi 10–50× | Phaser of PacBio's human WGS pipeline, the default for HiFi users. |
 | TinkerHap 1.0.0 (2025) | ONT 10–60×, HiFi 10–50× | Recently published read-based phaser benchmarked against WhatsHap and HapCUT2. |
 | LongPhase, WhatsHap, HapCUT2 with indels | HapCUT2: both; LongPhase, WhatsHap: HiFi (ONT rows already existed) | HiPhase and TinkerHap phase indels by default, which lengthens blocks; comparing them with SNV-only runs would favour them. These runs complete the SNV + indel comparison on both platforms. |
@@ -115,8 +119,8 @@ ten seed values, the chr1-22 derivation of the v5.0q VCF, source data, and one n
 on the Clair3 model (`notes/log/2026-09-24-author-decisions-read-provenance.md`).
 
 SV phasing accuracy: issue #10 data arrived 2026-10-26 (`notes/sv_phasing/`, release v2.1.2, 100 runs,
-HiPhase on HiFi). Fig. 3a–c is drawn from it (redesigned 2026-10-27: SV error rate against coverage, c SVs ≥ 1 kb on both platforms; the + indels input is Supplementary Fig. 17). Results, Discussion, Methods
-and Supplementary Table 19 rewritten from it the same day. The abstract was rewritten as a whole the
+HiPhase on HiFi). Fig. 3a–c is drawn from it (redesigned 2026-10-27: SV error rate against coverage, c SVs ≥ 1 kb on both platforms; the + indels input is Supplementary Fig. 2). Results, Discussion, Methods
+and Supplementary Table 5 rewritten from it the same day. The abstract was rewritten as a whole the
 same day (170 words).
 
 LongPhase v2.1.2 (JH, 2026-10-26, merged with the local Fig. 3 work the same day; JH's notes in
@@ -125,8 +129,8 @@ SSD times below.
 
 Runtime on an SSD (2026-10-28, `notes/log/2026-10-28-runtime-ssd.md`, `notes/runtime/runtime_ssd.tsv`, sheet
 `Runtime` of `supplementary.xlsx`): all SNV-only runs re-timed with inputs and outputs on an SSD. Decided
-(author, 2026-10-28, `notes/log/2026-10-28-runtime-ssd-adopted.md`): Supplementary Fig. 10, Supplementary
-Table 15, Results and Methods use the SSD times; the HapCUT2 runs not re-timed (nanopore 60×, HiFi) are left out.
+(author, 2026-10-28, `notes/log/2026-10-28-runtime-ssd-adopted.md`): Supplementary Fig. 6, Supplementary
+Table 11, Results and Methods use the SSD times; the HapCUT2 runs not re-timed (nanopore 60×, HiFi) are left out.
 
 Everything else was moved out of the rendered text into `%  [tag]` source comments
 next to the paragraph it concerns (grep `^%  \[` in `sections/*.tex` and

@@ -2,6 +2,13 @@
 
 One file per change, newest first. Moved verbatim from `../../README.md` on 2026-10-20;
 each file adds the entry title as its heading.
+- 2026-11-03 — [Supplementary Figures and Tables renumbered by first citation in the main text, 2026-11-03 (author request)](2026-11-03-supplementary-renumbered.md)
+- 2026-11-03 — ["Variant class" replaces "evidence class/type", 2026-11-03 (author decision)](2026-11-03-variant-class-terminology.md)
+- 2026-11-03 — [Fig. 3 legend shortened from 246 to 120 words, 2026-11-03 (author decision, option A)](2026-11-03-fig3-legend-shortened.md)
+- 2026-11-03 — [Results: evidence-class paragraphs merged, 2026-11-03 (author request)](2026-11-03-results-evidence-class-merge.md)
+- 2026-11-03 — [Results: 5mC paragraphs redesigned by input set (MethPhaser and LongHap), 2026-11-03 (author decision, option D)](2026-11-03-results-5mc-paragraphs-option-d.md)
+- 2026-11-03 — [HapBridge hidden from the manuscript, 2026-11-03 (author decision)](2026-11-03-hapbridge-hidden.md)
+- 2026-11-03 — [Results: 10-kb deletion sentence removed; SV and 5mC subsections merged, 2026-11-03 (author decision, title B)](2026-11-03-results-sv-10kb-and-subsection-merge.md)
 - 2026-10-28 — [Runtime: SSD timings adopted; HapCUT2 runs not re-timed left out, 2026-10-28 (author decision)](2026-10-28-runtime-ssd-adopted.md)
 - 2026-10-28 — [Runtime re-timed on an SSD, 2026-10-28 (HDD or SSD left to the author)](2026-10-28-runtime-ssd.md)
 - 2026-10-28 — [Results: SV rate sentence leads with the fold; "SV phasing error rate" used throughout, 2026-10-28 (author decision, option A)](2026-10-28-results-sv-rate-sentence.md)

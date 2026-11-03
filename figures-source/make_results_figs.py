@@ -16,7 +16,7 @@ Run from the repository root with any Python that has matplotlib and openpyxl:
 Outputs:
     figures/fig{2..4}_*.pdf
     figures/supp/suppfig{10..16}_*.pdf and suppfig_runtime.pdf
-    figures-source/supp_tables.tex   (\\input by Supplementary.tex)
+    figures-source/supp_tables/<label>.tex   (one file per table, \\input by Supplementary.tex)
 """
 import os
 import re
@@ -84,6 +84,11 @@ NAME = {
     "hc": "HapCUT2", "margin": "Margin", "ralphi": "Ralphi", "gc": "GCphase",
     "meth": "MethPhaser", "hp": "HiPhase", "hb": "HapBridge", "lh": "LongHap",
 }
+# [author-hidden] 2026-11-03: HapBridge (preprint, little public use) is hidden from every figure and
+# table and from Supplementary Data 1; its rows are kept in notes/competitors/hapbridge_hidden_rows.tsv,
+# which _other_phasers() reads back when this set is emptied.
+HIDE = {"hb"}
+shown = lambda pairs: tuple(x for x in pairs if x[0] not in HIDE)
 XLSX_TOOL = {"lp": "longphase_v2.0.1", "lp_gnn": "longphase_v2.1.2",
              "wh": "whatshap_v28", "hc": "hapcut2_v134", "margin": "margin_v231",
              "ralphi": "ralphi", "gc": "gcphase"}
@@ -569,7 +574,7 @@ def fig3_sv_methylation():
     correctly and the 50 bp-1 kb error rates are in Supplementary Table 19 and the text. Row 2, SNVs and
     5mC on nanopore data: d switch error rate against coverage (linear axis, author) against MethPhaser,
     HapBridge and LongHap; e switch error rate against block N50 (the former d; phased SNVs, the former e,
-    are in the text and Supplementary Table 17); f by evidence type, last as the conclusion: LongPhase 2
+    are in the text and Supplementary Table 17); f by variant class, last as the conclusion: LongPhase 2
     SNVs and four classes, WhatsHap SNVs and + indels, LongHap four classes (LongPhase 2 + indels, which
     coincides with four classes, is Supplementary Fig. 15). e and f use a linear switch-error axis as d.
     The Hamming panel of the 2026-10-20 Fig. 3 is Supplementary Fig. 16e."""
@@ -594,7 +599,7 @@ def fig3_sv_methylation():
     all4 = lambda c_: D["coph"]["Indel+Mod+SV"]["longphase_v2.1.2"].get(c_)
     mod1 = lambda c_: [r for r in D["coph"]["Mod"]["longphase_v2.1.2"][c_] if r["rep"] == 1]
     meth = lambda c_: [{k: meth_value(c_, k) for k in ("sw_pct", "ham", "n50", "psnv_pct")}]
-    tools = (("lh", meth_other("lh")), ("hb", meth_other("hb")), ("meth", meth), ("lp_gnn", mod1))
+    tools = shown((("lh", meth_other("lh")), ("hb", meth_other("hb")), ("meth", meth), ("lp_gnn", mod1)))
     for t, get in tools:   # d, e; comparators first, LongPhase 2 on top
         st = STY[t]
         d.plot(BAR_COVS, [ms(get(c_), "sw_pct")[0] for c_ in BAR_COVS], color=C[t], ls="-",
@@ -618,8 +623,8 @@ def fig3_sv_methylation():
 
     grey = "#555555"
     k1 = [thandle(t, n) for t, n in (("lp_gnn", "LongPhase 2"), ("wh", "WhatsHap"), ("hp", "HiPhase"))]
-    k2 = [thandle(t, n) for t, n in (("lp_gnn", "LongPhase 2"), ("meth", "MethPhaser"), ("hb", "HapBridge"),
-                                     ("lh", "LongHap"), ("wh", "WhatsHap"))]
+    k2 = [thandle(t, n) for t, n in shown((("lp_gnn", "LongPhase 2"), ("meth", "MethPhaser"), ("hb", "HapBridge"),
+                                           ("lh", "LongHap"), ("wh", "WhatsHap")))]
     kc = [Line2D([], [], color=grey, ls="-", label="Nanopore"), Line2D([], [], color=grey, ls=":", label="PacBio HiFi")]
     kf = [Line2D([], [], color=grey, ls="-", label="SNVs"), Line2D([], [], color=grey, ls="--", label="+ indels"),
           Line2D([], [], color=grey, ls="-.", marker="o", ms=3.0, mfc=grey, label="+ indels, SVs, 5mC")]
@@ -634,7 +639,7 @@ def fig3_sv_methylation():
     sf2.suptitle(" SNVs and 5mC, nanopore", x=0.0, ha="left", fontsize=7, fontweight="bold")
     _row_keys(fig, (sf1, sf2), (k1, k2))
     for ax, L, title in ((a, "a", "Nanopore"), (b, "b", "PacBio HiFi"), (c, "c", "SVs of 1 kb or longer"),
-                         (d, "d", "Accuracy"), (e, "e", "Accuracy and contiguity"), (f, "f", "By evidence type")):
+                         (d, "d", "Accuracy"), (e, "e", "Accuracy and contiguity"), (f, "f", "By variant class")):
         letter(ax, L, title=title)
     save(fig, os.path.join(OUT, "fig3_sv_methylation.pdf"))
 
@@ -668,7 +673,7 @@ def sfig16():
     a, b, c_, d, e = axs
     mod1 = lambda c: [r for r in D["coph"]["Mod"]["longphase_v2.1.2"][c] if r["rep"] == 1]
     meth = lambda c: [{k: meth_value(c, k) for k in ("sw_pct", "ham", "n50", "psnv_pct")}]
-    for t, get in (("lh", meth_other("lh")), ("hb", meth_other("hb")), ("meth", meth), ("lp_gnn", mod1)):
+    for t, get in shown((("lh", meth_other("lh")), ("hb", meth_other("hb")), ("meth", meth), ("lp_gnn", mod1))):
         tline(e, t, *_series(get, BAR_COVS)("ham"), band=False)
     for t in ("hc", "wh", "lp_gnn"):
         tline(a, t, *_series(snv("ONT", t), PLOT_COVS)("ham"), band=False)
@@ -693,7 +698,7 @@ def sfig16():
     e.set_xlim(5, 65)
     grey = "#555555"
     h = [thandle(t, NAME[t].split(" (")[0]) for t in ("lp_gnn", "wh", "hc", "hp")]
-    h += [thandle(t, n) for t, n in (("meth", "MethPhaser"), ("hb", "HapBridge"), ("lh", "LongHap"))]
+    h += [thandle(t, n) for t, n in shown((("meth", "MethPhaser"), ("hb", "HapBridge"), ("lh", "LongHap")))]
     h += [Line2D([], [], color=grey, ls="-", label="b: SNVs"),
           Line2D([], [], color=grey, ls=":", marker="o", ms=3.0, mfc="none", mew=0.8, label="b: indels")]
     _light(fig, h)
@@ -1431,7 +1436,7 @@ def runtime_table(w):
     r2 = lambda x: str(Decimal(repr(x)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
     rt = _runtime()
     w(r"\begin{table}[h]")
-    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data (top) and PacBio HiFi data (bottom), replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~10). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB. \toolname times include alignment reading, phasing and VCF writing, and \toolname was run with 24 threads and on one thread; outputs of \toolname and \whatshap were identical to the reported VCFs. \hapcut includes fragment extraction; records with genotypes other than two alleles from 0, 1 and 2, which \hapcut does not accept (at most 682 per data set), were removed from its input. \hapcut was not timed at nanopore 60$\times$ or on HiFi data (--, no value).}\label{tab:runtime}")
+    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data (top) and PacBio HiFi data (bottom), replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~6). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB. \toolname times include alignment reading, phasing and VCF writing, and \toolname was run with 24 threads and on one thread; outputs of \toolname and \whatshap were identical to the reported VCFs. \hapcut includes fragment extraction; records with genotypes other than two alleles from 0, 1 and 2, which \hapcut does not accept (at most 682 per data set), were removed from its input. \hapcut was not timed at nanopore 60$\times$ or on HiFi data (--, no value).}\label{tab:runtime}")
     w(r"\small\setlength{\tabcolsep}{4pt}\begin{tabular}{@{}rrrrrrrrrrrrr@{}}\toprule")
     groups = [(("LongPhase 2", "24"), r"\toolname, 24 threads"), (("LongPhase 2", "1"), r"\toolname, 1 thread"),
               (("WhatsHap 2.8", "1"), r"\whatshap"), (("HapCUT2 1.3.4", "1"), r"\hapcut")]
@@ -1475,6 +1480,13 @@ def _other_phasers():
         plat = "ONT" if r[1].startswith("ONT") else "HiFi"
         out[(plat, r[3], int(r[4].split("x")[0]))] = dict(
             psnv=r[5], psnv_pct=r[6], pindel_pct=r[8], sw=r[9], sw_pct=r[10], ham=r[11], nblock=r[12], n50=r[13])
+    if "hb" not in HIDE:   # HapBridge rows, removed from the sheet on 2026-11-03
+        import csv
+        with open(os.path.join(ROOT, "notes", "competitors", "hapbridge_hidden_rows.tsv")) as f:
+            for r in list(csv.reader(f, delimiter="\t"))[1:]:
+                n = [float(x) for x in r[5:14]]
+                out[("ONT", r[3], int(r[4].split("x")[0]))] = dict(
+                    psnv=n[0], psnv_pct=n[1], pindel_pct=n[3], sw=n[4], sw_pct=n[5], ham=n[6], nblock=n[7], n50=n[8])
     _OTHER.update(out)
     return _OTHER
 
@@ -1532,7 +1544,7 @@ def other_phasers_table(w):
         ("Nanopore R10.4.1, SNVs and 5mC", "ONT", [
             (r"\toolname", coph("Mod", "longphase_v2.1.2")),
             ("MethPhaser", lambda c: D["meth"][c]),
-            ("HapBridge", oth("ONT", "HapBridge ec48f02 (on LongPhase 2 SNV output, no GNN)")),
+            *([] if "hb" in HIDE else [("HapBridge", oth("ONT", "HapBridge ec48f02 (on LongPhase 2 SNV output, no GNN)"))]),
             ("LongHap", oth("ONT", "LongHap 0.2.0 (SNVs, with 5mC)")),
             ("LongHap, without 5mC", oth("ONT", "LongHap 0.2.0 (SNVs, sequence only)"))]),
         ("Nanopore R10.4.1, SNVs and indels", "ONT", [
@@ -1559,7 +1571,7 @@ def other_phasers_table(w):
     w(r"\clearpage")   # flush Tables 11-16 (floats) so that the longtable follows them
     w(r"{\scriptsize\setlength{\tabcolsep}{4pt}")
     w(r"\begin{longtable}{@{}lrrrrrrr@{}}")
-    w(r"\caption{\textbf{Phasing compared with further phasers.} HG002, replicate~1; nanopore R10.4.1 data at 10--60$\times$ in steps of 10$\times$ and PacBio HiFi data at 10--50$\times$. Each block compares tools given the same reads, variant calls and evidence classes; within a block, \toolname is listed first. MethPhaser and HapBridge were given the SNV-only output of \toolname without GNN correction. HiPhase and TinkerHap have no SNV-only mode, so their SNV-only rows used call sets restricted to SNVs. LongHap with indels, SVs and 5mC was given deletions and insertions from Sniffles2 as sequence-resolved records. Switch error rates are over consecutive SNV pairs; Hamming distance includes indels where both files contain them, so it is comparable only within a block. Phased fractions are percentages of benchmark heterozygous SNVs or indels; --, not applicable. Source: Supplementary Data~1, sheets \code{Other\_phasers}, \code{SNV\_Detail}, \code{co-phase\_Detail} and \code{MethPhaser}.}\label{tab:otherphasers}\\")
+    w(r"\caption{\textbf{Phasing compared with further phasers.} HG002, replicate~1; nanopore R10.4.1 data at 10--60$\times$ in steps of 10$\times$ and PacBio HiFi data at 10--50$\times$. Each block compares tools given the same reads, variant calls and variant classes; within a block, \toolname is listed first. " + ("MethPhaser was" if "hb" in HIDE else "MethPhaser and HapBridge were") + r" given the SNV-only output of \toolname without GNN correction. HiPhase and TinkerHap have no SNV-only mode, so their SNV-only rows used call sets restricted to SNVs. LongHap with indels, SVs and 5mC was given deletions and insertions from Sniffles2 as sequence-resolved records. Switch error rates are over consecutive SNV pairs; Hamming distance includes indels where both files contain them, so it is comparable only within a block. Phased fractions are percentages of benchmark heterozygous SNVs or indels; --, not applicable. Source: Supplementary Data~1, sheets \code{Other\_phasers}, \code{SNV\_Detail}, \code{co-phase\_Detail} and \code{MethPhaser}.}\label{tab:otherphasers}\\")
     head = (r"\toprule Tool & Cov. & \shortstack[r]{Phased\\SNVs (\%)} & \shortstack[r]{Phased\\indels (\%)} & "
             r"\shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate relative\\to \toolname} & \shortstack[r]{Hamming\\(\%)} & \shortstack[r]{N50\\(Mb)} \\ \midrule")
     w(head + r"\endfirsthead")
@@ -1766,9 +1778,18 @@ def tables():
           + " & ".join(f"{d[k]:,}" for k in ("het_other_allele", "hom", "absent", "chrXY")) + r" \\")
     w(r"\bottomrule\end{tabular}\end{table}" + "\n")
     other_phasers_table(w)
-    path = os.path.join(ROOT, "figures-source", "supp_tables.tex")
-    open(path, "w").write("\n".join(L) + "\n")
-    print("wrote", os.path.relpath(path, ROOT))
+    # One file per table, named by its label, so that Supplementary.tex can \input the generated
+    # and the hand-written tables in the order of first citation in the main text.
+    starts = [i for i, s in enumerate(L) if s.startswith((r"\begin{table}", r"{\scriptsize"))]
+    outdir = os.path.join(ROOT, "figures-source", "supp_tables")
+    os.makedirs(outdir, exist_ok=True)
+    for a, b in zip(starts, starts[1:] + [len(L)]):
+        body = "\n".join(L[a:b]) + "\n"
+        name = re.findall(r"\\label\{tab:([^}]+)\}", body)
+        assert len(name) == 1, name
+        path = os.path.join(outdir, name[0] + ".tex")
+        open(path, "w").write(L[0] + "\n" + body)
+        print("wrote", os.path.relpath(path, ROOT))
 
 
 if __name__ == "__main__":

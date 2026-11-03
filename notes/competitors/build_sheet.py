@@ -21,7 +21,9 @@ S = '/ssd/longphase_process'
 RUNS = [
     ('ONT R10.4.1', 'SNV + 5mC', 'LongHap 0.2.0 (SNVs, with 5mC)', ONT, S + '/longhap/{c}x/sw_longhap_meth_{c}x_1.tsv'),
     ('ONT R10.4.1', 'SNV + 5mC', 'LongHap 0.2.0 (SNVs, sequence only)', ONT, S + '/longhap/{c}x/sw_longhap_seq_{c}x_1.tsv'),
-    ('ONT R10.4.1', 'SNV + 5mC', 'HapBridge ec48f02 (on LongPhase 2 SNV output, no GNN)', ONT, S + '/hapbridge/sw_hapbridge_{c}x_1.tsv'),
+    # [author-hidden] 2026-11-03: HapBridge left out of Supplementary Data 1; its rows are kept in
+    # hapbridge_hidden_rows.tsv. Remove the leading '# ' to put it back.
+    # ('ONT R10.4.1', 'SNV + 5mC', 'HapBridge ec48f02 (on LongPhase 2 SNV output, no GNN)', ONT, S + '/hapbridge/sw_hapbridge_{c}x_1.tsv'),
     ('ONT R10.4.1', 'SNV + indel', 'HapCUT2 1.3.4 (--indels 1)', ONT, '/disk/research/hapcut2_v1.3.4/indels/sw_hapcut2_v134_indels_{c}x_1.tsv'),
     ('ONT R10.4.1', 'SNV + indel', 'TinkerHap 1.0.0', ONT, S + '/others_ont/sw_tinkerhap_{c}x_1.tsv'),
     ('ONT R10.4.1', 'SNV + indel + SV + 5mC', 'LongHap 0.2.0 (all variants, with 5mC)', ONT, S + '/longhap/allvar/sw_longhap_all_{c}x_1.tsv'),
