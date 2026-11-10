@@ -2,7 +2,7 @@
 
 {\scriptsize\setlength{\tabcolsep}{4pt}
 \begin{longtable}{@{}lrrrrrrr@{}}
-\caption{\textbf{Phasing compared with further phasers.} HG002, replicate~1; nanopore R10.4.1 data at 10--60$\times$ in steps of 10$\times$ and PacBio HiFi data at 10--50$\times$. Each block compares tools given the same reads, variant calls and variant classes; within a block, \toolname is listed first. MethPhaser was given the SNV-only output of \toolname without GNN correction. HiPhase and TinkerHap have no SNV-only mode, so their SNV-only rows used call sets restricted to SNVs. LongHap with indels, SVs and 5mC was given deletions and insertions from Sniffles2 as sequence-resolved records. Switch error rates are over consecutive SNV pairs; Hamming distance includes indels where both files contain them, so it is comparable only within a block. Phased fractions are percentages of benchmark heterozygous SNVs or indels; --, not applicable. Source: Supplementary Data~1, sheets \code{Other\_phasers}, \code{SNV\_Detail}, \code{co-phase\_Detail} and \code{MethPhaser}.}\label{tab:otherphasers}\\
+\caption{\textbf{Phasing compared with further phasers.} HG002, replicate~1; nanopore R10.4.1 data at 10--60$\times$ in steps of 10$\times$ and PacBio HiFi data at 10--50$\times$. Each block compares tools given the same reads, variant calls and variant classes; within a block, \toolname is listed first. MethPhaser was given the SNV-only output of \toolname without GNN correction. HiPhase and TinkerHap have no SNV-only mode, so their SNV-only rows used call sets restricted to SNVs. Switch error rates are over consecutive SNV pairs; Hamming distance includes indels where both files contain them, so it is comparable only within a block. Phased fractions are percentages of benchmark heterozygous SNVs or indels; --, not applicable. Source: Supplementary Data~1, sheets \code{Other\_phasers}, \code{SNV\_Detail}, \code{co-phase\_Detail} and \code{MethPhaser}.}\label{tab:otherphasers}\\
 \toprule Tool & Cov. & \shortstack[r]{Phased\\SNVs (\%)} & \shortstack[r]{Phased\\indels (\%)} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate relative\\to \toolname} & \shortstack[r]{Hamming\\(\%)} & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead
 \toprule Tool & Cov. & \shortstack[r]{Phased\\SNVs (\%)} & \shortstack[r]{Phased\\indels (\%)} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate relative\\to \toolname} & \shortstack[r]{Hamming\\(\%)} & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead
 \multicolumn{8}{@{}l}{\textit{Nanopore R10.4.1, SNVs and 5mC}} \\
@@ -18,18 +18,6 @@ MethPhaser & 10$\times$ & 78.11 & -- & 0.124 & 1.51 & 7.19 & 0.96 \\
  & 40$\times$ & 91.64 & -- & 0.043 & 1.57 & 4.55 & 4.06 \\
  & 50$\times$ & 91.55 & -- & 0.043 & 1.55 & 5.13 & 5.03 \\
  & 60$\times$ & 91.43 & -- & 0.035 & 1.60 & 3.95 & 5.49 \\
-LongHap & 10$\times$ & 59.88 & -- & 0.180 & 2.19 & 4.35 & 0.41 \\
- & 20$\times$ & 87.26 & -- & 0.181 & 4.48 & 17.99 & 2.56 \\
- & 30$\times$ & 90.09 & -- & 0.158 & 5.37 & 19.99 & 4.35 \\
- & 40$\times$ & 90.44 & -- & 0.141 & 5.15 & 19.01 & 4.93 \\
- & 50$\times$ & 90.51 & -- & 0.126 & 4.56 & 19.90 & 5.25 \\
- & 60$\times$ & 90.50 & -- & 0.110 & 4.99 & 18.44 & 5.40 \\
-LongHap, without 5mC & 10$\times$ & 59.87 & -- & 0.175 & 2.12 & 4.09 & 0.40 \\
- & 20$\times$ & 87.25 & -- & 0.158 & 3.91 & 10.50 & 1.39 \\
- & 30$\times$ & 90.08 & -- & 0.136 & 4.60 & 8.81 & 1.79 \\
- & 40$\times$ & 90.43 & -- & 0.123 & 4.47 & 10.13 & 2.02 \\
- & 50$\times$ & 90.51 & -- & 0.109 & 3.96 & 9.95 & 2.35 \\
- & 60$\times$ & 90.49 & -- & 0.096 & 4.38 & 10.06 & 2.55 \\
 \midrule
 \multicolumn{8}{@{}l}{\textit{Nanopore R10.4.1, SNVs and indels}} \\
 \toolname & 10$\times$ & 77.78 & 30.38 & 0.091 & -- & 7.02 & 0.98 \\
@@ -56,20 +44,6 @@ TinkerHap & 10$\times$ & 78.89 & 33.98 & 0.332 & 3.66 & 8.14 & 0.80 \\
  & 40$\times$ & 92.43 & 50.78 & 0.170 & 5.23 & 10.82 & 2.27 \\
  & 50$\times$ & 92.45 & 51.64 & 0.162 & 5.30 & 11.86 & 2.67 \\
  & 60$\times$ & 92.41 & 52.11 & 0.151 & 5.64 & 13.16 & 3.13 \\
-\midrule
-\multicolumn{8}{@{}l}{\textit{Nanopore R10.4.1, SNVs, indels, SVs and 5mC}} \\
-\toolname & 10$\times$ & 77.79 & 30.46 & 0.091 & -- & 6.92 & 1.02 \\
- & 20$\times$ & 90.90 & 41.02 & 0.047 & -- & 7.05 & 2.32 \\
- & 30$\times$ & 91.47 & 43.39 & 0.038 & -- & 5.47 & 2.73 \\
- & 40$\times$ & 91.50 & 44.41 & 0.033 & -- & 4.54 & 3.19 \\
- & 50$\times$ & 91.43 & 45.03 & 0.031 & -- & 3.60 & 3.69 \\
- & 60$\times$ & 91.34 & 45.37 & 0.026 & -- & 3.93 & 4.14 \\
-LongHap & 10$\times$ & 59.84 & 27.13 & 0.219 & 2.40 & 6.43 & 0.47 \\
- & 20$\times$ & 87.26 & 43.76 & 0.194 & 4.14 & 19.52 & 2.95 \\
- & 30$\times$ & 90.09 & 47.68 & 0.166 & 4.41 & 21.91 & 4.52 \\
- & 40$\times$ & 90.43 & 49.28 & 0.148 & 4.47 & 21.68 & 5.81 \\
- & 50$\times$ & 90.51 & 50.23 & 0.129 & 4.21 & 20.79 & 5.79 \\
- & 60$\times$ & 90.49 & 50.73 & 0.114 & 4.46 & 20.97 & 6.83 \\
 \midrule
 \multicolumn{8}{@{}l}{\textit{PacBio HiFi, SNVs}} \\
 \toolname & 10$\times$ & 87.01 & -- & 0.049 & -- & 0.73 & 0.34 \\

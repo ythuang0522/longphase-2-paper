@@ -64,6 +64,13 @@ def load():
                 continue
             d = dict(zip(COPH_COLS, vals)); d["rep"] = rep
             coph[cfg][tool][cov].append(d)
+    # SV_5mC_phasing: phased SVs and 5mC sites per co-phasing run (notes/sv_mod/), attached to coph
+    for r in _rows(wb["SV_5mC_phasing"]):
+        cov, rep = _case(r[3])
+        for tool, o in (("longphase_v2.0.1", 6), ("longphase_v2.1.2", 10)):
+            for d in coph[r[2]][tool][cov]:
+                if d["rep"] == rep:
+                    d["psv"] = r[o] or 0; d["pmod"] = r[o + 2] or 0
     calls = defaultdict(lambda: defaultdict(list))
     for r in _rows(wb["Variant_Calling"]):
         plat = "ONT" if r[1].startswith("ONT") else "HiFi"

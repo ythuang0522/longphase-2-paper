@@ -1,8 +1,16 @@
 # Further phasers (2026-10-17)
 
-Sheet `Other_phasers` of `supplementary.xlsx` (Supplementary Data 1), written by `build_sheet.py`
-from the `longphase compare` reports of the runs below. Not in the manuscript text or figures;
-whether and how to use them is left to the authors.
+Sheet `Other_phasers` of `supplementary.xlsx` (Supplementary Data 1) is written by `build_sheet.py`
+from the `longphase compare` reports of the runs below. The submission workbook now has 47 runs.
+LongHap comparisons were removed from the paper on 2026-11-10. All 18 LongHap result rows,
+including headers and all 15 columns, are retained in `longhap_hidden_rows.tsv`; prior manuscript
+passages are in `longhap_removed_comparisons.tex.md`. The six HapBridge result rows are retained
+in `hapbridge_hidden_rows.tsv` (removed on 2026-11-03). Scripts and historical results below are
+kept for reproducibility. Both preprints remain cited as related work in the Introduction.
+
+The figure generator excludes these tools with `HIDE = {"hb", "lh"}`. Removing a key restores
+that tool's archived rows to its figures and tables. `build_sheet.py` keeps both tools out of the
+submission workbook.
 
 All runs: HG002, replicate 1; nanopore 10-60x, HiFi 10-50x (`hg002.hifi.50x.1.bam` is the full 48x
 set); the paper's inputs (per-coverage PEPPER calls, the same BAMs, the same Sniffles 2.8 SVs);

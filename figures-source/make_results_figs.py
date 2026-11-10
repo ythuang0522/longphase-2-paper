@@ -86,8 +86,10 @@ NAME = {
 }
 # [author-hidden] 2026-11-03: HapBridge (preprint, little public use) is hidden from every figure and
 # table and from Supplementary Data 1; its rows are kept in notes/competitors/hapbridge_hidden_rows.tsv,
-# which _other_phasers() reads back when this set is emptied.
-HIDE = {"hb"}
+# which _other_phasers() reads back when its key is removed from this set.
+# [author-hidden] 2026-11-10: LongHap comparisons are also hidden; all 18 source rows remain in
+# notes/competitors/longhap_hidden_rows.tsv and are restored by removing "lh" from this set.
+HIDE = {"hb", "lh"}
 shown = lambda pairs: tuple(x for x in pairs if x[0] not in HIDE)
 XLSX_TOOL = {"lp": "longphase_v2.0.1", "lp_gnn": "longphase_v2.1.2",
              "wh": "whatshap_v28", "hc": "hapcut2_v134", "margin": "margin_v231",
@@ -614,12 +616,17 @@ def fig3_sv_methylation():
             (ind("whatshap_v28"), PLOT_COVS, "wh", "--", False), (snv("wh"), PLOT_COVS, "wh", "-", False),
             (_other("ONT", "LongHap 0.2.0 (all variants, with 5mC)"), BAR_COVS, "lh", "-.", True),
             (all4, PLOT_COVS, "lp_gnn", "-.", True), (snv("lp_gnn"), PLOT_COVS, "lp_gnn", "-", False)):
+        if t in HIDE:
+            continue
         ex, ey = _path(f, get, covs, C[t], ls, STY[t]["marker"], STY[t]["ms"], mfc=C[t] if filled else "none")
         if t == "lh":   # 10x to the right: below it sits the 10x point of WhatsHap
             for i, off, ha, va in ((0, (5, 0), "left", "center"), (-1, (0, 4), "center", "bottom")):
                 f.annotate(f"{covs[i]}×", (ex[i], ey[i]), xytext=off, textcoords="offset points",
                            ha=ha, va=va, fontsize=5.5, color="#555555")
-    _tradeoff_axis(f, (0, 8.6), [0, 2, 4, 6, 8])
+    if "lh" in HIDE:
+        _tradeoff_axis(f, (0, 4.7), [0, 1, 2, 3, 4])
+    else:
+        _tradeoff_axis(f, (0, 8.6), [0, 2, 4, 6, 8])
 
     grey = "#555555"
     k1 = [thandle(t, n) for t, n in (("lp_gnn", "LongPhase 2"), ("wh", "WhatsHap"), ("hp", "HiPhase"))]
@@ -657,6 +664,42 @@ def sfig17_sv_indels():
     fig.legend(handles=key, loc="outside upper center", ncol=3, frameon=False, handlelength=2.6, columnspacing=2.0)
     letter(a, "a", title="Nanopore: SNVs, indels and SVs"); letter(b, "b", title="PacBio HiFi: SNVs, indels and SVs")
     save(fig, os.path.join(SUPP, "suppfig17_sv_indels.pdf"))
+
+
+# ===================== Supplementary Fig. 2 (numbering of 2026-11-10) =====
+def sfig_in_benchmark():
+    """Fig. 2a,b inside the v5.0q benchmark regions (author decision, 2026-11-10, option A, after a
+    draft PNG: Fig. 2 scores the truth VCF in full, and a reviewer would ask for the benchmark regions).
+    A pair is counted when both of its variants lie in the v5.0q BED (region v5bed of issue #1):
+    a nanopore SNVs (item4_strata.tsv; LongPhase 2, WhatsHap, HapCUT2), b nanopore SNVs and indels
+    (item3_indel.tsv; LongPhase 2 and WhatsHap, solid SNV pairs, dotted pairs with an indel). Axes as
+    Fig. 2a,b. No in-benchmark scoring exists for PacBio HiFi data or for HapCUT2 with indels."""
+    fig, (a, b) = new_fig(58, 1, 2)
+    S = _group(_tsv("item4_strata.tsv"),
+               lambda r: (r["tool"], int(r["coverage"]), r["truth"], r["region"], r["stratum"]))
+    I = _group(_tsv("item3_indel.tsv"), lambda r: (r["config"], int(r["coverage"]), r["region"]))
+    for t, name in (("hc", "hapcut2_v134"), ("wh", "whatshap_v28_onlySNVs"), ("lp_gnn", "longphase_gnn")):
+        get = lambda c, n=name: [{"sw_pct": float(r["snv_sw_rate%"])} for r in S[(n, c, "v5", "v5bed", "any")]]
+        tline(a, t, *_series(get, PLOT_COVS)("sw_pct"), band=False)
+    for t, cfg in (("wh", "whatshap_v28"), ("lp_gnn", "longphase_coh_indel_gnn")):
+        get = lambda c, n=cfg: [{"snv": float(r["snv_sw_rate%"]), "indel": float(r["indel_sw_rate%"])}
+                                for r in I[(n, c, "v5bed")]]
+        tline(b, t, *_series(get, PLOT_COVS)("snv"), band=False)
+        line(b, *_series(get, PLOT_COVS)("indel"), C[t], ls=":", marker=STY[t]["marker"], ms=STY[t]["ms"],
+             band=False, mfc="none")
+    _rate_axis(a, (0, 0.1, 0.2, 0.3)); _rate_axis(b, (0, 0.2, 0.4, 0.6, 0.8, 1))
+    cov_axis(a); cov_axis(b)
+    a.set_ylabel("Switch error rate (%)")
+    grey = "#555555"
+    tools = [thandle(t, n) for t, n in (("lp_gnn", "LongPhase 2"), ("wh", "WhatsHap"), ("hc", "HapCUT2"))]
+    kb = [Line2D([], [], color=grey, ls="-", label="SNV pairs"), Line2D([], [], color=grey, ls=":", label="Pairs with an indel")]
+    _light(fig, tools + kb)
+    b.legend(handles=kb, loc="upper right", bbox_to_anchor=(1, 0.75), frameon=False, handlelength=2.6,
+             borderaxespad=0.3, borderpad=0.0, labelspacing=0.3)
+    fig.legend(handles=tools, loc="outside upper center", ncol=len(tools), frameon=False, handlelength=2.6,
+               columnspacing=2.0)
+    letter(a, "a", title="Nanopore: SNVs"); letter(b, "b", title="Nanopore: SNVs and indels")
+    save(fig, os.path.join(SUPP, "suppfig_in_benchmark.pdf"))
 
 
 # ============================================== Supplementary Fig. 16 =====
@@ -829,119 +872,186 @@ def phased_class(c, t, k):
     return comp(c, "background", k) + comp(c, ONLY[t], k)
 
 
-def fig5():
-    """What LongPhase 2 leaves unphased (author decisions, 2026-10-09 and 2026-10-10). Row 1, calls
-    phased by LongPhase 2 and WhatsHap, and in b also HiPhase: one message -- LongPhase 2 phases about 1% fewer benchmark
-    SNVs, but more of the calls it phases are benchmark SNVs, and fewer of them are genotype
-    errors. Completeness and precision are paired by platform (author decision, 2026-10-19,
-    option A): a completeness and b precision (nanopore; F1 in the text and Supplementary Table 7),
-    c completeness and d precision (PacBio HiFi, with HiPhase, the PacBio phaser; HiFi phased-call
-    counts from issue #9), e phased calls at positions where v5.0q is homozygous (genotype errors
-    written onto a haplotype; GIAB v5.0q framing; nanopore only, no HiFi counts exist). Row 2, SNVs unphased
-    by GNN correction (former Supplementary Fig. 16, promoted 2026-10-10 so that a main figure
-    shows what the network withholds): f v5.0q status by coverage, g T2T-HG002 assembly status at
-    60x against a random sample of SNVs phased before correction, h the same by chromosome.
-    Row 2 is a different set from row 1: GNN correction leaves unphased only about one sixth of
-    the calls that LongPhase 2 alone leaves unphased. No numbers inside panels (author,
-    2026-10-09); they are in the text and Supplementary Table 11. The calls left unphased by one
-    tool only, their read depth and interval co-location are in the text, Supplementary Table 16
-    and Supplementary Fig. 12; the regions added by v5.0q are in Fig. 3d,e."""
-    fig = plt.figure(figsize=(FIGW, 136 * MM), layout="constrained")
-    fig.get_layout_engine().set(w_pad=2 * MM, h_pad=1.2 * MM, wspace=0.05, hspace=0.0)
-    sf1, sf2 = fig.subfigures(2, 1, height_ratios=[62, 74], hspace=0.035)
-    # ---- row 1: LongPhase 2 and WhatsHap
-    # 4 x 2 grid (author decision, 2026-10-19): row 1 completeness and precision paired by platform,
-    # row 2 likely errors, phased (genotype errors, both tools) or withheld (SNVs unphased by GNN)
-    ax_a, ax_b, ax_h, ax_hp = sf1.subplots(1, 4)
-    ax_c, ax_e, ax_f, ax_g = sf2.subplots(1, 4, width_ratios=[1, 1.15, 0.95, 0.9])
-    TOOLS = (("wh", "WhatsHap"), ("lp_gnn", "LongPhase 2"))   # LongPhase 2 drawn last, on top
-    snv = lambda tool, plat="ONT": (lambda c: D["snv"][plat][XLSX_TOOL[tool]].get(c))
-    tline(ax_h, "hp", *_series(hiphase, HIFI_COVS)("psnv_pct"))   # HiFi panels only (author decision, 2026-10-19)
-    tline(ax_hp, "hp", *_series(precision_hifi("hp"), HIFI_COVS)("prec"))
-    for t, _ in TOOLS:
-        tline(ax_a, t, *_series(snv(t), PLOT_COVS)("psnv_pct"))
-        tline(ax_h, t, *_series(snv(t, "HiFi"), HIFI_COVS)("psnv_pct"))
-        tline(ax_b, t, *_series(precision_runs(t), PLOT_COVS)("prec"))
-        tline(ax_hp, t, *_series(precision_hifi(t), HIFI_COVS)("prec"))
-    ax_a.set_ylim(76, 94); ax_a.set_yticks([76, 80, 84, 88, 92])
-    ax_a.set_ylabel("Benchmark het. SNVs phased (%)")
-    ax_a.set_title("Completeness, nanopore", loc="center", fontsize=6.5)
-    ax_h.set_ylim(86, 93); ax_h.set_yticks([86, 88, 90, 92])
-    ax_hp.set_ylim(89.5, 95.5); ax_hp.set_yticks([90, 92, 94])
-    ax_hp.set_ylabel("Phased calls that are\nbenchmark het. SNVs (%)")
-    ax_hp.set_title("Precision, PacBio HiFi", loc="center", fontsize=6.5)
-    cov_axis(ax_hp, HIFI_COVS); ax_hp.set_xlim(7.5, 52.5)
-    ax_h.set_ylabel("Benchmark het. SNVs phased (%)")
-    ax_h.set_title("Completeness, PacBio HiFi", loc="center", fontsize=6.5)
-    ax_b.set_ylim(84, 95); ax_b.set_yticks([85, 88, 91, 94])
-    ax_b.set_ylabel("Phased calls that are\nbenchmark het. SNVs (%)")
-    ax_b.set_title("Precision, nanopore", loc="center", fontsize=6.5)
-    cov_axis(ax_a); cov_axis(ax_b); cov_axis(ax_h, HIFI_COVS)
-    ax_h.set_xlim(7.5, 52.5)
-    ax = ax_c   # d: grouped bars, both tools, replicate 1 at 10/30/60x
-    for i, (t, _) in enumerate(reversed(TOOLS)):
-        ax.bar([j + (i - 0.5) * 0.36 for j in range(3)], [phased_class(c, t, "hom") / 1000 for c in VENN_COVS],
-               0.33, color=C[t], zorder=3)
-    ax.set_xticks(range(3)); ax.set_xticklabels([f"{c}×" for c in VENN_COVS])
-    ax.set_xlim(-0.6, 2.6); ax.set_ylim(0, 30); ax.set_yticks([0, 10, 20, 30])
-    ax.set_xlabel("Coverage"); ax.set_ylabel("Phased het. calls at v5.0q\nhomozygous sites (thousands)")
-    ax.set_title("Genotype errors, nanopore", loc="center", fontsize=6.5)
-    # ---- row 2: SNVs unphased by GNN correction (LongPhase 2 only)
-    T = t2t()
-    GREYS = ("#D9D9D9", "#969696", "#4D4D4D")   # light = cannot be verified, dark = verified
-    KEYPAD = 12   # points: titles of e-g sit above the one-line keys of e and f
-    ax = ax_e
+def _key(ax, handles, ncol, **kw):
+    """One-line key above a panel, under its title (Fig. 5 and Supplementary Fig. 6)."""
+    ax.legend(handles=handles, loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=ncol, fontsize=5.5,
+              **{**dict(handlelength=1.0, columnspacing=0.8, borderaxespad=0.2), **kw})
+
+
+FIG5_KEYPAD = 12   # points: panel titles sit above the one-line keys
+FIG5_G = ("#4D4D4D", "#E08A00", "#969696", "#D9D9D9")   # benchmark het., homozygous, other allele, absent
+
+
+def _v5_status(ax):
+    """v5.0q status of the SNVs left unphased at high phasing uncertainty, by coverage."""
     xs = range(len(COVS)); bottom = [0] * len(COVS)
+    cols = (FIG5_G[3], FIG5_G[1], FIG5_G[0])
     for i, lab in enumerate(("absent", "homozygous", "heterozygous")):   # COMPOSITION order
         v = [100 * COMPOSITION[c][i] / sum(COMPOSITION[c]) for c in COVS]
-        ax.bar(xs, v, 0.72, bottom=bottom, color=GREYS[i], label=lab, zorder=3)
+        ax.bar(xs, v, 0.72, bottom=bottom, color=cols[i], label=lab, zorder=3)
         bottom = [x + y for x, y in zip(bottom, v)]
     ax.set_xticks(list(xs)); ax.set_xticklabels([str(c) for c in COVS])
-    ax.set_xlabel("Coverage (×)"); ax.set_ylabel("Withheld SNVs (%)")
+    ax.set_xlabel("Coverage (×)"); ax.set_ylabel("SNVs unphased at high\nphasing uncertainty (%)")
     ax.set_ylim(0, 100); ax.set_yticks([0, 25, 50, 75, 100])
-    ax.set_title("Status in the v5.0q benchmark", loc="center", fontsize=6.5, pad=KEYPAD)
     h, l = ax.get_legend_handles_labels()
-    ax.legend(h[::-1], l[::-1], loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=3, fontsize=5.5,
-              handlelength=1.0, columnspacing=1.0, borderaxespad=0.2)
-    ax = ax_f
-    n = T["rm_n"]; out_rm = 100 * T["cls"]["unassessed"] / n
+    _key(ax, h[::-1], 3)
+
+
+def fig5():
+    """What LongPhase 2 phases and leaves unphased (author decisions, 2026-11-10, option B after draft PNGs and a
+    second review: the figure answers which calls are left unphased). Nanopore, SNV-only, chr1-22; 2 x 4 grid.
+    Row 1, which calls and the direct evidence (replicate 1 at 10/30/60x): a v5.0q status in percent of the calls
+    that LongPhase 2 phased (phased by both + by LongPhase 2 only) and left unphased (unphased by LongPhase 2 only
+    + by both); b calls left unphased by LongPhase 2 and by WhatsHap (by WhatsHap only + by both) as counts, bar
+    outline = tool; c phased calls at v5.0q homozygous positions, both tools; d WhatsHap's wrong-phase fraction at
+    the benchmark SNVs that LongPhase 2 left unphased, against all SNVs that WhatsHap phased. a and b are two
+    different comparisons (author, 2026-11-10): phased against unphased, and LongPhase 2 against WhatsHap; keep
+    both. Homozygous has its own colour: it is the class with direct evidence of a genotype error.
+    Row 2, gain, cost and where the calls lie: e precision and f completeness (every coverage and replicate),
+    g read depth at 60x of the calls left unphased by one tool only or by both (Supplementary Fig. 7 has 10x and
+    30x), h T2T-HG002 assembly status at 60x of the SNVs left unphased at high phasing uncertainty, a subset of
+    the unphased calls, against a random sample of phased SNVs. Depth and assembly alignment are supporting
+    evidence, not independent truth. The HiFi panels, the v5.0q status of the subset and its distribution by
+    chromosome are Supplementary Fig. 6 (sfig_unphased_more). No numbers inside panels (author, 2026-10-09)."""
+    fig = plt.figure(figsize=(FIGW, 122 * MM), layout="constrained")
+    fig.get_layout_engine().set(w_pad=2.5 * MM, h_pad=1.5 * MM, wspace=0.06, hspace=0.0)
+    sf1, sf2 = fig.subfigures(2, 1, hspace=0.06)
+    ax_p, ax_a, ax_b, ax_c = sf1.subplots(1, 4)
+    ax_d, ax_e, ax_f, ax_g = sf2.subplots(1, 4)
+    G = FIG5_G
+    grouped = lambda ax: (ax.set_xticks(range(3)), ax.set_xticklabels([f"{c}×" for c in VENN_COVS]),
+                          ax.set_xlabel("Coverage"), ax.set_xlim(-0.6, 2.6))
+    # ---- a: v5.0q status of the calls that LongPhase 2 phased and left unphased (chr1-22), in percent
+    def status(c, sets):
+        v = [sum(comp(c, s, k) for s in sets) for k in ("het_match", "hom", "het_other_allele", "absent")]
+        return [100 * x / sum(v) for x in v]
+    xs, labs = [], []
+    for j, c in enumerate(VENN_COVS):
+        for i, sets in enumerate((("background", "wh_only"), ("lp_only", "both"))):
+            x, v, b = j * 2.7 + i * 1.05, status(c, sets), 0
+            for k in range(4):
+                ax_p.bar(x, v[k], 0.9, bottom=b, color=G[k], zorder=3); b += v[k]
+            xs.append(x); labs.append(("Phased", "Unphased")[i])
+        ax_p.annotate(f"{c}×", (j * 2.7 + 0.5, 0), xycoords=("data", "axes fraction"), xytext=(0, -27),
+                      textcoords="offset points", ha="center", va="top", fontsize=6.5)
+    ax_p.set_xticks(xs); ax_p.set_xticklabels(labs, rotation=45, ha="right", rotation_mode="anchor", fontsize=5.5)
+    ax_p.set_ylim(0, 100); ax_p.set_yticks([0, 25, 50, 75, 100]); ax_p.set_ylabel("Calls of LongPhase 2 (%)")
+    _key(ax_p, [Patch(color=G[0], label="benchmark het."), Patch(color=G[1], label="homozygous"),
+                Patch(color=G[2], label="other allele"), Patch(color=G[3], label="absent")], 2)
+    # ---- b: calls left unphased by each tool (chr1-22), counts by v5.0q status (key of a); the bar outline gives the tool
+    def unphased(c, t):
+        sets = (("lp_only", "both") if t == "lp_gnn" else ("wh_only", "both"))
+        return [sum(comp(c, s, k) for s in sets) / 1000 for k in ("het_match", "hom", "het_other_allele", "absent")]
+    for j, c in enumerate(VENN_COVS):
+        for i, t in enumerate(("lp_gnn", "wh")):
+            x, v, b = j + (i - 0.5) * 0.38, unphased(c, t), 0
+            for k in range(4):
+                ax_a.bar(x, v[k], 0.33, bottom=b, color=G[k], zorder=3); b += v[k]
+            ax_a.bar(x, b, 0.33, fill=False, edgecolor=C[t], lw=0.9, zorder=4)
+    ax_a.set_ylim(0, 250); ax_a.set_yticks([0, 50, 100, 150, 200, 250]); ax_a.set_ylabel("Calls left unphased (thousands)")
+    outline = lambda t, lab: Patch(facecolor="none", edgecolor=C[t], lw=0.9, label=lab)
+    _key(ax_a, [outline("lp_gnn", "LongPhase 2"), outline("wh", "WhatsHap")], 1)
+    # ---- c: phased calls at v5.0q homozygous positions (genotype errors), both tools
+    for i, t in enumerate(("lp_gnn", "wh")):
+        ax_b.bar([j + (i - 0.5) * 0.36 for j in range(3)], [phased_class(c, t, "hom") / 1000 for c in VENN_COVS],
+                 0.33, color=C[t], zorder=3)
+    ax_b.set_ylim(0, 30); ax_b.set_yticks([0, 10, 20, 30])
+    ax_b.set_ylabel("Phased het. calls at v5.0q\nhomozygous sites (thousands)")
+    _key(ax_b, [Patch(color=C["lp_gnn"], label="LongPhase 2"), Patch(color=C["wh"], label="WhatsHap")], 1)
+    # ---- d: WhatsHap's wrong-phase fraction at benchmark SNVs left unphased by LongPhase 2
+    light = tint(C["wh"], 0.6)
+    for i, (col, k) in enumerate(((C["wh"], 2), (light, 3))):
+        ax_c.bar([j + (i - 0.5) * 0.36 for j in range(3)], [other_tool_errors(c, "lp_only")[k] for c in VENN_COVS],
+                 0.33, color=col, zorder=3)
+    ax_c.set_ylim(0, 25); ax_c.set_yticks([0, 5, 10, 15, 20, 25])
+    ax_c.set_ylabel("Benchmark SNVs wrongly\nphased by WhatsHap (%)")
+    _key(ax_c, [Patch(color=C["wh"], label="unphased by LongPhase 2"), Patch(color=light, label="all phased")], 1)
+    grouped(ax_a); grouped(ax_b); grouped(ax_c)
+    # ---- e precision, f completeness: every coverage and replicate
+    TOOLS = (("wh", "WhatsHap"), ("lp_gnn", "LongPhase 2"))   # LongPhase 2 drawn last, on top
+    snv = lambda tool: (lambda c: D["snv"]["ONT"][XLSX_TOOL[tool]].get(c))
+    for t, _ in TOOLS:
+        tline(ax_d, t, *_series(precision_runs(t), PLOT_COVS)("prec"))
+        tline(ax_e, t, *_series(snv(t), PLOT_COVS)("psnv_pct"))
+    ax_d.set_ylim(85, 95); ax_d.set_yticks([85, 90, 95])
+    ax_d.set_ylabel("Phased calls that are\nbenchmark het. SNVs (%)")
+    ax_e.set_ylim(75, 95); ax_e.set_yticks([75, 80, 85, 90, 95])
+    ax_e.set_ylabel("Benchmark het. SNVs phased (%)")
+    cov_axis(ax_d); cov_axis(ax_e)
+    for ax in (ax_d, ax_e):
+        _key(ax, [thandle(t, n_) for t, n_ in reversed(TOOLS)], 2, handlelength=1.6, columnspacing=0.6, handletextpad=0.4)
+    # ---- g: read depth at 60x of the calls left unphased
+    H = venn_hist()[60]
+    for k, col, lab in (("both", "#969696", "both"), ("wh", C["wh"], "WhatsHap only"),
+                        ("lp", C["lp_gnn"], "LongPhase 2 only")):
+        ax_f.plot([2 * i for i in range(len(H[k]))], H[k], color=col, lw=0.9, label=lab)
+    ax_f.set_xlim(0, 130); ax_f.set_ylim(0, 0.16); ax_f.set_yticks([0, 0.04, 0.08, 0.12, 0.16])
+    ax_f.set_xticks([0, 30, 60, 90, 120])
+    ax_f.set_xlabel("Read depth at 60× (×)"); ax_f.set_ylabel("Fraction of unphased calls")
+    ax_f.axvspan(123, 130, color="#EEEEEE", lw=0, zorder=0)
+    h, l = ax_f.get_legend_handles_labels()
+    _key(ax_f, h[::-1], 3, handlelength=1.2, columnspacing=0.6)
+    # ---- h: T2T-HG002 assembly status of the SNVs left unphased at high phasing uncertainty
+    T = t2t()
+    out_rm = 100 * T["cls"]["unassessed"] / T["rm_n"]
     out_bg = 100 * (1 - T["bg_in"] / T["bg_n"])
     for y, out in ((1, out_bg), (0, out_rm)):
-        ax.barh(y, 100 - out, 0.55, color=GREYS[2], zorder=3)
-        ax.barh(y, out, 0.55, left=100 - out, color=GREYS[0], zorder=3)
-    ax.set_yticks([0, 1]); ax.set_yticklabels(["Withheld", "Phased\n(random\nsample)"])
-    ax.tick_params(axis="y", length=0)
-    ax.set_xlim(0, 100); ax.set_xticks([0, 25, 50, 75, 100]); ax.set_ylim(-0.6, 1.6)
-    ax.set_xlabel("SNVs at 60× (%)")
-    ax.set_title("T2T-HG002 assembly", loc="center", fontsize=6.5, pad=KEYPAD)
-    ax.legend(handles=[Patch(color=GREYS[2], label="aligned 1:1"), Patch(color=GREYS[0], label="not aligned 1:1")],
-              loc="lower center", bbox_to_anchor=(0.5, 1.0), ncol=2, fontsize=5.5, handlelength=1.0,
-              columnspacing=1.0, borderaxespad=0.2)
-    ax = ax_g
+        ax_g.barh(y, 100 - out, 0.55, color=G[0], zorder=3)
+        ax_g.barh(y, out, 0.55, left=100 - out, color=G[3], zorder=3)
+    ax_g.set_yticks([0, 1]); ax_g.set_yticklabels(["Unphased at\nhigh phasing\nuncertainty", "Phased\n(random\nsample)"])
+    ax_g.tick_params(axis="y", length=0)
+    ax_g.set_xlim(0, 100); ax_g.set_xticks([0, 25, 50, 75, 100]); ax_g.set_ylim(-0.6, 1.6)
+    ax_g.set_xlabel("SNVs at 60× (%)")
+    _key(ax_g, [Patch(color=G[0], label="aligned 1:1"), Patch(color=G[3], label="not aligned 1:1")], 2, columnspacing=1.0)
+    for ax, L, t in zip((ax_p, ax_a, ax_b, ax_c, ax_d, ax_e, ax_f, ax_g), "abcdefgh",
+                        ("Phased and unphased calls", "Calls left unphased", "Genotype errors phased",
+                         "Phase errors at unphased SNVs", "Precision", "Completeness", "Read depth",
+                         "T2T-HG002 assembly")):
+        letter(ax, L)
+        ax.set_title(t, loc="center", fontsize=6.5, pad=FIG5_KEYPAD + (8 if ax in (ax_p, ax_a, ax_b, ax_c) else 0))   # two-line keys in row 1
+    save(fig, os.path.join(OUT, "fig5_phased_unphased.pdf"))
+
+
+def sfig_unphased_more():
+    """Panels moved out of Fig. 5 on 2026-11-10 (author decision, option B): a completeness and
+    b precision on PacBio HiFi data (LongPhase 2, WhatsHap and HiPhase; HiFi phased-call counts from
+    issue #9), c v5.0q status of the SNVs left unphased at high phasing uncertainty by coverage,
+    d their share outside one-to-one T2T-HG002 assembly alignments by chromosome at 60x."""
+    fig, (ax_h, ax_hp, ax_e, ax_g) = new_fig(66, 1, 4, width_ratios=[1, 1, 1.15, 0.9])
+    snv = lambda tool: (lambda c: D["snv"]["HiFi"][XLSX_TOOL[tool]].get(c))
+    tline(ax_h, "hp", *_series(hiphase, HIFI_COVS)("psnv_pct"))
+    tline(ax_hp, "hp", *_series(precision_hifi("hp"), HIFI_COVS)("prec"))
+    for t in ("wh", "lp_gnn"):
+        tline(ax_h, t, *_series(snv(t), HIFI_COVS)("psnv_pct"))
+        tline(ax_hp, t, *_series(precision_hifi(t), HIFI_COVS)("prec"))
+    ax_h.set_ylim(86, 93); ax_h.set_yticks([86, 88, 90, 92]); ax_h.set_ylabel("Benchmark het. SNVs phased (%)")
+    ax_hp.set_ylim(89.5, 95.5); ax_hp.set_yticks([90, 92, 94])
+    ax_hp.set_ylabel("Phased calls that are\nbenchmark het. SNVs (%)")
+    for ax in (ax_h, ax_hp):
+        cov_axis(ax, HIFI_COVS); ax.set_xlim(7.5, 52.5)
+    fig.legend(handles=[thandle("lp_gnn", "LongPhase 2"), thandle("wh", "WhatsHap"), thandle("hp")],
+               loc="outside upper left", ncol=3, frameon=False, handlelength=2.6, columnspacing=2.0)
+    _v5_status(ax_e)
+    T = t2t()
     order = [f"chr{i}" for i in range(1, 23)] + ["chrX", "chrY"]
     ch = sorted(T["chroms"], key=lambda d: order.index(d["chrom"]))
     ys = range(len(ch))
     for y, d in zip(ys, ch):
-        ax.plot([100 * d["bg_rate"], 100 * d["rm_rate"]], [y, y], color="#BDBDBD", lw=0.6, zorder=2)
-    ax.plot([100 * d["bg_rate"] for d in ch], ys, "o", color="#4D4D4D", ms=2.2, zorder=3)
-    ax.plot([100 * d["rm_rate"] for d in ch], ys, "o", color=C["lp_gnn"], ms=2.2, zorder=3)
-    ax.set_yticks(list(ys)); ax.set_yticklabels([d["chrom"].replace("chr", "") for d in ch], fontsize=5)
-    ax.tick_params(axis="y", length=1.5, pad=1)
-    ax.invert_yaxis(); ax.set_xlim(0, 100); ax.set_xticks([0, 25, 50, 75, 100])
-    ax.set_xlabel("Not aligned 1:1 (%)"); ax.set_ylabel("Chromosome")
-    ax.set_title("By chromosome, 60×", loc="center", fontsize=6.5, pad=KEYPAD)
-    for ax, L in zip((ax_a, ax_b, ax_h, ax_hp, ax_c, ax_e, ax_f, ax_g), "abcdefgh"):
-        letter(ax, L)
-    for ax in (ax_c, ax_e, ax_f, ax_g):   # letter() resets the title pad of every title of the axes
-        ax.set_title(ax.get_title(loc="center"), loc="center", fontsize=6.5, pad=KEYPAD)
-    # no row titles (author, 2026-10-19); an empty title keeps the line on which _row_keys() places each key
-    _row_header(sf1, " ")
-    _row_header(sf2, " ")
+        ax_g.plot([100 * d["bg_rate"], 100 * d["rm_rate"]], [y, y], color="#BDBDBD", lw=0.6, zorder=2)
+    ax_g.plot([100 * d["bg_rate"] for d in ch], ys, "o", color="#4D4D4D", ms=2.2, zorder=3)
+    ax_g.plot([100 * d["rm_rate"] for d in ch], ys, "o", color=C["lp_gnn"], ms=2.2, zorder=3)
+    ax_g.set_yticks(list(ys)); ax_g.set_yticklabels([d["chrom"].replace("chr", "") for d in ch], fontsize=5)
+    ax_g.tick_params(axis="y", length=1.5, pad=1)
+    ax_g.invert_yaxis(); ax_g.set_xlim(0, 100); ax_g.set_xticks([0, 25, 50, 75, 100])
+    ax_g.set_xlabel("Not aligned 1:1 (%)"); ax_g.set_ylabel("Chromosome")
     dot = lambda col, lab: Line2D([], [], color=col, ls="none", marker="o", ms=2.6, label=lab)
-    _row_keys(fig, (sf1, sf2), ([thandle(t, n_) for t, n_ in reversed(TOOLS)] + [thandle("hp")],
-                                [Patch(color=C["lp_gnn"], label="LongPhase 2"), Patch(color=C["wh"], label="WhatsHap"),
-                                 dot("#4D4D4D", "phased (random sample)"), dot(C["lp_gnn"], "withheld")]))
-    save(fig, os.path.join(OUT, "fig5_phased_unphased.pdf"))
+    _key(ax_g, [dot("#4D4D4D", "phased"), dot(C["lp_gnn"], "unphased")], 2)
+    for ax, L, t in zip((ax_h, ax_hp, ax_e, ax_g), "abcd",
+                        ("Completeness, PacBio HiFi", "Precision, PacBio HiFi", "Status in the v5.0q benchmark",
+                         "By chromosome, 60×")):
+        letter(ax, L)
+        ax.set_title(t, loc="center", fontsize=6.5, pad=FIG5_KEYPAD)
+    save(fig, os.path.join(SUPP, "suppfig_unphased_more.pdf"))
 
 
 # ============================================================ Figure 4 =====
@@ -1436,7 +1546,7 @@ def runtime_table(w):
     r2 = lambda x: str(Decimal(repr(x)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
     rt = _runtime()
     w(r"\begin{table}[h]")
-    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data (top) and PacBio HiFi data (bottom), replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~6). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB. \toolname times include alignment reading, phasing and VCF writing, and \toolname was run with 24 threads and on one thread; outputs of \toolname and \whatshap were identical to the reported VCFs. \hapcut includes fragment extraction; records with genotypes other than two alleles from 0, 1 and 2, which \hapcut does not accept (at most 682 per data set), were removed from its input. \hapcut was not timed at nanopore 60$\times$ or on HiFi data (--, no value).}\label{tab:runtime}")
+    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data (top) and PacBio HiFi data (bottom), replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~8). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB. \toolname times include alignment reading, phasing and VCF writing, and \toolname was run with 24 threads and on one thread; outputs of \toolname and \whatshap were identical to the reported VCFs. \hapcut includes fragment extraction; records with genotypes other than two alleles from 0, 1 and 2, which \hapcut does not accept (at most 682 per data set), were removed from its input. \hapcut was not timed at nanopore 60$\times$ or on HiFi data (--, no value).}\label{tab:runtime}")
     w(r"\small\setlength{\tabcolsep}{4pt}\begin{tabular}{@{}rrrrrrrrrrrrr@{}}\toprule")
     groups = [(("LongPhase 2", "24"), r"\toolname, 24 threads"), (("LongPhase 2", "1"), r"\toolname, 1 thread"),
               (("WhatsHap 2.8", "1"), r"\whatshap"), (("HapCUT2 1.3.4", "1"), r"\hapcut")]
@@ -1480,9 +1590,11 @@ def _other_phasers():
         plat = "ONT" if r[1].startswith("ONT") else "HiFi"
         out[(plat, r[3], int(r[4].split("x")[0]))] = dict(
             psnv=r[5], psnv_pct=r[6], pindel_pct=r[8], sw=r[9], sw_pct=r[10], ham=r[11], nblock=r[12], n50=r[13])
-    if "hb" not in HIDE:   # HapBridge rows, removed from the sheet on 2026-11-03
+    for key, archive in (("hb", "hapbridge_hidden_rows.tsv"), ("lh", "longhap_hidden_rows.tsv")):
+        if key in HIDE:
+            continue
         import csv
-        with open(os.path.join(ROOT, "notes", "competitors", "hapbridge_hidden_rows.tsv")) as f:
+        with open(os.path.join(ROOT, "notes", "competitors", archive)) as f:
             for r in list(csv.reader(f, delimiter="\t"))[1:]:
                 n = [float(x) for x in r[5:14]]
                 out[("ONT", r[3], int(r[4].split("x")[0]))] = dict(
@@ -1533,7 +1645,7 @@ def sv_table():
 
 
 def other_phasers_table(w):
-    """Every tool of the five further-phaser comparisons, with LongPhase 2 on the same input."""
+    """Visible further-phaser comparisons, with LongPhase 2 on the same input."""
     O = _other_phasers()
     rep = lambda runs: [x for x in runs if x["rep"] == 1][0]
     lp_snv = lambda p: lambda c: rep(D["snv"][p][XLSX_TOOL["lp_gnn"]][c]) if p == "ONT" else D["snv"][p][XLSX_TOOL["lp_gnn"]][c][0]
@@ -1545,16 +1657,17 @@ def other_phasers_table(w):
             (r"\toolname", coph("Mod", "longphase_v2.1.2")),
             ("MethPhaser", lambda c: D["meth"][c]),
             *([] if "hb" in HIDE else [("HapBridge", oth("ONT", "HapBridge ec48f02 (on LongPhase 2 SNV output, no GNN)"))]),
-            ("LongHap", oth("ONT", "LongHap 0.2.0 (SNVs, with 5mC)")),
-            ("LongHap, without 5mC", oth("ONT", "LongHap 0.2.0 (SNVs, sequence only)"))]),
+            *([] if "lh" in HIDE else [
+                ("LongHap", oth("ONT", "LongHap 0.2.0 (SNVs, with 5mC)")),
+                ("LongHap, without 5mC", oth("ONT", "LongHap 0.2.0 (SNVs, sequence only)"))])]),
         ("Nanopore R10.4.1, SNVs and indels", "ONT", [
             (r"\toolname", coph("Indel", "longphase_v2.1.2")),
             (r"\whatshap", coph("Indel", "whatshap_v28")),
             (r"\hapcut", oth("ONT", "HapCUT2 1.3.4 (--indels 1)")),
             ("TinkerHap", oth("ONT", "TinkerHap 1.0.0"))]),
-        ("Nanopore R10.4.1, SNVs, indels, SVs and 5mC", "ONT", [
+        *([] if "lh" in HIDE else [("Nanopore R10.4.1, SNVs, indels, SVs and 5mC", "ONT", [
             (r"\toolname", coph("Indel+Mod+SV", "longphase_v2.1.2")),
-            ("LongHap", oth("ONT", "LongHap 0.2.0 (all variants, with 5mC)"))]),
+            ("LongHap", oth("ONT", "LongHap 0.2.0 (all variants, with 5mC)"))])]),
         ("PacBio HiFi, SNVs", "HiFi", [
             (r"\toolname", lp_snv("HiFi")),
             (r"\whatshap", snv("HiFi", "whatshap_v28")),
@@ -1571,7 +1684,7 @@ def other_phasers_table(w):
     w(r"\clearpage")   # flush Tables 11-16 (floats) so that the longtable follows them
     w(r"{\scriptsize\setlength{\tabcolsep}{4pt}")
     w(r"\begin{longtable}{@{}lrrrrrrr@{}}")
-    w(r"\caption{\textbf{Phasing compared with further phasers.} HG002, replicate~1; nanopore R10.4.1 data at 10--60$\times$ in steps of 10$\times$ and PacBio HiFi data at 10--50$\times$. Each block compares tools given the same reads, variant calls and variant classes; within a block, \toolname is listed first. " + ("MethPhaser was" if "hb" in HIDE else "MethPhaser and HapBridge were") + r" given the SNV-only output of \toolname without GNN correction. HiPhase and TinkerHap have no SNV-only mode, so their SNV-only rows used call sets restricted to SNVs. LongHap with indels, SVs and 5mC was given deletions and insertions from Sniffles2 as sequence-resolved records. Switch error rates are over consecutive SNV pairs; Hamming distance includes indels where both files contain them, so it is comparable only within a block. Phased fractions are percentages of benchmark heterozygous SNVs or indels; --, not applicable. Source: Supplementary Data~1, sheets \code{Other\_phasers}, \code{SNV\_Detail}, \code{co-phase\_Detail} and \code{MethPhaser}.}\label{tab:otherphasers}\\")
+    w(r"\caption{\textbf{Phasing compared with further phasers.} HG002, replicate~1; nanopore R10.4.1 data at 10--60$\times$ in steps of 10$\times$ and PacBio HiFi data at 10--50$\times$. Each block compares tools given the same reads, variant calls and variant classes; within a block, \toolname is listed first. " + ("MethPhaser was" if "hb" in HIDE else "MethPhaser and HapBridge were") + r" given the SNV-only output of \toolname without GNN correction. HiPhase and TinkerHap have no SNV-only mode, so their SNV-only rows used call sets restricted to SNVs." + ("" if "lh" in HIDE else " LongHap with indels, SVs and 5mC was given deletions and insertions from Sniffles2 as sequence-resolved records.") + r" Switch error rates are over consecutive SNV pairs; Hamming distance includes indels where both files contain them, so it is comparable only within a block. Phased fractions are percentages of benchmark heterozygous SNVs or indels; --, not applicable. Source: Supplementary Data~1, sheets \code{Other\_phasers}, \code{SNV\_Detail}, \code{co-phase\_Detail} and \code{MethPhaser}.}\label{tab:otherphasers}\\")
     head = (r"\toprule Tool & Cov. & \shortstack[r]{Phased\\SNVs (\%)} & \shortstack[r]{Phased\\indels (\%)} & "
             r"\shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate relative\\to \toolname} & \shortstack[r]{Hamming\\(\%)} & \shortstack[r]{N50\\(Mb)} \\ \midrule")
     w(head + r"\endfirsthead")
@@ -1674,23 +1787,83 @@ def tables():
     L[-1] = r"\bottomrule"
     w(r"\end{longtable}}" + "\n")
     # ---- Table 10: co-phasing configurations
-    w(r"{\scriptsize\setlength{\tabcolsep}{3.5pt}")
-    w(r"\begin{longtable}{@{}lllrrrrr@{}}")
-    w(r"\caption{\textbf{Co-phasing configurations of \toolname, without and with GNN correction.} Scored against v5.0q: switch errors on SNVs, Hamming distance over SNVs and, where they are phased, indels; phased indels as a percentage of benchmark heterozygous indels. Means (s.d.) over ten replicates at 10 and 20$\times$; one replicate at 30 and 60$\times$. Every coverage is in Supplementary Data~1.}\label{tab:cophase}\\")
-    w(r"\toprule Classes & GNN & Cov. & \shortstack[r]{Phased\\indel (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead")
-    w(r"\toprule Classes & GNN & Cov. & \shortstack[r]{Phased\\indel (\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead")
+    # Blocks joined, sites added and switch errors added are paired by down-sampling replicate with
+    # SNV-only phasing at the same GNN setting (author, 2026-11-03). HiFi rows: issue #10 runs
+    # (notes/sv_phasing/snv.tsv); their phased indels are not scored, so the site columns are empty.
+    def _pairs(base, runs, hifi=False):
+        b0 = {r["rep"]: r for r in base}
+        out = []
+        for r in runs:
+            if r["rep"] not in b0:
+                continue
+            s0 = b0[r["rep"]]
+            d = {"join": s0["nblock"] - r["nblock"], "dsw": r["sw"] - s0["sw"]}
+            if not hifi:
+                d["add"] = (r.get("pindel") or 0) + r.get("psv", 0) + r.get("pmod", 0)
+                d["jps"] = 1e3 * d["join"] / d["add"] if d["add"] else None
+            d["epj"] = d["dsw"] / d["join"] if d["join"] else None
+            out.append(d)
+        return out
+
+    def _jcols(base, runs, cfg, hifi=False):
+        if cfg == "SNV":
+            return "-- & -- & -- & --"
+        p = _pairs(base, runs, hifi)
+        epj = "--" if cfg == "SV" else cell(p, "epj", 2)
+        neg = lambda x: re.sub(r"(?<![\d-])-(?=\d)", "$-$", re.sub(r"-0\.00\b", "0.00", x))   # minus sign, no "-0.00"
+        if hifi:
+            return neg(f"{cell(p, 'join', 0)} & -- & -- & {epj}")
+        return neg(f"{cell(p, 'join', 0)} & {cell(p, 'add', 0, 1e-3)} & {cell(p, 'jps', 2)} & {epj}")
+
+    def _hifi_runs():
+        import csv
+        from collections import defaultdict
+        out = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
+        with open(os.path.join(ROOT, "notes", "sv_phasing", "snv.tsv")) as f:
+            for r in csv.DictReader(f, delimiter="\t"):
+                if r["platform"] != "HiFi" or r["tool"] != "LongPhase 2":
+                    continue
+                out[r["input"]][r["gnn"]][int(r["coverage"])].append(dict(
+                    rep=int(r["replicate"]), sw=int(r["snv_switch"]), sw_pct=float(r["snv_switch_rate_pct"]),
+                    ham=float(r["hamming_pct"]), nblock=int(r["blocks"]), n50=int(r["block_n50"])))
+        return out
+
+    HDR = (r"\toprule Classes & GNN & Cov. & \shortstack[r]{Phased\\indel\\(\%)} & \shortstack[r]{Switch\\errors} & "
+           r"\shortstack[r]{Switch\\error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} & "
+           r"\shortstack[r]{Blocks\\joined} & \shortstack[r]{Sites\\added\\($10^3$)} & \shortstack[r]{Joins\\per $10^3$\\sites} & "
+           r"\shortstack[r]{Switch\\errors\\per join} \\ \midrule")
+    w(r"{\scriptsize\setlength{\tabcolsep}{4pt}")   # landscape page (Supplementary.tex)
+    w(r"\begin{longtable}{@{}lllrrrrrrrrrr@{}}")
+    w(r"\caption{\textbf{Co-phasing configurations of \toolname, without and with GNN correction.} Scored against v5.0q: switch errors on SNVs, Hamming distance over SNVs and, where they are phased, indels; phased indels as a percentage of benchmark heterozygous indels. Blocks joined, the number of blocks of SNV-only phasing minus that of the configuration; sites added, the phased indels, SVs and 5mC sites of the configuration; switch errors per join, the SNV switch errors added to those of SNV-only phasing divided by the blocks joined. Each is computed against SNV-only phasing of the same down-sampling replicate at the same GNN setting. Nanopore: means (s.d.) over ten replicates at 10 and 20$\times$, one replicate at 30 and 60$\times$; every coverage is in Supplementary Data~1. PacBio HiFi: one replicate; phased indels were not scored. --, not applicable.}\label{tab:cophase}\\")
+    w(HDR + r"\endfirsthead")
+    w(HDR + r"\endhead")
+    w(r"\multicolumn{13}{@{}l}{\textit{Nanopore}} \\*")
     for cfg, name, _ in CFG:
         for tool, tag in (("longphase_v2.0.1", "no"), ("longphase_v2.1.2", "yes")):
             for c in (10, 20, 30, 60):
+                base = D["snv"]["ONT"][tool][c]
                 if cfg == "SNV":
-                    runs = D["snv"]["ONT"][tool][c]
+                    runs = base
                     pind = "--"
                 else:
                     runs = D["coph"][cfg][tool][c]
                     pind = cell(runs, "pindel_pct", 2) if "Indel" in cfg else "--"
                 first = c == 10
                 w(f"{name if (first and tag == 'no') else ''} & {tag if first else ''} & {c}$\\times$ & {pind} & {cell(runs, 'sw', 0)} & "
-                  f"{cell(runs, 'sw_pct', 3)} & {cell(runs, 'ham', 2)} & {cell(runs, 'n50', 2, 1e-6)} \\\\")
+                  f"{cell(runs, 'sw_pct', 3)} & {cell(runs, 'ham', 2)} & {cell(runs, 'nblock', 0)} & {cell(runs, 'n50', 2, 1e-6)} & "
+                  f"{_jcols(base, runs, cfg)} \\\\")
+        w(r"\midrule")
+    w(r"\multicolumn{13}{@{}l}{\textit{PacBio HiFi}} \\*")
+    HR = _hifi_runs()
+    for cfg, name, key in (("SNV", "SNV", None), ("SV", "+SV", "SNV+SV"), ("Indel+SV", "+indel+SV", "SNV+indel+SV")):
+        for tool, tag in (("longphase_v2.0.1", "no"), ("longphase_v2.1.2", "yes")):
+            for c in HIFI_COVS:
+                base = D["snv"]["HiFi"][tool][c]
+                runs = base if key is None else HR[key][tag][c]
+                first = c == 10
+                w(f"{name if (first and tag == 'no') else ''} & {tag if first else ''} & {c}$\\times$ & -- & {cell(runs, 'sw', 0)} & "
+                  f"{cell(runs, 'sw_pct', 3)} & {cell(runs, 'ham', 2)} & {cell(runs, 'nblock', 0)} & {cell(runs, 'n50', 2, 1e-6)} & "
+                  f"{_jcols(base, runs, cfg, hifi=True)} \\\\")
         w(r"\midrule")
     L[-1] = r"\bottomrule"
     w(r"\end{longtable}}" + "\n")
@@ -1794,5 +1967,5 @@ def tables():
 
 if __name__ == "__main__":
     fig2(); fig3_sv_methylation(); fig4(); fig5()
-    sfig10(); sfig_runtime(); sfig11(); sfig12(); sfig13(); sfig14(); sfig17(); sfig16(); sfig17_sv_indels()
+    sfig10(); sfig_runtime(); sfig11(); sfig12(); sfig13(); sfig14(); sfig17(); sfig16(); sfig17_sv_indels(); sfig_in_benchmark(); sfig_unphased_more()
     tables(); sv_table()

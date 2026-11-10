@@ -4,7 +4,8 @@ HapBridge, TinkerHap, HiPhase) and the SNV+indel runs of LongPhase, WhatsHap and
 indel-phasing tools are compared with, and HiPhase and TinkerHap on an SNV-only input VCF (neither
 has an SNV-only option) for the SNV-only comparison. One row per run (replicate 1), from the
 `longphase compare` reports of the runs (scripts/, README.md). Columns as in SNV_Detail and co-phase_Detail. The sheet
-is rebuilt from scratch; no other sheet changes.
+is rebuilt from scratch; no other sheet changes. HapBridge and LongHap are excluded from the
+publication sheet; their original rows remain in the corresponding *_hidden_rows.tsv archives.
 
     python3 build_sheet.py          (run on the lab server; needs openpyxl)
 """
@@ -19,14 +20,16 @@ ONT, HIFI = [10, 20, 30, 40, 50, 60], [10, 20, 30, 40, 50]
 S = '/ssd/longphase_process'
 # platform, variant set, tool, coverages, report path ({c} = coverage)
 RUNS = [
-    ('ONT R10.4.1', 'SNV + 5mC', 'LongHap 0.2.0 (SNVs, with 5mC)', ONT, S + '/longhap/{c}x/sw_longhap_meth_{c}x_1.tsv'),
-    ('ONT R10.4.1', 'SNV + 5mC', 'LongHap 0.2.0 (SNVs, sequence only)', ONT, S + '/longhap/{c}x/sw_longhap_seq_{c}x_1.tsv'),
+    # [author-hidden] 2026-11-10: LongHap rows remain in longhap_hidden_rows.tsv.
+    # Uncomment the three LongHap run definitions to rebuild their workbook rows.
+    # ('ONT R10.4.1', 'SNV + 5mC', 'LongHap 0.2.0 (SNVs, with 5mC)', ONT, S + '/longhap/{c}x/sw_longhap_meth_{c}x_1.tsv'),
+    # ('ONT R10.4.1', 'SNV + 5mC', 'LongHap 0.2.0 (SNVs, sequence only)', ONT, S + '/longhap/{c}x/sw_longhap_seq_{c}x_1.tsv'),
     # [author-hidden] 2026-11-03: HapBridge left out of Supplementary Data 1; its rows are kept in
     # hapbridge_hidden_rows.tsv. Remove the leading '# ' to put it back.
     # ('ONT R10.4.1', 'SNV + 5mC', 'HapBridge ec48f02 (on LongPhase 2 SNV output, no GNN)', ONT, S + '/hapbridge/sw_hapbridge_{c}x_1.tsv'),
     ('ONT R10.4.1', 'SNV + indel', 'HapCUT2 1.3.4 (--indels 1)', ONT, '/disk/research/hapcut2_v1.3.4/indels/sw_hapcut2_v134_indels_{c}x_1.tsv'),
     ('ONT R10.4.1', 'SNV + indel', 'TinkerHap 1.0.0', ONT, S + '/others_ont/sw_tinkerhap_{c}x_1.tsv'),
-    ('ONT R10.4.1', 'SNV + indel + SV + 5mC', 'LongHap 0.2.0 (all variants, with 5mC)', ONT, S + '/longhap/allvar/sw_longhap_all_{c}x_1.tsv'),
+    # ('ONT R10.4.1', 'SNV + indel + SV + 5mC', 'LongHap 0.2.0 (all variants, with 5mC)', ONT, S + '/longhap/allvar/sw_longhap_all_{c}x_1.tsv'),
     ('PB HiFi Revio', 'SNV only', 'HiPhase 1.7.0 (SNV-only input VCF)', HIFI, S + '/hifi_snvonly/sw_hiphase_v170_hifi_snv_{c}x_1.tsv'),
     ('PB HiFi Revio', 'SNV only', 'TinkerHap 1.0.0 (SNV-only input VCF)', HIFI, S + '/hifi_snvonly/sw_tinkerhap_hifi_snv_{c}x_1.tsv'),
     ('PB HiFi Revio', 'SNV + indel', 'LongPhase 2.1.1 (--indels)', HIFI, '/disk/research/v2.1.1/pacbio/indels/sw_longphase_hifi_indel_{c}x_1.tsv'),

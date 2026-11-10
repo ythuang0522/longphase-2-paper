@@ -126,7 +126,7 @@ Long-read sequencing captures SNVs, indels, structural variants (SVs) and 5-meth
   HG002, replicate~1 unless stated. SV phase was scored against the T2T-HG002 assembly and SNV phase against v5.0q.
   \textbf{a},\textbf{b}, SV phasing error rate against coverage on nanopore (\textbf{a}) and PacBio HiFi (\textbf{b}) data; SVs shorter than 1~kb are 90--93\% of the SVs scored.
   \textbf{c}, SVs of at least 1~kb on nanopore (solid) and PacBio HiFi (dotted) data.
-  \textbf{d}, SNV switch error rate against coverage of SNV and 5mC phasing on nanopore data.
+  \textbf{d}, SNV switch error rate against coverage of SNV and 5mC phasing on nanopore data, compared with MethPhaser.
   \textbf{e}, SNV switch error rate against phase-block N50 of the runs in \textbf{d}, one point per coverage.
   \textbf{f}, The same by variant class; filled markers, SNVs, indels, SVs and 5mC; \toolname and \whatshap are means of ten replicates at 10--20$\times$.}
   \label{fig:methylation}
@@ -146,15 +146,16 @@ Long-read sequencing captures SNVs, indels, structural variants (SVs) and 5-meth
 \begin{figure}[p]
   \centering
   \includegraphics[width=\textwidth]{fig5_phased_unphased.pdf}
-  \caption{\textbf{Calls phased by \toolname, \whatshap and HiPhase, and SNVs withheld at high phasing uncertainty.}
-  SNV-only phasing of HG002 nanopore R10.4.1 data (\textbf{a}, \textbf{b}, \textbf{e}--\textbf{h}) and PacBio HiFi data (\textbf{c}, \textbf{d}). \textbf{a}--\textbf{d}, coverages and replicates as in Fig.~\ref{fig:phasers}; \textbf{e}--\textbf{h}, replicate~1.
-  \textbf{a},\textbf{c}, Completeness: fraction of the heterozygous SNVs of the v5.0q benchmark phased from nanopore (\textbf{a}) and HiFi (\textbf{c}) data; every tool received the same heterozygous calls.
-  \textbf{b},\textbf{d}, Precision: share of the phased calls on chr1--22 that match a benchmark heterozygous SNV in position and alleles, for nanopore (\textbf{b}) and HiFi (\textbf{d}) data (Supplementary Tables~1 and~3).
-  \textbf{c},\textbf{d} also show HiPhase, which was given the calls restricted to SNVs.
-  \textbf{e}, Phased heterozygous calls on chr1--22 at positions where v5.0q has a homozygous genotype (genotype errors; Supplementary Table~9).
-  \textbf{f}, SNVs that \toolname withheld at high phasing uncertainty, by their genotype in the v5.0q benchmark VCF, matched by position without a benchmark BED.
-  \textbf{g}, At 60$\times$, these SNVs and a random sample of phased SNVs, inside or outside the regions where both haplotypes of the T2T-HG002 assembly align one-to-one to GRCh38 (exploratory).
-  \textbf{h}, The share outside these regions for each chromosome (Supplementary Table~10).}
+  \caption{\textbf{Heterozygous SNV calls that \toolname phases and leaves unphased.}
+  SNV-only phasing of HG002 nanopore R10.4.1 data; calls on chr1--22, classified against the v5.0q benchmark VCF without a benchmark BED. \textbf{a}--\textbf{d},\textbf{g},\textbf{h}, replicate~1; \textbf{e},\textbf{f}, coverages and replicates as in Fig.~\ref{fig:phasers}.
+  \textbf{a}, Calls that \toolname phased and left unphased, by their status in v5.0q: a heterozygous SNV with the same position and alleles, a homozygous genotype, a heterozygous SNV with other alleles, or absent.
+  \textbf{b}, Number of calls left unphased by \toolname and by \whatshap (bar outline), by the same status.
+  \textbf{c}, Phased heterozygous calls at positions where v5.0q has a homozygous genotype (genotype errors; Supplementary Table~9).
+  \textbf{d}, Fraction of benchmark heterozygous SNVs to which \whatshap assigned the wrong phase, among the SNVs that \toolname left unphased and among all SNVs that \whatshap phased.
+  \textbf{e}, Precision: share of the phased calls that match a benchmark heterozygous SNV in position and alleles.
+  \textbf{f}, Completeness: fraction of the benchmark heterozygous SNVs phased; both tools received the same heterozygous calls (Supplementary Table~1).
+  \textbf{g}, Read depth at 60$\times$ of the calls left unphased by \toolname only, by \whatshap only or by both, in 2$\times$ bins; the grey bin collects sites at or above the depth cap of the variant caller.
+  \textbf{h}, At 60$\times$, the SNVs that \toolname left unphased at high phasing uncertainty, a subset of its unphased calls, and a random sample of phased SNVs, inside or outside the regions where both haplotypes of the T2T-HG002 assembly align one-to-one to GRCh38 (exploratory; Supplementary Table~10).}
   \label{fig:unphased}
 \end{figure}
 

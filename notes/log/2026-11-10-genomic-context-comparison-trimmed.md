@@ -1,0 +1,3 @@
+# Repeated tool comparison removed from genomic-context paragraph, 2026-11-10
+
+At the author's request, removed the two sentences stating that LongPhase 2 had the lowest switch error rate within v5.0q benchmark regions and listing its fold differences against WhatsHap and HapCUT2 by coverage. The paragraph now moves directly from "The separation between phasers also depended on genomic context" to the GIAB-stratum comparison. The stratum and newly covered-region analyses, their data and citations are unchanged. Supplementary Table 8 remains cited in the preceding paragraph and retains the supporting results.
