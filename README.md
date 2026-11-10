@@ -113,13 +113,11 @@ tuning), scored as `SNV_Detail` (`longphase compare`, v5.0q chr1–22, SNV switc
 
 ## Before submission
 
-Red `\todo{}` marks are reserved for what blocks submission: 26 remain after the
-2026-09-24 pass (main text 6, Methods 15, Supplementary 5), down from 65 on 2026-09-20.
-What is left: the missing WhatsHap/HapCUT2/LongPhase 1.0 and runtime tables (the
-largest block), the release and training-code deposition, the Fig. 6 definitions and
-plotting script, the constant justifications and the Supplementary Fig. 10 decision, the
-ten seed values, the chr1-22 derivation of the v5.0q VCF, source data, and one new flag
-on the Clair3 model (`notes/log/2026-09-24-author-decisions-read-provenance.md`).
+Red `\todo{}` marks are reserved for what blocks submission: none remains since
+2026-11-10 (26 on 2026-09-24, 65 on 2026-09-20). The last two, in Methods, were removed
+by author decision: figure and training scripts need not be public, and Code availability
+now states only that the trained GNN model is in the repository
+(`notes/log/2026-11-10-methods-todos-removed.md`).
 
 SV phasing accuracy: issue #10 data arrived 2026-10-26 (`notes/sv_phasing/`, release v2.1.2, 100 runs,
 HiPhase on HiFi). Fig. 3a–c is drawn from it (redesigned 2026-10-27: SV error rate against coverage, c SVs ≥ 1 kb on both platforms; the + indels input is Supplementary Fig. 3). Results, Discussion, Methods

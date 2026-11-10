@@ -2,6 +2,15 @@
 
 One file per change, newest first. Moved verbatim from `../../README.md` on 2026-10-20;
 each file adds the entry title as its heading.
+- 2026-11-10 — [Supplementary writing review completed](2026-11-10-supplementary-writing-pass.md)
+- 2026-11-10 — [Methods writing review completed](2026-11-10-methods-writing-pass.md)
+- 2026-11-10 — [Discussion writing review completed](2026-11-10-discussion-five-changes-completed.md)
+- 2026-11-10 — [Methods: the two \todo marks removed](2026-11-10-methods-todos-removed.md)
+- 2026-11-10 — [Methods review, group D: structure, data availability, todo text](2026-11-10-methods-group-d-structure-data.md)
+- 2026-11-10 — [Methods review, group C: text for analyses that are not reported](2026-11-10-methods-group-c-deletions.md)
+- 2026-11-10 — [Methods review, group B: missing definitions](2026-11-10-methods-group-b-definitions.md)
+- 2026-11-10 — [Methods review, group A: factual corrections](2026-11-10-methods-group-a-factual-corrections.md)
+- 2026-11-10 — [Discussion density pass](2026-11-10-discussion-density-pass.md)
 - 2026-11-10 — [Discussion aligned with the updated Results](2026-11-10-discussion-aligned-with-results.md)
 - 2026-11-10 — [Runtime merged into the preceding Results paragraph](2026-11-10-runtime-merged-into-results-ending.md)
 - 2026-11-10 — [Fig. 5h interpretation checked against the GIAB preprint](2026-11-10-fig5h-giab-context-verified.md)
