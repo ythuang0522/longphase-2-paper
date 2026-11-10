@@ -2,7 +2,7 @@
 
 {\scriptsize\setlength{\tabcolsep}{4pt}
 \begin{longtable}{@{}lrrrrrrr@{}}
-\caption{\textbf{Phasing compared with further phasers.} HG002, replicate~1; nanopore R10.4.1 data at 10--60$\times$ in steps of 10$\times$ and PacBio HiFi data at 10--50$\times$. Each block compares tools given the same reads, variant calls and variant classes; within a block, \toolname is listed first. MethPhaser was given the SNV-only output of \toolname without GNN correction. HiPhase and TinkerHap have no SNV-only mode, so their SNV-only rows used call sets restricted to SNVs. Switch error rates are over consecutive SNV pairs; Hamming distance includes indels where both files contain them, so it is comparable only within a block. Phased fractions are percentages of benchmark heterozygous SNVs or indels; --, not applicable. Source: Supplementary Data~1, sheets \code{Other\_phasers}, \code{SNV\_Detail}, \code{co-phase\_Detail} and \code{MethPhaser}.}\label{tab:otherphasers}\\
+\caption{\textbf{Additional phasing comparisons on replicate~1.} HG002; nanopore R10.4.1 data at 10--60$\times$ in steps of 10$\times$ and PacBio HiFi data at 10--50$\times$. Each block compares tools given the same reads, variant calls and variant classes; within a block, \toolname is listed first. MethPhaser was given the SNV-only output of \toolname without GNN correction. HiPhase has no SNV-only mode, so its SNV-only rows used call sets restricted to SNVs. Switch error rates are over consecutive SNV pairs; Hamming distance includes indels where both files contain them, so it is comparable only within a block. Phased fractions are percentages of benchmark heterozygous SNVs or indels; --, not applicable. Source: Supplementary Data~1, sheets \code{Other\_phasers}, \code{SNV\_Detail}, \code{co-phase\_Detail} and \code{MethPhaser}.}\label{tab:otherphasers}\\
 \toprule Tool & Cov. & \shortstack[r]{Phased\\SNVs (\%)} & \shortstack[r]{Phased\\indels (\%)} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate relative\\to \toolname} & \shortstack[r]{Hamming\\(\%)} & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead
 \toprule Tool & Cov. & \shortstack[r]{Phased\\SNVs (\%)} & \shortstack[r]{Phased\\indels (\%)} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate relative\\to \toolname} & \shortstack[r]{Hamming\\(\%)} & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead
 \multicolumn{8}{@{}l}{\textit{Nanopore R10.4.1, SNVs and 5mC}} \\
@@ -38,12 +38,6 @@ MethPhaser & 10$\times$ & 78.11 & -- & 0.124 & 1.51 & 7.19 & 0.96 \\
  & 40$\times$ & 92.41 & 50.69 & 0.157 & 4.81 & 11.21 & 4.05 \\
  & 50$\times$ & 92.41 & 51.57 & 0.137 & 4.46 & 11.45 & 4.37 \\
  & 60$\times$ & 92.37 & 52.04 & 0.126 & 4.69 & 13.48 & 5.01 \\
-TinkerHap & 10$\times$ & 78.89 & 33.98 & 0.332 & 3.66 & 8.14 & 0.80 \\
- & 20$\times$ & 91.84 & 46.61 & 0.229 & 4.73 & 8.91 & 1.48 \\
- & 30$\times$ & 92.34 & 49.46 & 0.197 & 5.34 & 9.72 & 1.96 \\
- & 40$\times$ & 92.43 & 50.78 & 0.170 & 5.23 & 10.82 & 2.27 \\
- & 50$\times$ & 92.45 & 51.64 & 0.162 & 5.30 & 11.86 & 2.67 \\
- & 60$\times$ & 92.41 & 52.11 & 0.151 & 5.64 & 13.16 & 3.13 \\
 \midrule
 \multicolumn{8}{@{}l}{\textit{PacBio HiFi, SNVs}} \\
 \toolname & 10$\times$ & 87.01 & -- & 0.049 & -- & 0.73 & 0.34 \\
@@ -66,11 +60,6 @@ HiPhase & 10$\times$ & 87.20 & -- & 0.085 & 1.73 & 0.80 & 0.34 \\
  & 30$\times$ & 92.19 & -- & 0.068 & 1.80 & 0.86 & 0.54 \\
  & 40$\times$ & 92.19 & -- & 0.063 & 1.69 & 0.87 & 0.57 \\
  & 50$\times$ & 91.88 & -- & 0.057 & 1.75 & 0.85 & 0.58 \\
-TinkerHap & 10$\times$ & 87.61 & -- & 0.169 & 3.44 & 1.22 & 0.34 \\
- & 20$\times$ & 92.33 & -- & 0.146 & 3.64 & 1.03 & 0.48 \\
- & 30$\times$ & 92.52 & -- & 0.130 & 3.45 & 0.98 & 0.52 \\
- & 40$\times$ & 92.48 & -- & 0.109 & 2.93 & 1.00 & 0.56 \\
- & 50$\times$ & 92.14 & -- & 0.095 & 2.92 & 0.97 & 0.58 \\
 \midrule
 \multicolumn{8}{@{}l}{\textit{PacBio HiFi, SNVs and indels}} \\
 \toolname & 10$\times$ & 86.86 & 47.64 & 0.094 & -- & 2.54 & 0.40 \\
@@ -93,9 +82,4 @@ HiPhase & 10$\times$ & 87.40 & 52.85 & 0.164 & 1.75 & 4.15 & 0.45 \\
  & 30$\times$ & 92.34 & 63.38 & 0.091 & 1.71 & 2.60 & 0.71 \\
  & 40$\times$ & 92.33 & 65.00 & 0.079 & 1.64 & 2.46 & 0.76 \\
  & 50$\times$ & 92.02 & 65.68 & 0.070 & 1.74 & 2.11 & 0.78 \\
-TinkerHap & 10$\times$ & 87.65 & 53.68 & 0.283 & 3.00 & 5.36 & 0.44 \\
- & 20$\times$ & 92.38 & 61.34 & 0.217 & 3.61 & 4.75 & 0.63 \\
- & 30$\times$ & 92.56 & 64.24 & 0.181 & 3.38 & 3.94 & 0.69 \\
- & 40$\times$ & 92.51 & 65.85 & 0.153 & 3.18 & 3.85 & 0.72 \\
- & 50$\times$ & 92.17 & 66.52 & 0.133 & 3.29 & 3.44 & 0.75 \\
 \bottomrule\end{longtable}}

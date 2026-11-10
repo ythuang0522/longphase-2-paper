@@ -5,7 +5,8 @@ indel-phasing tools are compared with, and HiPhase and TinkerHap on an SNV-only 
 has an SNV-only option) for the SNV-only comparison. One row per run (replicate 1), from the
 `longphase compare` reports of the runs (scripts/, README.md). Columns as in SNV_Detail and co-phase_Detail. The sheet
 is rebuilt from scratch; no other sheet changes. HapBridge and LongHap are excluded from the
-publication sheet; their original rows remain in the corresponding *_hidden_rows.tsv archives.
+publication sheet, and TinkerHap since 2026-11-10; their original rows remain in the corresponding
+*_hidden_rows.tsv archives.
 
     python3 build_sheet.py          (run on the lab server; needs openpyxl)
 """
@@ -28,15 +29,17 @@ RUNS = [
     # hapbridge_hidden_rows.tsv. Remove the leading '# ' to put it back.
     # ('ONT R10.4.1', 'SNV + 5mC', 'HapBridge ec48f02 (on LongPhase 2 SNV output, no GNN)', ONT, S + '/hapbridge/sw_hapbridge_{c}x_1.tsv'),
     ('ONT R10.4.1', 'SNV + indel', 'HapCUT2 1.3.4 (--indels 1)', ONT, '/disk/research/hapcut2_v1.3.4/indels/sw_hapcut2_v134_indels_{c}x_1.tsv'),
-    ('ONT R10.4.1', 'SNV + indel', 'TinkerHap 1.0.0', ONT, S + '/others_ont/sw_tinkerhap_{c}x_1.tsv'),
+    # [author-hidden] 2026-11-10: TinkerHap rows remain in tinkerhap_hidden_rows.tsv.
+    # Uncomment the three TinkerHap run definitions to rebuild their workbook rows.
+    # ('ONT R10.4.1', 'SNV + indel', 'TinkerHap 1.0.0', ONT, S + '/others_ont/sw_tinkerhap_{c}x_1.tsv'),
     # ('ONT R10.4.1', 'SNV + indel + SV + 5mC', 'LongHap 0.2.0 (all variants, with 5mC)', ONT, S + '/longhap/allvar/sw_longhap_all_{c}x_1.tsv'),
     ('PB HiFi Revio', 'SNV only', 'HiPhase 1.7.0 (SNV-only input VCF)', HIFI, S + '/hifi_snvonly/sw_hiphase_v170_hifi_snv_{c}x_1.tsv'),
-    ('PB HiFi Revio', 'SNV only', 'TinkerHap 1.0.0 (SNV-only input VCF)', HIFI, S + '/hifi_snvonly/sw_tinkerhap_hifi_snv_{c}x_1.tsv'),
+    # ('PB HiFi Revio', 'SNV only', 'TinkerHap 1.0.0 (SNV-only input VCF)', HIFI, S + '/hifi_snvonly/sw_tinkerhap_hifi_snv_{c}x_1.tsv'),
     ('PB HiFi Revio', 'SNV + indel', 'LongPhase 2.1.1 (--indels)', HIFI, '/disk/research/v2.1.1/pacbio/indels/sw_longphase_hifi_indel_{c}x_1.tsv'),
     ('PB HiFi Revio', 'SNV + indel', 'WhatsHap 2.8 (indels)', HIFI, '/disk/research/pacbio/whatshap_v2.8_indels/sw_whatshap_v28_hifi_indels_{c}x_1.tsv'),
     ('PB HiFi Revio', 'SNV + indel', 'HapCUT2 1.3.4 (--indels 1)', HIFI, '/disk/research/pacbio/hapcut2_v1.3.4/indels/sw_hapcut2_v134_hifi_indels_{c}x_1.tsv'),
     ('PB HiFi Revio', 'SNV + indel', 'HiPhase 1.7.0', HIFI, '/disk/research/pacbio/hiphase_v1.7.0/sw_hiphase_v170_hifi_{c}x_1.tsv'),
-    ('PB HiFi Revio', 'SNV + indel', 'TinkerHap 1.0.0', HIFI, S + '/extra/sw_tinkerhap_hifi_{c}x_1.tsv'),
+    # ('PB HiFi Revio', 'SNV + indel', 'TinkerHap 1.0.0', HIFI, S + '/extra/sw_tinkerhap_hifi_{c}x_1.tsv'),
 ]
 HEAD = ['No.', 'Platform', 'Variant set', 'Tool', 'Case', 'Phased_SNV', 'Phased_SNV(%)', 'Phased_INDEL',
         'Phased_INDEL(%)', 'SNV_SW', 'SNV_SW(%)', 'HM_Dis.(%)', 'No. Block', 'Block_N50(bp)', 'Block_Sum']

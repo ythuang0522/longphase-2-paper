@@ -53,11 +53,15 @@ edge (6) feature-vector strips segmented by feature group (16/6/5/4 and 3/1/1/1,
 
 ## Comparison with further phasers (2026-10-17)
 
-Supplementary Data 1, sheet `Other_phasers` (47 runs). Commands, inputs and full tables are in
+Supplementary Data 1, sheet `Other_phasers` (31 runs since 2026-11-10; 47 before the TinkerHap rows were archived). Commands, inputs and full tables are in
 `notes/competitors/README.md`; scripts are in `notes/competitors/scripts/`. HiPhase (SNV-only)
 is in Figs. 2c,g and 5c,d, Supplementary Fig. 1c and Supplementary Table 3. HiFi runs with
 indels and nanopore HapCUT2 with indels are in Fig. 2b,d,f,h and Supplementary Fig. 1d.
-TinkerHap is included in Supplementary Table 4 only.
+TinkerHap, Margin, Ralphi and GCphase were removed from the Methods, the Supplementary Information and
+Supplementary Data 1 on 2026-11-10 (author decision: no second-tier phasers in the manuscript); their
+data are in `notes/competitors/` (`tinkerhap_hidden_rows.tsv`, `margin_ralphi_gcphase_hidden_columns.tsv`,
+`second_tier_removed_comparisons.tex.md`) and `notes/heldout/`. The TinkerHap, Margin and Ralphi values
+in the tables below are kept as a record.
 
 LongHap comparisons were removed from the main text, figures, Supplementary Information and
 Supplementary Data 1 on 2026-11-10 (author decision). Its 18 complete result rows remain in

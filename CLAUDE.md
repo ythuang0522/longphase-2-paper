@@ -30,8 +30,19 @@ Methods and Supplementary Data 1. Keep its brief Introduction citation. The olde
 provenance above describes historical layouts. The current Fig. 3d,e and Supplementary Fig. 1e
 compare LongPhase 2 with MethPhaser only; Fig. 3f has LongPhase 2 and WhatsHap. Supplementary
 Table 4 excludes LongHap. Preserve all 18 result rows in
-`notes/competitors/longhap_hidden_rows.tsv`, scripts and historical notes. `HIDE = {"hb", "lh"}`
-controls the figure/table exclusions. Do not restore archived comparisons without a new request.
+`notes/competitors/longhap_hidden_rows.tsv`, scripts and historical notes.
+
+TinkerHap, Margin, Ralphi and GCphase (second-tier phasers) are also excluded from Methods, every
+Supplementary table and figure, and Supplementary Data 1 (author decision, 2026-11-10). They were
+already absent from Results, Discussion and the main figures. Margin keeps its Introduction citation.
+The former Supplementary Fig. 19 (Margin and Ralphi) is removed, so there are 18 Supplementary
+figures, all cited in the main text. Archives: `notes/competitors/tinkerhap_hidden_rows.tsv` (16 rows of
+`Other_phasers`), `margin_ralphi_gcphase_hidden_columns.tsv` (60 rows of the three `SNV_Detail` column
+blocks, loaded by `results_data.py`), `second_tier_removed_comparisons.tex.md` (removed text),
+`notes/heldout/` (held-out values) and `figures/supp/suppfig10_more_tools.pdf`.
+
+`HIDE = {"hb", "lh", "th", "margin", "ralphi", "gc"}` in `make_results_figs.py` controls the figure and
+table exclusions. Do not restore archived comparisons without a new request.
 
 ## Shared hub (claude.ai artifact)
 

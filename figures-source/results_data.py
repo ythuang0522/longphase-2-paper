@@ -50,10 +50,26 @@ def load():
         cov, rep = _case(r[2])
         for i, tool in enumerate(SNV_TOOLS):
             vals = r[3 + 8 * i: 3 + 8 * (i + 1)]
-            if vals[0] is None:
+            if not vals or vals[0] is None:
                 continue
             d = dict(zip(SNV_COLS, vals)); d["rep"] = rep
             snv[plat][tool][cov].append(d)
+    # [author-hidden] 2026-11-10: the Margin, Ralphi and GCphase column blocks were removed from SNV_Detail
+    # and are kept in notes/competitors/margin_ralphi_gcphase_hidden_columns.tsv. They are loaded here so
+    # that removing the tools from HIDE in make_results_figs.py is enough to show them again.
+    arch = os.path.join(ROOT, "notes", "competitors", "margin_ralphi_gcphase_hidden_columns.tsv")
+    if os.path.exists(arch):
+        import csv
+        with open(arch) as fh:
+            for r in list(csv.reader(fh, delimiter="\t"))[1:]:
+                plat = "ONT" if r[1].startswith("ONT") else "HiFi"
+                cov, rep = _case(r[2])
+                for i, tool in enumerate(SNV_TOOLS[4:]):
+                    vals = r[3 + 8 * i: 3 + 8 * (i + 1)]
+                    if not vals or vals[0] == "":
+                        continue
+                    d = dict(zip(SNV_COLS, [float(v) for v in vals])); d["rep"] = rep
+                    snv[plat][tool][cov].append(d)
     coph = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
     for r in _rows(wb["co-phase_Detail"]):
         cfg = r[2]
