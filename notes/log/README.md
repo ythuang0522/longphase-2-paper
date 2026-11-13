@@ -2,6 +2,7 @@
 
 One file per change, newest first. Moved verbatim from `../../README.md` on 2026-10-20;
 each file adds the entry title as its heading.
+- 2026-11-13 — [HG008 external validation of the frozen GNN (issue #11)](2026-11-13-hg008-external-validation.md)
 - 2026-11-10 — [Supplementary writing review completed](2026-11-10-supplementary-writing-pass.md)
 - 2026-11-10 — [Methods writing review completed](2026-11-10-methods-writing-pass.md)
 - 2026-11-10 — [Discussion writing review completed](2026-11-10-discussion-five-changes-completed.md)

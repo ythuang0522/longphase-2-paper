@@ -1,0 +1,10 @@
+#!/bin/bash
+# download.sh: public HG008 inputs for paper issue #11 (2026-11-10). ONT-std normal pancreas uBAMs (3 flow cells, Dorado 0.5.3
+# sup@v4.3.0 + 5mC_5hmC), their README/md5, the frozen HG008-N v6.3 haplotype FASTAs (GIAB announcement), HERRO README.
+cd /disk/research/HG008
+wget -q -c -P ubam https://ftp.ncbi.nlm.nih.gov/ReferenceSamples/giab/data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/checksum.md5 https://ftp.ncbi.nlm.nih.gov/ReferenceSamples/giab/data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/README_NE_ONT-std.md https://ftp.ncbi.nlm.nih.gov/ReferenceSamples/giab/data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/HERR0-corrrected-20250218/README -O /dev/null 2>/dev/null
+wget -q -c -O ubam/checksum.md5 https://ftp.ncbi.nlm.nih.gov/ReferenceSamples/giab/data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/checksum.md5; wget -q -c -O ubam/README_NE_ONT-std.md https://ftp.ncbi.nlm.nih.gov/ReferenceSamples/giab/data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/README_NE_ONT-std.md; wget -q -c -O ubam/HERRO_README https://ftp.ncbi.nlm.nih.gov/ReferenceSamples/giab/data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/HERR0-corrrected-20250218/README
+wget -q -c -P asm https://nist-giab.s3.us-east-1.amazonaws.com/giab_tumor-normal/analysis/HG008/NIST_asm_dev/HG008N_v6.3/HG008N_v6.3_hap1.fasta.gz https://nist-giab.s3.us-east-1.amazonaws.com/giab_tumor-normal/analysis/HG008/NIST_asm_dev/HG008N_v6.3/HG008N_v6.3_hap2.fasta.gz && echo "$(date '+%F %T') asm done"
+for i in "" _2 _3; do f=03_13_24_R1041_GIAB_Normal_Pancreas$i.dorado_0.5.3_5mC_5hmC; wget -q -c -P ubam https://ftp.ncbi.nlm.nih.gov/ReferenceSamples/giab/data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/HG008-N-P_ubams/$f.bam https://ftp.ncbi.nlm.nih.gov/ReferenceSamples/giab/data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/HG008-N-P_ubams/$f.summary.txt && echo "$(date '+%F %T') $f done"; done
+curl -s https://ftp.ncbi.nlm.nih.gov/ReferenceSamples/giab/data_somatic/HG008/Liss_lab/Northeastern_ONT-std_20240422/HG008-N-P_ubams/ > ubam/listing.html
+echo "$(date '+%F %T') download done"

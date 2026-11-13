@@ -1,0 +1,14 @@
+sample HG008N
+chromosomes 22
+GT [('1|0', 1384462), ('0|1', 1363222), ('1|2', 64335), ('2|1', 63989)]
+FILTER Counter({'.': 2876008})
+allele check, 300 random het SNVs: match 300 mismatch 0 no aligned base 0
+PS on more than one chromosome 0
+overlapping PS intervals 0 PS 2781
+swap test (swaptest/): synthetic query Q.vcf (0.2% random switches, query PS ignoring truth blocks, 5% unphased); truth vs truth with hap1/hap2 swapped in every odd PS:
+  compare cmp_HG008N_v6.3_truth: 2147883	95.00884	0	0.00000	4589	0.21400	24.07371	766	3745921	2799352772
+  compare cmp_T_swap: 2147883	95.00884	0	0.00000	4589	0.21400	24.07371	766	3745921	2799352772
+  score_phase sp_HG008N_v6.3_truth: 2147883	0	2144393	4589	2144393	4589	0	0 | #ham_all	517059	ham_n	2147816	ham_snv	517059	ham_indel	0	ham_n_indel	0
+  score_phase sp_T_swap: 2147883	0	2144393	4589	2144393	4589	0	0 | #ham_all	517059	ham_n	2147816	ham_snv	517059	ham_indel	0	ham_n_indel	0
+identical: yes; compare == score_phase (phased SNV 2147883, SNV switches 4589): yes
+validated 2026-11-10 23:51:14
