@@ -134,7 +134,11 @@ Built with `scripts/truth/prep.sh` and `make_truth.py`.
 
 ### Scoring rules
 
-Blocks are truth PS × query PS, so no assessed pair crosses a truth block boundary. The somatic HG008-T benchmarks were not used.
+Blocks are truth PS × query PS, so no assessed pair crosses a truth block boundary. This applies to switch errors and Hamming distance only.
+
+Block count and block N50 (`blocks`, `n50`) come from the query phase sets alone (`CompareProcess.cpp` of release v2.1, "block statistics on the QUERY"). They are each phaser's native values and are not cut at truth block boundaries.
+
+The somatic HG008-T benchmarks were not used.
 
 ### Independence of the reference
 
