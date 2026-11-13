@@ -60,13 +60,15 @@ Yes.
 | `results/hg008_runs.tsv` | per-run metrics, 28 rows (`longphase compare` and `score_phase.py` columns) |
 | `results/hg008_summary.tsv` | means and ranges per coverage and tool |
 | `results/hg008_gnn_effect.tsv` | GNN vs `--disableGNN` per run: Δ switch errors, withheld calls and benchmark SNVs, blocks, N50 |
+| `results/hg008_times.tsv` | runtime with the manuscript's SSD protocol, seed 1 at 10, 20, 30×: label, coverage, run, wall s, CPU s, peak RSS GiB (see Runtime) |
+| `results/hg008_timing.log` | log of the timing run, including the output identity checks |
 | `results/hg008_fig.pdf` | switch error rate / completeness / block N50 against coverage, seeds as points (draft panel, not in Nature style yet) |
 | `truth/HG008N_v6.3_truth.blocks.bed` | scoring mask = truth phase blocks on GRCh38 (2,781 intervals, 4th column = PS) |
 | `truth/HG008N_v6.3_GRCh38.dip.bed` | dipcall confidence BED |
 | `truth/HG008N_v6.3_hap{1,2}.gaps.bed` | assembly N-gaps in assembly coordinates (`scripts/truth/gaps.py`) |
 | `truth/HG008N_v6.3_truth.counts.tsv` | exclusion counts |
 | `truth/check_truth.txt`, `truth/validated` | truth checks (sample, chromosomes, GT, alleles, PS, swap test) |
-| `scripts/` | every script, in run order below; copies of `/disk/research/HG008/*.sh`, `truth/*` |
+| `scripts/` | every script, in run order below; copies of `/disk/research/HG008/*.sh`, `truth/*`, `timing/run_timing.sh` |
 
 ### Large files (lab server, not in Git)
 
@@ -168,6 +170,22 @@ The truth is assembly-derived phase, not independent experimental truth.
 ## Runtime
 
 Runtimes in `phase/*.time` are not comparable with the manuscript's runtime tables: other jobs (polyploid project) shared the machine throughout.
+
+Runtime was therefore re-measured on 2026-11-13/14 (`scripts/timing/run_timing.sh` → `results/hg008_times.tsv`, log `results/hg008_timing.log`) with the manuscript's SSD protocol (`notes/log/2026-10-28-runtime-ssd.md`):
+
+- **Setup:** inputs and outputs on ext4 NVMe (`/home/twolinin/lp_ext4/hg008`), an idle machine (AMD Ryzen 9 9950X3D, 16 cores / 32 threads, ≥95% idle before each run), page cache dropped before every run, one run at a time, `/usr/bin/time -v`. The polyploid drivers were paused (SIGSTOP) for the duration.
+- **Runs:** seed 1 at 10, 20 and 30×. LongPhase v2.1.2 with GNN (24 threads and 1 thread) and with `--disableGNN` (24 threads); WhatsHap 2.8 `--only-snvs`; HapCUT2 1.3.4 `extractHAIRS --ont 1` plus `HAPCUT2`, timed together. WhatsHap and HapCUT2 are single-threaded. Variant calling is not timed.
+- **Identity:** every re-timed LongPhase 2 and WhatsHap output is identical to the accuracy run, and the 1-thread LongPhase 2 output is identical to the 24-thread output (12 `SAME` lines in the log). HapCUT2 outputs were not compared.
+
+Wall time (CPU time), peak memory:
+
+| Coverage | LongPhase 2, GNN, 24 threads | no GNN, 24 threads | GNN, 1 thread | WhatsHap | HapCUT2 |
+|---|---|---|---|---|---|
+| 10× | 13.1 s (193 s), 1.7 GiB | 8.6 s (146 s), 1.6 GiB | 117 s (127 s), 0.95 GiB | 10.1 min (610 s), 1.2 GiB | 11.8 min (706 s), 4.6 GiB |
+| 20× | 20.0 s (362 s), 2.5 GiB | 15.1 s (299 s), 2.1 GiB | 199 s (216 s), 1.3 GiB | 39.6 min (2,379 s), 1.8 GiB | 26.0 min (1,560 s), 6.8 GiB |
+| 30× | 26.3 s (514 s), 2.8 GiB | 21.1 s (446 s), 2.7 GiB | 275 s (302 s), 1.3 GiB | 74.0 min (4,442 s), 2.3 GiB | 37.7 min (2,262 s), 8.8 GiB |
+
+GNN correction adds 4.5–5.2 s of wall time with 24 threads. LongPhase 2 with GNN and 24 threads is 46×, 119× and 169× faster than WhatsHap at 10×, 20× and 30×; with 1 thread, 5.2×, 12× and 16×. One run per configuration, so there is no spread.
 
 ## Not done (out of scope of the minimum test, per the issue)
 
