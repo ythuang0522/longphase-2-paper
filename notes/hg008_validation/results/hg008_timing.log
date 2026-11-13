@@ -1,0 +1,43 @@
+2026-11-13 21:57:27 copy 10x_1.bam
+2026-11-13 21:59:25 copy 10x_1.bam.bai
+2026-11-13 21:59:25 copy 10x_1.vcf.gz
+2026-11-13 21:59:25 copy 10x_1.vcf.gz.tbi
+2026-11-13 21:59:29 copy 20x_1.bam
+2026-11-13 22:03:21 copy 20x_1.bam.bai
+2026-11-13 22:03:21 copy 20x_1.vcf.gz
+2026-11-13 22:03:22 copy 20x_1.vcf.gz.tbi
+2026-11-13 22:03:27 copy 30x_1.bam
+2026-11-13 22:10:32 copy 30x_1.bam.bai
+2026-11-13 22:10:32 copy 30x_1.vcf.gz
+2026-11-13 22:10:33 copy 30x_1.vcf.gz.tbi
+2026-11-13 22:10:37 inputs ready
+2026-11-13 22:10:37 polyploid drivers paused: 370144 2234193 2641453 2641456 2641457 2641458 2641460 2641461 2641462 2756593 2770756 2775788 2778690 2793704 2793896 
+2026-11-13 22:23:40 out/lp_gnn_10x_1
+SAME out/lp_gnn_10x_1.vcf vs /disk/research/HG008/phase/lp_gnn_10x_1.vcf
+2026-11-13 22:24:06 out/lp_nognn_10x_1
+SAME out/lp_nognn_10x_1.vcf vs /disk/research/HG008/phase/lp_nognn_10x_1.vcf
+2026-11-13 22:24:28 out/lp_gnn_t1_10x_1
+SAME out/lp_gnn_t1_10x_1.vcf vs out/lp_gnn_10x_1.vcf
+2026-11-13 22:26:36 out/wh_10x_1
+SAME out/wh_10x_1.vcf vs /disk/research/HG008/phase/wh_10x_1.vcf
+2026-11-13 22:36:57 out/hapcut2_10x_1
+2026-11-13 22:48:53 out/lp_gnn_20x_1
+SAME out/lp_gnn_20x_1.vcf vs /disk/research/HG008/phase/lp_gnn_20x_1.vcf
+2026-11-13 22:49:27 out/lp_nognn_20x_1
+SAME out/lp_nognn_20x_1.vcf vs /disk/research/HG008/phase/lp_nognn_20x_1.vcf
+2026-11-13 22:49:55 out/lp_gnn_t1_20x_1
+SAME out/lp_gnn_t1_20x_1.vcf vs out/lp_gnn_20x_1.vcf
+2026-11-13 22:53:25 out/wh_20x_1
+SAME out/wh_20x_1.vcf vs /disk/research/HG008/phase/wh_20x_1.vcf
+2026-11-13 23:33:15 out/hapcut2_20x_1
+2026-11-13 23:59:27 out/lp_gnn_30x_1
+SAME out/lp_gnn_30x_1.vcf vs /disk/research/HG008/phase/lp_gnn_30x_1.vcf
+2026-11-14 00:00:07 out/lp_nognn_30x_1
+SAME out/lp_nognn_30x_1.vcf vs /disk/research/HG008/phase/lp_nognn_30x_1.vcf
+2026-11-14 00:00:42 out/lp_gnn_t1_30x_1
+SAME out/lp_gnn_t1_30x_1.vcf vs out/lp_gnn_30x_1.vcf
+2026-11-14 00:05:29 out/wh_30x_1
+SAME out/wh_30x_1.vcf vs /disk/research/HG008/phase/wh_30x_1.vcf
+2026-11-14 01:19:45 out/hapcut2_30x_1
+2026-11-14 01:57:28 timing done
+2026-11-14 01:57:28 polyploid resumed: 370144 2234193 2641453 2641456 2641457 2641458 2641460 2641461 2641462 2756593 2770756 2775788 2778690 2793704 2793896 
