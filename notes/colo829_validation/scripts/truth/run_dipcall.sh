@@ -1,17 +1,18 @@
 #!/bin/bash
 # run_dipcall.sh: dipcall of COLO829BL DSA v3.0.0 (hap1 = hapX SMASFTH1B2J6, hap2 = hapY SMASFK4V33V8; hap1 first, so
 # 0|1 means hap1 = REF) against the paper's GRCh38 no-alt reference, whole assembly vs whole reference, then gaps, norm
-# (-c x, as HG008) and make_truth.py on chr1-22. Rules: notes/hg008_validation/README.md, Phase reference (unchanged).
+# (-c x, as HG008) and make_truth.py on chr1-22. Input: contigs cut into 20 Mb pieces (chunk_fasta.py; the only change
+# to the HG008 rules: truth blocks also end at every cut). Rules: notes/hg008_validation/README.md, Phase reference (unchanged).
 set -euo pipefail
 W=/home/user/work; E=$W/tools/env/bin; export PATH=$E:$PATH; S=$(dirname $(readlink -f $0))
 cd $W/truth; REF=$W/ref/GRCh38.fa; P=COLO829BL_dsa3_GRCh38
-# Makefile edits for a 15 GB machine (8 GB swap file added): minimap2 -K100M -t1, samtools sort -m1G --threads 2, and
+# Makefile edits for a 15 GB machine (8 GB swap file added): minimap2 -K100M -t2, samtools sort -m1G --threads 2, and
 # pipefail + .DELETE_ON_ERROR so a killed minimap2 stops make instead of leaving a truncated PAF/SAM (seen 2026-11-16).
-[[ -s $P.mak ]] || { run-dipcall -t 1 $P $REF $W/asm/hap1.fa.gz $W/asm/hap2.fa.gz |
+[[ -s $P.mak ]] || { run-dipcall -t 2 $P $REF $W/asm/hap1.chunk.fa.gz $W/asm/hap2.chunk.fa.gz |
   sed 's/^MM2_OPT=-xasm5 --cs -t/MM2_OPT=-xasm5 --cs -K100M -t/; s/sort -m4G --threads 4/sort -m1G --threads 2/' |
   sed '1i SHELL=/bin/bash\n.SHELLFLAGS=-o pipefail -c\n.DELETE_ON_ERROR:' > $P.mak; }
 make -j1 -f $P.mak
-python3 $S/gaps.py $W/asm/hap1.fa.gz hap1.gaps.bed; python3 $S/gaps.py $W/asm/hap2.fa.gz hap2.gaps.bed
+python3 $S/gaps.py $W/asm/hap1.chunk.fa.gz hap1.gaps.bed; python3 $S/gaps.py $W/asm/hap2.chunk.fa.gz hap2.gaps.bed
 printf 'COLO829BL\n' > sample.txt
 bcftools reheader -s sample.txt -o named.vcf.gz $P.dip.vcf.gz
 bcftools norm -f $REF -c x -Oz -o norm.vcf.gz named.vcf.gz 2> norm.log; tail -2 norm.log
