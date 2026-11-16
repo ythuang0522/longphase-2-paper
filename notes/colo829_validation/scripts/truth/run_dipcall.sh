@@ -5,9 +5,9 @@
 set -euo pipefail
 W=/home/user/work; E=$W/tools/env/bin; export PATH=$E:$PATH; S=$(dirname $(readlink -f $0))
 cd $W/truth; REF=$W/ref/GRCh38.fa; P=COLO829BL_dsa3_GRCh38
-# Makefile edits for a 15 GB machine (8 GB swap file added): minimap2 -K100M -t2, samtools sort -m1G --threads 2, and
+# Makefile edits for a 15 GB machine (8 GB swap file added): minimap2 -K100M -t1, samtools sort -m1G --threads 2, and
 # pipefail + .DELETE_ON_ERROR so a killed minimap2 stops make instead of leaving a truncated PAF/SAM (seen 2026-11-16).
-[[ -s $P.mak ]] || { run-dipcall -t 2 $P $REF $W/asm/hap1.fa.gz $W/asm/hap2.fa.gz |
+[[ -s $P.mak ]] || { run-dipcall -t 1 $P $REF $W/asm/hap1.fa.gz $W/asm/hap2.fa.gz |
   sed 's/^MM2_OPT=-xasm5 --cs -t/MM2_OPT=-xasm5 --cs -K100M -t/; s/sort -m4G --threads 4/sort -m1G --threads 2/' |
   sed '1i SHELL=/bin/bash\n.SHELLFLAGS=-o pipefail -c\n.DELETE_ON_ERROR:' > $P.mak; }
 make -j1 -f $P.mak
