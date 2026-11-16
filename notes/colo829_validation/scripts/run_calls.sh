@@ -14,7 +14,7 @@ set -uo pipefail
 W=/home/user/work; cd $W; E=$W/tools/env/bin; export PATH=$E:$PATH
 REF=$W/ref/GRCh38.fa; LP=$W/tools/longphase_linux-x64; T=${THREADS:-4}
 SRC=https://ont-open-data.s3.amazonaws.com/colo829_2024.03/basecalls/colo829bl/sup/PAU59807.d052sup4305mCG_5hmCGvHg38.bam
-RUNS=${RUNS:-"10x_1 10x_2 10x_3 20x_1 20x_2 20x_3 30x_1"}; CHRS=${CHRS:-$(seq 1 22)}
+RUNS=${RUNS:-"10x_1 20x_1 30x_1"}; CHRS=${CHRS:-$(seq 1 22)}
 mkdir -p bam calls phase
 X() { local o=$1; shift; [[ -e $o.done ]] && return 0; $E/time -v -o $o.time "$@" > $o.log 2>&1 && touch $o.done || echo "FAILED $o"; }
 fetch() { local c=chr$1 F=bam/full.chr$1.bam
@@ -28,7 +28,7 @@ fetch() { local c=chr$1 F=bam/full.chr$1.bam
 DEP=${DEP:-51.895}
 echo "$(date '+%F %T') start; chr1-22 mean depth $DEP"
 for i in $CHRS; do c=chr$i; F=bam/full.$c.bam
-  ls phase/hc_*_$c.done 2>/dev/null | wc -l | grep -qx $(wc -w <<< "$RUNS") && continue
+  ls phase/hc_[0-9]*_$c.done 2>/dev/null | wc -l | grep -qx $(wc -w <<< "$RUNS") && continue
   echo "$(date '+%F %T') $c fetch"; fetch $i || { echo "FAILED fetch $c"; continue; }
   for run in $RUNS; do cv=${run%x_*}; s=${run#*x_}; B=bam/$c.${cv}x.$s.bam; V=calls/clair3_${run}_$c; o=${run}_$c
     fr=$(awk -v c=$cv -v d=$DEP 'BEGIN {printf "%.4f", c / d}' | cut -d. -f2)
@@ -50,6 +50,6 @@ for i in $CHRS; do c=chr$i; F=bam/full.$c.bam
     ls phase/{lp_gnn,lp_nognn,wh,hc}_$o.done > /dev/null 2>&1 && rm -f $B $B.bai phase/hc_fragments_$o
     echo "$(date '+%F %T') $o done"
   done
-  ls phase/hc_*_$c.done 2>/dev/null | wc -l | grep -qx $(wc -w <<< "$RUNS") && rm -f $F $F.bai
+  ls phase/hc_[0-9]*_$c.done 2>/dev/null | wc -l | grep -qx $(wc -w <<< "$RUNS") && rm -f $F $F.bai
 done
 echo "$(date '+%F %T') all done"
