@@ -28,6 +28,8 @@ DEP=${DEP:-51.895}
 echo "$(date '+%F %T') start; chr1-22 mean depth $DEP"
 for i in $CHRS; do c=chr$i
   ls phase/hc_[0-9]*_$c.done 2>/dev/null | wc -l | grep -qx $(wc -w <<< "$RUNS") && continue
+  # two loops share the machine: a chromosome is claimed by the first loop to reach it (rm -r phase/claim_* on restart)
+  mkdir phase/claim_$c 2>/dev/null || continue
   for run in $RUNS; do cv=${run%x_*}; s=${run#*x_}; B=bam/$c.${cv}x.$s.cram; V=calls/clair3_${run}_$c; o=${run}_$c
     fr=$(awk -v c=$cv -v d=$DEP 'BEGIN {printf "%.4f", c / d}' | cut -d. -f2)
     [[ -e phase/hc_$o.done ]] && continue
