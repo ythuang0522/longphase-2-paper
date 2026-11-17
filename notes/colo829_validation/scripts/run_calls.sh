@@ -36,12 +36,22 @@ for i in $CHRS; do c=chr$i
     [[ -s $B.crai ]] || { echo "$(date '+%F %T') $o fetch"
       samtools view -u $SRC $c | samtools view -@2 -C -T $REF -e '[qs] >= 10' -s $s.$fr -x MM -x ML -x mv -o $B.tmp - &&
       mv $B.tmp $B && samtools index $B && samtools coverage -r $c $B | tail -1 > bam/cov.$o.tsv || { echo "FAILED fetch $o"; continue; }; }
-    [[ -s $V.vcf.gz ]] || { echo "$(date '+%F %T') $o clair3"
-      $E/time -v -o $V.time docker run --rm -v $W:$W hkubal/clair3:v1.2.0 /opt/bin/run_clair3.sh --bam_fn=$W/$B \
-        --ref_fn=$REF --threads=$T --platform=ont --model_path=$W/tools/models/r1041_e82_400bps_sup_v430 --ctg_name=$c \
-        --sample_name=COLO829BL --output=$W/calls/clair3_$o.out > $V.log 2>&1 &&
-        mv calls/clair3_$o.out/merge_output.vcf.gz $V.vcf.gz && mv calls/clair3_$o.out/merge_output.vcf.gz.tbi $V.vcf.gz.tbi &&
-        rm -r calls/clair3_$o.out || { echo "FAILED clair3 $o"; continue; }; }
+    # Clair3 per 20 Mb window (--bed_fn), windows concatenated: the session container restarts every 1-2 h, and a
+    #   whole-chromosome call of chr1-10 takes longer than that. chr1 and chr18-22 were called per whole chromosome
+    #   (2026-11-16, before the restarts began); calls near window edges may differ slightly.
+    [[ -s $V.vcf.gz ]] || { echo "$(date '+%F %T') $o clair3"; ok=1; ws=""
+      len=$(awk -v c=$c '$1 == c {print $2}' $REF.fai)
+      for ((st = 0; st < len; st += 20000000)); do k=$((st / 20000000)); Vw=$V.w$k; ws="$ws $Vw.vcf.gz"
+        [[ -s $Vw.vcf.gz ]] && continue
+        printf '%s\t%d\t%d\n' $c $st $(( st + 20000000 < len ? st + 20000000 : len )) > $Vw.bed
+        rm -rf calls/clair3_$o.w$k.out
+        $E/time -v -o $Vw.time docker run --rm -v $W:$W hkubal/clair3:v1.2.0 /opt/bin/run_clair3.sh --bam_fn=$W/$B \
+          --ref_fn=$REF --threads=$T --platform=ont --model_path=$W/tools/models/r1041_e82_400bps_sup_v430 --ctg_name=$c \
+          --bed_fn=$W/$Vw.bed --sample_name=COLO829BL --output=$W/calls/clair3_$o.w$k.out > $Vw.log 2>&1 &&
+          mv calls/clair3_$o.w$k.out/merge_output.vcf.gz $Vw.vcf.gz && rm -r calls/clair3_$o.w$k.out || { ok=0; break; }
+      done
+      [[ $ok == 1 ]] && bcftools concat -Oz -o $V.vcf.gz.tmp $ws && mv $V.vcf.gz.tmp $V.vcf.gz && tabix -p vcf $V.vcf.gz &&
+        rm -f $ws $V.w*.bed || { echo "FAILED clair3 $o"; continue; }; }
     [[ -s $V.pass_het_snv.vcf ]] || zcat $V.vcf.gz | awk -F'\t' '/^#/ {print; next} $7 == "PASS" && length($4) == 1 && length($5) == 1 {
         split($10, g, ":"); if (g[1] ~ /^(0[\/|]1|1[\/|]0)$/) print}' > $V.pass_het_snv.vcf
     X phase/lp_gnn_$o $LP phase --ont -t $T -s $V.vcf.gz -b $B -r $REF -o phase/lp_gnn_$o
