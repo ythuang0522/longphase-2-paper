@@ -50,7 +50,11 @@ for i in $CHRS; do c=chr$i
           --bed_fn=$W/$Vw.bed --sample_name=COLO829BL --output=$W/calls/clair3_$o.w$k.out > $Vw.log 2>&1 &&
           mv calls/clair3_$o.w$k.out/merge_output.vcf.gz $Vw.vcf.gz && rm -r calls/clair3_$o.w$k.out || { ok=0; break; }
       done
-      [[ $ok == 1 ]] && bcftools concat -Oz -o $V.vcf.gz.tmp $ws && mv $V.vcf.gz.tmp $V.vcf.gz && tabix -p vcf $V.vcf.gz &&
+      # Clair3 reports a few calls just past a window's end (they reappear in the next window), so each window keeps
+      #   only records with POS inside it (1-based st+1..end).
+      [[ $ok == 1 ]] && { zcat $V.w0.vcf.gz | grep '^#'; for ((st = 0; st < len; st += 20000000)); do
+          zcat $V.w$((st / 20000000)).vcf.gz | awk -F'\t' -v a=$((st + 1)) -v b=$((st + 20000000)) '!/^#/ && $2 >= a && $2 <= b'
+        done; } | bgzip > $V.vcf.gz.tmp && mv $V.vcf.gz.tmp $V.vcf.gz && tabix -p vcf $V.vcf.gz &&
         rm -f $ws $V.w*.bed || { echo "FAILED clair3 $o"; continue; }; }
     [[ -s $V.pass_het_snv.vcf ]] || zcat $V.vcf.gz | awk -F'\t' '/^#/ {print; next} $7 == "PASS" && length($4) == 1 && length($5) == 1 {
         split($10, g, ":"); if (g[1] ~ /^(0[\/|]1|1[\/|]0)$/) print}' > $V.pass_het_snv.vcf
