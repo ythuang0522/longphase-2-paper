@@ -34,7 +34,9 @@ for i in $CHRS; do c=chr$i
     fr=$(awk -v c=$cv -v d=$DEP 'BEGIN {printf "%.4f", c / d}' | cut -d. -f2)
     [[ -e phase/hc_$o.done ]] && continue
     [[ -s $B.crai ]] || { echo "$(date '+%F %T') $o fetch"
-      samtools view -u $SRC $c | samtools view -@2 -C -T $REF -e '[qs] >= 10' -s $s.$fr -x MM -x ML -x mv -o $B.tmp - &&
+      # up to 3 attempts: a dropped connection to the remote BAM fails the stream (chr12 30x, 2026-11-17)
+      for try in 1 2 3; do samtools view -u $SRC $c | samtools view -@2 -C -T $REF -e '[qs] >= 10' -s $s.$fr -x MM -x ML -x mv \
+        -o $B.tmp - && break; rm -f $B.tmp; echo "$(date '+%F %T') $o fetch retry $try"; sleep 60; done; [[ -s $B.tmp ]] &&
       mv $B.tmp $B && samtools index $B && samtools coverage -r $c $B | tail -1 > bam/cov.$o.tsv || { echo "FAILED fetch $o"; continue; }; }
     # Clair3 per 20 Mb window (--bed_fn), windows concatenated: the session container restarts every 1-2 h, and a
     #   whole-chromosome call of chr1-10 takes longer than that. chr1 and chr18-22 were called per whole chromosome
