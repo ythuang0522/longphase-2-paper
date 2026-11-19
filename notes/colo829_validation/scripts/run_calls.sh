@@ -5,7 +5,7 @@
 #   GRCh38 by ONT; PAU61427 not used), streamed per chromosome and run, reads with qs >= 10, MM/ML/mv tags dropped.
 # Down-sampling: samtools view -s seed.fraction, fraction = target / chr1-22 mean depth (from samtools coverage of every
 #   chromosome). The subsample keeps a read by a hash of its name and the seed, so per-chromosome subsets with one seed
-#   are the genome-wide subset. 10x seeds 1-3, 20x seeds 1-3, 30x seed 1.
+#   are the genome-wide subset. Seed 1 at 10x, 20x and 30x (one seed per coverage, author request).
 # Calls: Clair3 v1.2.0 (hkubal/clair3:v1.2.0) with ONT model r1041_e82_400bps_sup_v430 (Clair3 v2 cannot load it),
 #   --platform ont, per chromosome; output GTs unphased (no --enable_phasing).
 # Phasing: LongPhase 2 v2.1.2 release binary (GNN, threshold 0.35) | --disableGNN | WhatsHap 2.8 --only-snvs |
@@ -29,7 +29,7 @@ echo "$(date '+%F %T') start; chr1-22 mean depth $DEP"
 for i in $CHRS; do c=chr$i
   ls phase/hc_[0-9]*_$c.done 2>/dev/null | wc -l | grep -qx $(wc -w <<< "$RUNS") && continue
   # two loops share the machine: a chromosome is claimed by the first loop to reach it (rm -r phase/claim_* on restart)
-  mkdir phase/claim_$c 2>/dev/null || continue
+  mkdir phase/claim_${c}_${RUNS// /_} 2>/dev/null || continue
   for run in $RUNS; do cv=${run%x_*}; s=${run#*x_}; B=bam/$c.${cv}x.$s.cram; V=calls/clair3_${run}_$c; o=${run}_$c
     fr=$(awk -v c=$cv -v d=$DEP 'BEGIN {printf "%.4f", c / d}' | cut -d. -f2)
     [[ -e phase/hc_$o.done ]] && continue
