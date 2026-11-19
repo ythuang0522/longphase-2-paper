@@ -2,7 +2,8 @@
 
 One file per change, newest first. Moved verbatim from `../../README.md` on 2026-10-20;
 each file adds the entry title as its heading.
-- 2026-11-16 — [COLO829BL phasing benchmark: setup (chr1-22, Clair3; in progress)](2026-11-16-colo829bl-chr20-setup.md)
+- 2026-11-19 — [COLO829BL phasing benchmark: chr1-22 results](2026-11-19-colo829bl-results.md)
+- 2026-11-16 — [COLO829BL phasing benchmark: setup (chr1-22, Clair3)](2026-11-16-colo829bl-chr20-setup.md)
 - 2026-11-14 — [HG008 runtime re-measured with the SSD protocol (issue #11)](2026-11-14-hg008-runtime.md)
 - 2026-11-13 — [HG008 external validation of the frozen GNN (issue #11)](2026-11-13-hg008-external-validation.md)
 - 2026-11-10 — [Supplementary writing review completed](2026-11-10-supplementary-writing-pass.md)

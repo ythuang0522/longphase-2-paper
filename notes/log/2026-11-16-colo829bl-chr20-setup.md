@@ -1,4 +1,4 @@
-# COLO829BL phasing benchmark: setup (chr1-22, Clair3; in progress)
+# COLO829BL phasing benchmark: setup (chr1-22, Clair3)
 
 Started a third-individual check modelled on `notes/hg008_validation/`, on chr20 only (cloud container: 4 cores,
 15 GB RAM). Script: `notes/colo829_validation/scripts/run_calls.sh`. No manuscript text or figure changed.
@@ -19,3 +19,5 @@ Started a third-individual check modelled on `notes/hg008_validation/`, on chr20
 - Depth for the downsample fraction: 51.895×, estimated from the remote BAM index (scaled to the measured chr20 depth).
 - dipcall: whole assembly against whole GRCh38; minimap2 single-threaded with `-K100M` and an 8 GB swap file after two
   out-of-memory kills.
+
+Results: `2026-11-19-colo829bl-results.md`.
