@@ -1,0 +1,8 @@
+##Total phased SNV = 170497
+##Total Block = 412
+##Total Block N50 = 969782
+##Total Block Sum = 175616728
+###Sample	Phased_SNV	Phased_SNV(%)	Phased_INDEL	Phased_INDEL(%)	SNV_SW	SNV_SW(%)	Hamming_Dis.(%)	No._of_Block	Block_N50(bp)	Block_Sum
+###lp_nognn_20x_1_chr3.vcf	151773	97.55303	0	0.00000	31	0.02050	0.54890	412	969782	175616728
+#sample	chromosome	dataset1	dataset2	common_het	phased_SNV	phased_SNV(%)	phased_INDEL	phased_INDEL(%)	intersection_blocks	covered_variants	all_assessed_pairs	all_switches	all_switch_rate(%)	switchflips(sw/fl)	switchflip_rate(%)	blockwise_hamming	blockwise_hamming_rate(%)	SNV_SW	SNV_SW(%)	No._of_Block	Block_N50(bp)	Block_Sum
+lp_nognn_20x_1_chr3.vcf	chr3	file0	file1	175778	151773	97.55303	0	0.00000	510	151757	151247	31	0.02050	23/4	0.01785	833	0.54890	31	0.02050	412	969782	175616728

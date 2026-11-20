@@ -704,6 +704,76 @@ def sfig_in_benchmark():
     save(fig, os.path.join(SUPP, "suppfig_in_benchmark.pdf"))
 
 
+# ================================== other individuals (Supp. Fig. 3) =====
+# HG008-N (notes/hg008_validation/, issue #11) and COLO829BL (notes/colo829_validation/): the released
+# model unchanged, scored against assembly-derived phase of each individual. Per-run metrics from
+# results/{hg008,colo829}_runs.tsv (longphase compare v2.1 and score_phase.py). Author decision,
+# 2026-11-20, option A: a Results paragraph with one Supplementary figure and one table.
+INDIV = (("HG008-N", "hg008_validation/results/hg008_runs.tsv"),
+         ("COLO829BL", "colo829_validation/results/colo829_runs.tsv"))
+INDIV_TOOL = {"lp_gnn": "lp_gnn", "lp_nognn": "lp", "wh": "wh", "hapcut2": "hc"}
+
+
+def _indiv_runs(path):
+    """{(tool key, coverage): [run rows]} of one individual."""
+    import csv
+    g = {}
+    for r in csv.DictReader(open(os.path.join(ROOT, "notes", path)), delimiter="\t"):
+        g.setdefault((INDIV_TOOL[r["tool"]], int(r["coverage"][:-1])), []).append(r)
+    return g
+
+
+def sfig_other_individuals():
+    """Two further individuals, nanopore, released model unchanged (2 x 3): rows HG008-N and COLO829BL;
+    columns SNV switch error rate (linear from 0, as Fig. 2), completeness (phased truth heterozygous SNVs)
+    and block N50 against coverage. HG008-N 10-20x: mean of three seeds with s.d. band; one seed otherwise."""
+    fig, axs = new_fig(96, 2, 3)
+    specs = (("ser_pct", "Switch error rate (%)", 1), ("completeness_pct", "Phased truth SNVs (%)", 1),
+             ("n50", "Block N50 (Mb)", 1e-6))
+    for row, (indiv, path) in enumerate(INDIV):
+        g = _indiv_runs(path)
+        for col, (key, lab, sc) in enumerate(specs):
+            ax = axs[row][col]
+            for t in ("hc", "wh", "lp", "lp_gnn"):
+                covs = sorted(c for (u, c) in g if u == t)
+                vals = [[float(r[key]) for r in g[(t, c)]] for c in covs]
+                tline(ax, t, covs, [st.mean(v) for v in vals], [st.stdev(v) if len(v) > 1 else 0 for v in vals], scale=sc)
+            cov_axis(ax, (10, 20, 30)); ax.set_ylabel(lab)
+            if key == "ser_pct":
+                ax.set_ylim(bottom=0)
+            letter(ax, "abcdef"[3 * row + col], title=f"{indiv} nanopore: " + ("switch errors", "completeness", "block N50")[col])
+    h = [thandle(t, n) for t, n in (("lp_gnn", "LongPhase 2"), ("lp", "LongPhase 2 without GNN"), ("wh", "WhatsHap"),
+                                    ("hc", "HapCUT2"))]
+    _light(fig, h)
+    fig.legend(handles=h, loc="outside upper center", ncol=4, frameon=False, handlelength=2.6, columnspacing=2.0)
+    save(fig, os.path.join(SUPP, "suppfig_other_individuals.pdf"))
+
+
+def other_individuals_table(w):
+    """Per individual, coverage and tool: seeds, SNV switch errors and assessed pairs, switch error rate,
+    completeness, block-wise Hamming distance, block N50 and blocks (means over seeds)."""
+    w(r"\begin{table}[h]")
+    w(r"\caption{\textbf{Phasing accuracy in two further individuals.} Nanopore data of HG008-N and COLO829BL, chromosomes 1--22, scored against phase derived from a diploid assembly of each individual (Methods); the network weights and threshold were those trained on HG002. Variant calls from PEPPER-Margin-DeepVariant (HG008-N) and Clair3 (COLO829BL). Values are means over three down-sampling seeds at 10 and 20$\times$ in HG008-N (range of the switch error rate in parentheses) and single runs otherwise. Switch errors and assessed pairs are summed over seeds. Completeness is the percentage of truth heterozygous SNVs (HG008-N 2,260,719; COLO829BL 2,254,361) phased. Measured depths of COLO829BL: 10.8, 21.7 and 32.5$\times$.}\label{tab:individuals}")
+    w(r"\scriptsize\setlength{\tabcolsep}{4pt}\begin{tabular}{@{}llrrrrrr@{}}\toprule")
+    w(r"Cov. & Tool & Switch errors / pairs & Switch error rate (\%) & Completeness (\%) & Hamming (\%) & N50 (kb) & Blocks \\ \midrule")
+    names = (("lp_gnn", r"\toolname"), ("lp", r"\toolname without GNN"), ("wh", r"\whatshap"), ("hc", r"\hapcut"))
+    for i, (indiv, path) in enumerate(INDIV):
+        g = _indiv_runs(path)
+        w(rf"\multicolumn{{8}}{{@{{}}l}}{{\textit{{{indiv}}}}} \\")
+        for c in (10, 20, 30):
+            for j, (t, n) in enumerate(names):
+                R = g[(t, c)]; m = lambda k: st.mean(float(r[k]) for r in R)
+                rates = [float(r["ser_pct"]) for r in R]
+                rate = f"{st.mean(rates):.3f}" + (f" ({min(rates):.3f}--{max(rates):.3f})" if len(R) > 1 else "")
+                sw = sum(int(r["snv_sw"]) for r in R); pairs = sum(int(r["snv_pairs"]) for r in R)
+                cv = rf"{c}$\times$" if j == 0 else ""
+                w(f"{cv} & {n} & {sw:,} / {pairs:,} & {rate} & {m('completeness_pct'):.2f} & "
+                  f"{m('hamming_pct'):.2f} & {m('n50') / 1e3:,.0f} & {m('blocks'):,.0f} \\\\")
+        if i == 0:
+            w(r"\midrule")
+    w(r"\bottomrule\end{tabular}\end{table}" + "\n")
+
+
 # ============================================== Supplementary Fig. 16 =====
 def sfig16():
     """Block-wise Hamming distance of the Fig. 2 comparisons, against coverage (author decision,
@@ -1553,7 +1623,7 @@ def runtime_table(w):
     r2 = lambda x: str(Decimal(repr(x)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
     rt = _runtime()
     w(r"\begin{table}[h]")
-    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data (top) and PacBio HiFi data (bottom), replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~8). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB. \toolname times include alignment reading, phasing and VCF writing, and \toolname was run with 24 threads and on one thread; outputs of \toolname and \whatshap were identical to the reported VCFs. \hapcut includes fragment extraction; records with genotypes other than two alleles from 0, 1 and 2, which \hapcut does not accept (at most 682 per data set), were removed from its input. \hapcut was not timed at nanopore 60$\times$ or on HiFi data (--, no value).}\label{tab:runtime}")
+    w(r"\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data (top) and PacBio HiFi data (bottom), replicate~1 at every coverage, on the workstation described in Methods (Supplementary Fig.~9). Wall-clock time and CPU time (user plus system) in minutes and peak resident memory in GiB. \toolname times include alignment reading, phasing and VCF writing, and \toolname was run with 24 threads and on one thread; outputs of \toolname and \whatshap were identical to the reported VCFs. \hapcut includes fragment extraction; records with genotypes other than two alleles from 0, 1 and 2, which \hapcut does not accept (at most 682 per data set), were removed from its input. \hapcut was not timed at nanopore 60$\times$ or on HiFi data (--, no value).}\label{tab:runtime}")
     w(r"\small\setlength{\tabcolsep}{4pt}\begin{tabular}{@{}rrrrrrrrrrrrr@{}}\toprule")
     groups = [(("LongPhase 2", "24"), r"\toolname, 24 threads"), (("LongPhase 2", "1"), r"\toolname, 1 thread"),
               (("WhatsHap 2.8", "1"), r"\whatshap"), (("HapCUT2 1.3.4", "1"), r"\hapcut")]
@@ -1743,7 +1813,7 @@ def tables():
     w("% Generated by figures-source/make_results_figs.py -- do not edit by hand.\n")
     # ---- Table 7: input call sets
     w(r"\begin{table}[h]")
-    w(r"\caption{\textbf{Input call sets per coverage.} Heterozygous (het.) and homozygous (hom.) calls entering the phasing runs; nanopore values at 10--20$\times$ are means (s.d.) over ten down-sampling replicates. Small variants from PEPPER-Margin-DeepVariant, SVs from Sniffles2 2.8.0, allele-specific 5mC sites from \code{longphase modcall}. 5mC was not called on the HiFi data; HiFi SV counts are in Supplementary Table~5. Homozygous SNVs include the PEPPER candidates genotyped homozygous reference (\code{refCall}).}")
+    w(r"\caption{\textbf{Input call sets per coverage.} Heterozygous (het.) and homozygous (hom.) calls entering the phasing runs; nanopore values at 10--20$\times$ are means (s.d.) over ten down-sampling replicates. Small variants from PEPPER-Margin-DeepVariant, SVs from Sniffles2 2.8.0, allele-specific 5mC sites from \code{longphase modcall}. 5mC was not called on the HiFi data; HiFi SV counts are in Supplementary Table~6. Homozygous SNVs include the PEPPER candidates genotyped homozygous reference (\code{refCall}).}")
     w(r"\label{tab:calls}\scriptsize\setlength{\tabcolsep}{4pt}")
     w(r"\begin{tabular}{@{}llrrrrrr@{}}\toprule")
     w(r"Platform & Cov. & Het. SNV & Hom. SNV & Het. indel & Het. SV & Hom. SV & Het. 5mC \\ \midrule")
@@ -1877,7 +1947,7 @@ def tables():
     w(r"\end{longtable}}" + "\n")
     # ---- Table 11: HiFi
     w(r"\begin{table}[h]")
-    w(r"\caption{\textbf{SNV-only phasing of HG002 PacBio HiFi (Revio) data.} One replicate per coverage, scored against v5.0q. The network was trained on nanopore data only and applied without retraining. Variants were called separately at every coverage (Methods). HiPhase has no SNV-only option and was given the call set restricted to SNVs. Precision, share of the phased heterozygous SNV calls on chr1--22 that match a benchmark heterozygous SNV (Supplementary Fig.~6b); --, not computed.}")
+    w(r"\caption{\textbf{SNV-only phasing of HG002 PacBio HiFi (Revio) data.} One replicate per coverage, scored against v5.0q. The network was trained on nanopore data only and applied without retraining. Variants were called separately at every coverage (Methods). HiPhase has no SNV-only option and was given the call set restricted to SNVs. Precision, share of the phased heterozygous SNV calls on chr1--22 that match a benchmark heterozygous SNV (Supplementary Fig.~7b); --, not computed.}")
     w(r"\label{tab:hifi}\scriptsize")
     w(r"\begin{tabular}{@{}llrrrrrrr@{}}\toprule")
     w(r"Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Precision\\(\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(kb)} \\ \midrule")
@@ -1959,6 +2029,7 @@ def tables():
           + " & ".join(f"{d[k]:,}" for k in ("het_other_allele", "hom", "absent", "chrXY")) + r" \\")
     w(r"\bottomrule\end{tabular}\end{table}" + "\n")
     other_phasers_table(w)
+    other_individuals_table(w)
     # One file per table, named by its label, so that Supplementary.tex can \input the generated
     # and the hand-written tables in the order of first citation in the main text.
     starts = [i for i, s in enumerate(L) if s.startswith((r"\begin{table}", r"{\scriptsize"))]
@@ -1977,5 +2048,5 @@ if __name__ == "__main__":
     fig2(); fig3_sv_methylation(); fig4(); fig5()
     if not {"margin", "ralphi"} <= HIDE:
         sfig10()
-    sfig_runtime(); sfig11(); sfig12(); sfig13(); sfig14(); sfig17(); sfig16(); sfig17_sv_indels(); sfig_in_benchmark(); sfig_unphased_more()
+    sfig_runtime(); sfig11(); sfig12(); sfig13(); sfig14(); sfig17(); sfig16(); sfig17_sv_indels(); sfig_in_benchmark(); sfig_unphased_more(); sfig_other_individuals()
     tables(); sv_table()

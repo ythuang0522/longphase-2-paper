@@ -144,7 +144,7 @@ next to the paragraph it concerns (grep `^%  \[` in `sections/*.tex` and
 
 - `[optional experiment]` — LongPhase 1.0 co-phasing comparison; accuracy of the
   indel/5mC phase itself; fixed-PE baseline and threshold sweeps; second
-  individual, HiFi, runtime table, downstream demonstration.
+  nanopore chemistry, runtime table, downstream demonstration.
 - `[optional figure]` — MR(v) histogram and scanner interval counts (Supp. Fig. 1g);
   modcall real-data panels (Supp. Fig. 7).
 - `[optional, cheap and recommended]` — re-score one coverage on chr17/21/22 with
@@ -167,8 +167,9 @@ The critical ones:
 2. **(Resolved 2026-10-07.)** The source baseline is the official release v2.1 on `main`
    (`46ba470`), which contains all of branch JH. The results were produced at `cc17fb1`;
    v2.1 folds `gnn` into `phase` with byte-identical outputs (see `notes/log/2026-10-07-source-baseline-moved-release-v2-1.md`).
-3. **Everything is HG002, one chemistry**, and the GNN was trained on it. No second
-   individual, no PacBio HiFi, no downstream demonstration (the ClairS purity-sweep
+3. **The GNN was trained on HG002, one chemistry.** Two further individuals (HG008-N, COLO829BL;
+   Supplementary Fig. 3, Table 5, since 2026-11-20) and HiFi now test transfer, against assembly-derived
+   phase that is not independent of the HG008-N reads. No second chemistry, no downstream demonstration (the ClairS purity-sweep
    experiment in the algorithm slides is the natural candidate; see the Results todo).
 4. **Text↔code discrepancies** are flagged inline in `methods.tex` with file:line.
    The six Supplementary matching errors were fixed on 2026-09-18 (Table 1 log bases and

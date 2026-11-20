@@ -8,4 +8,4 @@
 - **Completeness:** about 0.6 percentage point lower than both.
 - **Caveat:** the evaluation reads very likely contributed to the assembly.
 
-Results were posted to the issue on the same day. Not yet in the manuscript. To decide (author): main-text panel or Supplementary, and the Results/Discussion wording.
+Results were posted to the issue on the same day. In the manuscript since 2026-11-20 (Supplementary Fig. 3 and Table 5; `2026-11-20-other-individuals-in-manuscript.md`).

@@ -9,7 +9,8 @@ on COLO829BL nanopore reads. COLO829BL is the lymphoblastoid line matched to the
 - **Frozen model:** nothing was retrained, tuned, re-thresholded or re-masked on COLO829BL.
 - **Where and when:** run from 2026-11-16 to 2026-11-19 in a cloud container (4 cores, 15 GB RAM, about 39 GB of disk),
   one chromosome at a time.
-- **Not used:** no manuscript text or figure.
+- **In the manuscript:** since 2026-11-20, with HG008-N, as Supplementary Fig. 3 and Supplementary Table 5
+  (`notes/log/2026-11-20-other-individuals-in-manuscript.md`).
 
 **Difference from HG008:** the variant caller is Clair3 v1.2.0, not PEPPER-Margin-DeepVariant r0.8 (author: "Do it with
 clair3"). This experiment therefore tests a new genome and a new caller together.
@@ -88,7 +89,9 @@ different caller.
 | `results/colo829_by_chr.tsv` | per chromosome × tool × run: assessed SNV pairs, switch errors, phased SNVs (264 rows) |
 | `results/colo829_gnn_effect.tsv` | GNN vs `--disableGNN` per run: Δ switch errors, withheld calls and benchmark SNVs, blocks, N50 |
 | `results/colo829_fig.pdf` | switch error rate / completeness / block N50 against coverage (draft panel, not in Nature style yet) |
-| `results/chr21_*` | chr21 per-run score files committed during the setup (`longphase compare` and `score_phase.py`); identical to the final chr21 scores |
+| `results/raw/by_chr/` | raw scorer output per chromosome × tool × run (264 runs): `longphase compare` (`.tsv`), `score_phase.py` (`.sp.tsv`) and its switch-error pairs (`.sp.sw.tsv`) |
+| `results/raw/genome/` | the same for the 12 genome-wide (chr1–22) runs; `summarize.py` reads these |
+| `results/raw/depth/` | `samtools coverage` of every downsampled run and chromosome (chr21 missing, see Result) |
 | `truth/COLO829BL_truth.blocks.bed` | scoring mask = truth phase blocks on GRCh38 (2,723 blocks, 4th column = PS) |
 | `truth/COLO829BL_dsa3_GRCh38.dip.bed` | dipcall confidence BED |
 | `truth/hap{1,2}.gaps.bed` | assembly N-gaps in assembly coordinates |
@@ -98,9 +101,20 @@ different caller.
 | `scripts/` | every script, in run order below |
 | `scripts/session/` | the container's restart, scoring and compression loops (`restart.sh`, `auto_score.sh`, `compress_loop.sh`) |
 
-The large files (reads, calls, phased VCFs, the truth VCF and dipcall intermediates) were in the cloud container's
-`/home/user/work` and are not kept. The phased VCFs can be rebuilt from the scripts. Every input is public: the ONT
-reads, and the assembly, which needs a free SMaHT portal login.
+### Raw data
+
+Only the scorer output is in Git (author, 2026-11-20: "just the raw numbers for generating figures"). The large
+files were in `/home/user/work` of the cloud session `session_016MpzQAd54HaJjtG7j5Wqwe`
+(https://claude.ai/code/session_016MpzQAd54HaJjtG7j5Wqwe), about 1 GB compressed:
+
+- `phase/`: 12 runs × 22 chromosomes of phased VCFs (`{lp_gnn,lp_nognn,wh}_<run>_chrN.vcf.gz`,
+  `hapcut2_<run>_chrN.phased.VCF.gz`) and per-step `.time`/`.log`; `genome/`: the concatenated per-run VCFs.
+- `calls/`: Clair3 VCFs per run and chromosome (`clair3_<run>_chrN.vcf.gz`, `.pass_het_snv.vcf`).
+- `truth/`: `COLO829BL_truth.vcf.gz`, the dipcall output and intermediates.
+
+The session transcript records every command. The container is reclaimed after inactivity, after which these files
+are gone; they can be rebuilt from `scripts/` (every input is public: the ONT reads, and the assembly, which needs a
+free SMaHT portal login). The CRAMs were deleted after each run.
 
 ## Versions and checksums
 

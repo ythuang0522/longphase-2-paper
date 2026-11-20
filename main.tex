@@ -139,7 +139,7 @@ Long-read sequencing captures SNVs, indels, structural variants (SVs) and 5-meth
   SNV-only phasing of HG002 nanopore R10.4.1 data; replicates as in Fig.~\ref{fig:phasers}; both truth VCFs used in full.
   \textbf{a},\textbf{b}, Genome-wide switch errors under v4.2.1 (\textbf{a}) and v5.0q (\textbf{b}).
   \textbf{c}, Switch errors at 60$\times$; grey, switch errors made by all three tools at the same SNV pair, with their share of each tool's total.
-  \textbf{d},\textbf{e}, Switch error rate against v5.0q at 10$\times$ (\textbf{d}) and 60$\times$ (\textbf{e}) inside the v5.0q benchmark regions and in subsets of them: outside difficult regions and in segmental duplications (GIAB v3.6 strata), and in the parts that v4.2.1 also covers or that v5.0q adds. Below the dashed line, outside the benchmark regions of both truth sets, where the truth phase is least certain (exploratory). A variant pair is assigned to a region when both of its variants lie in it (Supplementary Table~8).}
+  \textbf{d},\textbf{e}, Switch error rate against v5.0q at 10$\times$ (\textbf{d}) and 60$\times$ (\textbf{e}) inside the v5.0q benchmark regions and in subsets of them: outside difficult regions and in segmental duplications (GIAB v3.6 strata), and in the parts that v4.2.1 also covers or that v5.0q adds. Below the dashed line, outside the benchmark regions of both truth sets, where the truth phase is least certain (exploratory). A variant pair is assigned to a region when both of its variants lie in it (Supplementary Table~9).}
   \label{fig:benchmarks}
 \end{figure}
 
@@ -150,12 +150,12 @@ Long-read sequencing captures SNVs, indels, structural variants (SVs) and 5-meth
   SNV-only phasing of HG002 nanopore R10.4.1 data; calls on chr1--22, classified against the v5.0q benchmark VCF without a benchmark BED. \textbf{a}--\textbf{d},\textbf{g},\textbf{h}, replicate~1; \textbf{e},\textbf{f}, coverages and replicates as in Fig.~\ref{fig:phasers}.
   \textbf{a}, Calls that \toolname phased and left unphased, by their status in v5.0q: a heterozygous SNV with the same position and alleles, a homozygous genotype, a heterozygous SNV with other alleles, or absent.
   \textbf{b}, Number of calls left unphased by \toolname and by \whatshap (bar outline), by the same status.
-  \textbf{c}, Phased heterozygous calls at positions where v5.0q has a homozygous genotype (genotype errors; Supplementary Table~9).
+  \textbf{c}, Phased heterozygous calls at positions where v5.0q has a homozygous genotype (genotype errors; Supplementary Table~10).
   \textbf{d}, Fraction of benchmark heterozygous SNVs to which \whatshap assigned the wrong phase, among the SNVs that \toolname left unphased and among all SNVs that \whatshap phased.
   \textbf{e}, Precision: share of the phased calls that match a benchmark heterozygous SNV in position and alleles.
   \textbf{f}, Completeness: fraction of the benchmark heterozygous SNVs phased; both tools received the same heterozygous calls (Supplementary Table~1).
   \textbf{g}, Read depth at 60$\times$ of the calls left unphased by \toolname only, by \whatshap only or by both, in 2$\times$ bins; the grey bin collects sites at or above the depth cap of the variant caller.
-  \textbf{h}, At 60$\times$, the SNVs that \toolname left unphased at high phasing uncertainty, a subset of its unphased calls, and a random sample of phased SNVs, inside or outside the regions where both haplotypes of the T2T-HG002 assembly align one-to-one to GRCh38 (exploratory; Supplementary Table~10).}
+  \textbf{h}, At 60$\times$, the SNVs that \toolname left unphased at high phasing uncertainty, a subset of its unphased calls, and a random sample of phased SNVs, inside or outside the regions where both haplotypes of the T2T-HG002 assembly align one-to-one to GRCh38 (exploratory; Supplementary Table~11).}
   \label{fig:unphased}
 \end{figure}
 
