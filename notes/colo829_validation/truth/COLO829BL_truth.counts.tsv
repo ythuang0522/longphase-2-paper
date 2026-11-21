@@ -1,0 +1,10 @@
+records chr1-22	4977420
+dropped: dipcall FILTER (HET1/HET2/GAP1/GAP2)	287434
+dropped: homozygous	1776533
+kept het records	2884068
+kept het SNVs	2274723
+block splits at het gaps > 100 kb	224
+dropped: outside reliable intervals	29385
+reliable interval bp (both haps, one piece each, in dipcall BED)	2654584732
+reliable intervals	2536
+truth blocks (PS)	2723

@@ -1,0 +1,7 @@
+sample COLO829BL
+chromosomes 22
+GT [('1|0', 1381496), ('0|1', 1371226), ('1|2', 65730), ('2|1', 65616)]
+FILTER Counter({'.': 2884068})
+allele check, up to 300 random het SNVs: match 300 mismatch 0 no aligned base 0
+PS on more than one chromosome 0
+overlapping PS intervals 0 PS 2723
