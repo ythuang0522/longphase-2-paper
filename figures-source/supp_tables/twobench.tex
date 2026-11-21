@@ -2,7 +2,7 @@
 
 {\scriptsize\setlength{\tabcolsep}{3.5pt}
 \begin{longtable}{@{}llrrrrr@{}}
-\caption{\textbf{The same phased VCFs scored against GIAB v4.2.1 and the T2T-HG002-derived v5.0q benchmark.} Switch errors on SNVs; Hamming distance over SNVs and, where they are phased, indels. All \toolname runs with GNN correction, phasing SNVs alone or with indels (+indel) or indels and SVs (+indel+SV). Values at 10--20$\times$ are means (s.d.) over ten replicates. Phased indels as a percentage of benchmark heterozygous indels (v5.0q).}\label{tab:twobench}\\
+\caption{\textbf{The same phased VCFs scored against GIAB v4.2.1 and the T2T-HG002-derived v5.0q benchmark.} Switch errors on SNVs; Hamming distance over SNVs and, where they are phased, indels. All \toolname runs with GNN-based unphasing, phasing SNVs alone or with indels (+indel) or indels and SVs (+indel+SV). Values at 10--20$\times$ are means (s.d.) over ten replicates. Phased indels as a percentage of benchmark heterozygous indels (v5.0q).}\label{tab:twobench}\\
 \toprule Configuration & Cov. & \shortstack[r]{Switch errors\\v4.2.1} & \shortstack[r]{Switch errors\\v5.0q} & \shortstack[r]{Hamming\\v4.2.1 (\%)} & \shortstack[r]{Hamming\\v5.0q (\%)} & \shortstack[r]{Phased\\indels (\%)} \\ \midrule\endfirsthead
 \toprule Configuration & Cov. & \shortstack[r]{Switch errors\\v4.2.1} & \shortstack[r]{Switch errors\\v5.0q} & \shortstack[r]{Hamming\\v4.2.1 (\%)} & \shortstack[r]{Hamming\\v5.0q (\%)} & \shortstack[r]{Phased\\indels (\%)} \\ \midrule\endhead
 LongPhase 2, SNVs & 10$\times$ & 1,839 (28) & 1,503 (29) & 5.37 (0.23) & 5.39 (0.24) & -- \\

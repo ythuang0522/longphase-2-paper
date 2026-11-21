@@ -21,8 +21,8 @@ Layout follows the 2026-09-18 redesign raster:
      reads 1, 2 and 7 of a at the two CNV SNVs, G/A filtered and A/T kept) ->
      reweighted graph (down-weighted C and CA dashed, their edges low-confidence
      dashed, the filtered G/A variant); grey cross-links are left unstyled.
-  c  per-variant phasing uncertainty bars (y-axis label; trigger orange, no
-     threshold line) above the window; node (31) and edge (6) feature-vector
+  c  "High uncertainty" label over the highlighted trigger column (no bar
+     chart since 2026-11-16) of the window; node (31) and edge (6) feature-vector
      strips below it, segmented by feature group -> local message passing (star;
      GATv2) and global self-attention over the window (token row; Transformer)
      -> feature fusion (with a skip connection from the input h(l)) ->
@@ -367,17 +367,10 @@ text(24, 722, "c", cls="pl")
 XS = [83, 129, 175, 221, 267]                              # same node size / pitch as the refined window
 YTc, YBc, CTR = 852, 910, 2                                # rows centred on the flow axis (FY = 881)
 
-# --- per-variant phasing uncertainty (phasing entropy): the trigger exceeds the threshold
-# (bar chart with its own y-axis label; no threshold line in the overview)
-PE_BASE, AX = 812, 64
-rect(XS[CTR] - 27, 742, 54, YBc + 31 - 742, HILITE, rx=8)  # trigger column: bar + window nodes
-for x, h in zip(XS, (16, 22, 62, 12, 18)):
-    trig = x == XS[CTR]
-    rect(x - 11, PE_BASE - h, 22, h, ORANGE if trig else GREY, rx=2, stroke="#C97A0E" if trig else "none", sw=1.2)
-line(AX, PE_BASE, 292, PE_BASE, UNPH, 1.4, cap="butt")
-line(AX, 718, AX, PE_BASE, UNPH, 1.4, cap="butt")
-for dx, s in ((-20, "Phasing"), (-3, "uncertainty")):
-    text(AX + dx, 765, s, cls="sm", anchor="middle", extra=f' transform="rotate(-90 {AX + dx} 765)"')
+# --- trigger column: the variant with high phasing uncertainty (phasing entropy);
+# a label only, no bar chart (author, 2026-11-16, option B)
+rect(XS[CTR] - 27, 822, 54, YBc + 31 - 822, HILITE, rx=8)  # trigger column: window nodes
+text(XS[CTR], 814, "High uncertainty", cls="sm", anchor="middle")
 window_graph(XS, YTc, YBc, "ATCGT", "GCTAC", r=19, fs=21.5, centre=CTR)
 
 # --- node and edge feature vectors (below the window) ------------------------

@@ -669,6 +669,45 @@ def sfig17_sv_indels():
 
 
 # ===================== Supplementary Fig. 2 (numbering of 2026-11-10) =====
+def sfig_hg008():
+    """A second individual, HG008 (issue #11; author decision 2026-11-13, option C, after a draft PNG):
+    SNV-only phasing of HG008-N-P nanopore data at 10, 20 and 30x, scored against assembly-derived phase
+    (notes/hg008_validation/results/hg008_runs.tsv). a switch error rate, b Hamming distance, c recall, each
+    against coverage (replicates as small markers, means as lines), d switch error rate against block N50."""
+    import csv
+    rows = list(csv.DictReader(open(os.path.join(ROOT, "notes", "hg008_validation", "results", "hg008_runs.tsv")), delimiter="\t"))
+    tools = (("hc", "hapcut2"), ("wh", "wh"), ("lp", "lp_nognn"), ("lp_gnn", "lp_gnn"))
+    covs = (10, 20, 30)
+    def vals(tool, key, scale=1.0):
+        return {c: [float(r[key]) / scale for r in rows if r["tool"] == tool and r["coverage"] == f"{c}x"] for c in covs}
+    mean = lambda v: sum(v) / len(v)
+    fig, axs = new_fig(50, 1, 4)
+    for ax, key in zip(axs[:3], ("ser_pct", "hamming_pct", "completeness_pct")):
+        for t, name in tools:
+            d = vals(name, key); st = STY[t]
+            for c in covs:
+                if len(d[c]) > 1:
+                    ax.plot([c] * len(d[c]), d[c], ls="", marker=st["marker"], ms=st["ms"] * 0.7, mfc="none", mec=C[t],
+                            alpha=0.6, zorder=2)
+            tline(ax, t, covs, [mean(d[c]) for c in covs], [0] * 3, band=False)
+        cov_axis(ax, covs); ax.set_xlim(7, 33)
+    for t, name in tools:
+        x, y, st = vals(name, "n50", 1e6), vals(name, "ser_pct"), STY[t]
+        line(axs[3], [mean(x[c]) for c in covs], [mean(y[c]) for c in covs], [0] * 3, C[t], ls=st["ls"],
+             marker=st["marker"], ms=st["ms"], mfc=st["mfc"], band=False)
+    axs[0].set_ylabel("SNV switch error rate (%)"); axs[0].set_ylim(0, None)
+    axs[1].set_ylabel("Hamming distance (%)"); axs[1].set_ylim(0, None)
+    axs[2].set_ylabel("Recall (%)")
+    axs[3].set_ylabel("SNV switch error rate (%)"); axs[3].set_ylim(0, None); axs[3].set_xlabel("Block N50 (Mb)")
+    hs = _light(fig, [thandle("lp_gnn", "LongPhase 2"), thandle("lp", "LongPhase 2 without GNN"),
+                      thandle("wh", "WhatsHap"), thandle("hc", "HapCUT2")])
+    fig.legend(handles=hs, loc="outside upper center", ncol=4, frameon=False, handlelength=2.6, columnspacing=2.0)
+    for ax, l, ti in zip(axs, "abcd", ("Nanopore: switch errors", "Nanopore: Hamming distance", "Nanopore: recall",
+                                       "Nanopore: accuracy and contiguity")):
+        letter(ax, l, title=ti)
+    save(fig, os.path.join(SUPP, "suppfig_hg008.pdf"))
+
+
 def sfig_in_benchmark():
     """Fig. 2a,b inside the v5.0q benchmark regions (author decision, 2026-11-10, option A, after a
     draft PNG: Fig. 2 scores the truth VCF in full, and a reviewer would ask for the benchmark regions).
@@ -909,7 +948,7 @@ def fig5():
     the benchmark SNVs that LongPhase 2 left unphased, against all SNVs that WhatsHap phased. a and b are two
     different comparisons (author, 2026-11-10): phased against unphased, and LongPhase 2 against WhatsHap; keep
     both. Homozygous has its own colour: it is the class with direct evidence of a genotype error.
-    Row 2, gain, cost and where the calls lie: e precision and f completeness (every coverage and replicate),
+    Row 2, gain, cost and where the calls lie: e precision and f recall (every coverage and replicate),
     g read depth at 60x of the calls left unphased by one tool only or by both (Supplementary Fig. 7 has 10x and
     30x), h T2T-HG002 assembly status at 60x of the SNVs left unphased at high phasing uncertainty, a subset of
     the unphased calls, against a random sample of phased SNVs. Depth and assembly alignment are supporting
@@ -966,10 +1005,10 @@ def fig5():
         ax_c.bar([j + (i - 0.5) * 0.36 for j in range(3)], [other_tool_errors(c, "lp_only")[k] for c in VENN_COVS],
                  0.33, color=col, zorder=3)
     ax_c.set_ylim(0, 25); ax_c.set_yticks([0, 5, 10, 15, 20, 25])
-    ax_c.set_ylabel("Benchmark SNVs wrongly\nphased by WhatsHap (%)")
-    _key(ax_c, [Patch(color=C["wh"], label="unphased by LongPhase 2"), Patch(color=light, label="all phased")], 1)
+    ax_c.set_ylabel("Incorrectly phased SNVs (%)")
+    _key(ax_c, [Patch(color=C["wh"], label="Unphased by LongPhase 2"), Patch(color=light, label="All phased by WhatsHap")], 1)
     grouped(ax_a); grouped(ax_b); grouped(ax_c)
-    # ---- e precision, f completeness: every coverage and replicate
+    # ---- e precision, f recall: every coverage and replicate
     TOOLS = (("wh", "WhatsHap"), ("lp_gnn", "LongPhase 2"))   # LongPhase 2 drawn last, on top
     snv = lambda tool: (lambda c: D["snv"]["ONT"][XLSX_TOOL[tool]].get(c))
     for t, _ in TOOLS:
@@ -1007,7 +1046,7 @@ def fig5():
     _key(ax_g, [Patch(color=G[0], label="aligned 1:1"), Patch(color=G[3], label="not aligned 1:1")], 2, columnspacing=1.0)
     for ax, L, t in zip((ax_p, ax_a, ax_b, ax_c, ax_d, ax_e, ax_f, ax_g), "abcdefgh",
                         ("Phased and unphased calls", "Calls left unphased", "Genotype errors phased",
-                         "Phase errors at unphased SNVs", "Precision", "Completeness", "Read depth",
+                         "WhatsHap phasing errors", "Precision", "Recall", "Read depth",
                          "T2T-HG002 assembly")):
         letter(ax, L)
         ax.set_title(t, loc="center", fontsize=6.5, pad=FIG5_KEYPAD + (8 if ax in (ax_p, ax_a, ax_b, ax_c) else 0))   # two-line keys in row 1
@@ -1015,7 +1054,7 @@ def fig5():
 
 
 def sfig_unphased_more():
-    """Panels moved out of Fig. 5 on 2026-11-10 (author decision, option B): a completeness and
+    """Panels moved out of Fig. 5 on 2026-11-10 (author decision, option B): a recall and
     b precision on PacBio HiFi data (LongPhase 2, WhatsHap and HiPhase; HiFi phased-call counts from
     issue #9), c v5.0q status of the SNVs left unphased at high phasing uncertainty by coverage,
     d their share outside one-to-one T2T-HG002 assembly alignments by chromosome at 60x."""
@@ -1049,7 +1088,7 @@ def sfig_unphased_more():
     dot = lambda col, lab: Line2D([], [], color=col, ls="none", marker="o", ms=2.6, label=lab)
     _key(ax_g, [dot("#4D4D4D", "phased"), dot(C["lp_gnn"], "unphased")], 2)
     for ax, L, t in zip((ax_h, ax_hp, ax_e, ax_g), "abcd",
-                        ("Completeness, PacBio HiFi", "Precision, PacBio HiFi", "Status in the v5.0q benchmark",
+                        ("Recall, PacBio HiFi", "Precision, PacBio HiFi", "Status in the v5.0q benchmark",
                          "By chromosome, 60×")):
         letter(ax, L)
         ax.set_title(t, loc="center", fontsize=6.5, pad=FIG5_KEYPAD)
@@ -1261,7 +1300,7 @@ def sfig_runtime():
 
 # ============================================== Supplementary Fig. 13 =====
 def sfig11():
-    """Effect of GNN correction on SNV-only phasing (nanopore and HiFi)."""
+    """Effect of GNN-based unphasing on SNV-only phasing (nanopore and HiFi)."""
     fig, axs = new_fig(100, 2, 3)
     specs = [("psnv_pct", "Phased SNVs (%)", None, 1), ("sw_pct", "Switch error rate (%)", "log", 1),
              ("ham", "Hamming distance (%)", None, 1), ("n50", "Block N50 (Mb)", None, 1e-6)]
@@ -1284,7 +1323,7 @@ def sfig11():
     ax.plot(PLOT_COVS, [100 * (1 - ms(Hh["longphase_gnn"][c], "sw")[0] / ms(Hh["longphase"][c], "sw")[0])
                         for c in PLOT_COVS], color="#7F7F7F", ls=":", marker="s", ms=2.6, mfc="white",
             label="nanopore, chr17, chr21, chr22")
-    ax.set_ylim(0, 52); ax.set_yticks([0, 10, 20, 30, 40]); ax.set_ylabel("Switch errors removed\nby GNN correction (%)")
+    ax.set_ylim(0, 52); ax.set_yticks([0, 10, 20, 30, 40]); ax.set_ylabel("Switch errors removed\nby GNN-based unphasing (%)")
     cov_axis(ax); letter(ax, "e"); ax.legend(loc="upper right", fontsize=5.5, borderaxespad=0.2)
     ax = axs.flat[5]
     for t, ls, mfc in (("lp", "--", "white"), ("lp_gnn", "-", None)):
@@ -1292,15 +1331,15 @@ def sfig11():
         line(ax, xs, m, s_, C["lp_gnn"], ls=ls, mfc=mfc)
     ax.set_ylim(0, 1500); ax.set_ylabel("Switch errors, PacBio HiFi"); cov_axis(ax, HIFI_COVS)
     letter(ax, "f")
-    h = [Line2D([], [], color=C["lp_gnn"], ls="--", marker="o", mfc="white", ms=2.6, label="without GNN correction"),
-         Line2D([], [], color=C["lp_gnn"], marker="o", ms=2.6, label="with GNN correction")]
+    h = [Line2D([], [], color=C["lp_gnn"], ls="--", marker="o", mfc="white", ms=2.6, label="without GNN-based unphasing"),
+         Line2D([], [], color=C["lp_gnn"], marker="o", ms=2.6, label="with GNN-based unphasing")]
     fig.legend(handles=h, loc="outside upper center", ncol=3)
     save(fig, os.path.join(SUPP, "suppfig13_gnn_effect.pdf"))
 
 
 # ============================================== Supplementary Fig. 14 =====
 def sfig12():
-    """Co-phasing configurations with and without GNN correction (former main Fig. 4)."""
+    """Co-phasing configurations with and without GNN-based unphasing (former main Fig. 4)."""
     fig, axs = new_fig(118, 2, 2)
     for ax, cov, L in ((axs[0, 0], 10, "a"), (axs[0, 1], 60, "b")):
         for cfg, name, col in CFG:
@@ -1347,11 +1386,11 @@ def sfig12():
 
 # ============================================== Supplementary Fig. 15 =====
 def sfig13():
-    """All co-phasing configurations across coverage, without and with GNN correction."""
+    """All co-phasing configurations across coverage, without and with GNN-based unphasing."""
     fig, axs = new_fig(96, 2, 4)
     specs = [("sw_pct", "SNV switch error rate (%)", 1), ("ham", "Hamming distance (%)", 1),
              ("n50", "Block N50 (Mb)", 1e-6), ("psnv_pct", "Phased SNVs (%)", 1)]
-    for row, tool, tag in ((0, "longphase_v2.0.1", "without GNN correction"), (1, "longphase_v2.1.2", "with GNN correction")):
+    for row, tool, tag in ((0, "longphase_v2.0.1", "without GNN-based unphasing"), (1, "longphase_v2.1.2", "with GNN-based unphasing")):
         for col, (key, lab, sc) in enumerate(specs):
             ax = axs[row, col]; single_band(ax)
             for cfg, name, c in CFG:
@@ -1438,7 +1477,7 @@ def strata_tables(w, L):
     # ---- Table 13a: switch errors by truth set and region
     w(r"{\scriptsize\setlength{\tabcolsep}{3.2pt}")
     w(r"\begin{longtable}{@{}llrrrrrrrr@{}}")
-    w(r"\caption{\textbf{Location of SNV switch errors by truth set and benchmark region.} \textbf{a}, switch errors by truth set and region; \textbf{b}, by genomic stratum within the v5.0q benchmark regions; \textbf{c}, switch errors shared by the three tools. SNV-only phasing of HG002 nanopore R10.4.1 data; \toolname with GNN correction. A variant pair is assigned to a region when both of its variants lie in it, so region counts do not sum to the total. \emph{Shared}, inside both sets of benchmark regions; \emph{v5.0q only}, inside the v5.0q regions only; \emph{outside}, outside both. Means over ten replicates at 10 and 20$\times$; one replicate at 30 and 60$\times$. Rates are switch errors per assessed SNV pair. Per-run values for every coverage, region and stratum are in Supplementary Data~1.}\label{tab:strata}\\")
+    w(r"\caption{\textbf{Location of SNV switch errors by truth set and benchmark region.} \textbf{a}, switch errors by truth set and region; \textbf{b}, by genomic stratum within the v5.0q benchmark regions; \textbf{c}, switch errors shared by the three tools. SNV-only phasing of HG002 nanopore R10.4.1 data; \toolname with GNN-based unphasing. A variant pair is assigned to a region when both of its variants lie in it, so region counts do not sum to the total. \emph{Shared}, inside both sets of benchmark regions; \emph{v5.0q only}, inside the v5.0q regions only; \emph{outside}, outside both. Means over ten replicates at 10 and 20$\times$; one replicate at 30 and 60$\times$. Rates are switch errors per assessed SNV pair. Per-run values for every coverage, region and stratum are in Supplementary Data~1.}\label{tab:strata}\\")
     hdr = (r"\toprule & & \multicolumn{2}{c}{v4.2.1} & \multicolumn{6}{c}{v5.0q} \\ \cmidrule(lr){3-4}\cmidrule(l){5-10}"
            r" Tool & Cov. & All & Shared & All & \shortstack[r]{Inside\\v5.0q} & \shortstack[r]{Rate inside\\v5.0q (\%)} & Shared & \shortstack[r]{v5.0q\\only} & \shortstack[r]{Outside\\(rate, \%)} \\ \midrule")
     w(hdr + r"\endfirsthead")
@@ -1516,16 +1555,41 @@ def _heldout(name):
     return d
 
 
+def hg008_table(w):
+    """SNV-only phasing of HG008-N-P, a second individual (issue #11; notes/hg008_validation/results/hg008_runs.tsv)."""
+    import csv
+    rows = list(csv.DictReader(open(os.path.join(ROOT, "notes", "hg008_validation", "results", "hg008_runs.tsv")), delimiter="\t"))
+    assert len(rows) == 28 and len({r["truth_het_snv"] for r in rows}) == 1
+    names = {"lp_gnn": r"\toolname", "lp_nognn": r"\toolname without GNN", "wh": r"\whatshap", "hapcut2": r"\hapcut"}
+    w(r"\begin{table}[h]")
+    w(r"\caption{\textbf{SNV-only phasing of a second individual, HG008.} Nanopore R10.4.1 reads of normal pancreatic tissue, down-sampled three times to 10$\times$ and to 20$\times$ and once to 30$\times$, phased with the released model and default settings. Scored on chr1--22 against the phase of the HG008 normal assembly, on "
+      + f"{int(rows[0]['truth_het_snv']):,}"
+      + r" biallelic heterozygous SNVs in 2,781 truth phase blocks (Supplementary Note~6). The assembly was built in part from the evaluated reads. \emph{Rate}, SNV switch error rate; \emph{recall}, phased benchmark SNVs as a share of the benchmark SNVs; \emph{Hamming}, block-wise Hamming distance; \emph{blocks} and \emph{N50}, phase blocks of the query; \emph{without GNN}, \toolname without GNN-based unphasing.}")
+    w(r"\label{tab:hg008}\scriptsize\setlength{\tabcolsep}{4pt}")
+    w(r"\begin{tabular}{@{}lllrrrrrrrr@{}}\toprule")
+    w(r"Cov. & Rep. & Tool & \shortstack[r]{Switch\\errors} & \shortstack[r]{SNV\\pairs} & \shortstack[r]{Rate\\(\%)} & \shortstack[r]{Phased\\SNVs} & \shortstack[r]{Recall\\(\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(kb)} \\ \midrule")
+    prev = None
+    for r in rows:
+        first = r["run"] != prev
+        if first and prev is not None and r["coverage"] != prevcov:
+            w(r"\midrule")
+        w(f"{r['coverage'][:-1] + '$' + chr(92) + 'times$' if first else ''} & {r['seed'] if first else ''} & {names[r['tool']]} & "
+          f"{int(r['snv_sw']):,} & {int(r['snv_pairs']):,} & {float(r['ser_pct']):.4f} & {int(r['phased_snv']):,} & "
+          f"{float(r['completeness_pct']):.2f} & {float(r['hamming_pct']):.2f} & {int(r['blocks']):,} & {int(r['n50']) / 1000:,.0f} \\\\")
+        prev, prevcov = r["run"], r["coverage"]
+    w(r"\bottomrule\end{tabular}\end{table}" + "\n")
+
+
 def heldout_table(w):
     """SNV-only phasing on the chromosomes held out from GNN training (issue #2)."""
     MR_HIDDEN = {"margin", "ralphi"} <= HIDE
     w(r"{\scriptsize\setlength{\tabcolsep}{3pt}")
     w(r"\begin{longtable}{@{}llrrrrrrr@{}}" if MR_HIDDEN else r"\begin{longtable}{@{}llrrrrrrrrr@{}}")
-    w(r"\caption{\textbf{SNV-only phasing on the chromosomes held out from GNN training (chr17, chr21 and chr22).} HG002 nanopore R10.4.1 data; the phased VCFs of the genome-wide analysis scored with \code{longphase compare --regions=chr17,chr21,chr22} against each truth VCF in full. Switch errors of \toolname as mean (s.d.); switch error rates in \%. \emph{Removed}, switch errors removed by GNN correction relative to \toolname without it; \emph{cost}, phased SNVs withheld per removed switch error (the deployment threshold was set on chr15 and chr16 to a cost of 6.35; Supplementary Method~4). Means over ten replicates at 10--20$\times$; one replicate at 30--60$\times$." + ("" if MR_HIDDEN else r" Margin and Ralphi were run at 10--20$\times$ only.") + r"}\label{tab:heldout}\\")
-    head = ((r"\toprule & & \multicolumn{2}{c}{\toolname} & \multicolumn{3}{c}{Switch error rate (\%)} & \multicolumn{2}{c}{GNN correction} \\"
+    w(r"\caption{\textbf{SNV-only phasing on the chromosomes held out from GNN training (chr17, chr21 and chr22).} HG002 nanopore R10.4.1 data; the phased VCFs of the genome-wide analysis scored with \code{longphase compare --regions=chr17,chr21,chr22} against each truth VCF in full. Switch errors of \toolname as mean (s.d.); switch error rates in \%. \emph{Removed}, switch errors removed by GNN-based unphasing relative to \toolname without it; \emph{cost}, phased SNVs withheld per removed switch error (the deployment threshold was set on chr15 and chr16 to a cost of 6.35; Supplementary Note~4). Means over ten replicates at 10--20$\times$; one replicate at 30--60$\times$." + ("" if MR_HIDDEN else r" Margin and Ralphi were run at 10--20$\times$ only.") + r"}\label{tab:heldout}\\")
+    head = ((r"\toprule & & \multicolumn{2}{c}{\toolname} & \multicolumn{3}{c}{Switch error rate (\%)} & \multicolumn{2}{c}{GNN-based unphasing} \\"
              r" \cmidrule(lr){3-4}\cmidrule(lr){5-7}\cmidrule(l){8-9} Truth & Cov. & Switch errors & Rate (\%) & without GNN & \whatshap & \hapcut & Removed (\%) & Cost \\ \midrule")
             if MR_HIDDEN else
-            (r"\toprule & & \multicolumn{2}{c}{\toolname} & \multicolumn{5}{c}{Switch error rate (\%)} & \multicolumn{2}{c}{GNN correction} \\"
+            (r"\toprule & & \multicolumn{2}{c}{\toolname} & \multicolumn{5}{c}{Switch error rate (\%)} & \multicolumn{2}{c}{GNN-based unphasing} \\"
              r" \cmidrule(lr){3-4}\cmidrule(lr){5-9}\cmidrule(l){10-11} Truth & Cov. & Switch errors & Rate (\%) & without GNN & \whatshap & \hapcut & Margin & Ralphi & Removed (\%) & Cost \\ \midrule"))
     w(head + r"\endfirsthead")
     w(head + r"\endhead")
@@ -1692,7 +1756,7 @@ def other_phasers_table(w):
     w(r"\clearpage")   # flush Tables 11-16 (floats) so that the longtable follows them
     w(r"{\scriptsize\setlength{\tabcolsep}{4pt}")
     w(r"\begin{longtable}{@{}lrrrrrrr@{}}")
-    w(r"\caption{\textbf{Additional phasing comparisons on replicate~1.} HG002; nanopore R10.4.1 data at 10--60$\times$ in steps of 10$\times$ and PacBio HiFi data at 10--50$\times$. Each block compares tools given the same reads, variant calls and variant classes; within a block, \toolname is listed first. " + ("MethPhaser was" if "hb" in HIDE else "MethPhaser and HapBridge were") + r" given the SNV-only output of \toolname without GNN correction. " + ("HiPhase has no SNV-only mode, so its SNV-only rows used call sets restricted to SNVs." if "th" in HIDE else "HiPhase and TinkerHap have no SNV-only mode, so their SNV-only rows used call sets restricted to SNVs.") + ("" if "lh" in HIDE else " LongHap with indels, SVs and 5mC was given deletions and insertions from Sniffles2 as sequence-resolved records.") + r" Switch error rates are over consecutive SNV pairs; Hamming distance includes indels where both files contain them, so it is comparable only within a block. Phased fractions are percentages of benchmark heterozygous SNVs or indels; --, not applicable. Source: Supplementary Data~1, sheets \code{Other\_phasers}, \code{SNV\_Detail}, \code{co-phase\_Detail} and \code{MethPhaser}.}\label{tab:otherphasers}\\")
+    w(r"\caption{\textbf{Additional phasing comparisons on replicate~1.} HG002; nanopore R10.4.1 data at 10--60$\times$ in steps of 10$\times$ and PacBio HiFi data at 10--50$\times$. Each block compares tools given the same reads, variant calls and variant classes; within a block, \toolname is listed first. " + ("MethPhaser was" if "hb" in HIDE else "MethPhaser and HapBridge were") + r" given the SNV-only output of \toolname without GNN-based unphasing. " + ("HiPhase has no SNV-only mode, so its SNV-only rows used call sets restricted to SNVs." if "th" in HIDE else "HiPhase and TinkerHap have no SNV-only mode, so their SNV-only rows used call sets restricted to SNVs.") + ("" if "lh" in HIDE else " LongHap with indels, SVs and 5mC was given deletions and insertions from Sniffles2 as sequence-resolved records.") + r" Switch error rates are over consecutive SNV pairs; Hamming distance includes indels where both files contain them, so it is comparable only within a block. Phased fractions are percentages of benchmark heterozygous SNVs or indels; --, not applicable. Source: Supplementary Data~1, sheets \code{Other\_phasers}, \code{SNV\_Detail}, \code{co-phase\_Detail} and \code{MethPhaser}.}\label{tab:otherphasers}\\")
     head = (r"\toprule Tool & Cov. & \shortstack[r]{Phased\\SNVs (\%)} & \shortstack[r]{Phased\\indels (\%)} & "
             r"\shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate relative\\to \toolname} & \shortstack[r]{Hamming\\(\%)} & \shortstack[r]{N50\\(Mb)} \\ \midrule")
     w(head + r"\endfirsthead")
@@ -1726,7 +1790,7 @@ def cell(runs, key, d, sc=1.0):
 
 
 def rate_ratio(t, c):
-    """Switch error rate of tool t over that of LongPhase 2 (GNN correction) in the same
+    """Switch error rate of tool t over that of LongPhase 2 (GNN-based unphasing) in the same
     down-sampling replicate; mean (s.d.) over the paired replicates at 10--20x."""
     if t == "lp_gnn":
         return "--"
@@ -1762,9 +1826,9 @@ def tables():
     # ---- Table 8: SNV-only, all tools, nanopore
     w(r"{\scriptsize\setlength{\tabcolsep}{3pt}")
     w(r"\begin{longtable}{@{}lrrrrrrrrr@{}}")
-    w(r"\caption{\textbf{SNV-only phasing of HG002 nanopore R10.4.1 data by " + ("four" if {"margin", "ralphi"} <= HIDE else "six") + r" configurations.} Scored against the v5.0q VCF (chr1--22, no benchmark BED applied). Values at 10--20$\times$ are means (s.d.) over ten down-sampling replicates; 30--60$\times$, one replicate. Phased SNVs are given as a percentage of the 2,398,880 heterozygous SNVs of the benchmark. Precision, phased SNV calls that match a benchmark heterozygous SNV as a percentage of all phased heterozygous SNV calls on chr1--22 (\toolname and \whatshap only); F1, harmonic mean of precision and completeness. Rate ratio, switch error rate divided by that of \toolname in the same down-sampling replicate." + ("" if {"margin", "ralphi"} <= HIDE else r" Margin and Ralphi were run at 10--20$\times$ only; GCphase was not included (Methods). Ralphi's phase blocks sum to 4.3--5.8~Gb, more than the length of the autosomes, so its block N50 is not comparable with that of the other tools.") + r"}\label{tab:snvall}\\")
-    w(r"\toprule Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Precision\\(\%)} & F1 (\%) & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate\\ratio} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead")
-    w(r"\toprule Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Precision\\(\%)} & F1 (\%) & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate\\ratio} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead")
+    w(r"\caption{\textbf{SNV-only phasing of HG002 nanopore R10.4.1 data by " + ("four" if {"margin", "ralphi"} <= HIDE else "six") + r" configurations.} Scored against the v5.0q VCF (chr1--22, no benchmark BED applied). Values at 10--20$\times$ are means (s.d.) over ten down-sampling replicates; 30--60$\times$, one replicate. Recall, phased SNV calls matching the benchmark in position and alleles as a percentage of its 2,398,880 heterozygous SNVs, regardless of phase correctness. Precision, phased SNV calls that match a benchmark heterozygous SNV as a percentage of all phased heterozygous SNV calls on chr1--22 (\toolname and \whatshap only); F1, harmonic mean of precision and recall. Rate ratio, switch error rate divided by that of \toolname in the same down-sampling replicate." + ("" if {"margin", "ralphi"} <= HIDE else r" Margin and Ralphi were run at 10--20$\times$ only; GCphase was not included (Methods). Ralphi's phase blocks sum to 4.3--5.8~Gb, more than the length of the autosomes, so its block N50 is not comparable with that of the other tools.") + r"}\label{tab:snvall}\\")
+    w(r"\toprule Cov. & \shortstack[r]{Recall\\(\%)} & \shortstack[r]{Precision\\(\%)} & F1 (\%) & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate\\ratio} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endfirsthead")
+    w(r"\toprule Cov. & \shortstack[r]{Recall\\(\%)} & \shortstack[r]{Precision\\(\%)} & F1 (\%) & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Rate\\ratio} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(Mb)} \\ \midrule\endhead")
     for t in [x for x in ("lp_gnn", "lp", "wh", "hc", "margin", "ralphi") if x not in HIDE]:
         for c in COVS:
             runs = D["snv"]["ONT"][XLSX_TOOL[t]].get(c)
@@ -1782,7 +1846,7 @@ def tables():
     # ---- Table 9: two benchmarks
     w(r"{\scriptsize\setlength{\tabcolsep}{3.5pt}")
     w(r"\begin{longtable}{@{}llrrrrr@{}}")
-    w(r"\caption{\textbf{The same phased VCFs scored against GIAB v4.2.1 and the T2T-HG002-derived v5.0q benchmark.} Switch errors on SNVs; Hamming distance over SNVs and, where they are phased, indels. All \toolname runs with GNN correction, phasing SNVs alone or with indels (+indel) or indels and SVs (+indel+SV). Values at 10--20$\times$ are means (s.d.) over ten replicates. Phased indels as a percentage of benchmark heterozygous indels (v5.0q).}\label{tab:twobench}\\")
+    w(r"\caption{\textbf{The same phased VCFs scored against GIAB v4.2.1 and the T2T-HG002-derived v5.0q benchmark.} Switch errors on SNVs; Hamming distance over SNVs and, where they are phased, indels. All \toolname runs with GNN-based unphasing, phasing SNVs alone or with indels (+indel) or indels and SVs (+indel+SV). Values at 10--20$\times$ are means (s.d.) over ten replicates. Phased indels as a percentage of benchmark heterozygous indels (v5.0q).}\label{tab:twobench}\\")
     w(r"\toprule Configuration & Cov. & \shortstack[r]{Switch errors\\v4.2.1} & \shortstack[r]{Switch errors\\v5.0q} & \shortstack[r]{Hamming\\v4.2.1 (\%)} & \shortstack[r]{Hamming\\v5.0q (\%)} & \shortstack[r]{Phased\\indels (\%)} \\ \midrule\endfirsthead")
     w(r"\toprule Configuration & Cov. & \shortstack[r]{Switch errors\\v4.2.1} & \shortstack[r]{Switch errors\\v5.0q} & \shortstack[r]{Hamming\\v4.2.1 (\%)} & \shortstack[r]{Hamming\\v5.0q (\%)} & \shortstack[r]{Phased\\indels (\%)} \\ \midrule\endhead")
     for k, name, col, _ls, _mk, src, v421 in F3:
@@ -1842,7 +1906,7 @@ def tables():
            r"\shortstack[r]{Switch\\errors\\per join} \\ \midrule")
     w(r"{\scriptsize\setlength{\tabcolsep}{4pt}")   # landscape page (Supplementary.tex)
     w(r"\begin{longtable}{@{}lllrrrrrrrrrr@{}}")
-    w(r"\caption{\textbf{Co-phasing configurations of \toolname, without and with GNN correction.} Scored against v5.0q: switch errors on SNVs, Hamming distance over SNVs and, where they are phased, indels; phased indels as a percentage of benchmark heterozygous indels. Blocks joined, the number of blocks of SNV-only phasing minus that of the configuration; sites added, the phased indels, SVs and 5mC sites of the configuration; switch errors per join, the SNV switch errors added to those of SNV-only phasing divided by the blocks joined. Each is computed against SNV-only phasing of the same down-sampling replicate at the same GNN setting. Nanopore: means (s.d.) over ten replicates at 10 and 20$\times$, one replicate at 30 and 60$\times$; every coverage is in Supplementary Data~1. PacBio HiFi: one replicate; phased indels were not scored. --, not applicable.}\label{tab:cophase}\\")
+    w(r"\caption{\textbf{Co-phasing configurations of \toolname, without and with GNN-based unphasing.} Scored against v5.0q: switch errors on SNVs, Hamming distance over SNVs and, where they are phased, indels; phased indels as a percentage of benchmark heterozygous indels. Blocks joined, the number of blocks of SNV-only phasing minus that of the configuration; sites added, the phased indels, SVs and 5mC sites of the configuration; switch errors per join, the SNV switch errors added to those of SNV-only phasing divided by the blocks joined. Each is computed against SNV-only phasing of the same down-sampling replicate at the same GNN setting. Nanopore: means (s.d.) over ten replicates at 10 and 20$\times$, one replicate at 30 and 60$\times$; every coverage is in Supplementary Data~1. PacBio HiFi: one replicate; phased indels were not scored. --, not applicable.}\label{tab:cophase}\\")
     w(HDR + r"\endfirsthead")
     w(HDR + r"\endhead")
     w(r"\multicolumn{13}{@{}l}{\textit{Nanopore}} \\*")
@@ -1877,10 +1941,10 @@ def tables():
     w(r"\end{longtable}}" + "\n")
     # ---- Table 11: HiFi
     w(r"\begin{table}[h]")
-    w(r"\caption{\textbf{SNV-only phasing of HG002 PacBio HiFi (Revio) data.} One replicate per coverage, scored against v5.0q. The network was trained on nanopore data only and applied without retraining. Variants were called separately at every coverage (Methods). HiPhase has no SNV-only option and was given the call set restricted to SNVs. Precision, share of the phased heterozygous SNV calls on chr1--22 that match a benchmark heterozygous SNV (Supplementary Fig.~6b); --, not computed.}")
+    w(r"\caption{\textbf{SNV-only phasing of HG002 PacBio HiFi (Revio) data.} One replicate per coverage, scored against v5.0q. The network was trained on nanopore data only and applied without retraining. Variants were called separately at every coverage (Methods). HiPhase has no SNV-only option and was given the call set restricted to SNVs. Recall, fraction of benchmark heterozygous SNVs matched in position and alleles and phased, regardless of phase correctness (Supplementary Fig.~6a). Precision, share of the phased heterozygous SNV calls on chr1--22 that match a benchmark heterozygous SNV (Supplementary Fig.~6b); --, not computed.}")
     w(r"\label{tab:hifi}\scriptsize")
     w(r"\begin{tabular}{@{}llrrrrrrr@{}}\toprule")
-    w(r"Tool & Cov. & \shortstack[r]{Phased\\SNV (\%)} & \shortstack[r]{Precision\\(\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(kb)} \\ \midrule")
+    w(r"Tool & Cov. & \shortstack[r]{Recall\\(\%)} & \shortstack[r]{Precision\\(\%)} & \shortstack[r]{Switch\\errors} & \shortstack[r]{Switch error\\rate (\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(kb)} \\ \midrule")
     for t in ["lp_gnn", "lp", "wh", "hc", "hp"]:
         for c in HIFI_COVS:
             r = hiphase(c) if t == "hp" else D["snv"]["HiFi"][XLSX_TOOL[t]][c]
@@ -1893,25 +1957,25 @@ def tables():
     T = t2t()
     cls = T["cls"]; n = T["rm_n"]
     w(r"\begin{table}[h]")
-    w(r"\caption{\textbf{SNVs left unphased at high phasing uncertainty (unphased by GNN correction), classified by the T2T-HG002 v1.1 assembly.} Nanopore 60$\times$, replicate~1, SNV-only phasing. ``Aligned'' denotes sites within regions where both assembled haplotypes align one-to-one to GRCh38 (\code{GRCh38\_HG2-T2TQ100-V1.1\_dipcall-z2k.dip.bed}). For these sites, the table also records whether the matching dipcall VCF contains a variant at the same start coordinate; alleles were not compared. All chromosomes, including chrX and chrY, unless stated. The background is a random sample of 50,000 SNVs phased before GNN correction, including sites that GNN correction later unphased. Top, overall classes; bottom, share outside the 1:1 alignment per chromosome. v5.0q is derived from the same assembly, so this analysis extends coverage rather than providing an independent truth set.}")
+    w(r"\caption{\textbf{SNVs left unphased at high phasing uncertainty (unphased by the GNN), classified by the T2T-HG002 v1.1 assembly.} Nanopore 60$\times$, replicate~1, SNV-only phasing. ``Aligned'' denotes sites within regions where both assembled haplotypes align one-to-one to GRCh38 (\code{GRCh38\_HG2-T2TQ100-V1.1\_dipcall-z2k.dip.bed}). For these sites, the table also records whether the matching dipcall VCF contains a variant at the same start coordinate; alleles were not compared. All chromosomes, including chrX and chrY, unless stated. The background is a random sample of 50,000 SNVs phased before GNN-based unphasing, including sites that the GNN later unphased. Top, overall classes; bottom, share outside the 1:1 alignment per chromosome. v5.0q is derived from the same assembly, so this analysis extends coverage rather than providing an independent truth set.}")
     w(r"\label{tab:t2t}\small")
     w(r"\begin{tabular}{@{}lrr@{}}\toprule Class & SNVs & Share (\%) \\ \midrule")
     for k, lab in (("unassessed", "not aligned 1:1 (unassessed)"), ("hom_wt", "aligned, no assembly variant record at the same coordinate"),
                    ("variant", "aligned, assembly variant record at the same coordinate")):
         w(f"{lab} & {cls[k]:,} & {100 * cls[k] / n:.2f} \\\\")
     w(f"total & {n:,} & 100.00 \\\\ \\midrule")
-    w(f"aligned 1:1, unphased by GNN correction & {T['rm_in']:,} / {n:,} & {100 * T['rm_in'] / n:.2f} \\\\")
-    w(f"aligned 1:1, phased before GNN correction (sample) & {T['bg_in']:,} / {T['bg_n']:,} & {100 * T['bg_in'] / T['bg_n']:.2f} \\\\")
+    w(f"aligned 1:1, unphased by the GNN & {T['rm_in']:,} / {n:,} & {100 * T['rm_in'] / n:.2f} \\\\")
+    w(f"aligned 1:1, phased before GNN-based unphasing (sample) & {T['bg_in']:,} / {T['bg_n']:,} & {100 * T['bg_in'] / T['bg_n']:.2f} \\\\")
     auto = [d for d in T["chroms"] if re.fullmatch(r"chr\d+", d["chrom"])]
     a_rn = sum(d["rm_n"] for d in auto); a_ri = a_rn - sum(d["rm_out"] for d in auto)
     a_bn = sum(d["bg_n"] for d in auto); a_bi = a_bn - sum(d["bg_out"] for d in auto)
-    w(f"\\quad autosomes only, unphased by GNN correction & {a_ri:,} / {a_rn:,} & {100 * a_ri / a_rn:.2f} \\\\")
-    w(f"\\quad autosomes only, phased before GNN correction (sample) & {a_bi:,} / {a_bn:,} & {100 * a_bi / a_bn:.2f} \\\\")
+    w(f"\\quad autosomes only, unphased by the GNN & {a_ri:,} / {a_rn:,} & {100 * a_ri / a_rn:.2f} \\\\")
+    w(f"\\quad autosomes only, phased before GNN-based unphasing (sample) & {a_bi:,} / {a_bn:,} & {100 * a_bi / a_bn:.2f} \\\\")
     b = T["bench"]
     w(f"inside the v5.0q benchmark BED & {b[0]:,} & -- \\\\")
     w(f"\\quad of which benchmark variant & {b[2]:,} & {100 * b[2] / b[0]:.2f} \\\\")
     w(r"\bottomrule\end{tabular}\par\medskip")
-    w(r"\begin{tabular}{@{}lrrrrr@{}}\toprule Chromosome & \multicolumn{2}{c}{Phased before GNN correction} & \multicolumn{2}{c}{Unphased by GNN correction} & Ratio \\")
+    w(r"\begin{tabular}{@{}lrrrrr@{}}\toprule Chromosome & \multicolumn{2}{c}{Phased before GNN-based unphasing} & \multicolumn{2}{c}{Unphased by GNN-based unphasing} & Ratio \\")
     w(r" & $n$ & not aligned (\%) & $n$ & not aligned (\%) & \\ \midrule")
     order = [f"chr{i}" for i in range(1, 23)] + ["chrX", "chrY"]
     for d in sorted(T["chroms"], key=lambda d: order.index(d["chrom"])):
@@ -1923,13 +1987,13 @@ def tables():
     # ---- Table 17: SNV calls left unphased, their benchmark status, the other tool's phase at the
     # benchmark het. SNVs among them, and co-location with switch-error intervals (Fig. 4c net values; issue #6)
     w(r"\begin{table}[h]")
-    w(r"\caption{\textbf{Heterozygous SNV calls phased by \toolname only, by \whatshap only, by both or by neither.} HG002 nanopore R10.4.1 data, SNV-only phasing, replicate~1; single-base calls with genotype 0/1, identical in both VCFs, including chrX and chrY. Calls phased by \whatshap only are split by the \toolname stage that left them unphased: the phasing graph before GNN correction or GNN correction. Benchmark status against the chr1--22 v5.0q VCF without a BED: het., same position, REF and ALT; other allele, another heterozygous record at the position; hom., homozygous; absent, no record; chrX/Y, outside the truth. \textbf{Top}, composition. \textbf{Middle}, benchmark het. SNVs among calls phased by one tool only, scored for that tool: \emph{assessed}, in a block with at least two assessed variants; \emph{all phased}, the tool's block-wise Hamming distance over all its phased SNVs; \emph{fold}, inside divided by expected. The definitions of wrong phase, switch-error intervals and expected share are in Methods, ``Analysis of unphased SNVs''. \textbf{Bottom}, additional calls phased by \whatshap: calls phased by \whatshap only minus calls phased by \toolname only.}")
+    w(r"\caption{\textbf{Heterozygous SNV calls phased by \toolname only, by \whatshap only, by both or by neither.} HG002 nanopore R10.4.1 data, SNV-only phasing, replicate~1; single-base calls with genotype 0/1, identical in both VCFs, including chrX and chrY. Calls phased by \whatshap only are split by the \toolname stage that left them unphased: the phasing graph or the GNN. Benchmark status against the chr1--22 v5.0q VCF without a BED: het., same position, REF and ALT; other allele, another heterozygous record at the position; hom., homozygous; absent, no record; chrX/Y, outside the truth. \textbf{Top}, composition. \textbf{Middle}, benchmark het. SNVs among calls phased by one tool only, scored for that tool: \emph{assessed}, in a block with at least two assessed variants; \emph{all phased}, the tool's block-wise Hamming distance over all its phased SNVs; \emph{fold}, inside divided by expected. The definitions of wrong phase, switch-error intervals and expected share are in Methods, ``Analysis of unphased SNVs''. \textbf{Bottom}, additional calls phased by \whatshap: calls phased by \whatshap only minus calls phased by \toolname only.}")
     w(r"\label{tab:unphased}\scriptsize\setlength{\tabcolsep}{2.9pt}")
     w(r"\begin{tabular}{@{}llrrrrrr@{}}\toprule")
     w(r"Cov. & Phased by & Calls & Het. & Other allele & Hom. & Absent & chrX/Y \\ \midrule")
     snames = (("wh_only", r"\toolname only"), ("lp_only", r"\whatshap only"),
               ("lp_only_phase", r"\quad unphased by the \toolname graph"),
-              ("lp_only_gnn", r"\quad unphased by GNN correction"),
+              ("lp_only_gnn", r"\quad unphased by the GNN"),
               ("background", "both tools"), ("both", "neither tool"))
     for c in VENN_COVS:
         cl = f"{c}$\\times$"
@@ -1959,6 +2023,7 @@ def tables():
           + " & ".join(f"{d[k]:,}" for k in ("het_other_allele", "hom", "absent", "chrXY")) + r" \\")
     w(r"\bottomrule\end{tabular}\end{table}" + "\n")
     other_phasers_table(w)
+    hg008_table(w)
     # One file per table, named by its label, so that Supplementary.tex can \input the generated
     # and the hand-written tables in the order of first citation in the main text.
     starts = [i for i, s in enumerate(L) if s.startswith((r"\begin{table}", r"{\scriptsize"))]
@@ -1977,5 +2042,5 @@ if __name__ == "__main__":
     fig2(); fig3_sv_methylation(); fig4(); fig5()
     if not {"margin", "ralphi"} <= HIDE:
         sfig10()
-    sfig_runtime(); sfig11(); sfig12(); sfig13(); sfig14(); sfig17(); sfig16(); sfig17_sv_indels(); sfig_in_benchmark(); sfig_unphased_more()
+    sfig_runtime(); sfig11(); sfig12(); sfig13(); sfig14(); sfig17(); sfig16(); sfig17_sv_indels(); sfig_in_benchmark(); sfig_unphased_more(); sfig_hg008()
     tables(); sv_table()

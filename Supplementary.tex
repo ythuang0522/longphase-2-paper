@@ -31,6 +31,8 @@
 \newcommand{\whatshap}{WhatsHap\xspace}
 \newcommand{\hapcut}{HapCUT2\xspace}
 \newcommand{\todo}[1]{\textcolor{red}{[#1]}}
+\usepackage{microtype}
+\DisableLigatures[-]{family=tt*}  % keep the two hyphens of command options (2026-11-11)
 \newcommand{\code}[1]{\texttt{\small #1}}
 
 % supplementary numbering
@@ -51,93 +53,61 @@
 \clearpage
 
 % ==================================================================
-\section*{Supplementary Methods}
-\addcontentsline{toc}{section}{Supplementary Methods}
+\section*{Supplementary Notes}
+\addcontentsline{toc}{section}{Supplementary Notes}
 
 % ------------------------------------------------------------------
-\subsection*{Supplementary Method 1. Allele-specific methylation calling (\code{modcall})}
-\addcontentsline{toc}{subsection}{Supplementary Method 1. Allele-specific methylation calling (\code{modcall})}
+\subsection*{Supplementary Note 1. Read-level allele observations and copy-number interval detection}
+\addcontentsline{toc}{subsection}{Supplementary Note 1. Read-level allele observations and copy-number interval detection}
 
-\paragraph{Modification interpretation.} Observations were classified solely by their 5mC probability (modification code \code{m}); 5hmC probabilities (code \code{h}) were not used. Thus, under a 5mCG\_5hmCG model, a cytosine called as 5hmC was counted as unmethylated whenever its 5mC probability was $\le 0.2$. Reverse-strand calls were mapped to the forward-strand CpG coordinate, and observations from the two strands were classified jointly. Non-CpG modification calls were discarded.
+Each read contributes one allele observation at each eligible heterozygous variant that it covers (Supplementary Fig.~10). \toolname selects the eligible variants, extracts the allele of each variant class from the alignment and removes sites in intervals in which reads are probably misaligned.
 
-\paragraph{Linking modes and the depth bound on the neighbour scan.} In \emph{SNV-anchored} mode, used whenever an SNV VCF was supplied, a candidate CpG was accepted as a strong anchor if it satisfied the co-segregation criterion of Methods against an SNV among the next 20 variants (\code{--connectAdjacent}). In \emph{methylation-only} mode, used where no informative SNV was in range, the same criterion was applied between two candidate CpGs.
+\paragraph{Variant eligibility and repeat annotation.} Homozygous and filtered small-variant records are carried through to the output but do not enter the phasing graph. An optional indel-quality filter excludes indels below a user-specified QUAL threshold and marks their FILTER field; the default threshold of 0 disables this filter. An indel is flagged as a tandem-repeat indel when the dinucleotide immediately downstream of its position occurs in five consecutive copies. Flagged indels remain in the graph and cast votes at one-tenth weight. Homozygous SVs, SVs whose breakpoint coincides with an SNV and SVs with duplicated positions are excluded. The length of each retained SV is recorded, with its supporting read names when the caller reports them.
 
-In both modes a pair was considered only while the number of reads spanning it exceeded $\max(6,\,(n_1+n_2)/4)$, where $n_1$ and $n_2$ are the numbers of reads recorded at the two sites. The neighbour scan for a site stopped at the first pair at or below this bound.
+\paragraph{Allele extraction.} SNV alleles are read from the aligned base and inherit its Phred base quality. Under the nanopore setting, when two SNVs at most 2~bp apart both lie in homopolymers of length at least three, the downstream SNV is removed.
 
-Candidates that never satisfied the co-segregation criterion were retained as weak candidates. They were admitted if they satisfied the criterion against an already accepted CpG on more reads than the pair-specific bound defined above, in two expansion rounds (\code{--iterCount}, default 2).
+Insertion and deletion alleles are called from the CIGAR string: a read supports the ALT allele if a CIGAR insertion or deletion begins immediately after the variant position, and the REF allele otherwise. When a read deletion spans an SNV in a homopolymer of length $\ge 3$, the SNV allele is recovered from the base that follows the deletion.
 
-Finally, an accepted CpG was kept only if it satisfied the criterion on at least six reads with the preceding and the following accepted site; SNVs and the first and last sites were exempt.
+SV alleles are assigned by scanning a window of 20 CIGAR operations (\code{--sv-window}) around the SV start for an insertion or deletion whose length is within 20\% (nanopore) or 10\% (HiFi) of the SV length (\code{--sv-threshold}). A read whose alignment ends at the SV is assigned from the junction to its supplementary alignment, and reads that the SV caller lists as supporting the SV are also assigned the ALT allele.
 
-\paragraph{Merging runs of CpGs.} Runs of consecutive CpG coordinates were merged into a single locus represented by the first position, and the strand-specific observations of the run were consolidated into one read list. These methylation loci were phased jointly with sequence variants. The resulting VCF records the methylated and unmethylated read names (\code{MR}, \code{NR}), the read strand and the per-site depths, and is passed to \code{phase} through \code{--mod-file}.
+5mC alleles are taken from the \code{modcall} read lists (methylated~$=$~allele~0, unmethylated~$=$~allele~1), restricted to reads whose strand matches the recorded strand.
 
-\subsection*{Supplementary Method 2. Read-level allele observations and copy-number interval detection}
-\addcontentsline{toc}{subsection}{Supplementary Method 2. Read-level allele observations and copy-number interval detection}
+Indel observations, 5mC observations and alternate-allele SV observations have a fixed quality of 60, and reference-allele SV observations a quality of 30. All of these observations therefore have full weight at the default base-quality threshold, and reference-allele SV evidence is down-weighted only at a higher threshold.
 
-\paragraph{Variant eligibility and repeat annotation.} Homozygous and filtered small-variant records were carried through to the output but did not enter the phasing graph. An optional indel-quality filter excluded indels below a user-specified QUAL threshold and marked their FILTER field; the default threshold of 0 disabled this filter. An indel was flagged as a tandem-repeat indel when the dinucleotide immediately downstream of its position occurred in five consecutive copies. Flagged indels remained in the graph and cast votes at one-tenth weight. Homozygous SVs, SVs whose breakpoint coincided with an SNV and SVs with duplicated positions were excluded. The supporting read names and length of each retained SV were recorded.
+\paragraph{Copy-number-aware filter.} Reads misaligned from other loci can produce false heterozygous sites. The copy-number-aware filter identifies candidate intervals that may contain such reads (Methods; Supplementary Fig.~10c). Candidate boundaries are inferred from clusters of soft- and hard-clips by scanning the per-position clipping counts of each chromosome in coordinate order.
 
-\paragraph{Per-class allele extraction.} SNV alleles were read from the aligned base and inherited its Phred base quality.
+\paragraph{Clipping counts.} For every reference position at which at least one alignment carries a soft- or hard-clipping operation longer than 5~bp, two counts are recorded: $u$, the number of alignments clipped at their front (left) end, and $d$, the number clipped at their back (right) end. An interval still open at the end of the chromosome is evaluated at a position 30~kb beyond the last observed clip.
 
-Insertion and deletion alleles were called from the CIGAR string: a read supports the ALT allele if a CIGAR insertion or deletion begins immediately after the variant position, and the REF allele otherwise; when a read deletion spans an SNV in a homopolymer of length $\ge 3$, the SNV allele was recovered from the base following the deletion.
+\paragraph{Scanner states.} The scanner has three states. In the \emph{idle} state no candidate interval is open. The \emph{step} state follows a copy-number transition, which appears as a strong cluster of front-clips. The \emph{ramp} state follows progressively nested breakpoints, which appear as a weak excess of front-clips. In the two active states the scanner keeps a candidate start, a look-ahead window of length $A$ that begins at the candidate start, and a running excess $c$ of front-clips over back-clips, which is updated at each position by $u-d$. The constants are listed in the table below.
 
-SV alleles were assigned by scanning a window of 20 CIGAR operations (\code{--sv-window}) around the SV start for an insertion or deletion whose length is within 20\% (nanopore) or 10\% (HiFi) of the SV length (\code{--sv-threshold}); a read whose alignment ends at the SV was assigned from the junction to its supplementary alignment, and reads listed by the SV caller as supporting the SV were also assigned the ALT allele.
+\paragraph{Opening an interval.} In the idle state, a position with $u \ge \Pi$ opens a step interval, and any other position with $u > d$ opens a ramp interval. The candidate start is the current position and $c = u - d$.
 
-5mC alleles were taken from the \code{modcall} read lists (methylated~$=$~allele~0, unmethylated~$=$~allele~1) restricted to reads whose strand matched the recorded strand.
+\paragraph{Step intervals.} A step interval uses three thresholds that are derived from the front-clip count $n$ of the position that opened it: a re-anchor threshold $r$, a pull-down threshold $p$ and a decay floor $f$. A position with $u > r$ is a stronger breakpoint and re-anchors the interval: the candidate start and the look-ahead window move to this position, and the thresholds are recomputed. The reported interval therefore begins at the strongest breakpoint. While $c > E$, the look-ahead window is moved forward to begin at the current position. The interval is emitted, from the candidate start to the current position, when $d \ge p$ (a back-clip cluster closes the interval) or when $c \le f$ inside the look-ahead window (the excess has decayed).
 
-The copy-number-aware filter identifies candidate intervals that may contain reads misaligned from other loci (Methods; Supplementary Fig.~11e,f). Candidate boundaries were inferred from clusters of soft- and hard-clips by scanning the per-position clipping counts of each chromosome in coordinate order.
+\paragraph{Ramp intervals.} A ramp interval is emitted when the back-clip count is large relative to the accumulated excess: $d \ge \lfloor c/4 \rfloor$ when $c > \Sigma$, and $d \ge \Pi$ otherwise. If the interval is not emitted and $u \ge \Pi$, it becomes a step interval that starts at the current position. Otherwise $c$ is updated and the look-ahead window is moved forward as for a step interval.
 
-\paragraph{Input.} For every reference position at which at least one alignment carries a soft- or hard-clipping operation longer than 5~bp, two counts are recorded: $u$, the number of alignments clipped at their front (left) end, and $d$, the number clipped at their back (right) end. An interval still open at the end of the chromosome was evaluated at a position 30~kb beyond the last observed clip.
+\paragraph{Discarding a candidate.} A candidate that is not emitted is discarded, and the scanner returns to the idle state, when the current position is beyond the look-ahead window, when $c \le 0$, or when the interval reaches the maximum length $\Lambda$. The emission conditions are tested before the discard conditions.
 
-\paragraph{State.} The scanner uses three heuristic states: \emph{idle}, \emph{step} (a copy-number transition, entered on a strong front-clip cluster) and \emph{ramp} (progressively nested breakpoints, entered on a weak front-clip excess). In the two active states it carries a running excess $c$ of front- over back-clips, a candidate start, a candidate end and three adaptive thresholds derived from the front-clip count $n$ that opened or re-anchored the interval:
-\[
-r = n, \qquad
-p = \begin{cases} \lfloor n/2 \rfloor, & n \ge 10\\ 5, & n < 10\end{cases},
-\]
-\[
-f = \begin{cases} 5, & n \ge 20\\ \lfloor n/4 \rfloor, & 10 \le n < 20\\ 2, & n < 10, \end{cases}
-\]
-where $r$ is the re-anchor threshold, $p$ the pull-down threshold and $f$ the decay floor.
+\begin{center}
+\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}l p{0.50\linewidth} p{0.36\linewidth}@{}}
+\toprule
+\textbf{Symbol} & \textbf{Meaning} & \textbf{Value} \\
+\midrule
+$\Pi$ & Front-clip count that opens a step interval; back-clip count that closes a ramp interval with $c \le \Sigma$ & 5 \\
+$A$ & Length of the look-ahead window & 30{,}000~bp \\
+$E$ & Excess above which the look-ahead window moves forward & 30 \\
+$\Lambda$ & Maximum interval length & 200{,}000~bp \\
+$\Sigma$ & Excess above which a ramp interval closes on $d \ge \lfloor c/4 \rfloor$ & 20 \\
+$r$ & Re-anchor threshold & $n$ \\
+$p$ & Pull-down threshold & $\lfloor n/2 \rfloor$ if $n \ge 10$; 5 if $n < 10$ \\
+$f$ & Decay floor & 5 if $n \ge 20$; $\lfloor n/4 \rfloor$ if $10 \le n < 20$; 2 if $n < 10$ \\
+\bottomrule
+\end{tabular}
+\end{center}
 
-\paragraph{Transitions.} With constants $\Pi = 5$ (push threshold), $A = 30{,}000$~bp (look-ahead), $E = 30$ (extend threshold), $\Lambda = 200{,}000$~bp (maximum interval length) and $\Sigma = 20$ (ramp commit threshold), the scanner at position $x$ with counts $(u,d)$ behaves as follows:
-
-{\small
-\begin{verbatim}
-idle:
-  if u >= PI and c == 0:
-      enter STEP;  c = u - d;  start = x;  end = x + A
-      set r, p, f from u
-  elif u > d and c == 0:
-      enter RAMP;  c = u - d;  start = x;  end = x + A
-
-step:
-  if u > r:                      # stronger breakpoint: re-anchor
-      start = x;  end = x + A;  set r, p, f from u
-  c += u - d
-  if c > E:  end = x + A
-  if d >= p:                     # pull-down reached
-      emit [start, x];  reset to idle
-  elif c <= f and x <= end:      # decayed to the floor in range
-      emit [start, x];  reset to idle
-  if x > end or c <= 0 or x - start >= LAMBDA:
-      reset to idle              # candidate discarded
-
-ramp:
-  if (c > SIGMA and d >= c/4) or (c <= SIGMA and d >= PI):
-      emit [start, x];  reset to idle
-  elif u >= PI:                  # promote to STEP
-      c = u - d;  start = x;  end = x + A;  set r, p, f from u
-  else:
-      c += u - d
-      if c > E:  end = x + A
-      if x > end or c <= 0 or x - start >= LAMBDA:
-          reset to idle          # candidate discarded
-\end{verbatim}
-}
-
-A stronger front-clip cluster re-anchored a \emph{step} interval: the candidate start moved to the new position and the three thresholds were recomputed. The reported interval began at the strongest breakpoint. The decay-floor exit applied only within the look-ahead window ($x \le \text{end}$); candidates outside this window were discarded.
-
-\paragraph{Site removal.} Within each emitted interval the mismatch-load statistic $\mathrm{MR}(v)$ defined in Methods is computed and heterozygous variants with $\mathrm{MR}(v) \ge 0.7$ are removed from all reads; SV alleles are not removed. A variant is scored only when both allele populations have a non-zero mean load; a site at which one population carries no other alternate allele is not removed on this basis.
-
-\paragraph{Rationale for the mismatch-load statistic.} Comparable alternate-allele loads in the two read groups give $\mathrm{MR}$ near 0.5. Larger loads in the reads that carry the alternate allele increase $\mathrm{MR}$ and may indicate reads misaligned from paralogous sequence.
+\paragraph{Site removal.} Within each emitted interval, the mismatch-load statistic $\mathrm{MR}(v)$ defined in Methods is computed. Comparable alternate-allele loads in the two read groups give $\mathrm{MR}$ near 0.5. Larger loads in the reads that carry the alternate allele increase $\mathrm{MR}$ and may indicate reads misaligned from paralogous sequence. Heterozygous variants with $\mathrm{MR}(v) \ge 0.7$ are therefore removed from all reads; SV alleles are not removed. A variant is scored only when both allele populations have a non-zero mean load; a site at which one population carries no other alternate allele is not removed on this basis.
 
 \paragraph{Choice of constants.} The constants of the scanner ($\Pi$, $A$, $E$, $\Lambda$ and $\Sigma$, those of the adaptive thresholds and the 5-bp minimum clip length) were set by inspection of clipping profiles in copy-number-variable segments of HG002, the individual evaluated here, in which many false heterozygous SNVs had been called; they were not tuned by a parameter sweep. The look-ahead window $A$ approximates the read length (read N50 of 29~kb; Methods). The thresholds are absolute alignment counts applied unchanged at every coverage, and the sensitivity of the results to them was not assessed.
 %  [provenance] 2026-10-10, author: set by inspection of HG002 clipping profiles at CNV segments
@@ -153,33 +123,54 @@ A stronger front-clip cluster re-anchored a \emph{step} interval: the candidate 
 %  release build; regenerate with the submitted version on the PEPPER calls used
 %  here).
 
-\subsection*{Supplementary Method 3. Tuning of the voting and read-filtering parameters}
-\addcontentsline{toc}{subsection}{Supplementary Method 3. Tuning of the voting and read-filtering parameters}
+\subsection*{Supplementary Note 2. Allele-specific methylation calling (\code{modcall})}
+\addcontentsline{toc}{subsection}{Supplementary Note 2. Allele-specific methylation calling (\code{modcall})}
 
-The voting and read-filtering constants were set empirically: the near-certain and exclusion ambiguity thresholds of 0.1 and 0.7, respectively, the near-certain vote weight of 20, the base-quality threshold of 12, and the single-read guard thresholds of 3 votes and 0.2 ambiguity. The voting rule and single-read guard are described in Methods, ``Haplotype resolution by multi-neighbour voting''; base-quality weighting is described in ``Weighted phasing graph''.
+\code{modcall} identifies allele-specific 5mC sites in the four steps of Methods: read classification, candidate selection, the linkage test, and merging and output (Supplementary Fig.~9). The candidate criterion and the linkage criterion are equations~1 and~2 of Methods.
 
-Each constant was fixed by a sweep on HG002 at 10--60$\times$ before the experiments reported here, and none was re-tuned afterwards. The sweeps were run during the development of \longphase in 2023--2024 on whole-genome phasing of earlier HG002 nanopore alignments, before the alignments evaluated here were generated and before the chromosome split used for GNN training was defined. The parameters were therefore tuned on data from the same individual as the evaluation, and chr17, chr21 and chr22 are held out from GNN training but not from this tuning.
+\paragraph{Read classification.} A read-level CpG observation is methylated when its 5mC probability is at least 0.8 (\code{--modThreshold}), unmethylated when it is at most 0.2 (\code{--unModThreshold}) and ambiguous otherwise. Observations are classified solely by their 5mC probability (modification code \code{m}); 5hmC probabilities (code \code{h}) are not used. Thus, under a 5mCG\_5hmCG model, a cytosine called as 5hmC is counted as unmethylated whenever its 5mC probability is $\le 0.2$. Reverse-strand calls are mapped to the forward-strand CpG coordinate, and observations from the two strands are classified jointly. Non-CpG modification calls are discarded.
 
-\subsection*{Supplementary Method 4. Graph neural network training and inference}
-\addcontentsline{toc}{subsection}{Supplementary Method 4. Graph neural network training and inference}
+\paragraph{Linkage test: modes and depth bound.} In \emph{SNV-anchored} mode, used whenever an SNV VCF is supplied, a candidate CpG is accepted as a strong anchor if it satisfies the linkage criterion against an SNV among the next 20 variants (\code{--connectAdjacent}). In \emph{methylation-only} mode, used where no informative SNV is in range, the same criterion is applied between two candidate CpGs.
+
+In both modes a pair is considered only while the number of reads that span it exceeds $\max(6,\,(n_1+n_2)/4)$, where $n_1$ and $n_2$ are the numbers of reads recorded at the two sites. The neighbour scan for a site stops at the first pair at or below this bound.
+
+\paragraph{Linkage test: expansion and final filter.} Candidates that never satisfy the linkage criterion are retained as weak candidates. They are admitted if they satisfy the criterion against an already accepted CpG on more reads than the pair-specific bound defined above, in two expansion rounds (\code{--iterCount}, default 2).
+
+Finally, an accepted CpG is kept only if it satisfies the criterion on at least six reads with the preceding and the following accepted site; SNVs and the first and last sites are exempt.
+
+\paragraph{Merging and output.} Runs of consecutive CpG coordinates are merged into a single locus represented by the first position, and the strand-specific observations of the run are consolidated into one read list. These methylation loci are phased jointly with sequence variants. The resulting VCF records the methylated and unmethylated read names (\code{MR}, \code{NR}), the read strand and the per-site depths, and is passed to \code{phase} through \code{--mod-file}.
+
+\subsection*{Supplementary Note 3. Voting rules, read-based correction and the tuning of their constants}
+\addcontentsline{toc}{subsection}{Supplementary Note 3. Voting rules, read-based correction and the tuning of their constants}
+
+The vote weights, the single-read guard and the read filter of Methods use the constants below. The user-adjustable parameters are listed with their options in Supplementary Table~12; the other constants are fixed in the program.
+
+\paragraph{Vote weights.} A pair with ambiguity $s>\tau$ (default 0.7) casts no vote; SNV--5mC pairs use a threshold of 0.3 and require support of at least one read-equivalent. A vote has weight 1 by default. A near-unanimous pair ($s\le0.1$ with total support of at least 1, or one phasing below 1 while the other is at least 1) votes with weight 20. A tandem-repeat indel (Supplementary Note~1) votes with weight 0.1. A read adds weight 1 to an edge when both observations have a base quality of at least 12, and weight 0.1 otherwise.
+
+\paragraph{Single-read guard.} When more than three votes have support of at most 1 read-equivalent, and at least one qualifying vote remains, only votes with support above 1 read-equivalent, $s<0.2$, weight of at least 1 and a non-indel voting variant are counted.
+
+\paragraph{Read-based correction.} SNV and SV alleles have weight 1 and indel alleles weight 0.1. A read is used only when its majority fraction exceeds $\theta_{\mathrm{read}}$ (default 0.65) and its total evidence weight exceeds 1. The majority pairing assigns the phase of a variant only when $\rho>\theta_{\mathrm{var}}$ (default 0.75).
+
+\paragraph{Tuning.} The voting and read-filtering constants were set empirically: the near-certain and exclusion ambiguity thresholds of 0.1 and 0.7, respectively, the near-certain vote weight of 20, the base-quality threshold of 12, and the single-read guard thresholds of 3 votes and 0.2 ambiguity. Each constant was fixed by a sweep on HG002 at 10--60$\times$ before the experiments reported here, and none was re-tuned afterwards. The sweeps were run during the development of \longphase in 2023--2024 on whole-genome phasing of earlier HG002 nanopore alignments, before the alignments evaluated here were generated and before the chromosome split used for GNN training was defined. The parameters were therefore tuned on data from the same individual as the evaluation, and chr17, chr21 and chr22 are held out from GNN training but not from this tuning.
+
+\subsection*{Supplementary Note 4. Graph neural network training and inference}
+\addcontentsline{toc}{subsection}{Supplementary Note 4. Graph neural network training and inference}
 
 The GNN predicts label-defined phase-disagreement onsets, comprising isolated disagreements and the first positions of consecutive disagreement runs. Its error-class output is used as an onset score for selective unphasing.
 
-\paragraph{Node features.} Each allele node carried 31 features in four groups, phasing evidence, genomic context, graph structure and variant class, defined in Supplementary Table~12 (window construction in Supplementary Figs.~14 and~15). Among small variants, unequal REF and ALT lengths identified indels.
+\paragraph{Node features.} Each allele node carries 31 features in four groups, phasing evidence, genomic context, graph structure and variant class, defined in Supplementary Table~13 (window construction in Supplementary Figs.~13 and~14). Among small variants, unequal REF and ALT lengths identify indels.
 
-\paragraph{Edge features.} Edges were taken from the DOT graph and restricted to pairs with both endpoints inside the window. They were symmetrized by copying the features of whichever direction was present. Each node received a self-loop whose features were the mean of its non-self incident edges. The vote weight $w$ of an edge is the weighted haplotype vote recorded for the source allele when the vote was cast. Each edge carried six features (Supplementary Table~13).
+\paragraph{Edge features.} Edges are taken from the DOT graph and restricted to pairs with both endpoints inside the window. They are symmetrized by copying the features of whichever direction is present. Each node receives a self-loop whose features are the mean of its non-self incident edges. The vote weight $w$ of an edge is the weighted haplotype vote recorded for the source allele when the vote was cast. Each edge carries six features (Supplementary Table~14).
 
-\paragraph{Architecture.} The network used the GPS graph-transformer architecture\cite{rampasek2022gps} (Supplementary Table~14 and Supplementary Fig.~16). Node features were standardized with a batch-normalization layer whose statistics are frozen at inference, linearly projected to a 128-dimensional embedding and passed through a GELU non-linearity. Four layers with the same architecture then each combine a local and a global branch. The local branch is a four-head GATv2 message-passing layer\cite{velickovic2018gat,brody2022gatv2} in which the attention coefficient of head $t$ for edge $j \rightarrow i$ is
+\paragraph{Architecture.} The network uses the GPS graph-transformer architecture\cite{rampasek2022gps} (Supplementary Table~15). Node features are standardized with a batch-normalization layer whose statistics are frozen at inference, linearly projected to a 128-dimensional embedding and passed through a GELU non-linearity. Four layers with the same architecture then each combine a local and a global branch. The local branch is a four-head GATv2 message-passing layer\cite{velickovic2018gat,brody2022gatv2} in which the attention coefficient of head $t$ for edge $j \rightarrow i$ is
 \begin{equation}
 \alpha^{(t)}_{ij} \;\propto\; \exp\!\Big(\mathbf{a}_t^{\top}\,\mathrm{LeakyReLU}_{0.2}\big(\big[\mathbf{W}_r \mathbf{x}_i + \mathbf{W}_l \mathbf{x}_j + \mathbf{W}_e \mathbf{e}_{ij}\big]_t\big)\Big),
 \end{equation}
 where $[\cdot]_t$ selects the 32 coordinates of head $t$, $\mathbf{W}_e$ is a per-layer edge encoder without bias and the normalization is a softmax over the incoming edges of $i$; the head outputs are concatenated and a bias is added. The global branch is four-head scaled dot-product self-attention over all nodes of the window\cite{vaswani2017attention}, with no masking. The two branch outputs are added to the residual stream, followed by layer normalization, a two-layer feed-forward block (128$\rightarrow$256$\rightarrow$128, GELU) with a second residual connection and layer normalization.
 
-Two edge-context features were concatenated with the final node embedding: the sum and the non-negative maximum of the logistic-transformed vote weights over incoming edges, excluding the self-loop. For an edge with vote weight $w$, the transformed weight is $1/(1+e^{-w})$. The augmented node embedding is then passed through a two-layer classifier (130$\rightarrow$128$\rightarrow$2) with softmax output. The model comprises 687,358 stored values, including the frozen batch-normalization statistics.
+Two edge-context features are concatenated with the final node embedding: the sum and the non-negative maximum of the logistic-transformed vote weights over incoming edges, excluding the self-loop. For an edge with vote weight $w$, the transformed weight is $1/(1+e^{-w})$. The augmented node embedding is then passed through a two-layer classifier (130$\rightarrow$128$\rightarrow$2) with softmax output. The model comprises 687,358 stored values, including the frozen batch-normalization statistics.
 
-\paragraph{Scoring zone and inference.} Inference was implemented in C++ without external runtime dependencies and used the erf-based GELU. Predictions for the two allele nodes of a variant were averaged. Only variants in the central zone of each window were scored: those whose genomic distance from the trigger is at most half the largest such distance in the window, $|p - p_c| \le \tfrac{1}{2}\max_u |p_u - p_c|$. Only labelled variants in this zone contributed to the training loss, and the same zone was scored at inference; the other variants supplied graph context. A variant scored in several windows received the arithmetic mean of its predictions from those windows.
-
-\paragraph{Phase-set update.} A variant with a mean onset score $\ge 0.35$ was unphased while preserving its alleles: both \code{0|1} and \code{1|0} became \code{0/1}, and the PS tag was removed. Bridge protection was disabled in the reported runs. Deletions of at least 10~kb with at least one vote and PE~$=0$ kept their phase. Connectivity was then evaluated over the surviving graph edges within each original phase set. The largest connected component retained the original PS identifier; each other component received the 1-based position of its first variant as its identifier. A variant that unphasing or block splitting left as the only variant of its phase set was also unphased, whatever its score; phase sets that held one variant before correction were not changed. SNVs, indels, SVs and 5mC sites were counted together. Corrected records were written separately for small variants, SVs and methylation sites.
+\paragraph{Training data.} Training windows came from the same HG002 nanopore co-phasing runs used for evaluation at 10--20$\times$ (six coverages and ten down-sampling replicates, 60 runs).  Of 722,116 windows, 602,788 from chr1--14 and chr18--20 were used for training and 67,880 from chr15--16 for validation. The remaining 51,448 windows from chr17, chr21 and chr22 were used for evaluation. These chromosome sets were disjoint. Windows from chr17, chr21 and chr22 were excluded from model fitting, batch-normalization statistics and checkpoint selection. However, results from these chromosomes contributed to the choice of label definition, as described under Label definitions.  Windows contained all four variant classes, but only benchmarked SNV and indel nodes had labels, and the unphasing of SVs and 5mC sites relies on the model trained on those labelled small variants.  The training and evaluation truth was the v5.0q small-variant benchmark.  Training windows were limited to 10--20$\times$, whereas results also included 30--60$\times$ and PacBio HiFi data.
 
 \paragraph{Labels.} Labels were derived from the v5.0q benchmark restricted to chr1--chr22 small variants, the same truth set used for evaluation, and describe the phase of a variant relative to its neighbours rather than in absolute terms. Within each window the variants were grouped by phase set; in each group the first variant present in the benchmark fixed the orientation of that group and was labelled \emph{correct}, and every later variant was labelled \emph{correct} if its allele-to-haplotype orientation agreed with that anchor and \emph{disagreeing} otherwise.
 
@@ -195,27 +186,31 @@ The released model was trained and applied in binary mode. The binary classifier
 \begin{equation}
 S = R\,\Big(2 - \frac{1}{P}\Big) = \frac{\mathrm{TP}-\mathrm{FP}}{\mathrm{TP}+\mathrm{FN}},
 \end{equation}
-where $P=\mathrm{TP}/(\mathrm{TP}+\mathrm{FP})$ and $R=\mathrm{TP}/(\mathrm{TP}+\mathrm{FN})$ are precision and recall for the label-defined error class. For a fixed evaluation set, $\mathrm{TP}+\mathrm{FN}$ is constant. Thus, maximizing $S$ is equivalent to maximizing $\mathrm{TP}-\mathrm{FP}$, assigning unit benefit to each true-positive detection and unit cost to each false-positive prediction. This score serves as a proxy for correction utility, rather than an exact fraction of switch errors removed from the corrected VCF. The score was maximized over thresholds subject to recall of at least $0.005$; for $P\le0.5$, the score was instead $P-1$. The selected checkpoint was epoch 30 ($S = 0.0221$ at $P = 0.621$, $R = 0.057$ and a threshold of 0.574); its classification metrics on the validation and held-out chromosomes are given in Supplementary Table~15. The score $S$ governed checkpoint selection; the deployment threshold was chosen separately using the end-to-end phasing trade-off described below.
+where $P=\mathrm{TP}/(\mathrm{TP}+\mathrm{FP})$ and $R=\mathrm{TP}/(\mathrm{TP}+\mathrm{FN})$ are precision and recall for the label-defined error class. For a fixed evaluation set, $\mathrm{TP}+\mathrm{FN}$ is constant. Thus, maximizing $S$ is equivalent to maximizing $\mathrm{TP}-\mathrm{FP}$, assigning unit benefit to each true-positive detection and unit cost to each false-positive prediction. This score serves as a proxy for the utility of unphasing, rather than an exact fraction of switch errors removed from the output VCF. The score was maximized over thresholds subject to recall of at least $0.005$; for $P\le0.5$, the score was instead $P-1$. The selected checkpoint was epoch 30 ($S = 0.0221$ at $P = 0.621$, $R = 0.057$ and a threshold of 0.574); its classification metrics on the validation and held-out chromosomes are given in Supplementary Table~16. The score $S$ governed checkpoint selection; the deployment threshold was chosen separately using the end-to-end phasing trade-off described below.
 
-\paragraph{Label definitions, seeds and deployment threshold.} For each of two label definitions, five models were trained with the settings above and seeds 42, 43, 44, 1337 and 3407. The first definition matched benchmark variants to calls by position, as described under Labels. The second matched by position, REF and ALT, leaving calls whose alleles differ from the benchmark unlabelled. Every model was applied to 60 HG002 nanopore SNV-only runs, comprising ten down-sampling replicates at each of 10, 12, 14, 16, 18 and 20$\times$, and scored relative to phasing without GNN correction by the fraction of switch errors removed and by the cost of correction, the number of phased SNVs withheld divided by the number of switch errors removed.
+\paragraph{Label definitions, seeds and deployment threshold.} For each of two label definitions, five models were trained with the settings above and seeds 42, 43, 44, 1337 and 3407. The first definition matched benchmark variants to calls by position, as described under Labels. The second matched by position, REF and ALT, leaving calls whose alleles differ from the benchmark unlabelled. Every model was applied to 60 HG002 nanopore SNV-only runs, comprising ten down-sampling replicates at each of 10, 12, 14, 16, 18 and 20$\times$, and scored relative to phasing without GNN-based unphasing by the fraction of switch errors removed and by the cost of unphasing, the number of phased SNVs withheld divided by the number of switch errors removed.
 
-Because the fraction removed and the cost of correction trade off against each other through the onset-score threshold $B$, each model's threshold was set on the validation chromosomes chr15 and chr16 to the same cost, 6.35 withheld SNVs per removed error (the cost of the release v2.1 model at $B=0.30$), and the models were compared at that cost (Supplementary Table~16).
+Because the fraction removed and the cost of correction trade off against each other through the onset-score threshold $\theta_{\mathrm{GNN}}$, each model's threshold was set on the validation chromosomes chr15 and chr16 to the same cost, 6.35 withheld SNVs per removed error (the cost of the release v2.1 model at $\theta_{\mathrm{GNN}}=0.30$), and the models were compared at that cost (Supplementary Table~17).
 
-The REF/ALT-matched labels gave higher classification scores on the held-out chromosomes (error-class $F_1$ 0.367--0.382 against 0.345--0.355) but removed fewer switch errors there (mean of five seeds 21.6\% against 23.0\%), and over the whole genome (33.5\% against 33.8\%). The position-matched labels were therefore kept. Among their five seeds, the released model is the one that removed the most switch errors on the validation chromosomes (seed 42, 50.8\%); the threshold selected on the validation chromosomes was 0.34 and was rounded to $B=0.35$ for deployment.
+The REF/ALT-matched labels gave higher classification scores on the held-out chromosomes (error-class $F_1$ 0.367--0.382 against 0.345--0.355) but removed fewer switch errors there (mean of five seeds 21.6\%, range 20.8--22.9\%, against 23.0\%, range 22.4--23.9\%), and over the whole genome (33.5\% against 33.8\%). The position-matched labels were therefore kept. Among their five seeds, the released model is the one that removed the most switch errors on the validation chromosomes (seed 42, 50.8\%); the threshold selected on the validation chromosomes was 0.34 and was rounded to $\theta_{\mathrm{GNN}}=0.35$ for deployment.
 
-With the released implementation and $B=0.35$, correction removed 34.3\% of switch errors at a cost of 7.98 withheld SNVs per removed error (60 runs pooled, whole genome), and 23.5\% at a cost of 9.26 on the held-out chromosomes chr17, chr21 and chr22 (Supplementary Table~17).
+With the released implementation and $\theta_{\mathrm{GNN}}=0.35$, GNN-based unphasing removed 34.3\% of switch errors at a cost of 7.98 withheld SNVs per removed error (60 runs pooled, whole genome), and 23.5\% at a cost of 9.26 on the held-out chromosomes chr17, chr21 and chr22 (Supplementary Note~7, Supplementary Fig.~15e and Supplementary Table~18).
 
 The seed and the threshold were selected on the validation chromosomes only. The choice between the two label definitions also used the held-out and whole-genome results, so the held-out chromosomes are not independent of that choice. This criterion concerns the final phasing output and is distinct from the classifier-based criterion used to rank training checkpoints.
+
+\paragraph{Scoring zone and inference.} Inference is implemented in C++ without external runtime dependencies and uses the erf-based GELU. Predictions for the two allele nodes of a variant are averaged. Only variants in the central zone of each window are scored: those whose genomic distance from the trigger is at most half the largest such distance in the window, $|p - p_c| \le \tfrac{1}{2}\max_u |p_u - p_c|$. Only labelled variants in this zone contributed to the training loss, and the same zone is scored at inference; the other variants supply graph context. Because the zone is defined on genomic distance and not on variant index, the number of variants that it holds depends on the local spacing. A variant scored in several windows receives the arithmetic mean of its predictions from those windows.
+
+\paragraph{Phase-set update.} A variant with a mean onset score $\ge 0.35$ is unphased while preserving its alleles: both \code{0|1} and \code{1|0} become \code{0/1}, and the PS tag is removed. Bridge protection was disabled in the reported runs. Deletions of at least 10~kb with at least one vote and PE~$=0$ keep their phase. Connectivity is then evaluated over the surviving graph edges within each original phase set. The largest connected component retains the original PS identifier; each other component receives the 1-based position of its first variant as its identifier. A variant that unphasing or block splitting leaves as the only variant of its phase set is also unphased, whatever its score; phase sets that held one variant before unphasing are not changed. SNVs, indels, SVs and 5mC sites are counted together. Corrected records are written separately for small variants, SVs and methylation sites.
 
 %  [optional] Report the achieved maximum differences for the first two links as
 %  well; the export script prints both, but the export log was not retained.
 \paragraph{Export and numerical agreement.} The trained model was rewritten with dense $N \times N$ adjacency and edge tensors, exported to ONNX (opset 17, dynamic $N$) and compiled into the C++ module; the logistic transform of the vote weight and the self-loop features are applied to the inputs before inference. The dense rewrite was compared with the PyTorch Geometric model, and the ONNX graph with the dense rewrite, on a real training window. Both comparisons used an acceptance bound of $10^{-3}$ on the absolute difference in onset score. The compiled C++ module was compared with ONNX Runtime on six synthetic graphs of 3--120 nodes at edge densities 0.1--0.4. The largest absolute difference was $3\times 10^{-7}$ (acceptance bound $10^{-5}$).
 
 % ------------------------------------------------------------------
-\subsection*{Supplementary Method 5. Read haplotagging}
-\addcontentsline{toc}{subsection}{Supplementary Method 5. Read haplotagging}
+\subsection*{Supplementary Note 5. Read haplotagging}
+\addcontentsline{toc}{subsection}{Supplementary Note 5. Read haplotagging}
 
-\code{longphase haplotag} assigns eligible alignments to a haplotype using the phased VCFs produced by phasing with or without GNN correction.
+\code{longphase haplotag} assigns eligible alignments to a haplotype using the phased VCFs produced by phasing with or without GNN-based unphasing.
 
 \paragraph{Alignment selection.} Primary alignments with mapping quality $\ge 1$ (\code{-q, --qualityThreshold}) are considered. Supplementary alignments are considered only under \code{--tagSupplementary}; secondary alignments are excluded from haplotagging. Existing \code{HP}, \code{PS} and \code{PQ} tags are cleared from records that enter the haplotagging decision, before new tags are written. Mapped records skipped by this decision retain any existing tags. The separate writer for the unmapped tail clears these three tags before passing those records to the output.
 
@@ -227,7 +222,7 @@ The seed and the threshold were selected on the validation chromosomes only. The
 \item \emph{Allele-specific 5mC} sites are matched by read name, not by position: the methylated-read list \code{INFO/MR} of the phased 5mC VCF adds 1 to the haplotype that record is phased to, for each read it names. The unmethylated list \code{NR} is not consulted; a 5mC site contributes evidence only to the reads that are methylated at it.
 \end{itemize}
 
-Each informative observation contributed unit weight during haplotagging, whatever its class. During read-based correction inside \code{phase}, by contrast, SNV and SV alleles contribute 1, indel and tandem-repeat-indel alleles 0.1, and 5mC alleles are excluded (Methods).
+Each informative observation contributes unit weight during haplotagging, whatever its class. During read-based correction inside \code{phase}, by contrast, SNV and SV alleles contribute 1, indel and tandem-repeat-indel alleles 0.1, and 5mC alleles are excluded (Methods).
 
 \paragraph{Decision and phasing quality.} Let $m = \max(n_1,n_2)$ and $\mu = \min(n_1,n_2)$. Reads with no informative evidence ($m+\mu=0$) remain untagged. Otherwise, a read is assigned to the majority haplotype when $m/(m+\mu) \ge$ \code{-p, --percentageThreshold} (default 0.6) and is otherwise left untagged. For alignments entering the haplotagging decision, a Phred-scaled phasing quality is computed as
 \begin{equation}
@@ -239,7 +234,7 @@ Each informative observation contributed unit weight during haplotagging, whatev
 \end{equation}
 \code{PQ} is written as an integer auxiliary tag \code{PQ:i} alongside \code{HP:i} and \code{PS:i}, and only on tagged reads.
 
-\paragraph{Phase-set veto.} The phase sets of all informative variants on the read are counted. Reads with informative variants in more than one phase set were left untagged, regardless of their haplotype tally. The \code{PS} value written on a tagged read is that of the first phased variant at or after the alignment start, whether or not that variant is informative on the read. The output \code{PS} normally matches the phase set of the informative variants because the veto requires all informative variants to share one phase set. It can differ when the first phased variant at or after the alignment start is uninformative on the read and belongs to another block.
+\paragraph{Phase-set veto.} The phase sets of all informative variants on the read are counted. Reads with informative variants in more than one phase set are left untagged, regardless of their haplotype tally. The \code{PS} value written on a tagged read is that of the first phased variant at or after the alignment start, whether or not that variant is informative on the read. The output \code{PS} normally matches the phase set of the informative variants because the veto requires all informative variants to share one phase set. It can differ when the first phased variant at or after the alignment start is uninformative on the read and belongs to another block.
 
 %  [code housekeeping, not blocking] Three items for this module. (i) Decide
 %  whether the boundary case above should be closed in the code by taking
@@ -254,10 +249,30 @@ Each informative observation contributed unit weight during haplotagging, whatev
 
 % ------------------------------------------------------------------
 \clearpage
-\subsection*{Supplementary Method 6. Evaluation metrics}
-\addcontentsline{toc}{subsection}{Supplementary Method 6. Evaluation metrics}
+\subsection*{Supplementary Note 6. Benchmark data, tool configurations and evaluation}
+\addcontentsline{toc}{subsection}{Supplementary Note 6. Benchmark data, tool configurations and evaluation}
 
-Metrics were computed with \code{longphase compare} (Supplementary Fig.~18), a C++ re-implementation of the \code{whatshap compare} algorithm\cite{patterson2015whatshap}.
+The evaluations used HG002 on two sequencing platforms, the same input for every tool and two phased truth sets. The released model was also applied to a second individual, HG008 (last paragraph of this Note).
+
+\paragraph{Sequencing data and down-sampling.} The benchmark used HG002 (NA24385) R10.4.1 reads from the Oxford Nanopore Technologies (ONT) \texttt{giab\_lsk114\_2022.12} release: two PromethION flow cells (PAG65784 and PAG68757), SQK-LSK114, 400 bases per second and 4-kHz sampling, basecalled with Dorado \texttt{dna\_r10.4.1\_e8.2\_400bps\_sup@v4.0.0} and \texttt{5mCG\_5hmCG@v2}; their read N50 values were 29.2 and 29.4~kb.  Reads were aligned to the GRCh38 no-alt analysis set by ONT with minimap2 v2.24 (\texttt{-y -ax map-ont}), retaining reads with mean base quality $\ge 10$.  The 60$\times$ data set is a random 91.14\% subset of the 70.4$\times$ alignment (samtools v1.15, \texttt{view -s 0.9114}), and the 10--50$\times$ data sets were down-sampled from it with samtools v1.23.1\cite{danecek2021samtools} \texttt{view -s} \textit{seed.fraction}.  Ten replicates were used at 10--20$\times$ and one at 30--60$\times$; variants were called separately at every coverage and replicate (Supplementary Table~19).  SNVs and indels came from PEPPER-Margin-DeepVariant r0.8, which reports unphased genotypes, SVs from Sniffles2 v2.8.0, and allele-specific 5mC sites from \toolname.
+The seeds were 1--9 and 867 at 10$\times$ (fraction 0.1666), 12--21 at 12$\times$ (0.200), 22--31 at 14$\times$ (0.233), 32--41 at 16$\times$ (0.266), 42--51 at 18$\times$ (0.300), 1--10 at 20$\times$ (0.3333), and 42 at 30, 40 and 50$\times$ (0.5, 0.6667 and 0.8333).  PEPPER-Margin-DeepVariant used the \texttt{--ont\_r10\_q20} model for nanopore data and \texttt{--hifi} for HiFi data.
+HG002 PacBio HiFi (Revio) reads were taken from a 48$\times$ GIAB alignment (Supplementary Table~20), which was used as 50$\times$; 10--40$\times$ data sets were down-sampled from it with samtools v1.23.1 \texttt{view --subsample} (seed 1; fractions 0.2083, 0.4167, 0.6250 and 0.8333), and variants were called separately at every coverage.
+
+\paragraph{Truth sets and region assignment.} Accuracy was scored with \texttt{longphase compare} on autosomes 1--22 against two HG002 truth sets: GIAB v4.2.1\cite{wagner2022giab}, in the version with phase transferred from a hifiasm assembly (the v4.2.1 benchmark VCF itself is unphased), restricted to biallelic heterozygous records; and GIAB v5.0q\cite{olson2026giabv5}, derived from the diploid T2T-HG002 assembly\cite{hansen2026q100}, in which every heterozygous variant is phased.  The truth VCFs were not restricted to their benchmark regions, and a call was scored only where the truth VCF holds the same REF and ALT alleles in a heterozygous genotype.  Both truth VCFs list heterozygous variants outside their benchmark regions (9.3\% of the autosomal heterozygous records of v5.0q and 3.4\% of v4.2.1), so the error counts include sites that the benchmark regions do not cover, among them satellite and segmental-duplication sequence that the T2T-HG002 assembly resolves\cite{hansen2026q100}.
+
+To locate switch errors and to score indels, every consecutive variant pair in an intersected block was recorded with a re-implementation of \texttt{longphase compare}, which reproduced its counts exactly in all 1,024 scored runs.  A pair was assigned to a region when both variants lay in it; regions were the intersection and the differences of the two sets of benchmark regions, the remainder outside both sets, and the GIAB v3.6 genome stratifications\cite{dwarshuis2024stratifications}, which were applied inside the v5.0q benchmark regions.
+
+A switch error was shared between tools when it lay at the same pair of SNV positions on the same chromosome under the same truth set (replicate~1); individual switch-error pairs were not tracked across the two truth sets.
+
+Indel switch errors were counted over consecutive pairs that included at least one indel, and the indel Hamming distance was computed in the block orientation chosen on all variants.
+
+\paragraph{Tool configurations.} \whatshap~v2.8\cite{patterson2015whatshap} and \hapcut~v1.3.4\cite{edge2017hapcut2} were run on the same alignments and variant calls as \toolname; cross-tool SNV comparisons used SNV-only phasing, with indel phasing disabled in \whatshap.  \toolname was run with the nanopore setting and the GNN settings given in Methods.  Co-phasing experiments separately evaluated the seven variant-class combinations listed in Supplementary Table~6, with and without GNN-based unphasing.  Indel co-phasing was also compared with \whatshap's default indel phasing and, in replicate~1, with \hapcut run with indel phasing (Supplementary Table~4).
+
+The HiFi call sets were phased SNV-only with \toolname (\texttt{--pb}), with and without GNN-based unphasing, with \whatshap, with \hapcut and with HiPhase v1.7.0\cite{holt2024hiphase}; the GNN weights were trained on nanopore data.  HiPhase phases indels by default and has no SNV-only mode, so its SNV-only runs used the call sets restricted to SNVs, the variants that \whatshap phases with \texttt{--only-snvs}.  For the comparison with indels, \toolname, \whatshap and \hapcut were run with indel phasing and HiPhase on the full call sets (Supplementary Table~4).
+
+\whatshap was run as \texttt{whatshap phase --ignore-read-groups --reference} with \texttt{--only-snvs} for SNV comparisons, and \hapcut as \texttt{extractHAIRS --ont 1} (\texttt{--pacbio 1} for HiFi) followed by \texttt{HAPCUT2} with default parameters, including its default likelihood-based pruning, on the PASS heterozygous SNVs.  \hapcut rejects genotypes other than two alleles from 0, 1 and 2, so the HiFi call sets given to it omitted such records (134--204 uncalled reference candidates per coverage and one multi-allelic indel at 50$\times$); none of them was a heterozygous SNV.  All tools ran on the same workstation.
+
+\paragraph{Metric computation.} Metrics were computed with \code{longphase compare} (Supplementary Fig.~16), a C++ re-implementation of the \code{whatshap compare} algorithm\cite{patterson2015whatshap}.
 
 \paragraph{Block intersection.} For each chromosome, heterozygous records common to the truth and a query are intersected by position and by REF/ALT alleles. The intersection is partitioned into maximal runs that lie in one truth phase set and one query phase set simultaneously; runs of length one carry no phase information and are discarded. Switch errors and Hamming distance are computed within the surviving blocks.
 
@@ -265,25 +280,62 @@ Metrics were computed with \code{longphase compare} (Supplementary Fig.~18), a C
 
 \paragraph{Hamming distance.} For each block the query strings $(q_0,q_1)$ are compared with the truth strings $(t_0,t_1)$ in both orientations, and the smaller of $\mathrm{H}(t_0,q_0)+\mathrm{H}(t_1,q_1)$ and $\mathrm{H}(t_0,q_1)+\mathrm{H}(t_1,q_0)$ is halved to give the number of misassigned variants in that block. Block values are summed and expressed as a percentage of all compared variants. This denominator includes every variant class present in both files, including indels when present, unlike the SNV-pair denominator of the reported switch error rate.
 
-\paragraph{Completeness (phased fraction).} Completeness is calculated before partitioning the truth--query intersection into blocks. Its numerator is the number of truth heterozygous variants whose position, REF and first ALT match a query record that is heterozygous and phased. Its denominator is all truth heterozygous variants of the same class.
+\paragraph{Recall (phasing completeness).} Recall is calculated before partitioning the truth--query intersection into blocks. Its numerator is the number of truth heterozygous variants whose position, REF and first ALT match a query record that is heterozygous and phased. Its denominator is all truth heterozygous variants of the same class. A matched variant contributes to recall regardless of whether its phase is correct.
 
 \paragraph{Block N50.} Query phase sets with fewer than two variants are excluded. The span of each remaining block is the distance in bp between its first and last variants. Block spans are sorted in decreasing order, and N50 is the span at which the cumulative sum first reaches half the total, which is the span-weighted median. It is computed once per chromosome and once over the block spans of all chromosomes pooled. The values plotted in Figs.~2e--h and~3e are the pooled, genome-wide N50 of the query. This metric uses query phase sets independently of the truth set and does not require truth--query intersection.
 
+\paragraph{Co-phasing summaries.} For each co-phasing configuration, we defined \emph{blocks joined} as the net decrease in block count relative to SNV-only phasing in the same replicate and at the same GNN setting. Individual merge events were not tracked. We defined \emph{sites added} as the total number of phased indels, SVs and 5mC sites. We calculated switch errors per join as the increase in SNV switch-error count relative to SNV-only phasing divided by the net decrease in block count.
 
-% ==================================================================
-\section*{Supplementary Note}
-\addcontentsline{toc}{section}{Supplementary Note}
+\paragraph{SV phase evaluation.} SV phase was evaluated on chr1--22 against haplotype-resolved variants called by dipcall from the T2T-HG002 Q100 v1.1 assembly aligned to GRCh38\cite{li2018dipcall,hansen2026q100}. Truth records with a missing allele on either haplotype were excluded. SVs were called with Sniffles2 v2.8.0 using the reference genome and retaining supporting read names on both platforms. Evaluation used replicate~1 at every coverage and the same heterozygous deletions and insertions of at least 50~bp for every tool.
 
-\subsection*{Supplementary Note 1. Effect of GNN correction}
-\addcontentsline{toc}{subsection}{Supplementary Note 1. Effect of GNN correction}
+\whatshap~v2.8 (\texttt{--indels}) and HiPhase v1.7.0 read SVs only as sequence-resolved records in the variant VCF. For these tools, deletions were given the reference sequence as REF and insertions the inserted sequence as ALT. These records were merged with the SNV (and indel) calls. \toolname received the unmodified SV calls. Inversions, duplications, breakends, symbolic insertions and records with an unknown reference base (296--580 per run) could not be converted. They were not given to \whatshap or HiPhase and were not scored for any tool.
+
+A truth match required the same SV type and size similarity of at least 70\%. It also required start positions within 1~kb or, for deletions, reciprocal overlap of at least 50\%. The nearest eligible truth SV was selected. Each block was oriented by the majority phase agreement of its SNVs with truth SNVs matched by position. An SV matched to a heterozygous truth SV was correct when its oriented phase agreed with the assembly.
+
+Phased SVs matched to a homozygous truth SV were counted separately as genotype errors. Homozygous matches, phased SVs without a truth match and SVs in blocks that could not be oriented were excluded from the phase-error rate. The SV phasing error rate was the number of incorrectly phased SVs divided by the total number of correctly and incorrectly phased SVs.
+
+\paragraph{Analysis of unphased SNVs.} At 10, 30 and 60$\times$ coverage, we compared \toolname and \whatshap using replicate~1. The two output VCFs contained the same biallelic heterozygous SNV calls. We grouped these calls according to whether they were phased by both tools, \toolname only, \whatshap only or neither. Calls phased by \whatshap only were further split according to whether \toolname had left them unphased before GNN-based unphasing.
+
+Each call was classified against the v5.0q chr1--22 VCF, without a benchmark BED, as heterozygous with the same position and alleles, heterozygous with other alleles, homozygous or absent. Calls on chrX and chrY were counted separately. The calls phased by a tool comprised those phased by both tools and those phased by that tool only. Phased calls at positions with a homozygous v5.0q record were counted as genotype errors (Fig.~5c).
+
+Precision and F1 were calculated for every SNV-only run of \toolname and \whatshap, and on HiFi data also of HiPhase. Precision was the fraction of phased heterozygous SNV calls on chr1--22 that matched a benchmark heterozygous SNV, using the matched-call count from \texttt{compare}. F1 was the harmonic mean of precision and recall. Precision here is a benchmark-match fraction: an unmatched call outside the benchmark regions is unclassified, not a confirmed error. Neither precision nor recall requires the matched call to have the correct phase, so F1 does not measure phase correctness.
+
+For benchmark-matched calls phased by one tool only, that tool's phase assignments were scored as in \texttt{compare}. A call was counted as wrongly phased when its phase was opposite to the majority orientation of its block relative to the truth. A switch-error interval extended from the first SNV of a switch-error pair to the base before the second. The fraction of calls phased by one tool only that fell inside that tool's switch-error intervals was compared with the corresponding fraction among all heterozygous SNV calls phased by that tool.
+
+Read depth was taken from the variant caller's \texttt{FORMAT/DP} field, which is capped near 125$\times$. Calls were also annotated by the v5.0q benchmark regions, GIAB v3.6 segmental duplications and the one-to-one dipcall alignment (Supplementary Data~1).
+
+An SNV was counted as unphased by the GNN when it was phased before this step and unphased after it. This is the subset described as left unphased at high phasing uncertainty.  The subset includes variants near a high-entropy variant and variants left alone in their phase set, so not every SNV in it has high phasing entropy.  Such sites were classified against the v5.0q benchmark VCF, matched by chromosome and position and without a benchmark BED, as absent, homozygous or heterozygous (Supplementary Fig.~6c); the heterozygous count was also reported with matching REF and ALT alleles, the rule used by \texttt{compare}.  The analysis used the 10--60$\times$ outputs of replicate~1 with the final GNN model.
+
+At 60$\times$, SNVs unphased by the GNN were also classified against the T2T-HG002 assembly projected to GRCh38 as outside the 1:1 assembly BED, inside without an assembly variant at the same start coordinate, or inside with one; alleles were not compared.  All chromosomes, including chrX and chrY, were analysed, and autosome-only values were derived from the per-chromosome counts.  A random sample of 50,000 SNVs phased before GNN-based unphasing, which included sites that the GNN later unphased, provided the background; enrichment was summarized by chromosome.
+
+\paragraph{Second individual (HG008).} The released model was applied without retraining to HG008, the individual of the GIAB matched tumour--normal pair\cite{mcdaniel2025hg008}. Nanopore R10.4.1 reads of the normal pancreatic tissue (three PromethION flow cells, basecalled with Dorado \texttt{sup@v4.3.0}) were aligned as the HG002 reads were (minimap2 v2.24, \texttt{-y -ax map-ont}, reads with mean base quality $\ge 10$), which gave 56.5$\times$ on chr1--22. The alignment was down-sampled with samtools \texttt{view -s} \textit{seed.fraction} to 10$\times$ and 20$\times$ (seeds 1--3) and to 30$\times$ (seed 1). Variants were called from each of the seven data sets with PEPPER-Margin-DeepVariant r0.8 (\texttt{--ont\_r10\_q20}). Each data set was phased SNV-only by \toolname with and without GNN-based unphasing, by \whatshap and by \hapcut, with the commands used for HG002. No weight, threshold or graph constant was changed.
+
+The phase reference was derived from the HG008 normal assembly (v6.3)\cite{wagner2026hg008asm}. Its two haplotype sequences were aligned to the GRCh38 no-alt analysis set with dipcall\cite{li2018dipcall}. Records with a dipcall filter flag, and 88 records at reference positions with an ambiguity code, were removed. A truth phase block was a maximal interval inside the dipcall confident regions that was covered by one alignment of each haplotype and held no assembly gap of either haplotype. A block also ended where consecutive heterozygous records lay more than 100~kb apart, because the assembly phase across such a run does not rest on read linkage. This gave 2,781 truth phase blocks in 2.66~Gb, with 2,260,719 biallelic heterozygous SNVs, the denominator of recall. Metrics were computed with \code{longphase compare} as for HG002; because scored blocks are intersections of truth and query phase sets, no assessed pair crossed a truth block boundary. These rules were set before any phasing output was scored. The assembly was built from HiFi, nanopore and Hi-C data, and its nanopore input includes reads of the three flow cells used here, so its phase is not independent of the evaluated reads. Results are in Supplementary Fig.~17 and Supplementary Table~21.
+%  [provenance] 2026-11-13, issue #11 (JH, commit cef988a): notes/hg008_validation/README.md, truth/*.counts.tsv,
+%  scripts/. Truth rules dated 2026-11-10 (truth/validated). Read overlap with the assembly: GIAB HERRO README lists the
+%  > 25 kb reads of the three Normal Pancreas flow cells (JH; not rechecked on the writing machine).
+
+
+
+% ------------------------------------------------------------------
+\subsection*{Supplementary Note 7. Effect of GNN-based unphasing}
+\addcontentsline{toc}{subsection}{Supplementary Note 7. Effect of GNN-based unphasing}
 %  [provenance] 2026-10-28 (author decision, option 5b-A): moved verbatim from the former Results
 %  subsection "GNN correction reduces genome-wide SNV switch error rates by one-third and limits
 %  indel-associated errors"; the Results present LongPhase 2 as one tool.
-On HG002 nanopore data at 10--60$\times$, scored against v5.0q, \toolname without GNN correction had 1.9--2.5-fold lower SNV switch error rates than \whatshap and 2.2--3.3-fold lower rates than \hapcut (Supplementary Fig.~17b and Supplementary Table~1). GNN correction reduced the SNV switch error rates of \toolname by a further 32--36\% across coverages (31--38\% across individual replicates at 10--20$\times$). The associated loss of completeness decreased with coverage, from 0.26 percentage points at 10$\times$ to 0.08--0.11 at 30--60$\times$. Block N50 decreased by 5--9\% at 10--20$\times$ and 1--4\% at 30--60$\times$ (Supplementary Fig.~17a,d).
+On HG002 nanopore data at 10--60$\times$, scored against v5.0q, \toolname without GNN-based unphasing had 1.9--2.5-fold lower SNV switch error rates than \whatshap and 2.2--3.3-fold lower rates than \hapcut (Supplementary Fig.~15b and Supplementary Table~1). GNN-based unphasing reduced the SNV switch error rates of \toolname by a further 32--36\% across coverages (31--38\% across individual replicates at 10--20$\times$). The associated loss of recall decreased with coverage, from 0.26 percentage points at 10$\times$ to 0.08--0.11 at 30--60$\times$. Block N50 decreased by 5--9\% at 10--20$\times$ and 1--4\% at 30--60$\times$ (Supplementary Fig.~15a,d).
 
-The correction effect was smaller on chromosomes excluded from GNN training (chr17, chr21 and chr22). These chromosomes were excluded from model fitting but contributed to label selection (Supplementary Method~4). On these chromosomes, correction removed 22--25\% of switch errors at 10--20$\times$ and 14--20\% at 30--60$\times$ (9--17 switch errors per run at 30--60$\times$). Across the 60 runs at 10--20$\times$, correction withheld 9.3 phased SNVs per removed switch error on these chromosomes, compared with 8.0 genome-wide (Supplementary Table~17). Every tool had higher switch error rates on these chromosomes than genome-wide. The smaller reduction may therefore reflect both chromosome difficulty and sequence absent from training. After correction, \toolname still had 2.7--5.1-fold lower SNV switch error rates than \whatshap and \hapcut on these chromosomes across the tested coverages (Supplementary Table~17).
+The effect of GNN-based unphasing was smaller on chromosomes excluded from GNN training (chr17, chr21 and chr22). These chromosomes were excluded from model fitting but contributed to label selection (Supplementary Note~4). On these chromosomes, it removed 22--25\% of switch errors at 10--20$\times$ and 14--20\% at 30--60$\times$ (9--17 switch errors per run at 30--60$\times$). Across the 60 runs at 10--20$\times$, it withheld 9.3 phased SNVs per removed switch error on these chromosomes, compared with 8.0 genome-wide (Supplementary Table~18). Every tool had higher switch error rates on these chromosomes than genome-wide. The smaller reduction may therefore reflect both chromosome difficulty and sequence absent from training. With GNN-based unphasing, \toolname still had 2.7--5.1-fold lower SNV switch error rates than \whatshap and \hapcut on these chromosomes across the tested coverages (Supplementary Table~18).
 
-On HiFi data, the nanopore-trained network removed 23--31\% of switch errors without retraining, while reducing completeness by at most 0.12 percentage points and block N50 by 0.8--1.6\% (Supplementary Fig.~17e,f).
+On HiFi data, the nanopore-trained network removed 23--31\% of switch errors without retraining, while reducing recall by at most 0.12 percentage points and block N50 by 0.8--1.6\% (Supplementary Fig.~15e,f).
+
+In a second individual, HG008, the same model and threshold were applied to nanopore data at 10--30$\times$ and scored against phase derived from its assembly (Supplementary Note~6, Supplementary Fig.~17 and Supplementary Table~21). \toolname had SNV switch error rates of 0.026--0.058\%, compared with 0.091--0.107\% for \whatshap and 0.137--0.144\% for \hapcut (means over replicates). These rates were 1.8--3.6-fold and 2.4--5.4-fold lower, and \toolname had the lowest rate in each of the seven runs. Its recall was 0.6 percentage points lower than that of both tools at every coverage, and the mean block N50 values of the three tools were within 2\%. Its block-wise Hamming distance was lower than that of \hapcut in every run and lower than that of \whatshap in six runs; in one 10$\times$ replicate the values were 1.366\% and 1.364\%.
+
+Without GNN-based unphasing, \toolname had 1.5--2.9-fold lower switch error rates than \whatshap and 2.1--4.3-fold lower rates than \hapcut on HG008. GNN-based unphasing removed a further 15--17\% of switch errors at 10$\times$ and 18--20\% at 20--30$\times$, with a reduction in every run. Recall decreased by 0.08--0.11 percentage points and block N50 by 1.5--3.6\%. At 10--20$\times$, 10.4--13.9 phased benchmark SNVs were withheld per removed switch error, compared with 8.0 genome-wide and 9.3 on the held-out chromosomes in HG002. The reduction on HG008 was thus about half of the genome-wide reduction in HG002 (32--36\%) and close to that on the held-out chromosomes. Because the HG008 assembly was built in part from the evaluated reads, these values do not come from an independent benchmark.
+%  [provenance] 2026-11-13, issue #11: notes/hg008_validation/results/hg008_{runs,summary,gnn_effect}.tsv. Mean rate
+%  ratios WH/LP2 1.83, 2.90, 3.57 and HC/LP2 2.44, 4.04, 5.38 at 10, 20, 30x; without GNN 1.55, 2.35, 2.87 and 2.06, 3.29,
+%  4.32. Removed 14.96-16.57% (10x), 18.43-19.13% (20x), 19.71% (30x). Withheld benchmark SNVs per removed error 10.4,
+%  11.3, 10.9, 13.9, 13.7, 13.3 and 14.9 (30x). Recall difference to WhatsHap 0.61-0.65 points (means).
 
 %  [optional experiment] Matched-retention comparison (former Results \todo, demoted on
 %  2026-10-09 by author decision: no new experiments; the Discussion states the gap as a
@@ -293,23 +345,6 @@ On HiFi data, the nanopore-trained network removed 23--31\% of switch errors wit
 %  (Table and figure numbers in the comments of this Note are those before the 2026-11-03 renumbering.)
 %  The paired-uncertainty item of the same \todo is answered by the paired rate ratios in
 %  Supplementary Table 7 (per-replicate range 2.8--4.2 for WhatsHap, 3.2--5.2 for HapCUT2; v2.1.1).
-
-Indels were associated with the largest increases in both contiguity and SNV switch error rates across seven combinations of variant classes (Supplementary Figs.~5 and~9 and Supplementary Table~6). Relative to SNV-only phasing at the same coverage before GNN correction, adding SVs changed block N50 by at most 0.2\% and adding 5mC increased it by 2--14\%, with SNV switch error rates changing by at most 3\%. Indels increased N50 by 29--51\% (31--74\% with SVs and 5mC), but increased switch error rates by 22--33\%.
-
-GNN correction reduced SNV switch error rates by 31--37\% in configurations without indels and 37--43\% in those with indels. It reduced the excess SNV switch error rate relative to SNV-only phasing by 40--71\%, calculated as $1-E_{\mathrm{after}}/E_{\mathrm{before}}$, where $E$ is the rate difference from SNV-only phasing at the same coverage and GNN setting. It also reduced indel-pair switch error rates by 21--39\% (Supplementary Table~2). Block N50 decreased by 12--21\% with indels and 0.3--9\% without them as unphasing disconnected blocks.
-%  [limitation] Former \todo (demoted 2026-10-09, author: no new experiments): for
-%  indel-containing configurations, compare computes the Hamming distance over SNVs and indels
-%  (CompareProcess.cpp:579), whereas switch errors are SNV-only. No Hamming value of such a
-%  configuration is quoted in this section; Methods, the legends of Supplementary Figs. 14 and
-%  15 and the captions of Supplementary Tables 8 and 9 state that it includes indels, and
-%  configurations are compared by SNV switch error rate. Indel accuracy: Supplementary Table 13.
-%  [provenance] 2026-10-09 recomputation over all ten coverages (Supplementary Data 1,
-%  co-phase_Detail): the former "41--67%" was the four-class configuration only; across
-%  the four indel-containing configurations the v2.1.1 range is 38--71%. The indel-pair
-%  switch-error reduction is 22--40% across all four configurations and ten coverages
-%  (notes/v2.1.1/claims.py, P25.indel_pair_removed); 24--39% applies to indels alone.
-%  v2.1.2 (2026-10-26, notes/v2.1.2/claims.py): 21--39% over the four configurations, additional error
-%  removed 40--71%; four-class vs indel-only indel-pair change 6.8% (v2.1.1: 3.8%).
 
 
 \clearpage
@@ -351,6 +386,49 @@ GNN correction reduced SNV switch error rates by 31--37\% in configurations with
 \FloatBarrier
 
 \input{figures-source/supp_tables/runtime}
+\FloatBarrier
+
+\begin{table}[h]
+\caption{\textbf{User-adjustable parameters of \toolname and their default values.} Symbols are those of Methods; a parameter without a symbol is described there in words. All runs reported here used these defaults. The constants that are fixed in the program are given in Supplementary Notes~1--5.}
+\label{tab:params}
+\small
+\begin{tabular}{@{}L{1.3cm} L{7.8cm} L{2.1cm} L{4.0cm}@{}}
+\toprule
+Symbol & Parameter & Default & Option \\
+\midrule
+\multicolumn{4}{@{}l}{\textit{Allele-specific methylation calling (\code{modcall})}}\\
+ & 5mC probability at or above which a read is methylated & 0.8 & \code{-m, --modThreshold} \\
+ & 5mC probability at or below which a read is unmethylated & 0.2 & \code{-u, --unModThreshold} \\
+$\alpha$ & Minimum ratio of the smaller to the larger of the methylated and unmethylated read counts & 0.6 & \code{-e, --heterRatio} \\
+$\beta$ & Maximum fraction of ambiguous reads & 0.2 & \code{-i, --noiseRatio} \\
+$\gamma$ & Minimum fraction of reads with a consistent pairing in the linkage test & 0.9 & \code{-c, --connectConfidence} \\
+ & Number of following sites tested for linkage & 20 & \code{-a, --connectAdjacent} \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textit{Phasing (\code{phase})}}\\
+ & Minimum mapping quality of an alignment & 1 & \code{-q, --mappingQuality} \\
+ & Overlap of two alignments of one read, as a fraction of their combined span, above which the shorter is discarded & 0.2 & \code{-L, --overlapThreshold} \\
+ & CIGAR operations scanned on either side of an SV start & 20 & \code{-w, --sv-window} \\
+ & Maximum relative difference between the length of an insertion or deletion and the SV length & 0.20 (nanopore), 0.10 (HiFi) & \code{-h, --sv-threshold} \\
+ & Minimum QUAL of an indel (0 disables the filter) & 0 & \code{--indelQuality} \\
+$k$ & Number of following heterozygous variants to which each allele is connected & 35 & \code{-a, --connectAdjacent} \\
+ & Base quality below which an observation has reduced weight & 12 & \code{-p, --baseQuality} \\
+ & Reduced edge weight & 0.1 & \code{-e, --edgeWeight} \\
+ & Maximum distance to the next heterozygous variant & 300~kb & \code{-d, --distance} \\
+$\tau$ & Ambiguity above which a variant pair casts no vote & 0.7 & \code{-1, --edgeThreshold} \\
+$\theta_{\mathrm{read}}$ & Majority fraction that a read must exceed to be used in read-based correction & 0.65 & \code{-m, --readConfidence} \\
+$\theta_{\mathrm{var}}$ & Read consistency $\rho$ that a variant must exceed to keep its phase & 0.75 & \code{-n, --snpConfidence} \\
+$\theta_{\mathrm{PE}}$ & Phasing entropy at or above which a GNN window is opened & 0.80 & \code{--gnnPeThreshold} \\
+ & Variants on either side of the centre of a GNN window & 20 & \code{--gnnWindow} \\
+$\theta_{\mathrm{GNN}}$ & Mean GNN score at or above which a variant is unphased & 0.35 & \code{--gnnBreakThreshold} \\
+\addlinespace
+\multicolumn{4}{@{}l}{\textit{Haplotagging (\code{haplotag})}}\\
+ & Minimum mapping quality of an alignment & 1 & \code{-q, --qualityThreshold} \\
+ & Minimum fraction of votes for the majority haplotype & 0.6 & \code{-p, --percentageThreshold} \\
+ & CIGAR operations scanned on either side of an SV start & 20 & \code{-w, --sv-window} \\
+ & Maximum relative difference between the length of an insertion or deletion and the SV length & 0.10 & \code{-h, --sv-threshold} \\
+\bottomrule
+\end{tabular}
+\end{table}
 \FloatBarrier
 
 \begin{table}[h]
@@ -439,7 +517,7 @@ Classifier & concat[$h_i$, $\sum_j \sigma(w_{ij})$, $\max_j \sigma(w_{ij})$] (13
 Stored values & 687,358, including frozen normalization statistics \\
 Window & trigger PE $\ge 0.8$; $\pm 20$ variants ($\le 41$ variants, $\le 82$ allele nodes) \\
 Decision & unphase if the mean onset score over the two allele nodes and windows in which the variant lies in the scoring zone is $\ge 0.35$ \\
-Post-processing & split disconnected phase sets (largest component keeps PS); bridge protection off; deletion exception and singleton handling as in Supplementary Method~4 \\
+Post-processing & split disconnected phase sets (largest component keeps PS); bridge protection off; deletion exception and singleton handling as in Supplementary Note~4 \\
 Training & see Supplementary Table~\ref{tab:gnntrain} \\
 \bottomrule
 \end{tabular}
@@ -447,7 +525,7 @@ Training & see Supplementary Table~\ref{tab:gnntrain} \\
 \FloatBarrier
 
 \begin{table}[h]
-\caption{\textbf{Training configuration and evaluation of the released model.} Values recorded in the released checkpoint and its training log. ``Scored nodes'' are labelled allele nodes inside the central zone of a window, the only nodes that contribute to the loss. The split called ``test'' in the training log was excluded from model fitting but contributed to label selection (Supplementary Method~4).}
+\caption{\textbf{Training configuration and evaluation of the released model.} Values recorded in the released checkpoint and its training log. ``Scored nodes'' are labelled allele nodes inside the central zone of a window, the only nodes that contribute to the loss. The split called ``test'' in the training log was excluded from model fitting but contributed to label selection (Supplementary Note~4).}
 \label{tab:gnntrain}
 \small
 \begin{tabular}{@{}L{4.6cm} L{10.3cm}@{}}
@@ -473,14 +551,14 @@ Regularization & dropout 0.4 (local branch, global branch, FFN; inactive at infe
 Graph preprocessing & reverse edge added per DOT edge with identical features (undirected) \\
 Augmentation (train only) & haplotype swap with edge weights of the new source node, $p = 0.5$; coverage down-scaling $\times\,U[0.4, 0.7]$, $p = 0.5$, error-bearing windows only \\
 Epochs & budget 100, early stopping after 25 epochs without improvement; stopped at 55 \\
-Seed & 42 (Python and PyTorch generators); four further seeds and a second label definition in Supplementary Table~16 \\
+Seed & 42 (Python and PyTorch generators); four further seeds and a second label definition in Supplementary Table~17 \\
 Environment & PyTorch 2.11.0, PyTorch Geometric 2.7.0, Python 3.12, CUDA 13.0, cuDNN 9.19, one NVIDIA GeForce RTX 5090 \\
 \addlinespace
 \multicolumn{2}{@{}l}{\textit{Selection and export}}\\
 Selection criterion & max over 81 thresholds in $[0.01, 0.99]$ of $R\,(2 - 1/P)$ subject to $R \ge 0.005$, on chr15--chr16; $P - 1$ where $P \le 0.5$ \\
 Selected checkpoint & epoch 30; $S = 0.0221$ at $P = 0.621$, $R = 0.057$, threshold 0.574 \\
 Held-out test (chr17, 21, 22) & argmax: accuracy 0.936, error-class $P/R/F_1 = 0.251/0.564/0.347$; tuned threshold: 0.950, $0.294/0.471/0.362$; $n = 41{,}378$ error nodes \\
-Deployment threshold & 0.35; calibrated to a validation cost of 6.35 withheld SNVs per removed switch error (Supplementary Method~4) \\
+Deployment threshold & 0.35; calibrated to a validation cost of 6.35 withheld SNVs per removed switch error (Supplementary Note~4) \\
 Export & ONNX opset 17, dynamic $N$, compiled into the C++ module; C++ vs.\ ONNX Runtime max.\ absolute difference $3 \times 10^{-7}$ \\
 \bottomrule
 \end{tabular}
@@ -488,14 +566,14 @@ Export & ONNX opset 17, dynamic $N$, compiled into the C++ module; C++ vs.\ ONNX
 \FloatBarrier
 
 \begin{table}[h]
-\caption{\textbf{GNN models trained with two label definitions and five seeds.} Each model was trained on the same windows with the settings of Supplementary Table~15; labels matched the v5.0q benchmark to the calls by position (\emph{position}) or by position, REF and ALT (\emph{REF/ALT}). Selected epoch and held-out classification (error class, argmax) from training; $B$, onset-score threshold that gives on the validation chromosomes (chr15, chr16) the cost of the release v2.1 model at $B=0.30$ (6.35 phased SNVs withheld per removed switch error). At that threshold: switch errors removed by GNN correction relative to phasing without it, and the cost, on the validation chromosomes, the held-out chromosomes (chr17, chr21, chr22) and the whole genome, over the 60 HG002 nanopore SNV-only runs at 10--20$\times$, applied with the Python correction pipeline and scored with \code{longphase compare} against v5.0q. The released model (trained for v2.1.1 and unchanged in v2.1.2) is marked with an asterisk; its threshold was rounded to 0.35, and the values of the released C++ implementation are in Supplementary Method~4 and Supplementary Table~17.}\label{tab:seeds}
+\caption{\textbf{GNN models trained with two label definitions and five seeds.} Each model was trained on the same windows with the settings of Supplementary Table~16; labels matched the v5.0q benchmark to the calls by position (\emph{position}) or by position, REF and ALT (\emph{REF/ALT}). Selected epoch and held-out classification (error class, argmax) from training; $\theta_{\mathrm{GNN}}$, onset-score threshold that gives on the validation chromosomes (chr15, chr16) the cost of the release v2.1 model at $\theta_{\mathrm{GNN}}=0.30$ (6.35 phased SNVs withheld per removed switch error). At that threshold: switch errors removed by GNN-based unphasing relative to phasing without it, and the cost, on the validation chromosomes, the held-out chromosomes (chr17, chr21, chr22) and the whole genome, over the 60 HG002 nanopore SNV-only runs at 10--20$\times$, applied with the Python unphasing pipeline and scored with \code{longphase compare} against v5.0q. The released model (trained for v2.1.1 and unchanged in v2.1.2) is marked with an asterisk; its threshold was rounded to 0.35, and the values of the released C++ implementation are in Supplementary Note~4 and Supplementary Table~18.}\label{tab:seeds}
 \small
 \setlength{\tabcolsep}{5pt}
 \begin{tabular}{@{}llrrrrrrrr@{}}
 \toprule
  & & & Held-out & & \multicolumn{3}{c}{Switch errors removed (\%)} & \multicolumn{2}{c}{Cost} \\
 \cmidrule(lr){6-8}\cmidrule(l){9-10}
-Labels & Seed & Epoch & $F_1$ & $B$ & Valid. & Held-out & Genome & Held-out & Genome \\
+Labels & Seed & Epoch & $F_1$ & $\theta_{\mathrm{GNN}}$ & Valid. & Held-out & Genome & Held-out & Genome \\
 \midrule
 Position & 42* & 30 & 0.347 & 0.340 & 50.8 & 23.9 & 34.7 & 9.5 & 8.2 \\
 Position & 43 & 58 & 0.348 & 0.263 & 48.1 & 22.4 & 32.9 & 9.8 & 8.1 \\
@@ -549,6 +627,8 @@ Sniffles2 & 2.8.0 & \code{--output-rnames --reference} \\
 GIAB v4.2.1 HG002 & v4.2.1 & GRCh38 small-variant benchmark with phase transferred from a hifiasm assembly; \code{HG002\_GRCh38\_1\_22\_}\allowbreak\code{v4.2.1\_benchmark\_}\allowbreak\code{hifiasm\_v11\_}\allowbreak\code{phasetransfer.vcf.gz}, biallelic phased heterozygous records \\
 GIAB v5.0q HG002 benchmark\cite{hansen2026q100,olson2026giabv5} & v5.0q & GRCh38 small-variant benchmark derived from the T2T-HG002 v1.1 assembly; \code{HG002\_GRCh38\_v5.0q\_}\allowbreak\code{smvar.vcf.gz}, chr1--chr22 records \\
 T2T-HG002 assembly calls\cite{hansen2026q100,li2018dipcall} & Q100 v1.1, dipcall & variant calls and one-to-one alignment regions on GRCh38, the truth for SV phase and for the assembly-alignment analysis; \code{GRCh38\_HG2-T2TQ100-V1.1\_}\allowbreak\code{dipcall-z2k.dip.vcf.gz} and \code{.dip.bed} \\
+HG008 nanopore R10.4.1 reads\cite{mcdaniel2025hg008} & GIAB, normal pancreatic tissue (HG008-N-P) & three PromethION flow cells; Dorado \code{sup@v4.3.0}; aligned as the HG002 nanopore reads (56.5$\times$ on chr1--22); down-sampled to 10$\times$ and 20$\times$ (seeds 1--3) and 30$\times$ (seed 1) \\
+HG008 normal assembly\cite{wagner2026hg008asm,li2018dipcall} & v6.3, dipcall & haplotype sequences aligned to GRCh38; heterozygous SNVs in 2,781 truth phase blocks, the phase reference for HG008 (Supplementary Note~6) \\
 WhatsHap & 2.8 & \code{phase --ignore-read-groups --reference}; \code{--only-snvs} for SNV comparisons; default indel phasing for indel comparisons \\
 HapCUT2 & 1.3.4 & \code{extractHAIRS --ont 1} (\code{--pacbio 1} for HiFi), then \code{HAPCUT2} with default parameters (default pruning); input restricted to heterozygous SNVs; with \code{extractHAIRS --indels 1} on the full call sets for the comparison with indels (Supplementary Table~4) \\
 MethPhaser & 0.0.4 & run on the uncorrected SNV-only \toolname output (same reads and SNV calls as the joint SNV+5mC run), replicate~1, with its alignments haplotagged by \code{longphase haplotag} (v2.0.2) and restricted to primary records; \code{meth\_phaser\_parallel} with that VCF (\code{-vc}) and a GTF of its phase blocks (\code{-g}), then \code{meth\_phaser\_post\_processing}, otherwise default parameters; one local fix (when the block of a record cannot be found from its PS, which in \toolname output can precede the first phased variant of the block, it is found from the record position; 0.0.4 otherwise stops with an error), and output records split at missing line breaks and sorted \\
@@ -557,15 +637,19 @@ MethPhaser & 0.0.4 & run on the uncorrected SNV-only \toolname output (same read
 %  [author-hidden] 2026-11-10: archived in notes/competitors/longhap_removed_comparisons.tex.md.
 % LongHap\cite{pfennig2026longhap} & 0.2.0 & nanopore, replicate~1, 10--60$\times$ (Supplementary Table~4); \code{--ont --min\_base\_quality 10}, as its documentation recommends for nanopore data, run per chromosome; SNVs with \code{--snvs\_only}, with and without 5mC; SNVs, indels and SVs with 5mC from one VCF of the PEPPER calls and Sniffles2 deletions and insertions made sequence-resolved (inversions, duplications and breakends, 296--373 per coverage, omitted); 5mC from modkit 0.6.4 \code{pileup --combine-strands --cpg} \\
 HiPhase\cite{holt2024hiphase} & 1.7.0 & HiFi 10--50$\times$ (Supplementary Table~4); default parameters with \code{--threads 16 --ignore-read-groups}; phases indels by default and has no SNV-only mode, so SNV-only phasing used the call sets restricted to SNVs \\
-\toolname & v2.1.2, commit \code{6b8f2dd} & Nanopore mode (\code{--pb} for HiFi); GNN correction with defaults \\
+\toolname & v2.1.2, commit \code{6b8f2dd} & Nanopore mode (\code{--pb} for HiFi); GNN-based unphasing with defaults \\
 \end{longtable}
 }
+\FloatBarrier
+
+\input{figures-source/supp_tables/hg008}
+\FloatBarrier
 
 
 \clearpage
-\paragraph{Supplementary Data 1.} \code{supplementary.xlsx} contains the metrics behind Figs.~2--5, Supplementary Figs.~1, 2, 4--9 and~17 and Supplementary Tables~1--4, 6--9, 11 and~18. Per-run metrics are indexed by coverage and down-sampling replicate. Blank cells denote runs that were not performed. The 15 sheets are described below.
+\paragraph{Supplementary Data 1.} \code{supplementary.xlsx} contains the metrics behind Figs.~2--5, Supplementary Figs.~1, 2, 4--8 and~16 and Supplementary Tables~1--4, 6--9, 11 and~19. Per-run metrics are indexed by coverage and down-sampling replicate. Blank cells denote runs that were not performed. The 15 sheets are described below.
 
-The four \code{Unphased} sheets report replicate~1 at 10, 30 and 60$\times$. They use \code{lp\_only} for calls left unphased by \toolname only (phased by \whatshap only), and \code{wh\_only} for calls left unphased by \whatshap only (phased by \toolname only). In \code{Unphased\_composition}, \code{lp\_only\_phase} and \code{lp\_only\_gnn} divide \code{lp\_only} into calls left unphased by the phasing graph before GNN correction and calls unphased by GNN correction, respectively.
+The four \code{Unphased} sheets report replicate~1 at 10, 30 and 60$\times$. They use \code{lp\_only} for calls left unphased by \toolname only (phased by \whatshap only), and \code{wh\_only} for calls left unphased by \whatshap only (phased by \toolname only). In \code{Unphased\_composition}, \code{lp\_only\_phase} and \code{lp\_only\_gnn} divide \code{lp\_only} into calls left unphased by the phasing graph before GNN-based unphasing and calls unphased by the GNN, respectively.
 
 The code \code{both}, present in the composition, depth and sets sheets, denotes calls left unphased by both tools (``neither tool'' in Supplementary Table~9). The code \code{background}, present in the composition and sets sheets, denotes calls phased by both tools (``both tools'' in Supplementary Table~9).
 
@@ -578,7 +662,7 @@ The code \code{both}, present in the composition, depth and sets sheets, denotes
 \midrule
 \code{Variant\_Calling} & Input call sets. \\[4pt]
 \code{SNV\_Detail} & SNV-only phasing by every tool on nanopore and HiFi data. \\[4pt]
-\code{co-phase\_Detail} & The six co-phasing configurations of \toolname without (\code{longphase\_v2.0.1}) and with (\code{longphase\_v2.1.2}) GNN correction, and \whatshap with indels. \\[4pt]
+\code{co-phase\_Detail} & The six co-phasing configurations of \toolname without (\code{longphase\_v2.0.1}) and with (\code{longphase\_v2.1.2}) GNN-based unphasing, and \whatshap with indels. \\[4pt]
 \code{SNV\_switch\_by\_region} & SNV switch errors and assessed pairs for SNV-only runs, by truth set, benchmark region and GIAB v3.6 stratum. \\[4pt]
 \code{SNV\_switch\_coincidence} & Switch errors at identical SNV pairs across tools (replicate~1). \\[4pt]
 \code{Indel\_accuracy} & Indel and SNV switch errors, assessed pairs and Hamming distance for co-phasing runs, without and within the v5.0q benchmark regions. \\[4pt]
@@ -587,8 +671,8 @@ The code \code{both}, present in the composition, depth and sets sheets, denotes
 \code{Unphased\_depth} & Read-depth histograms in 2$\times$ bins (Supplementary Fig.~7). \\[4pt]
 \code{Unphased\_sets} & Per set: read-depth quartiles and share at the depth cap, phasing entropy (PE) of \toolname where it reports one, and enrichment in the other tool's switch-error intervals. \\[4pt]
 \code{Phased\_calls} & Phased heterozygous SNV calls on chr1--22 for every SNV-only run of \toolname and \whatshap, and on HiFi data also of HiPhase; the denominator of precision in Fig.~5e, Supplementary Fig.~6b and Supplementary Tables~1 and~3. \\[4pt]
-\code{MethPhaser} & MethPhaser applied to the SNV-only output of \toolname without GNN correction, scored as in \code{SNV\_Detail} (Fig.~3 and Supplementary Fig.~4). \\[4pt]
-\code{SV\_5mC\_phasing} & Heterozygous SVs (Sniffles2) and 5mC sites (\texttt{modcall}) of every co-phasing configuration with SVs or 5mC, and how many \toolname phased without (\code{longphase\_v2.0.1}) and with (\code{longphase\_v2.1.2}) GNN correction; all contigs, as in \code{Variant\_Calling}. \\[4pt]
+\code{MethPhaser} & MethPhaser applied to the SNV-only output of \toolname without GNN-based unphasing, scored as in \code{SNV\_Detail} (Fig.~3 and Supplementary Fig.~4). \\[4pt]
+\code{SV\_5mC\_phasing} & Heterozygous SVs (Sniffles2) and 5mC sites (\texttt{modcall}) of every co-phasing configuration with SVs or 5mC, and how many \toolname phased without (\code{longphase\_v2.0.1}) and with (\code{longphase\_v2.1.2}) GNN-based unphasing; all contigs, as in \code{Variant\_Calling}. \\[4pt]
 \code{Other\_phasers} & Replicate~1 of HiPhase on HiFi data, with indels and on an SNV-only input VCF (it has no SNV-only option), and of \toolname, \whatshap and HapCUT2 with indels, scored as in \code{SNV\_Detail} (Supplementary Table~4). The SNV-only HiPhase rows are also the HiPhase values of Fig.~2c,g, Supplementary Figs.~1c and~6a,b and Supplementary Table~3; the HiFi rows with indels and the nanopore \hapcut rows with indels are those of Fig.~2b,d,f,h and Supplementary Fig.~1d. \\[4pt]
 \code{Runtime} & Wall-clock time, CPU time and peak resident memory of every timing run of SNV-only phasing, with the storage used; Supplementary Fig.~8 and Supplementary Table~11 use the runs on the solid-state drive. \\
 %  [author-hidden] 2026-11-03: HapBridge rows removed from the sheet (notes/competitors/hapbridge_hidden_rows.tsv).
@@ -623,21 +707,21 @@ The code \code{both}, present in the composition, depth and sets sheets, denotes
 
 \begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig11_methphaser.pdf}
-\caption{\textbf{Joint methylation co-phasing compared with MethPhaser.} HG002 nanopore R10.4.1 data, replicate 1, scored on SNVs against v5.0q. MethPhaser was given the SNV-only output of \toolname without GNN correction.
+\caption{\textbf{Joint methylation co-phasing compared with MethPhaser.} HG002 nanopore R10.4.1 data, replicate 1, scored on SNVs against v5.0q. MethPhaser was given the SNV-only output of \toolname without GNN-based unphasing.
 \textbf{a}, Switch errors. \textbf{b}, Fraction of benchmark heterozygous SNVs phased. \textbf{c}, Hamming distance. \textbf{d}, Block N50.}
 \label{fig:supp_methphaser}
 \end{figure}
 
 \begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig15_cophasing_all.pdf}
-\caption{\textbf{All co-phasing configurations across coverage.} HG002 nanopore R10.4.1 data; means of ten replicates with s.d.\ at 10--20$\times$; one down-sampling at 30--60$\times$. Top row without, bottom row with GNN correction.
+\caption{\textbf{All co-phasing configurations across coverage.} HG002 nanopore R10.4.1 data; means of ten replicates with s.d.\ at 10--20$\times$; one down-sampling at 30--60$\times$. Top row without, bottom row with GNN-based unphasing.
 \textbf{a},\textbf{e}, SNV switch error rate. \textbf{b},\textbf{f}, Hamming distance (over SNVs and indels where indels are phased). \textbf{c},\textbf{g}, Block N50. \textbf{d},\textbf{h}, Fraction of benchmark heterozygous SNVs phased. Values in Supplementary Table~6.}
 \label{fig:supp_cophase_all}
 \end{figure}
 
 \begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig_unphased_more.pdf}
-\caption{\textbf{Phased calls on PacBio HiFi data, and SNVs left unphased at high phasing uncertainty.} SNV-only phasing of HG002. \textbf{a},\textbf{b}, PacBio HiFi data, one down-sampling per coverage, with HiPhase given the calls restricted to SNVs: fraction of the benchmark heterozygous SNVs of v5.0q phased (\textbf{a}) and share of the phased calls on chr1--22 that match a benchmark heterozygous SNV in position and alleles (\textbf{b}; Supplementary Table~3). \textbf{c},\textbf{d}, Nanopore R10.4.1 data, replicate~1: SNVs that \toolname left unphased at high phasing uncertainty, by their genotype in the v5.0q benchmark VCF, matched by position without a benchmark BED (\textbf{c}), and at 60$\times$ the share of these SNVs and of a random sample of phased SNVs outside the regions where both haplotypes of the T2T-HG002 assembly align one-to-one to GRCh38, for each chromosome (\textbf{d}; Supplementary Table~10).}
+\caption{\textbf{Phased calls on PacBio HiFi data, and SNVs left unphased at high phasing uncertainty.} SNV-only phasing of HG002. \textbf{a},\textbf{b}, PacBio HiFi data, one down-sampling per coverage, with HiPhase given the calls restricted to SNVs: recall, the fraction of benchmark heterozygous SNVs of v5.0q matched and phased (\textbf{a}), and precision, the share of phased calls on chr1--22 that match a benchmark heterozygous SNV in position and alleles (\textbf{b}; Supplementary Table~3). \textbf{c},\textbf{d}, Nanopore R10.4.1 data, replicate~1: SNVs that \toolname left unphased at high phasing uncertainty, by their genotype in the v5.0q benchmark VCF, matched by position without a benchmark BED (\textbf{c}), and at 60$\times$ the share of these SNVs and of a random sample of phased SNVs outside the regions where both haplotypes of the T2T-HG002 assembly align one-to-one to GRCh38, for each chromosome (\textbf{d}; Supplementary Table~10).}
 \label{fig:supp_unphased_more}
 \end{figure}
 
@@ -649,17 +733,9 @@ The code \code{both}, present in the composition, depth and sets sheets, denotes
 
 \begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig_runtime.pdf}
-\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data, replicate~1, on the workstation described in Methods; values in Supplementary Table~11. \toolname includes GNN correction and was run with 24 threads (lines) and on one thread (points); \whatshap and \hapcut run on one thread. \hapcut was not timed at 60$\times$.
+\caption{\textbf{Runtime and peak memory of SNV-only phasing.} HG002 nanopore R10.4.1 data, replicate~1, on the workstation described in Methods; values in Supplementary Table~11. \toolname includes GNN-based unphasing and was run with 24 threads (lines) and on one thread (points); \whatshap and \hapcut run on one thread. \hapcut was not timed at 60$\times$.
 \textbf{a}, Wall-clock time. \textbf{b}, CPU time (user plus system). \textbf{c}, Peak resident memory. Time axes in \textbf{a} and \textbf{b} are logarithmic.}
 \label{fig:supp_runtime}
-\end{figure}
-
-\begin{figure}[h]
-\centering\includegraphics[width=\textwidth]{figures/supp/suppfig14_cophase_gnn.pdf}
-\caption{\textbf{Co-phasing configurations with and without GNN correction.} HG002 nanopore R10.4.1 data; seven combinations of variant classes, each phased separately; SNV metrics against v5.0q.
-\textbf{a},\textbf{b}, SNV switch error rate against block N50 at 10$\times$ (\textbf{a}; means of ten replicates with s.d.) and 60$\times$ (\textbf{b}); arrows run from the result without (open) to the result with (filled) GNN correction.
-\textbf{c},\textbf{d}, SNV switch error rate (\textbf{c}) and Hamming distance (\textbf{d}; computed over SNVs and indels for four-class phasing) for SNV-only and four-class phasing.}
-\label{fig:supp_cophase_gnn}
 \end{figure}
 
 %  [optional figure] Two real-data panels would close the remaining gaps, and
@@ -669,7 +745,7 @@ The code \code{both}, present in the composition, depth and sets sheets, denotes
 %  the original was computed on 48 sites in the imprinted \textit{SNRPN} locus,
 %  too small and too special a sample for a Nature Methods supplement, so
 %  recompute genome-wide on HG002. (ii)~Distribution of the linkage ratio in
-%  \textbf{d} stratified by the true class of the site pair (heterozygous--
+%  \textbf{c} stratified by the true class of the site pair (heterozygous--
 %  heterozygous, homozygous--homozygous, heterozygous--homozygous). This is the
 %  strongest justification available for the 0.9 threshold: in the original the
 %  three classes separate at roughly 0.65--1, 0.5--0.75 and 0.5--0.7, showing
@@ -679,75 +755,62 @@ The code \code{both}, present in the composition, depth and sets sheets, denotes
 \begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig7_modcall.pdf}
 \caption{\textbf{Allele-specific methylation calling with \code{modcall}.}
-\textbf{a}, Per-read CpG state from the \code{MM}/\code{ML} tags: methylated at \code{ML}/255 $\ge 0.8$, unmethylated at $\le 0.2$, ambiguous in between.
-\textbf{b}, Strand-specific CpG observations are combined into loci for phasing: reverse-strand calls are mapped to the forward CpG coordinate and consecutive CpGs are merged.
-\textbf{c}, A CpG is genotyped as a candidate allele-specific site (0/1) when $\min(M,U)/\max(M,U) \ge 0.6$ and $A/(M+U+A) \le 0.2$, for methylated, unmethylated and ambiguous read counts $M$, $U$ and $A$; other sites are excluded.
-\textbf{d}, Read support between two loci in the four state pairs; a pair is linked when $\max(P,Q)/(P+Q) \ge 0.9$, and the example shown is rejected.
-\textbf{e}, Linking against an SNV among the next 20 variants, against another candidate CpG where no SNV is in range, and expansion to weak candidates; the last neighbour-link filter is not shown (Supplementary Method~1).
-\textbf{f}, Output record; the \code{MR} and \code{NR} read names attach the 5mC alleles to reads.}
+\textbf{a}, Read classification: each read-level CpG call on forward- and reverse-strand reads is methylated (5mC probability $\ge 0.8$), unmethylated ($\le 0.2$) or ambiguous.
+\textbf{b}, Candidate selection: a CpG is a candidate when its methylated ($M$) and unmethylated ($U$) read counts are balanced and its ambiguous ($A$) fraction is small (Methods, equation~1); the three sites are a candidate, an unbalanced site and an ambiguous site.
+\textbf{c}, Linkage test: the reads that cover an SNV and a CpG are counted in the four state pairs, and the two sites are linked when one consistent pairing dominates (Methods, equation~2). Candidates are linked to an SNV (1), unlinked candidates are tested against accepted CpGs (2), and an accepted CpG is kept only if it is linked to both the preceding and the following accepted site (3).
+\textbf{d}, Merging and output: the forward-strand calls at the C and the reverse-strand calls at the G of a CpG form one locus, whose methylated and unmethylated reads enter the phasing graph as its two alleles.}
 \end{figure}
 
 \begin{figure}[h]
-\centering\includegraphics[width=0.9\textwidth]{figures/supp/suppfig1_observations.pdf}
-\caption{\textbf{Read-level allele observations and pre-graph filters.}
-\textbf{a}, Allele observations extracted from one alignment for each variant class, and the weight of each observation in the phasing graph (Supplementary Method~2).
-\textbf{b}, Homopolymer SNV filter (\code{--ont}): of two SNVs in homopolymers of length $\ge 3$ that are $\le 2$~bp apart, the downstream SNV is removed.
-\textbf{c}, Overlapping-alignment filter for supplementary alignments of one read.
-\textbf{d}, Indels in tandem repeats remain in the graph and vote with weight 0.1.
-\textbf{e}, Clusters of clipped alignments define candidate intervals for the copy-number-aware filter (Supplementary Method~2).
-\textbf{f}, Within candidate intervals, non-SV heterozygous sites with $\mathrm{MR} \ge 0.7$ and non-zero mean loads in both read groups are removed from all reads; $\mathrm{MR}$ is the mean alternate-allele load of the reads carrying the alternate allele relative to the summed means of both read groups.
-\textbf{g}, Order in which the filters are applied.}
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig1_observations.pdf}
+\caption{\textbf{Read-level allele observations and the copy-number-aware filter.}
+\textbf{a}, Alignment selection: when two alignments of one read overlap by at least 0.2 of their combined span, the shorter alignment is discarded.
+\textbf{b}, Allele extraction: one read across the four variant classes, with the source of each allele; an SV allele can also come from the junction of a split alignment (zigzag) or from the read list of the SV caller (Supplementary Note~1).
+\textbf{c}, Copy-number-aware filter: clusters of front- and back-clipped alignments bound a candidate interval (left). Within the interval, a site is removed when the reads with its alternate allele (filled) carry more alternate alleles at other heterozygous sites (amber ticks) than the reads with its reference allele (open), that is, when $\mathrm{MR} \ge 0.7$ (Methods, equation~3) (right).}
 \end{figure}
 
 \begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig2_voting.pdf}
-\caption{\textbf{Pairwise allele support, weighted voting and phasing entropy.}
-\textbf{a}, Reads spanning two variants $u$ and $v$ accumulate four weights; $P$ and $Q$ are the supports for the two possible pairings and $s = \min(P,Q)/\max(P,Q)$ is their ambiguity.
-\textbf{b}, Vote weight as a function of $s$; the rules are given in Methods.
-\textbf{c}, Variant $v$ receives weighted votes from up to 35 upstream variants that share a read with it; line thickness encodes vote weight, and the totals $h_1$ and $h_2$ decide its haplotype.
-\textbf{d}, Single-read guard: when more than three votes rest on one read, $h_1$ and $h_2$ are recomputed from well-supported votes only.
-\textbf{e}, Phasing entropy (PE) of the vote totals as a function of the vote split (left) and for four examples (right); values $\ge 0.8$ (shaded) open a window for the network (Supplementary Fig.~14).
-\textbf{f}, Block formation; the phase set (PS) is the position of the first variant of a block.}
+\caption{\textbf{Weighted phasing graph and multi-neighbour voting.}
+\textbf{a}, Graph construction: each heterozygous variant has a reference ($r$) and an alternate ($a$) allele node, and each read connects its alleles to its alleles at the next $k$ variants ($k = 2$ in this example; default 35). Edge width is the summed read support, a dotted edge has only the reduced weight of an observation below the base-quality threshold, and a variant beyond the maximum distance (default 300~kb) is skipped.
+\textbf{b}, The four allele-pair supports of a variant pair $(u, v)$ give the supports $P$ and $Q$ of the two phasings and the ambiguity $s$.
+\textbf{c}, Vote weight as a function of $s$: a near-unanimous pair votes with weight 20, a pair with $s > \tau$ casts no vote, an SNV--5mC pair casts no vote above 0.3, and a tandem-repeat indel votes with weight 0.1 (Supplementary Note~3).
+\textbf{d}, Variant $v$ receives weighted votes from up to $k$ upstream variants; arc width is the vote weight and arc colour is the haplotype that the vote gives to the $r$ allele of $v$, and the totals $h_1$ and $h_2$ decide its haplotype.
+\textbf{e}, Single-read guard: one long read that covers many upstream variants gives many votes, each supported by that read only and each with weight 20, and can outvote well-supported pairs (left); when more than three votes have the support of one read or less and a stronger vote remains, only the stronger votes are counted (right).
+\textbf{f}, Phase blocks: a tie within a block leaves the variant unphased, and a tie beyond the last accepted edge opens a new block; the phase set (PS) is the position of the first variant of a block.}
 \end{figure}
 
 \begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig3_read_correction.pdf}
-\caption{\textbf{Read-based correction.}
-\textbf{a}, Each read is assigned to a haplotype by a weighted majority over its phased alleles; reads with a majority $\le 0.65$ or total evidence weight $\le 1$ remain unassigned for read-based correction.
-\textbf{b}, The phase of each variant is re-derived from the assigned reads and retained only if the consistent fraction $\rho$ exceeds 0.75; otherwise the variant is unphased.}
+\caption{\textbf{Read-based correction and phasing entropy.}
+\textbf{a}, Each read is assigned to a haplotype by the weighted majority of its phased alleles; a read with a majority fraction $\le \theta_{\mathrm{read}}$ (default 0.65) or a total evidence weight $\le 1$ is not assigned. Indels have a lower weight, and 5mC alleles are not used.
+\textbf{b}, The phase of each variant is derived again from the assigned reads and is kept only if the consistent fraction $\rho$ exceeds $\theta_{\mathrm{var}}$ (default 0.75); otherwise the variant is left unphased.
+\textbf{c}, Phasing entropy (PE) of the vote totals $h_1$ and $h_2$ as a function of the vote split, with three examples; variants with $\mathrm{PE} \ge \theta_{\mathrm{PE}}$ (default 0.8, shaded) open a window for the GNN (Supplementary Fig.~13).}
 \end{figure}
 
 \begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig4_gnn_overview.pdf}
-\caption{\textbf{Overview of the graph neural network correction module.}
+\caption{\textbf{Overview of the graph neural network unphasing module.}
 \textbf{a}, Every phased variant with a phasing entropy of at least 0.8 (amber) triggers a window of $\pm 20$ variants.
-\textbf{b}, The window is represented as a graph of allele nodes with 31 node features and six edge features (Supplementary Tables~12 and~13); squares represent features, not their values.
+\textbf{b}, The window is represented as a graph of allele nodes with 31 node features and six edge features (Supplementary Tables~13 and~14); squares represent features, not their values.
 \textbf{c}, Each of four GPS layers combines a local GATv2 branch with a global self-attention branch; a classifier head assigns each allele node a score for a label-defined phase-disagreement onset.
-\textbf{d}, Variants with an onset score of at least 0.35 are unphased without changing their genotypes, and the phase set is split where the remaining graph is disconnected.
-Exceptions and singleton handling are defined in Supplementary Method~4; further details are shown in Supplementary Figs.~15 and~16.}
+\textbf{d}, Variants with an onset score of at least 0.35 are unphased without changing their genotypes, and the phase set is split where the remaining graph is disconnected; the largest component keeps the original PS and every other component receives the position of its first variant.
+Exceptions and singleton handling are defined in Supplementary Note~4; window construction is shown in Supplementary Fig.~14.}
 \end{figure}
 
 \begin{figure}[h]
-\centering\includegraphics[width=0.92\textwidth]{figures/supp/suppfig5_gnn_window.pdf}
-\caption{\textbf{Window construction and phase-set update for the graph neural network.}
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig5_gnn_window.pdf}
+\caption{\textbf{Window construction for the graph neural network.}
 \textbf{a}, Window of $\pm 20$ variants around a trigger with PE $\ge 0.8$; arcs are phasing-graph edges and the dashed grey edge is a cross-haplotype link.
 \textbf{b}, Bridge-vertex feature: a variant whose removal disconnects the window graph.
-\textbf{c}, Variants within half the largest distance from the trigger receive inference scores; only labelled variants in this zone contribute to the training loss. The other variants supply graph context.
-\textbf{d}, The phasing graph in its DOT export format (\code{--dot}), with the vote weight at the source as the edge label.
-\textbf{e}, Before correction: a variant with an onset score $\ge 0.35$ (amber) inside a phase set.
-\textbf{f}, After correction: the variant is unphased; the largest remaining component keeps the original PS and every other component receives the position of its first variant as its PS.}
-\end{figure}
-
-\begin{figure}[h]
-\centering\includegraphics[width=\textwidth]{figures/supp/suppfig6_gnn_architecture.pdf}
-\caption{\textbf{Graph neural network architecture.} Node features are standardized and projected to 128 dimensions. Each of four GPS layers combines a local GATv2 branch over the window graph, with edge features entering through a per-layer edge encoder, and a global self-attention branch over all nodes; the branches are added to the residual stream and followed by layer normalization and a feed-forward block. The final embedding is concatenated with the sum and the maximum of the logistic-transformed weights $\sigma(w) = 1/(1+e^{-w})$ of the incoming edges, excluding the self-loop, and passed to a two-class classifier whose error-class output is the onset score; the scores of the two allele nodes of a variant are averaged.}
+\textbf{c}, Variants within half the largest distance from the trigger receive inference scores; only labelled variants in this zone contribute to the training loss. The other variants supply graph context.}
 \end{figure}
 
 \begin{figure}[h]
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig13_gnn_effect.pdf}
-\caption{\textbf{Effect of GNN correction on SNV-only phasing.} \toolname with and without GNN correction; HG002 nanopore R10.4.1 data unless stated; means of ten replicates with s.d.\ at 10--20$\times$; one down-sampling at 30--60$\times$.
+\caption{\textbf{Effect of GNN-based unphasing on SNV-only phasing.} \toolname with and without GNN-based unphasing; HG002 nanopore R10.4.1 data unless stated; means of ten replicates with s.d.\ at 10--20$\times$; one down-sampling at 30--60$\times$.
 \textbf{a}, Fraction of benchmark heterozygous SNVs phased. \textbf{b}, Switch error rate. \textbf{c}, Hamming distance. \textbf{d}, Block N50.
-\textbf{e}, Fraction of switch errors removed by GNN correction on nanopore and PacBio HiFi data, genome-wide, and on the nanopore chromosomes held out from GNN training (chr17, chr21 and chr22; Supplementary Table~17).
+\textbf{e}, Fraction of switch errors removed by GNN-based unphasing on nanopore and PacBio HiFi data, genome-wide, and on the nanopore chromosomes held out from GNN training (chr17, chr21 and chr22; Supplementary Table~18).
 \textbf{f}, Switch errors on PacBio HiFi data, with the network trained on nanopore data.}
 \label{fig:supp_gnn}
 \end{figure}
@@ -756,7 +819,15 @@ Exceptions and singleton handling are defined in Supplementary Method~4; further
 \centering\includegraphics[width=\textwidth]{figures/supp/suppfig8_metrics.pdf}
 \caption{\textbf{Phasing evaluation metrics.}
 \textbf{a}, Within one intersected block, the query haplotype string is compared with the truth in switch encoding; the number of differing positions is the switch-error count. Adjacent switch pairs form flips in a separate decomposition. The Hamming distance is the minimum over the two orientations of misassigned variants.
-\textbf{b}, Block intersection and the block-level statistics. Only variants that are heterozygous in both files and phased in both are compared (dark bars); blocks left with a single variant are ignored (outline). Switch error rate and Hamming distance are computed over the intersected blocks; completeness is the fraction of truth heterozygous variants matched and phased in the query before partitioning, and the block N50 is computed on the query's own blocks of at least two variants, as implemented in \code{longphase compare}.}
+\textbf{b}, Block intersection and the block-level statistics. Only variants that are heterozygous in both files and phased in both are compared (dark bars); blocks left with a single variant are ignored (outline). Switch error rate and Hamming distance are computed over the intersected blocks; recall is the fraction of truth heterozygous variants matched and phased in the query before partitioning, and the block N50 is computed on the query's own blocks of at least two variants, as implemented in \code{longphase compare}.}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=\textwidth]{figures/supp/suppfig_hg008.pdf}
+\caption{\textbf{SNV-only phasing of a second individual, HG008.} Nanopore R10.4.1 data of HG008 normal pancreatic tissue, phased with the released model and scored against phase derived from the HG008 normal assembly; three down-samplings at 10$\times$ and at 20$\times$ (small markers, runs; lines, means) and one at 30$\times$ (Supplementary Table~21).
+\textbf{a}--\textbf{c}, SNV switch error rate (\textbf{a}), block-wise Hamming distance (\textbf{b}) and recall (\textbf{c}) against coverage.
+\textbf{d}, SNV switch error rate against phase-block N50, one point per coverage.}
+\label{fig:supp_hg008}
 \end{figure}
 
 \clearpage

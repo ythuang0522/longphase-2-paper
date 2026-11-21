@@ -4,6 +4,14 @@ Germline haplotype phasing from long reads. Co-phases SNVs, small indels, SVs an
 5mC in a single weighted phasing graph, and scores the reliability of every phased
 variant with a GNN that unphases (never flips) variants predicted to be misphased.
 
+## Figure 5 terminology (2026-11-11)
+
+Panel d uses "WhatsHap phasing errors", with the populations named in the key. Panel f uses
+"Recall". Recall is the fraction of benchmark heterozygous variants matched and phased,
+regardless of phase correctness. The same terminology is used in the main text, Supplementary
+definitions, the HiFi companion panel and Supplementary Tables 1 and 3. F1 combines benchmark-match
+precision and recall; GNN error-class metrics retain their separate definition.
+
 ## Layout
 
 ```
@@ -13,9 +21,9 @@ sections/results.tex
 sections/methods.tex
 sections/discussion.tex
 references.bib
-Supplementary.tex         # Supplementary Methods, Note, Tables 1-19, Figs. 1-17 in order of first citation in the main text (separate PDF)
+Supplementary.tex         # Supplementary Notes 1-7, Tables 1-20, Figs. 1-17 in order of first citation in the main text (separate PDF)
 figures/                  # fig1_overview.svg/.pdf, fig2-6_*.pdf (generated), supp/
-figures-source/           # make_fig1.py (Fig. 1); make_results_figs.py + results_data.py (Figs. 2-5, Supp. Figs. 1-7, 15, 17, Supp. Tables 1-11, 17, 18; one file per table in supp_tables/)
+figures-source/           # make_fig1.py (Fig. 1); make_results_figs.py + results_data.py (Figs. 2-5, Supp. Figs. 1-8, 15, 17, Supp. Tables 1-11, 18, 19; one file per table in supp_tables/)
 Makefile                  # `make`, `make wordcount`, `make clean`; rebuilds Fig. 1 from its source
 notes/log/                # dated change log, one file per change; index in notes/log/README.md
 ```
@@ -47,7 +55,7 @@ canvas to 1680×1046. Plain wording in the figure: "phasing uncertainty" for pha
 instead of phase set. Wording rule (author, 2026-09-24): headings and captions say "phasing
 uncertainty" (entropy is only one measure of it); body text says "haplotype block" for phase set
 and keeps "phasing entropy" only where a sentence is about the metric's value (Results, Fig. 6c).
-Panel c shows the uncertainty bars with a y-axis label and no threshold line, and node (31) and
+Panel c labels the trigger column "High uncertainty" (the per-variant uncertainty bars were removed on 2026-11-16, author, option B), and has node (31) and
 edge (6) feature-vector strips segmented by feature group (16/6/5/4 and 3/1/1/1, from
 `PhasingProcess.cpp` nf[0..30] and ep[0..5] in v2.1 and the Methods grouping). Open polish: the PDF still embeds five Type 3 fonts (rsvg-convert output).
 
@@ -170,6 +178,10 @@ The critical ones:
 3. **Everything is HG002, one chemistry**, and the GNN was trained on it. No second
    individual, no PacBio HiFi, no downstream demonstration (the ClairS purity-sweep
    experiment in the algorithm slides is the natural candidate; see the Results todo).
+   Update 2026-11-13 (issue #11): a second individual, HG008, is in the Supplementary (author
+   decision, option C): Supplementary Table 21, Notes 6 and 7, one Results sentence and the
+   Discussion limitation paragraph. Its phase reference is not independent of the reads. Supplementary
+   Fig. 17 (`suppfig_hg008.pdf`) shows the result.
 4. **Text↔code discrepancies** are flagged inline in `methods.tex` with file:line.
    The six Supplementary matching errors were fixed on 2026-09-18 (Table 1 log bases and
    feature order, Table 3 node cap, Table 4 `--svWindow`/`--svThreshold` and `--ont`,

@@ -93,19 +93,31 @@ Long-read sequencing captures SNVs, indels, structural variants (SVs) and 5-meth
 \section*{Introduction}
 \input{sections/introduction}
 
+
+\section*{Results}
+\input{sections/results}
+
+\section*{Discussion}
+\input{sections/discussion}
+
+\section*{Methods}
+\input{sections/methods}
+
+\bibliography{references}
+
+% Main figures after the references (author, 2026-11-11).
+\clearpage
+
 \begin{figure}[p]
   \centering
   \includegraphics[width=\textwidth]{fig1_overview}
   \caption{\textbf{Overview of \toolname.}
   \textbf{a}, SNVs, small indels and SVs from upstream variant callers (dashed tag) and 5mC sites called by the \texttt{modcall} module of \toolname (navy tag), carried by the same long reads, enter one phasing problem; alleles are coloured by read haplotype, a dash marks the reference allele of the SV, and grey reads are clipped at both ends (orange).
   \textbf{b}, Weighted phasing graph before (top) and after (bottom) evidence weighting. Read-supported edges link allele nodes; observations at low-quality bases and indels in tandem repeats are down-weighted, and a variant whose alternate allele comes from clipped reads in a copy-number-altered region is filtered (insets).
-  \textbf{c}, A graph neural network evaluates local phasing graphs centred on variants with high phasing uncertainty (Methods). Predicted phase-disagreement onsets are selectively unphased (GNN correction; grey).
+  \textbf{c}, A graph neural network evaluates local phasing graphs centred on variants with high phasing uncertainty (Methods). Predicted phase-disagreement onsets are selectively unphased (GNN-based unphasing; grey).
   \textbf{d}, Output: phased haplotypes of all four variant classes, with the filtered variant (cross) and the selected variant left unphased (faded), and haplotagged reads.}
   \label{fig:overview}
 \end{figure}
-
-\section*{Results}
-\input{sections/results}
 
 \begin{figure}[p]
   \centering
@@ -151,25 +163,13 @@ Long-read sequencing captures SNVs, indels, structural variants (SVs) and 5-meth
   \textbf{a}, Calls that \toolname phased and left unphased, by their status in v5.0q: a heterozygous SNV with the same position and alleles, a homozygous genotype, a heterozygous SNV with other alleles, or absent.
   \textbf{b}, Number of calls left unphased by \toolname and by \whatshap (bar outline), by the same status.
   \textbf{c}, Phased heterozygous calls at positions where v5.0q has a homozygous genotype (genotype errors; Supplementary Table~9).
-  \textbf{d}, Fraction of benchmark heterozygous SNVs to which \whatshap assigned the wrong phase, among the SNVs that \toolname left unphased and among all SNVs that \whatshap phased.
+  \textbf{d}, Fraction of assessable benchmark heterozygous SNVs incorrectly phased by \whatshap, among those left unphased by \toolname and among all those phased by \whatshap; errors are defined by block-wise Hamming comparison (Methods).
   \textbf{e}, Precision: share of the phased calls that match a benchmark heterozygous SNV in position and alleles.
-  \textbf{f}, Completeness: fraction of the benchmark heterozygous SNVs phased; both tools received the same heterozygous calls (Supplementary Table~1).
+  \textbf{f}, Recall: fraction of benchmark heterozygous SNVs matched in position and alleles and phased, regardless of phase correctness; both tools received the same heterozygous calls (Supplementary Table~1).
   \textbf{g}, Read depth at 60$\times$ of the calls left unphased by \toolname only, by \whatshap only or by both, in 2$\times$ bins; the grey bin collects sites at or above the depth cap of the variant caller.
   \textbf{h}, At 60$\times$, the SNVs that \toolname left unphased at high phasing uncertainty, a subset of its unphased calls, and a random sample of phased SNVs, inside or outside the regions where both haplotypes of the T2T-HG002 assembly align one-to-one to GRCh38 (exploratory; Supplementary Table~10).}
   \label{fig:unphased}
 \end{figure}
 
-
-
-
-% Keep the Results figure pages from interrupting the Discussion.
-\clearpage
-\section*{Discussion}
-\input{sections/discussion}
-
-\section*{Methods}
-\input{sections/methods}
-
-\bibliography{references}
 
 \end{document}
