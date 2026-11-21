@@ -552,8 +552,8 @@ Sniffles2 & 2.8.0 & \code{--output-rnames --reference} \\
 HG008-N nanopore R10.4.1 reads & GIAB \code{Northeastern\_}\allowbreak\code{ONT-std\_20240422} & normal pancreas, three flow cells; Dorado 0.5.3 \code{sup@v4.3.0}; aligned with minimap2 2.24-r1122 (\code{-y -ax map-ont}, mean quality $\ge 10$), 56.5$\times$; seeds 1--3 at 10 and 20$\times$, seed~1 at 30$\times$ (Supplementary Fig.~3) \\
 COLO829BL nanopore R10.4.1 reads & ONT \code{colo829\_2024.03} & flow cell PAU59807, Dorado 0.5.2 \code{sup@v4.3.0}; GRCh38 alignment by ONT, mean quality $\ge 10$; seed~1 at 10, 20 and 30$\times$ (Supplementary Fig.~3) \\
 Clair3\cite{zheng2022clair3} & 1.2.0 & COLO829BL SNV and indel calls (unphased genotypes); model \code{r1041\_e82\_400bps\_sup\_v430}, \code{--platform=ont} \\
-HG008-N assembly & GIAB v6.3 & Verkko; truth phase for HG008-N (Methods) \\
-COLO829BL assembly & SMaHT DSA v3.0.0 & Verkko 2.1; haplotypes SMASFTH1B2J6 and SMASFK4V33V8; truth phase for COLO829BL (Methods) \\
+HG008-N assembly\cite{mcdaniel2025hg008} & GIAB v6.3 & Verkko; truth phase for HG008-N (Methods) \\
+COLO829BL assembly\cite{sohn2026colo829} & SMaHT DSA v3.0.0 & Verkko 2.1; haplotypes SMASFTH1B2J6 and SMASFK4V33V8; truth phase for COLO829BL (Methods) \\
 dipcall\cite{li2018dipcall} & \code{dipcall.kit}; 0.3 & truth phase of HG008-N (\code{dipcall.kit}, minimap2 2.20-r1061) and COLO829BL (bioconda 0.3, minimap2 2.31-r1302) \\
 GIAB v4.2.1 HG002 & v4.2.1 & GRCh38 small-variant benchmark with phase transferred from a hifiasm assembly; \code{HG002\_GRCh38\_1\_22\_}\allowbreak\code{v4.2.1\_benchmark\_}\allowbreak\code{hifiasm\_v11\_}\allowbreak\code{phasetransfer.vcf.gz}, biallelic phased heterozygous records \\
 GIAB v5.0q HG002 benchmark\cite{hansen2026q100,olson2026giabv5} & v5.0q & GRCh38 small-variant benchmark derived from the T2T-HG002 v1.1 assembly; \code{HG002\_GRCh38\_v5.0q\_}\allowbreak\code{smvar.vcf.gz}, chr1--chr22 records \\

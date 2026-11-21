@@ -178,10 +178,13 @@ environment. Rules: `notes/hg008_validation/README.md`, Phase reference.
 
 The truth is assembly-derived phase, not independent experimental truth.
 
-- **Whether our reads entered the assembly:** not checked. The DSA is a Verkko assembly of the SMaHT COLO829BL data.
-  Whether the ONT run used here (`PAU59807`, ONT open data) contributed to it has not been established. Read it as
-  possibly not independent, as for HG008.
-- **Cell line:** COLO829BL is a cell line, so the reads and the assembly may come from different passages.
+- **Whether our reads entered the assembly:** most likely not. The portal record of the hapX file (`SMASFTH1B2J6`,
+  checked 2026-11-21) lists the assembly inputs as SMaHT data from UWSC GCC (ONT ultra-long, PacBio Revio, Hi-C,
+  Fiber-seq; Verkko 2.1). The evaluation reads are ONT's own open-data run (`PAU59807`). The record cites Sohn et al.,
+  Cell 189, 6630 (2026), doi:10.1016/j.cell.2026.09.033.
+- **Cell line:** COLO829BL is a cell line, so the reads and the assembly come from different cultures.
+- **Access:** the files are open access (`access_status: Open`); the record also gives a public S3 URL, so no login is
+  needed to download them.
 
 ## Run order and commands
 
