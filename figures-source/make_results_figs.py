@@ -966,9 +966,9 @@ def fig5():
     chromosome are Supplementary Fig. 6 (sfig_unphased_more). No numbers inside panels (author, 2026-10-09)."""
     fig = plt.figure(figsize=(FIGW, 122 * MM), layout="constrained")
     fig.get_layout_engine().set(w_pad=2.5 * MM, h_pad=1.5 * MM, wspace=0.06, hspace=0.0)
-    sf1, sf2 = fig.subfigures(2, 1, hspace=0.06)
-    ax_p, ax_a, ax_b, ax_c = sf1.subplots(1, 4)
-    ax_d, ax_e, ax_f, ax_g = sf2.subplots(1, 4)
+    # one 2 x 4 grid (author, 2026-11-21, option C): the columns of the two rows align
+    (ax_p, ax_a, ax_b, ax_c), (ax_d, ax_e, ax_f, ax_g) = fig.subplots(2, 4)
+    fig.get_layout_engine().set(hspace=0.08)
     G = FIG5_G
     grouped = lambda ax: (ax.set_xticks(range(3)), ax.set_xticklabels([f"{c}×" for c in VENN_COVS]),
                           ax.set_xlabel("Coverage"), ax.set_xlim(-0.6, 2.6))
@@ -1046,13 +1046,14 @@ def fig5():
     T = t2t()
     out_rm = 100 * T["cls"]["unassessed"] / T["rm_n"]
     out_bg = 100 * (1 - T["bg_in"] / T["bg_n"])
-    for y, out in ((1, out_bg), (0, out_rm)):
-        ax_g.barh(y, 100 - out, 0.55, color=G[0], zorder=3)
-        ax_g.barh(y, out, 0.55, left=100 - out, color=G[3], zorder=3)
-    ax_g.set_yticks([0, 1]); ax_g.set_yticklabels(["Unphased at\nhigh phasing\nuncertainty", "Phased\n(random\nsample)"])
-    ax_g.tick_params(axis="y", length=0)
-    ax_g.set_xlim(0, 100); ax_g.set_xticks([0, 25, 50, 75, 100]); ax_g.set_ylim(-0.6, 1.6)
-    ax_g.set_xlabel("SNVs at 60× (%)")
+    # vertical stacked bars, labels under the bars as in panel a (author, 2026-11-21, option C)
+    for x, out in ((0, out_bg), (1, out_rm)):
+        ax_g.bar(x, 100 - out, 0.6, color=G[0], zorder=3)
+        ax_g.bar(x, out, 0.6, bottom=100 - out, color=G[3], zorder=3)
+    ax_g.set_xticks([0, 1])
+    ax_g.set_xticklabels(["Phased\n(random\nsample)", "Unphased at\nhigh phasing\nuncertainty"], fontsize=6)
+    ax_g.set_xlim(-0.6, 1.6); ax_g.set_ylim(0, 100); ax_g.set_yticks([0, 25, 50, 75, 100])
+    ax_g.set_ylabel("SNVs at 60× (%)")
     _key(ax_g, [Patch(color=G[0], label="aligned 1:1"), Patch(color=G[3], label="not aligned 1:1")], 2, columnspacing=1.0)
     for ax, L, t in zip((ax_p, ax_a, ax_b, ax_c, ax_d, ax_e, ax_f, ax_g), "abcdefgh",
                         ("Phased and unphased calls", "Calls left unphased", "Genotype errors phased",
