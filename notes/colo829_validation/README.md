@@ -9,8 +9,8 @@ on COLO829BL nanopore reads. COLO829BL is the lymphoblastoid line matched to the
 - **Frozen model:** nothing was retrained, tuned, re-thresholded or re-masked on COLO829BL.
 - **Where and when:** run from 2026-11-16 to 2026-11-19 in a cloud container (4 cores, 15 GB RAM, about 39 GB of disk),
   one chromosome at a time.
-- **In the manuscript:** not yet. Ported to `main` on 2026-11-21 from the branch `claude/youthful-lovelace-gdc2ku`;
-  the manuscript text on that branch was not merged and is being rewritten on the current manuscript.
+- **In the manuscript:** since 2026-11-21 (option A: Results paragraph, Supplementary Note 8, Fig. 17e–h, Table 21). Ported to `main` on 2026-11-21 from the branch `claude/youthful-lovelace-gdc2ku`;
+  the manuscript text on that branch was not merged; the text was written again on the current manuscript.
 
 **Difference from HG008:** the variant caller is Clair3 v1.2.0, not PEPPER-Margin-DeepVariant r0.8 (author: "Do it with
 clair3"). This experiment therefore tests a new genome and a new caller together.

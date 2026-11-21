@@ -21,7 +21,7 @@ sections/results.tex
 sections/methods.tex
 sections/discussion.tex
 references.bib
-Supplementary.tex         # Supplementary Notes 1-7, Tables 1-20, Figs. 1-17 in order of first citation in the main text (separate PDF)
+Supplementary.tex         # Supplementary Notes 1-8, Tables 1-21, Figs. 1-17 in order of first citation in the main text (separate PDF)
 figures/                  # fig1_overview.svg/.pdf, fig2-6_*.pdf (generated), supp/
 figures-source/           # make_fig1.py (Fig. 1); make_results_figs.py + results_data.py (Figs. 2-5, Supp. Figs. 1-8, 15, 17, Supp. Tables 1-11, 18, 19; one file per table in supp_tables/)
 Makefile                  # `make`, `make wordcount`, `make clean`; rebuilds Fig. 1 from its source
@@ -182,6 +182,10 @@ The critical ones:
    decision, option C): Supplementary Table 21, Notes 6 and 7, one Results sentence and the
    Discussion limitation paragraph. Its phase reference is not independent of the reads. Supplementary
    Fig. 17 (`suppfig_hg008.pdf`) shows the result.
+   Update 2026-11-21 (author decision, option A): HG008-N and a third individual, COLO829BL (Clair3 calls; phase
+   reference built without the evaluated reads), are one closing paragraph of the Results comparison subsection,
+   Supplementary Note 8, two rows of Supplementary Fig. 17 and Supplementary Table 21; no renumbering
+   (`notes/log/2026-11-21-other-individuals-option-a.md`).
 4. **Text↔code discrepancies** are flagged inline in `methods.tex` with file:line.
    The six Supplementary matching errors were fixed on 2026-09-18 (Table 1 log bases and
    feature order, Table 3 node cap, Table 4 `--svWindow`/`--svThreshold` and `--ont`,

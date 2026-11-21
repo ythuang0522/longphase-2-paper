@@ -79,10 +79,6 @@ On PacBio HiFi data, \toolname had lower SNV switch error rates (0.033--0.049\%)
 %  indels HiPhase +5.2 to +7.9, HapCUT2 +5.9 to +8.7 points. Nanopore HapCUT2 (--indels 1) / LongPhase 2 (Indel,
 %  rep 1) at 10-60x: switch error 3.47 4.06 4.81 4.81 4.46 4.69, N50 1.40 1.39 1.39 1.38 1.36 1.34.
 
-In a second individual, HG008, phased with the same model and settings and scored against phase derived from its assembly, \toolname also had lower SNV switch error rates (0.026--0.058\%) than \whatshap (0.091--0.107\%) and \hapcut (0.137--0.144\%) at 10--30$\times$ nanopore coverage, corresponding to 1.8--3.6- and 2.4--5.4-fold reductions, with 0.6 percentage points lower recall (Supplementary Note~7).
-%  [provenance] 2026-11-13 (author decision, option C: HG008 in the Supplementary, one Results sentence), issue #11:
-%  notes/hg008_validation/results/hg008_summary.tsv, means over replicates at 10 and 20x, one run at 30x.
-
 %  [provenance] 2026-10-19: sheet Other_phasers of Supplementary Data 1 (JHL, 2026-10-17/18;
 %  notes/competitors/README.md), LongPhase 2 rows from SNV_Detail and co-phase_Detail (replicate 1);
 %  ratios over 10-60x in steps of 10x (nanopore) and 10-50x (HiFi). Switch error rate tool / LongPhase 2:
@@ -117,6 +113,19 @@ Block contiguity was similar among phasers without indels, whereas with indels t
 
 %  [author-hidden] 2026-10-13: secondary-phaser comparison hidden pending editorial decision.
 %  Supplementary SNV-only comparisons with Ralphi\cite{battistella2025ralphi} and Margin\cite{shafin2021margin} were limited to 10--20$\times$ (Supplementary Fig.~9 and Supplementary Table~7). Within this range, Ralphi had 2.5--3.6-fold higher switch error rates than \toolname. Margin had a lower rate only at 10$\times$ (0.069\% versus 0.081\%), with 2.1--3.2-fold shorter blocks across the tested coverages. GCphase\cite{luo2024gcphase} was excluded because its handling of the input VCF phased filtered homozygous-reference calls as heterozygous variants (Methods).
+
+We then applied the released model, with no retraining and no change of threshold or parameter, to nanopore data of two further individuals (Supplementary Note~8). HG008-N is normal pancreatic tissue from a donor with pancreatic cancer\cite{mcdaniel2025hg008}, and COLO829BL is a lymphoblastoid cell line matched to the COLO829 melanoma line\cite{sohn2026colo829}. Phase was scored against phase derived from a diploid assembly of each individual; the COLO829BL assembly was built from data other than the evaluated reads (Methods). In HG008-N, with the variant caller used for HG002, \toolname had SNV switch error rates of 0.026--0.058\% at 10--30$\times$, compared with 0.091--0.107\% for \whatshap and 0.137--0.144\% for \hapcut. In COLO829BL, with variant calls from Clair3\cite{zheng2022clair3}, \toolname had 0.018--0.065\%, compared with 0.044--0.144\% and 0.089--0.206\%. These rates were 1.8--3.6- and 2.2--2.4-fold lower than those of \whatshap, and the difference increased with coverage in both individuals. As in HG002, \toolname phased 0.6--1.0 percentage points fewer benchmark heterozygous SNVs than \whatshap, at block N50 values within 5\% of those of \whatshap. Block-wise Hamming distances were lowest for \toolname, except in COLO829BL at 30$\times$ (0.51\% versus 0.46\% for \whatshap).
+%  [provenance] 2026-11-21 (author decision, option A: notes/drafts/2026-11-21-other-individuals-options.md). Replaces
+%  the one HG008 sentence of 2026-11-13 (option C). HG008-N: notes/hg008_validation/results/hg008_{runs,summary}.tsv
+%  (issue #11; seeds 1-3 at 10 and 20x, seed 1 at 30x; PEPPER-Margin-DeepVariant r0.8; means over seeds).
+%  COLO829BL: notes/colo829_validation/results/colo829_runs.tsv (seed 1 at 10, 20 and 30x; Clair3 v1.2.0; chr1-22;
+%  run in cloud session https://claude.ai/code/session_016MpzQAd54HaJjtG7j5Wqwe, 2026-11-16 to 2026-11-19).
+%  WhatsHap / LongPhase 2: HG008-N 1.83, 2.90, 3.58; COLO829BL 2.21, 2.34, 2.42. HapCUT2 / LongPhase 2: HG008-N 2.44,
+%  4.05, 5.38; COLO829BL 3.16, 4.92, 4.94 (Supplementary Note 8). Completeness WhatsHap minus LongPhase 2 (points):
+%  HG008-N 0.61, 0.65, 0.64; COLO829BL 0.95, 0.65, 0.62. N50 LongPhase 2 / WhatsHap: HG008-N 1.00, 0.99, 1.00; COLO829BL
+%  0.96, 1.00, 1.03. Hamming: HG008-N means lowest for LongPhase 2 at every coverage (one 10x replicate 1.366% vs
+%  1.364% for WhatsHap, Supplementary Note 8); COLO829BL 30x 0.507% vs 0.463%. No GNN effect in Results (rule):
+%  with/without GNN values are in Supplementary Note 7.
 
 \subsection*{Joint phasing extends lower error rates to SVs and 5mC}
 %  [provenance] 2026-11-03 (author decision, title B): the SV and 5mC subsections were merged because both
@@ -348,12 +357,13 @@ Some calls left unphased by \toolname had excess read depth or lay outside one-t
 %  (its values existed only as plot reads from the pptx figure).
 
 %  [optional experiment] Generalization experiments a reviewer may require: (i)
-%  a second individual (HG001 or HG005) or a second nanopore chemistry, scored
-%  with the identical pipeline and embedded weights; (ii) a runtime and
+%  a second nanopore chemistry, scored with the identical pipeline and embedded
+%  weights (two further individuals, HG008-N and COLO829BL, are in the Results
+%  since 2026-11-21); (ii) a runtime and
 %  peak-memory table across coverages, configurations and thread counts for all
 %  tools; (iii) a downstream demonstration (haplotagging accuracy or
 %  haplotype-aware calling). The HiFi result above addresses the platform half
-%  of the generalization question, not the individual half.
+%  of the generalization question; HG008-N and COLO829BL address the individual half.
 
 %  [note on existing material] The group's algorithm slides contain a ClairS
 %  somatic-calling experiment across six tumour cell lines at five simulated

@@ -669,42 +669,52 @@ def sfig17_sv_indels():
 
 
 # ===================== Supplementary Fig. 2 (numbering of 2026-11-10) =====
-def sfig_hg008():
-    """A second individual, HG008 (issue #11; author decision 2026-11-13, option C, after a draft PNG):
-    SNV-only phasing of HG008-N-P nanopore data at 10, 20 and 30x, scored against assembly-derived phase
-    (notes/hg008_validation/results/hg008_runs.tsv). a switch error rate, b Hamming distance, c recall, each
-    against coverage (replicates as small markers, means as lines), d switch error rate against block N50."""
+INDIVIDUALS = (("HG008-N", ("hg008_validation", "results", "hg008_runs.tsv")),
+               ("COLO829BL", ("colo829_validation", "results", "colo829_runs.tsv")))
+
+
+def _individual_rows(path):
     import csv
-    rows = list(csv.DictReader(open(os.path.join(ROOT, "notes", "hg008_validation", "results", "hg008_runs.tsv")), delimiter="\t"))
+    return list(csv.DictReader(open(os.path.join(ROOT, "notes", *path)), delimiter="\t"))
+
+
+def sfig_hg008():
+    """Two further individuals (HG008 issue #11, option C 2026-11-13; COLO829BL added 2026-11-21, option A of
+    notes/drafts/2026-11-21-other-individuals-options.md). SNV-only phasing of nanopore data at 10, 20 and 30x, scored
+    against assembly-derived phase (notes/{hg008,colo829}_validation/results/*_runs.tsv). One row per individual:
+    switch error rate, Hamming distance and recall against coverage (replicates as small markers, means as lines),
+    then switch error rate against block N50. File name kept (suppfig_hg008.pdf)."""
     tools = (("hc", "hapcut2"), ("wh", "wh"), ("lp", "lp_nognn"), ("lp_gnn", "lp_gnn"))
     covs = (10, 20, 30)
-    def vals(tool, key, scale=1.0):
-        return {c: [float(r[key]) / scale for r in rows if r["tool"] == tool and r["coverage"] == f"{c}x"] for c in covs}
     mean = lambda v: sum(v) / len(v)
-    fig, axs = new_fig(50, 1, 4)
-    for ax, key in zip(axs[:3], ("ser_pct", "hamming_pct", "completeness_pct")):
+    fig, axs = new_fig(95, 2, 4)
+    for row, (ind, path) in zip(axs, INDIVIDUALS):
+        rows = _individual_rows(path)
+        def vals(tool, key, scale=1.0):
+            return {c: [float(r[key]) / scale for r in rows if r["tool"] == tool and r["coverage"] == f"{c}x"] for c in covs}
+        for ax, key in zip(row[:3], ("ser_pct", "hamming_pct", "completeness_pct")):
+            for t, name in tools:
+                d = vals(name, key); st = STY[t]
+                for c in covs:
+                    if len(d[c]) > 1:
+                        ax.plot([c] * len(d[c]), d[c], ls="", marker=st["marker"], ms=st["ms"] * 0.7, mfc="none",
+                                mec=C[t], alpha=0.6, zorder=2)
+                tline(ax, t, covs, [mean(d[c]) for c in covs], [0] * 3, band=False)
+            cov_axis(ax, covs); ax.set_xlim(7, 33)
         for t, name in tools:
-            d = vals(name, key); st = STY[t]
-            for c in covs:
-                if len(d[c]) > 1:
-                    ax.plot([c] * len(d[c]), d[c], ls="", marker=st["marker"], ms=st["ms"] * 0.7, mfc="none", mec=C[t],
-                            alpha=0.6, zorder=2)
-            tline(ax, t, covs, [mean(d[c]) for c in covs], [0] * 3, band=False)
-        cov_axis(ax, covs); ax.set_xlim(7, 33)
-    for t, name in tools:
-        x, y, st = vals(name, "n50", 1e6), vals(name, "ser_pct"), STY[t]
-        line(axs[3], [mean(x[c]) for c in covs], [mean(y[c]) for c in covs], [0] * 3, C[t], ls=st["ls"],
-             marker=st["marker"], ms=st["ms"], mfc=st["mfc"], band=False)
-    axs[0].set_ylabel("SNV switch error rate (%)"); axs[0].set_ylim(0, None)
-    axs[1].set_ylabel("Hamming distance (%)"); axs[1].set_ylim(0, None)
-    axs[2].set_ylabel("Recall (%)")
-    axs[3].set_ylabel("SNV switch error rate (%)"); axs[3].set_ylim(0, None); axs[3].set_xlabel("Block N50 (Mb)")
+            x, y, st = vals(name, "n50", 1e6), vals(name, "ser_pct"), STY[t]
+            line(row[3], [mean(x[c]) for c in covs], [mean(y[c]) for c in covs], [0] * 3, C[t], ls=st["ls"],
+                 marker=st["marker"], ms=st["ms"], mfc=st["mfc"], band=False)
+        row[0].set_ylabel("SNV switch error rate (%)"); row[0].set_ylim(0, None)
+        row[1].set_ylabel("Hamming distance (%)"); row[1].set_ylim(0, None)
+        row[2].set_ylabel("Recall (%)")
+        row[3].set_ylabel("SNV switch error rate (%)"); row[3].set_ylim(0, None); row[3].set_xlabel("Block N50 (Mb)")
     hs = _light(fig, [thandle("lp_gnn", "LongPhase 2"), thandle("lp", "LongPhase 2 without GNN"),
                       thandle("wh", "WhatsHap"), thandle("hc", "HapCUT2")])
     fig.legend(handles=hs, loc="outside upper center", ncol=4, frameon=False, handlelength=2.6, columnspacing=2.0)
-    for ax, l, ti in zip(axs, "abcd", ("Nanopore: switch errors", "Nanopore: Hamming distance", "Nanopore: recall",
-                                       "Nanopore: accuracy and contiguity")):
-        letter(ax, l, title=ti)
+    for row, (ind, _), letters in zip(axs, INDIVIDUALS, ("abcd", "efgh")):
+        for ax, l, ti in zip(row, letters, ("switch errors", "Hamming distance", "recall", "accuracy and contiguity")):
+            letter(ax, l, title=f"{ind}, nanopore:\n{ti}")
     save(fig, os.path.join(SUPP, "suppfig_hg008.pdf"))
 
 
@@ -1556,27 +1566,33 @@ def _heldout(name):
 
 
 def hg008_table(w):
-    """SNV-only phasing of HG008-N-P, a second individual (issue #11; notes/hg008_validation/results/hg008_runs.tsv)."""
-    import csv
-    rows = list(csv.DictReader(open(os.path.join(ROOT, "notes", "hg008_validation", "results", "hg008_runs.tsv")), delimiter="\t"))
-    assert len(rows) == 28 and len({r["truth_het_snv"] for r in rows}) == 1
+    """SNV-only phasing of two further individuals, HG008-N (issue #11) and COLO829BL (2026-11-21), from
+    notes/{hg008,colo829}_validation/results/*_runs.tsv. Label tab:hg008 kept."""
+    data = [(ind, _individual_rows(path)) for ind, path in INDIVIDUALS]
+    assert len(data[0][1]) == 28 and len(data[1][1]) == 12
+    assert all(len({r["truth_het_snv"] for r in rows}) == 1 for _, rows in data)
+    n = {ind: f"{int(rows[0]['truth_het_snv']):,}" for ind, rows in data}
     names = {"lp_gnn": r"\toolname", "lp_nognn": r"\toolname without GNN", "wh": r"\whatshap", "hapcut2": r"\hapcut"}
     w(r"\begin{table}[h]")
-    w(r"\caption{\textbf{SNV-only phasing of a second individual, HG008.} Nanopore R10.4.1 reads of normal pancreatic tissue, down-sampled three times to 10$\times$ and to 20$\times$ and once to 30$\times$, phased with the released model and default settings. Scored on chr1--22 against the phase of the HG008 normal assembly, on "
-      + f"{int(rows[0]['truth_het_snv']):,}"
-      + r" biallelic heterozygous SNVs in 2,781 truth phase blocks (Supplementary Note~6). The assembly was built in part from the evaluated reads. \emph{Rate}, SNV switch error rate; \emph{recall}, phased benchmark SNVs as a share of the benchmark SNVs; \emph{Hamming}, block-wise Hamming distance; \emph{blocks} and \emph{N50}, phase blocks of the query; \emph{without GNN}, \toolname without GNN-based unphasing.}")
+    w(r"\caption{\textbf{SNV-only phasing of two further individuals, HG008-N and COLO829BL.} Nanopore R10.4.1 reads, phased with the released model and default settings and scored on chr1--22 against the phase of a diploid assembly of each individual (Supplementary Note~8). HG008-N: normal pancreatic tissue, down-sampled three times to 10$\times$ and to 20$\times$ and once to 30$\times$, PEPPER-Margin-DeepVariant calls, "
+      + n["HG008-N"] + r" biallelic heterozygous SNVs in 2,781 truth phase blocks; the assembly was built in part from the evaluated reads. COLO829BL: lymphoblastoid cell line, down-sampled once to each coverage, Clair3 calls, "
+      + n["COLO829BL"] + r" biallelic heterozygous SNVs in 2,723 truth phase blocks; the assembly was not built from the evaluated reads. \emph{Rate}, SNV switch error rate; \emph{recall}, phased benchmark SNVs as a share of the benchmark SNVs; \emph{Hamming}, block-wise Hamming distance; \emph{blocks} and \emph{N50}, phase blocks of the query; \emph{without GNN}, \toolname without GNN-based unphasing.}")
     w(r"\label{tab:hg008}\scriptsize\setlength{\tabcolsep}{4pt}")
     w(r"\begin{tabular}{@{}lllrrrrrrrr@{}}\toprule")
     w(r"Cov. & Rep. & Tool & \shortstack[r]{Switch\\errors} & \shortstack[r]{SNV\\pairs} & \shortstack[r]{Rate\\(\%)} & \shortstack[r]{Phased\\SNVs} & \shortstack[r]{Recall\\(\%)} & \shortstack[r]{Hamming\\(\%)} & Blocks & \shortstack[r]{N50\\(kb)} \\ \midrule")
-    prev = None
-    for r in rows:
-        first = r["run"] != prev
-        if first and prev is not None and r["coverage"] != prevcov:
+    for k, (ind, rows) in enumerate(data):
+        if k:
             w(r"\midrule")
-        w(f"{r['coverage'][:-1] + '$' + chr(92) + 'times$' if first else ''} & {r['seed'] if first else ''} & {names[r['tool']]} & "
-          f"{int(r['snv_sw']):,} & {int(r['snv_pairs']):,} & {float(r['ser_pct']):.4f} & {int(r['phased_snv']):,} & "
-          f"{float(r['completeness_pct']):.2f} & {float(r['hamming_pct']):.2f} & {int(r['blocks']):,} & {int(r['n50']) / 1000:,.0f} \\\\")
-        prev, prevcov = r["run"], r["coverage"]
+        w(r"\multicolumn{11}{@{}l}{\textbf{" + ind + r"}} \\")
+        prev = prevcov = None
+        for r in rows:
+            first = r["run"] != prev
+            if first and prev is not None and r["coverage"] != prevcov:
+                w(r"\midrule")
+            w(f"{r['coverage'][:-1] + '$' + chr(92) + 'times$' if first else ''} & {r['seed'] if first else ''} & {names[r['tool']]} & "
+              f"{int(r['snv_sw']):,} & {int(r['snv_pairs']):,} & {float(r['ser_pct']):.4f} & {int(r['phased_snv']):,} & "
+              f"{float(r['completeness_pct']):.2f} & {float(r['hamming_pct']):.2f} & {int(r['blocks']):,} & {int(r['n50']) / 1000:,.0f} \\\\")
+            prev, prevcov = r["run"], r["coverage"]
     w(r"\bottomrule\end{tabular}\end{table}" + "\n")
 
 

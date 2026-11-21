@@ -2,6 +2,7 @@
 
 One file per change, newest first. Moved verbatim from `../../README.md` on 2026-10-20;
 each file adds the entry title as its heading.
+- 2026-11-21 — [HG008-N and COLO829BL in the manuscript (option A)](2026-11-21-other-individuals-option-a.md)
 - 2026-11-19 — [COLO829BL phasing benchmark: chr1-22 results](2026-11-19-colo829bl-results.md)
 - 2026-11-16 — [COLO829BL phasing benchmark: setup (chr1-22, Clair3)](2026-11-16-colo829bl-chr20-setup.md)
 - [2026-11-16 GNN schematics reduced to two Supplementary figures (option A)](2026-11-16-gnn-schematics-two-figures.md)

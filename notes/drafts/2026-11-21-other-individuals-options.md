@@ -1,6 +1,6 @@
 # HG008-N and COLO829BL in the manuscript: options (2026-11-21)
 
-Status: proposal. No manuscript source is changed until the author chooses.
+Status: author chose option A on 2026-11-21 (implemented; `notes/log/2026-11-21-other-individuals-option-a.md`).
 Data: `notes/hg008_validation/`, `notes/colo829_validation/` (ported from `claude/youthful-lovelace-gdc2ku`, commit 61e7d00).
 
 ## 1. Problems in the current text and on the branch
